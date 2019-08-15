@@ -156,8 +156,11 @@ namespace Inspinia_MVC5
 
             // vectorMap 
             bundles.Add(new ScriptBundle("~/plugins/vectorMap").Include(
-                      "~/Scripts/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js",
-                      "~/Scripts/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"));
+                      "~/Scripts/plugins/jvectormap/jquery-jvectormap-2.0.3.min.js",
+                      "~/Scripts/plugins/jvectormap/jquery-jvectormap-world-mill-en.js",
+                      "~/Scripts/plugins/jvectormap/jquery-jvectormap-ru-merc.js",
+                      "~/Scripts/plugins/jvectormap/jquery-jvectormap-de-mill.js"));
+
 
             // ionRange styles
             bundles.Add(new StyleBundle("~/Content/plugins/ionRangeSlider/ionRangeStyles").Include(
