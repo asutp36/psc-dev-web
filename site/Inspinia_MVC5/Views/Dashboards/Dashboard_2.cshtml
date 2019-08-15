@@ -428,6 +428,13 @@
                                 case "RU-BEL":
                                     return "36 292";
                             }
+                        },
+                        offsets: function (code) {
+                            return {
+                                'RU-VGG': [0, -2],
+                                'RU-KRS': [-1, 0],
+                                'RU-BEL': [0, -1]
+                            }[code];
                         }
                     }
                 },
