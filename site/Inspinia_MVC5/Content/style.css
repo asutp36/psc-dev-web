@@ -2751,7 +2751,7 @@ div.dt-button-info {
   margin-bottom: 0;
 }
 .glyphicon.fa {
-  font-family: "FontAwesome";
+    font-family: "Font Awesome 5 Free";
 }
 /* INPUTS */
 .inline {
@@ -3205,10 +3205,10 @@ select.form-control:not([size]):not([multiple]) {
   content: '-';
 }
 #nestable2 .dd-item > button {
-  font-family: FontAwesome;
-  height: 34px;
-  width: 33px;
-  color: #c1c1c1;
+    font-family: Font Awesome 5 Free;
+    height: 34px;
+    width: 33px;
+    color: #c1c1c1;
 }
 #nestable2 .dd-item > button:before {
   content: "\f067";

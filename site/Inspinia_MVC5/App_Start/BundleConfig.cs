@@ -17,7 +17,7 @@ namespace Inspinia_MVC5
 
             // Font Awesome icons
             bundles.Add(new StyleBundle("~/font-awesome/css").Include(
-                      "~/fonts/font-awesome/css/font-awesome.min.css", new CssRewriteUrlTransform()));
+                      "~/fonts/font-awesome/css/all.css", new CssRewriteUrlTransform()));
 
             // jQuery
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
@@ -160,7 +160,6 @@ namespace Inspinia_MVC5
                       "~/Scripts/plugins/jvectormap/jquery-jvectormap-world-mill-en.js",
                       "~/Scripts/plugins/jvectormap/jquery-jvectormap-ru-merc.js",
                       "~/Scripts/plugins/jvectormap/jquery-jvectormap-de-mill.js"));
-
 
             // ionRange styles
             bundles.Add(new StyleBundle("~/Content/plugins/ionRangeSlider/ionRangeStyles").Include(
