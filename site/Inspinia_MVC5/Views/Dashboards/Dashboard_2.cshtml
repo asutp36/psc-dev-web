@@ -270,7 +270,7 @@
         $(document).ready(function () {
 
             /////////////////////////////////////////////////////////////////////////////////////
-            // График карт
+            // График клиентских карт
             /////////////////////////////////////////////////////////////////////////////////////
             var data2 = [
                 [gd(2019, 5, 14), 7], [gd(2019, 5, 15), 6], [gd(2019, 5, 16), 4], [gd(2019, 5, 17), 8],
@@ -388,11 +388,22 @@
             /////////////////////////////////////////////////////////////////////////////////////
 
             var mapData = {
-                "RU-BEL": 10,
-                "RU-VGG": 40,
-                "RU-KRS": 20,
-                "RU-TAM": 30,
+                "RU-BEL": 36292,
+                "RU-VGG": 145168,
+                "RU-KRS": 72584,
+                "RU-TAM": 108876,
             };
+
+            function validData(val) {
+                if (typeof val === "undefined") {
+                    ret = "";
+                }
+                else {
+                    ret = val;
+                }
+
+                return ret;
+            }
 
             $('#world-map').vectorMap({
                 map: 'ru_merc',
@@ -418,16 +429,7 @@
                 labels: {
                     regions: {
                         render: function (code) {
-                            switch (code) {
-                                case "RU-VGG":
-                                    return "145 168";
-                                case "RU-TAM":
-                                    return "108 876";
-                                case "RU-KRS":
-                                    return "72 584";
-                                case "RU-BEL":
-                                    return "36 292";
-                            }
+                            return String(validData(mapData[code])).replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1' + unescape('%u2009'));
                         },
                         offsets: function (code) {
                             return {
