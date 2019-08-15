@@ -355,6 +355,7 @@
     <Content Include="Content\plugins\slick\fonts\slick.ttf" />
     <Content Include="Content\plugins\slick\fonts\slick.woff" />
     <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Images\profile_small2.jpg" />
     <Content Include="locales\en.json" />
     <Content Include="locales\es.json" />
     <Content Include="Models\BakeryModel.Context.tt">

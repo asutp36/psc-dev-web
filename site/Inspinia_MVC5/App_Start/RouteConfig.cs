@@ -16,7 +16,7 @@ namespace Inspinia_MVC5
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Dashboards", action = "Dashboard_1", id = UrlParameter.Optional }
+                defaults: new { controller = "Dashboards", action = "Dashboard_2", id = UrlParameter.Optional }
             );
         }
 
