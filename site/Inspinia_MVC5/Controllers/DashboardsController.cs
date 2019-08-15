@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Inspinia_MVC5.Filters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,7 +7,7 @@ using System.Web.Mvc;
 
 namespace Inspinia_MVC5.Controllers
 {
-    public class DashboardsController : Controller
+    public class DashboardsController : HomeController
     {
         public ActionResult Dashboard_1()
         {
@@ -37,6 +38,5 @@ namespace Inspinia_MVC5.Controllers
         {
             return View();
         }
-
     }
 }
