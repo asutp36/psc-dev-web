@@ -9595,4 +9595,14 @@ body.md-skin {
   #page-wrapper {
     margin: 0;
   }
+
+    /*New code*/
+
+    select#lang option[value="ru"] {
+        background-image: url(/Images/flags/16/Russia.png);
+    }
+
+    select#lang option[value="en"] {
+        background-image: url(/Images/flags/16/United-Kingdom.png);
+    }
 }
