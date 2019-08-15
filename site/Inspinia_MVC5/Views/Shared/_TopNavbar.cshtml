@@ -4,13 +4,28 @@
             <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
             <form role="search" class="navbar-form-custom" method="post" action="">
                 <div class="form-group">
-                    <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                    <input type="text" placeholder="@Resources.Resource.Search" data-i18n="topnav.search" class="form-control" name="top-search" id="top-search">
                 </div>
             </form>
         </div>
         <ul class="nav navbar-top-links navbar-right">
             <li style="padding:20px">
                 <span class="m-r-sm text-muted welcome-message" data-i18n="topnav.welcometext">Welcome to INSPINIA+ Admin Theme.</span>
+            </li>
+            <li>
+                @using (Html.BeginForm("ChangeCulture", "Home"))
+                {
+                    string lang = "ru";
+                    if (@Request.Cookies["lang"] != null)
+                    {
+                        lang = @Request.Cookies["lang"].Value;
+                    }
+
+                    <select name="lang" id="lang" onchange="submit()" class="form-control m-b">
+                        <option value="ru" @((lang.Contains("ru")) ? "selected" : "")>Русский</option>
+                        <option value="en" @((lang.Contains("en")) ? "selected" : "")>English</option>
+                    </select>
+                }
             </li>
             <li class="dropdown">
                 <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
@@ -109,7 +124,7 @@
             </li>
             <li>
                 <a href="@Url.Action("Login", "Pages")">
-                    <i class="fa fa-sign-out"></i> Log out
+                    <i class="fa fa-sign-out"></i> @Resources.Resource.Logout
                 </a>
             </li>
             <li>
