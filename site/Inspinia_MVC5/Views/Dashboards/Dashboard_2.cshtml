@@ -136,14 +136,6 @@
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                             <i class="fa fa-wrench"></i>
                         </a>
-                        <ul class="dropdown-menu dropdown-user">
-                            <li>
-                                <a href="#" class="dropdown-item">Config option 1</a>
-                            </li>
-                            <li>
-                                <a href="#" class="dropdown-item">Config option 2</a>
-                            </li>
-                        </ul>
                         <a class="close-link">
                             <i class="fa fa-times"></i>
                         </a>
@@ -259,15 +251,6 @@
                                 <td class="center">A</td>
                             </tr>
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>Rendering engine</th>
-                                <th>Browser</th>
-                                <th>Platform(s)</th>
-                                <th>Engine version</th>
-                                <th>CSS grade</th>
-                            </tr>
-                        </tfoot>
                     </table>
 
                 </div>
@@ -503,6 +486,8 @@
             /////////////////////////////////////////////////////////////////////////////////////
 
             $('.dataTables-example').DataTable({
+                searching: false,
+                paging: false,
                 pageLength: 25,
                 dom: '<"html5buttons"B>lTfgitp',
                 buttons: [
