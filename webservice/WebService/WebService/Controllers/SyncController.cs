@@ -17,11 +17,28 @@ namespace WebService.Controllers
             return "sync";
         }
 
+        [HttpPost]
+        [ActionName("op")]
         public void PostOp([FromBody]Operation operation)
         {
             _model.Operations.Add(operation);
             _model.SaveChanges();
-            
+        }
+
+        [HttpPost]
+        [ActionName("owner")]
+        public void PostOw([FromBody]Owner owner)
+        {
+            _model.Owners.Add(owner);
+            _model.SaveChanges();
+        }
+
+        [HttpPost]
+        [ActionName("card")]
+        public void PostCard([FromBody]Card card)
+        {
+            _model.Cards.Add(card);
+            _model.SaveChanges();
         }
 
     }
