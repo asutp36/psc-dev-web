@@ -1,8 +1,8 @@
 ﻿@{
     ViewBag.Title = "Панель 1";
 }
-@Scripts.Render("~/scripts/jquery-1.10.2.js")
-@Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+
+@model IEnumerable<Inspinia_MVC5.Models.Operation>
 
 <div class="wrapper wrapper-content">
     <div class="row">
@@ -14,7 +14,7 @@
                 </div>
                 <div class="ibox-content">
                     <h1 class="no-margins">96 700 830</h1>
-                    @*                    <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>*@
+                    @*<div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>*@
                     <small>с начала работы</small>
                 </div>
             </div>
@@ -265,6 +265,9 @@
     @Scripts.Render("~/plugins/peity")
     @Scripts.Render("~/plugins/dataTables")
 
+    @Scripts.Render("~/scripts/jquery-3.1.1.min.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+
 
 
 
@@ -513,4 +516,22 @@
 
         });
     </script>
+
+    <script type="text/javascript">
+            $(document).ready(function () {
+
+
+                timedRefresh(1000);
+            });
+
+        function Refresh() {
+            var href = "/Home?user=" + encodeURIComponent($("#Username").text());
+
+            $("#ActionLink").attr("href", href).click();
+            setTimeout("Refresh();", 5000);
+        }
+
+            
+    </script>
+
 }
