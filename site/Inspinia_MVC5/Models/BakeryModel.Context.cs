@@ -13,20 +13,5 @@ namespace Inspinia_MVC5.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class bakeryDBEntities : DbContext
-    {
-        public bakeryDBEntities()
-            : base("name=bakeryDBEntities")
-        {
-        }
     
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            throw new UnintentionalCodeFirstException();
-        }
-    
-        public virtual DbSet<ProductGroup> ProductGroup { get; set; }
-        public virtual DbSet<Order> Order { get; set; }
-        public virtual DbSet<Product> Product { get; set; }
-    }
 }

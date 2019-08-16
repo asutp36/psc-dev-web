@@ -1,6 +1,8 @@
 ﻿@{
     ViewBag.Title = "Панель 1";
 }
+@Scripts.Render("~/scripts/jquery-1.10.2.js")
+@Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
 
 <div class="wrapper wrapper-content">
     <div class="row">
@@ -12,7 +14,7 @@
                 </div>
                 <div class="ibox-content">
                     <h1 class="no-margins">96 700 830</h1>
-@*                    <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>*@
+                    @*                    <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>*@
                     <small>с начала работы</small>
                 </div>
             </div>
@@ -64,12 +66,12 @@
                 <div class="ibox-title">
                     <h5>Карты</h5>
                     @*<div class="float-right">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-xs btn-white active">Today</button>
-                            <button type="button" class="btn btn-xs btn-white">Monthly</button>
-                            <button type="button" class="btn btn-xs btn-white">Annual</button>
-                        </div>
-                    </div>*@
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-xs btn-white active">Today</button>
+                                <button type="button" class="btn btn-xs btn-white">Monthly</button>
+                                <button type="button" class="btn btn-xs btn-white">Annual</button>
+                            </div>
+                        </div>*@
                 </div>
                 <div class="ibox-content">
                     <div class="row">
@@ -112,22 +114,21 @@
             </div>
         </div>
     </div>
-
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
                     <div>
                         <span class="float-right text-right">
                             <small class="float-right">
                                 <i class="fa fa-clock-o"> </i>
-                                Обновлено в 21:40
+                                @DateTime.Now;
                             </small>
                         </span>
                         <h3 class="font-bold no-margins">
-                            Поступление за сутки
+                            Операции
                         </h3>
-                        <small>по мойкам</small>
+                        <small>с картами</small>
                     </div>
                     <div class="ibox-tools">
                         <a class="collapse-link">
@@ -146,91 +147,39 @@
                     <table class="table table-striped table-bordered table-hover dataTables-example">
                         <thead>
                             <tr>
-                                <th>Регион</th>
-                                <th>Мойка</th>
-                                <th>Адрес</th>
-                                <th>Зачисления</th>
+                                <th><p>IDOperation</p></th>
+                                <th><p>IDPcs</p></th>
+                                <th><p>IDOperationType</p></th>
+                                <th><p>IDCard</p></th>
+                                <th><p>DTime</p></th>
+                                <th><p>Amount</p></th>
+                                <th><p>Balance</p></th>
+                                <th><p>ServerID</p></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="gradeX">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М 1</td>
-                                <td>Волгоград Жукова</td>
-                                <td class="text-right">42 190</td>
-                            </tr>
-                            <tr class="gradeC">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М 2</td>
-                                <td>Волжский Ленина</td>
-                                <td class="text-right">34 110</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Курский регион</td>
-                                <td class="text-center">М 3</td>
-                                <td>Курск Малых</td>
-                                <td class="text-right">32 380</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Белгородский регион</td>
-                                <td class="text-center">М 4</td>
-                                <td>Губкин Космонавтов</td>
-                                <td class="text-right">16 180</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Белгородский регион</td>
-                                <td class="text-center">М 5</td>
-                                <td>Старый Оскол Угарова</td>
-                                <td class="text-right">19 530</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М 6</td>
-                                <td>Волгоград 30-летия Победы</td>
-                                <td class="text-right">36 290</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М 7</td>
-                                <td>Волгоград Фруктовая</td>
-                                <td class="text-right">28 550</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Тамбовский регион</td>
-                                <td class="text-center">М 8</td>
-                                <td>Мичуринск Автозаводская</td>
-                                <td class="text-right">33 700</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Тамбовский регион</td>
-                                <td class="text-center">М 9</td>
-                                <td>Мичуринск Советская</td>
-                                <td class="text-right">26 040</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Курский регион</td>
-                                <td class="text-center">М10</td>
-                                <td>Курск Пучковка</td>
-                                <td class="text-right">25 700</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Курский регион</td>
-                                <td class="text-center">М11</td>
-                                <td>Железногорск Ветеринарный</td>
-                                <td class="text-right">0</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М12</td>
-                                <td>Волгоград Алехина</td>
-                                <td class="text-right">39 590</td>
-                            </tr>
+
+                            @foreach (var o in ViewBag.Operations)
+                            {
+                                <tr>
+                                    <td><p>@o.OperationID</p></td>
+                                    <td><p>@o.PscID</p></td>
+                                    <td><p>@o.OperationTypeID</p></td>
+                                    <td><p>@o.CardID</p></td>
+                                    <td><p>@o.DTime</p></td>
+                                    <td><p>@o.Amount</p></td>
+                                    <td><p>@o.Balance</p></td>
+                                    <td><p>@o.ServerID</p></td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
 
                 </div>
             </div>
         </div>
+
+        
 
         <div class="col-lg-6">
             <div class="ibox ">
@@ -270,7 +219,7 @@
         $(document).ready(function () {
 
             /////////////////////////////////////////////////////////////////////////////////////
-            // График клиентских карт
+            // График карт
             /////////////////////////////////////////////////////////////////////////////////////
             var data2 = [
                 [gd(2019, 5, 14), 7], [gd(2019, 5, 15), 6], [gd(2019, 5, 16), 4], [gd(2019, 5, 17), 8],
@@ -387,109 +336,12 @@
             // Карта регионов
             /////////////////////////////////////////////////////////////////////////////////////
 
-            var ruRegionName = {
-                "RU-AD": "Адыгея",
-                "RU-AL": "Алтай",
-                "RU-ALT": "Алтайский край",
-                "RU-AMU": "Амурская область",
-                "RU-ARK": "Архангельская область",
-                "RU-AST": "Астраханская область",
-                "RU-BA": "Башкортостан",
-                "RU-BEL": "Белгородская область",
-                "RU-BRY": "Брянская область",
-                "RU-BU": "Бурятия",
-                "RU-CE": "Чечня",
-                "RU-CHE": "Челябинская область",
-                "RU-CHU": "Чукотский АО",
-                "RU-CU": "Чувашия",
-                "RU-DA": "Дагестан",
-                "RU-IN": "Ингушетия",
-                "RU-IRK": "Иркутская область",
-                "RU-IVA": "Ивановская область",
-                "RU-KB": "Кабардино-Балкария",
-                "RU-KGD": "Калининградская область",
-                "RU-KL": "Калмыкия",
-                "RU-KLU": "Калужская область",
-                "RU-KAM": "Камчатский край",
-                "RU-KC": "Карачаево-Черкесия",
-                "RU-KR": "Карелия",
-                "RU-KEM": "Кемеровская область - Кузбасс",
-                "RU-KHA": "Хабаровский край",
-                "RU-KK": "Хакасия",
-                "RU-KHM": "Ханты-Мансийский АО — Югра",
-                "RU-KIR": "Кировская область",
-                "RU-KO": "Коми",
-                "RU-KOS": "Костромская область",
-                "RU-KDA": "Краснодарский край",
-                "RU-KYA": "Красноярский край",
-                "RU-KGN": "Курганская область",
-                "RU-KRS": "Курская область",
-                "RU-LEN": "Ленинградская область",
-                "RU-LIP": "Липецкая область",
-                "RU-MAG": "Магаданская область",
-                "RU-ME": " Марий Эл",
-                "RU-MO": "Мордовия",
-                "RU-MOS": "Московская область",
-                "RU-MOW": "Москва",
-                "RU-MUR": "Мурманская область",
-                "RU-NEN": "Ненецкий АО",
-                "RU-NIZ": "Нижегородская область",
-                "RU-NGR": "Новгородская область",
-                "RU-NVS": "Новосибирская область",
-                "RU-OMS": "Омская область",
-                "RU-ORE": "Оренбургская область",
-                "RU-ORL": "Орловская область",
-                "RU-PNZ": "Пензенская область",
-                "RU-PER": "Пермский край",
-                "RU-PRI": "Приморский край",
-                "RU-PSK": "Псковская область",
-                "RU-ROS": "Ростовская область",
-                "RU-RYA": "Рязанская область",
-                "RU-SA": "Саха (Якутия)",
-                "RU-SAK": "Сахалинская область",
-                "RU-SAM": "Самарская область",
-                "RU-SPE": "Санкт-Петербург",
-                "RU-SAR": "Саратовская область",
-                "RU-SE": "Северная Осетия — Алания",
-                "RU-SMO": "Смоленская область",
-                "RU-STA": "Ставропольский край",
-                "RU-SVE": "Свердловская область",
-                "RU-TAM": "Тамбовская область",
-                "RU-TA": "Татарстан",
-                "RU-TOM": "Томская область",
-                "RU-TUL": "Тульская область",
-                "RU-TVE": " Тверская область",
-                "RU-TYU": "Тюменская область",
-                "RU-TY": "Тыва",
-                "RU-UD": "Удмуртия",
-                "RU-ULY": "Ульяновская область",
-                "RU-VLA": "Владимирская область",
-                "RU-VGG": "Волгоградская область",
-                "RU-VLG": "Вологодская область",
-                "RU-VOR": "Воронежская область",
-                "RU-YAN": "Ямало-Ненецкий АО",
-                "RU-YAR": "Ярославская область",
-                "RU-YEV": "Еврейская АО",
-                "RU-ZAB": "Забайкальский край"
-            };
-
             var mapData = {
-                "RU-BEL": 36292,
-                "RU-VGG": 145168,
-                "RU-KRS": 72584,
-                "RU-TAM": 108876,
+                "RU-BEL": 10,
+                "RU-VGG": 40,
+                "RU-KRS": 20,
+                "RU-TAM": 30,
             };
-
-            function validData(val) {
-                if (typeof val === "undefined") {
-                    ret = "";
-                }
-                else {
-                    ret = val;
-                }
-
-                return ret;
-            }
 
             $('#world-map').vectorMap({
                 map: 'ru_merc',
@@ -515,26 +367,24 @@
                 labels: {
                     regions: {
                         render: function (code) {
-                            return String(validData(mapData[code])).replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1' + unescape('%u2009'));
-                        },
-                        offsets: function (code) {
-                            return {
-                                'RU-VGG': [0, -2],
-                                'RU-KRS': [-1, 0],
-                                'RU-BEL': [0, -1]
-                            }[code];
+                            switch (code) {
+                                case "RU-VGG":
+                                    return "145 168";
+                                case "RU-TAM":
+                                    return "108 876";
+                                case "RU-KRS":
+                                    return "72 584";
+                                case "RU-BEL":
+                                    return "36 292";
+                            }
                         }
                     }
                 },
-                onRegionTipShow: function (e, el, code) {
-                    return el.html(ruRegionName[code]);
-                    //el.html(el.html() + '=' + code);
-                }
             });
 
             // отмасштабировать по Воронежской области
             var mapObj = $('#world-map').vectorMap('get', 'mapObject');
-            mapObj.setFocus({region: "RU-VOR"});
+            mapObj.setFocus({ region: "RU-VOR" });
 
 
             /////////////////////////////////////////////////////////////////////////////////////
