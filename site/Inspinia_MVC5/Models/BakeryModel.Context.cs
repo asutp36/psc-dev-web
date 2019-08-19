@@ -11,7 +11,5 @@ namespace Inspinia_MVC5.Models
 {
     using System;
     using System.Data.Entity;
-    using System.Data.Entity.Infrastructure;
-    
-    
+    using System.Data.Entity.Infrastructure;    
 }
