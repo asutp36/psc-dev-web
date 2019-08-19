@@ -10,10 +10,14 @@ namespace Inspinia_MVC5.Controllers
 {
     public class DashboardsController : HomeController
     {
-        static ContextDb db = new ContextDb();
+        static ModelDb db = new ModelDb();
 
         IEnumerable<Card> cards = db.Cards;
         IEnumerable<Operation> operations = db.Operations;
+
+        static ModelOfIncomes dbadd = new ModelOfIncomes();
+        
+        IEnumerable<Income> incomes = dbadd.Incomes;
 
         public ActionResult Dashboard_1()
         {
@@ -24,6 +28,7 @@ namespace Inspinia_MVC5.Controllers
         {
             ViewBag.Cards = cards;
             ViewBag.Operations = operations;
+            ViewBag.Incomes = incomes;
 
             return View();
         }
