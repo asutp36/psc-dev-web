@@ -19,26 +19,63 @@ namespace WebService.Controllers
 
         [HttpPost]
         [ActionName("op")]
-        public void PostOp([FromBody]Operation operation)
+        public HttpResponseMessage PostOp([FromBody]Operation operation)
         {
-            _model.Operations.Add(operation);
-            _model.SaveChanges();
+            if (operation != null)
+            {
+                _model.Operations.Add(operation);
+                _model.SaveChanges();
+
+                var responseGood = Request.CreateResponse(HttpStatusCode.OK);
+                responseGood.Headers.Add("ServerID", "Nikitoon");
+                return responseGood;
+            }
+
+            var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
+            responseBad.Headers.Add("ServerID", "Nikitoon");
+
+            return responseBad;
         }
 
         [HttpPost]
         [ActionName("owner")]
-        public void PostOw([FromBody]Owner owner)
+        public HttpResponseMessage PostOw([FromBody]Owner owner)
         {
-            _model.Owners.Add(owner);
-            _model.SaveChanges();
+            if (owner != null)
+            {
+                _model.Owners.Add(owner);
+                _model.SaveChanges();
+
+                var responseGood = Request.CreateResponse(HttpStatusCode.OK);
+                responseGood.Headers.Add("ServerID", "Nikitoon");
+                return responseGood;
+            }
+
+            var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
+            responseBad.Headers.Add("ServerID", "Nikitoon");
+
+            return responseBad;
+
         }
 
         [HttpPost]
         [ActionName("card")]
-        public void PostCard([FromBody]Card card)
+        public HttpResponseMessage PostCard([FromBody]Card card)
         {
-            _model.Cards.Add(card);
-            _model.SaveChanges();
+            if (card != null)
+            {
+                _model.Cards.Add(card);
+                _model.SaveChanges();
+
+                var responseGood = Request.CreateResponse(HttpStatusCode.OK);
+                responseGood.Headers.Add("ServerID", "Nikitoon");
+                return responseGood;
+            }
+
+            var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
+            responseBad.Headers.Add("ServerID", "Nikitoon");
+
+            return responseBad;
         }
 
     }
