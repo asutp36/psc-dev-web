@@ -24,6 +24,7 @@ namespace Inspinia_MVC5.Controllers
             return View();
         }
 
+       
         public ActionResult Dashboard_2()
         {
             ViewBag.Cards = cards;
@@ -31,6 +32,22 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.Incomes = incomes;
 
             return View();
+        }
+
+        [HttpGet]
+        [ActionName("UpdateTable")]
+        public ActionResult UpdateTable()
+        {
+            ViewBag.Operations = operations;
+
+            return PartialView("~/Views/Dashboards/OperationsTable.cshtml");
+        }
+
+        [HttpGet]
+        [ActionName("UpdateTime")]
+        public string UpdateTime()
+        {
+            return DateTime.Now.ToString();
         }
 
         public ActionResult Dashboard_3()
