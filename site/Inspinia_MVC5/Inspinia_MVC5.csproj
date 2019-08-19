@@ -173,11 +173,8 @@
     <Compile Include="Models\Card.cs" />
     <Compile Include="Models\CardStatus.cs" />
     <Compile Include="Models\CardType.cs" />
-    <Compile Include="Models\ContextAddDb.cs" />
     <Compile Include="Models\ContextDb.cs" />
-    <Compile Include="Models\Income.cs" />
     <Compile Include="Models\ModelDb.cs" />
-    <Compile Include="Models\ModelOfIncomes.cs" />
     <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\OperationType.cs" />
     <Compile Include="Models\Owner.cs" />
@@ -197,10 +194,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\AdditionalDb.mdf" />
-    <Content Include="App_Data\AdditionalDb_log.ldf">
-      <DependentUpon>AdditionalDb.mdf</DependentUpon>
-    </Content>
     <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
