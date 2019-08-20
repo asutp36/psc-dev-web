@@ -11,5 +11,18 @@ namespace Inspinia_MVC5.Models
 {
     using System;
     using System.Data.Entity;
-    using System.Data.Entity.Infrastructure;    
+    using System.Data.Entity.Infrastructure;
+    
+    public partial class bakeryDBEntities : DbContext
+    {
+        public bakeryDBEntities()
+            : base("name=bakeryDBEntities")
+        {
+        }
+    
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            throw new UnintentionalCodeFirstException();
+        }
+    }
 }
