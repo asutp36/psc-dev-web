@@ -39,7 +39,7 @@ namespace Inspinia_MVC5.Controllers
         {
             ViewBag.Operations = operations;
 
-            return PartialView("~/Views/Dashboards/OperationsTable.cshtml");
+            return PartialView("~/Views/Dashboards/UpdateTable.cshtml");
         }
 
         [HttpGet]
