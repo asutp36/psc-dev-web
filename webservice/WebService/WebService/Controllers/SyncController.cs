@@ -27,12 +27,12 @@ namespace WebService.Controllers
                 _model.SaveChanges();
 
                 var responseGood = Request.CreateResponse(HttpStatusCode.OK);
-                responseGood.Headers.Add("ServerID", "Nikitoon");
+                responseGood.Headers.Add("ServerID", "1488");
                 return responseGood;
             }
 
             var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
-            responseBad.Headers.Add("ServerID", "Nikitoon");
+            responseBad.Headers.Add("ServerID", "1488");
 
             return responseBad;
         }
@@ -47,12 +47,12 @@ namespace WebService.Controllers
                 _model.SaveChanges();
 
                 var responseGood = Request.CreateResponse(HttpStatusCode.OK);
-                responseGood.Headers.Add("ServerID", "Nikitoon");
+                responseGood.Headers.Add("ServerID", "1488");
                 return responseGood;
             }
 
             var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
-            responseBad.Headers.Add("ServerID", "Nikitoon");
+            responseBad.Headers.Add("ServerID", "1488");
 
             return responseBad;
 
@@ -68,12 +68,12 @@ namespace WebService.Controllers
                 _model.SaveChanges();
 
                 var responseGood = Request.CreateResponse(HttpStatusCode.OK);
-                responseGood.Headers.Add("ServerID", "Nikitoon");
+                responseGood.Headers.Add("ServerID", "1488");
                 return responseGood;
             }
 
             var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
-            responseBad.Headers.Add("ServerID", "Nikitoon");
+            responseBad.Headers.Add("ServerID", "1488");
 
             return responseBad;
         }
