@@ -205,85 +205,22 @@
                     <table class="table table-striped table-bordered table-hover dataTables-example">
                         <thead>
                             <tr>
-                                <th>Регион</th>
-                                <th>Мойка</th>
-                                <th>Адрес</th>
-                                <th>Зачисления</th>
+                                <th><p>Регион</p></th>
+                                <th><p>Мойка</p></th>
+                                <th><p>Адрес</p></th>
+                                <th><p>Зачисление</p></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="gradeX">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М 1</td>
-                                <td>Волгоград Жукова</td>
-                                <td class="text-right">42 190</td>
-                            </tr>
-                            <tr class="gradeC">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М 2</td>
-                                <td>Волжский Ленина</td>
-                                <td class="text-right">34 110</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Курский регион</td>
-                                <td class="text-center">М 3</td>
-                                <td>Курск Малых</td>
-                                <td class="text-right">32 380</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Белгородский регион</td>
-                                <td class="text-center">М 4</td>
-                                <td>Губкин Космонавтов</td>
-                                <td class="text-right">16 180</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Белгородский регион</td>
-                                <td class="text-center">М 5</td>
-                                <td>Старый Оскол Угарова</td>
-                                <td class="text-right">19 530</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М 6</td>
-                                <td>Волгоград 30-летия Победы</td>
-                                <td class="text-right">36 290</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М 7</td>
-                                <td>Волгоград Фруктовая</td>
-                                <td class="text-right">28 550</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Тамбовский регион</td>
-                                <td class="text-center">М 8</td>
-                                <td>Мичуринск Автозаводская</td>
-                                <td class="text-right">33 700</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Тамбовский регион</td>
-                                <td class="text-center">М 9</td>
-                                <td>Мичуринск Советская</td>
-                                <td class="text-right">26 040</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Курский регион</td>
-                                <td class="text-center">М10</td>
-                                <td>Курск Пучковка</td>
-                                <td class="text-right">25 700</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Курский регион</td>
-                                <td class="text-center">М11</td>
-                                <td>Железногорск Ветеринарный</td>
-                                <td class="text-right">0</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М12</td>
-                                <td>Волгоград Алехина</td>
-                                <td class="text-right">39 590</td>
-                            </tr>
+                            @foreach (var i in ViewBag.Incomes)
+                            {
+                                <tr>
+                                    <td><p>@i.Region</p></td>
+                                    <td><p>@i.WashName</p></td>
+                                    <td><p>@i.Adress</p></td>
+                                    <td><p>@i.Incomes</p></td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>

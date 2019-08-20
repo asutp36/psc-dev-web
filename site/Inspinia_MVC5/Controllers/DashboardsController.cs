@@ -15,6 +15,10 @@ namespace Inspinia_MVC5.Controllers
         IEnumerable<Card> cards = db.Cards;
         IEnumerable<Operation> operations = db.Operations;
 
+        static ModelDbIncomes dbIncomes = new ModelDbIncomes();
+
+        IEnumerable<Income> incomes = dbIncomes.Incomes;
+
         public ActionResult Dashboard_1()
         {
             return View();
@@ -24,6 +28,7 @@ namespace Inspinia_MVC5.Controllers
         {
             ViewBag.Cards = cards;
             ViewBag.Operations = operations;
+            ViewBag.Incomes = incomes;
 
             return View();
         }

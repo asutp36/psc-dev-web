@@ -177,7 +177,9 @@
     <Compile Include="Models\Card.cs" />
     <Compile Include="Models\CardStatus.cs" />
     <Compile Include="Models\CardType.cs" />
+    <Compile Include="Models\Income.cs" />
     <Compile Include="Models\ModelDb.cs" />
+    <Compile Include="Models\ModelDbIncomes.cs" />
     <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\OperationType.cs" />
     <Compile Include="Models\Owner.cs" />
@@ -197,6 +199,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\CarWashDb.mdf" />
+    <Content Include="App_Data\CarWashDb_log.ldf">
+      <DependentUpon>CarWashDb.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
