@@ -192,7 +192,11 @@
     <Compile Include="Models\CardStatus.cs" />
     <Compile Include="Models\CardType.cs" />
 <<<<<<< HEAD
+<<<<<<< HEAD
     <Compile Include="Models\Income.cs" />
+=======
+    <Compile Include="Models\ContextDb.cs" />
+>>>>>>> parent of bf81d28... сделал вывод данных в таблицу с поступлениями
 =======
     <Compile Include="Models\ContextDb.cs" />
 >>>>>>> parent of bf81d28... сделал вывод данных в таблицу с поступлениями
