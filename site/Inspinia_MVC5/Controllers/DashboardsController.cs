@@ -47,7 +47,7 @@ namespace Inspinia_MVC5.Controllers
         [ActionName("UpdateTime")]
         public string UpdateTime()
         {
-            return DateTime.Now.ToString();
+            return "Обновлено в " + DateTime.Now.ToString();
         }
 
         public ActionResult Dashboard_3()

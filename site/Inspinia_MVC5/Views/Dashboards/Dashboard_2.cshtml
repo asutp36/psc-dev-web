@@ -122,7 +122,7 @@
                         <span class="float-right text-right">
                             <small class="float-right">
                                 <i class="fa fa-clock-o"> </i>
-                                <div id="update-time"></div>
+                                <div id="update-time">Обновлено в @DateTime.Now</div>
                             </small>
                         </span>
                         <h3 class="font-bold no-margins">
@@ -187,8 +187,8 @@
                 </div>*@
 
 
-                <div id="op-table" class=" ibox-content">
-                </div>
+                @*<div id="op-table" class=" ibox-content">
+                </div>*@
             </div>
         </div>
 
@@ -532,7 +532,7 @@
 
     <script type="text/javascript">
                 $(document).ready(function () {
-                    timedRefresh(1000);
+                    timedRefresh(8000);
                 });
 
                 function timedRefresh(timeoutPeriod) {
