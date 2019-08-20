@@ -15,7 +15,7 @@ namespace Inspinia_MVC5.Controllers
         IEnumerable<Card> cards = db.Cards;
         IEnumerable<Operation> operations = db.Operations;
 
-        static ModelDbIncomes dbIncomes = new ModelDbIncomes();
+        static ModelIncomes dbIncomes = new ModelIncomes();
 
         IEnumerable<Income> incomes = dbIncomes.Incomes;
 

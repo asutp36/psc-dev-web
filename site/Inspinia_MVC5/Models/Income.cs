@@ -11,17 +11,15 @@ namespace Inspinia_MVC5.Models
         [Key]
         public int IDCarwash { get; set; }
 
-        [Column(TypeName = "text")]
         [Required]
+        [StringLength(50)]
         public string WashName { get; set; }
 
-        [Column(TypeName = "text")]
         [Required]
         public string Region { get; set; }
 
-        [Column(TypeName = "text")]
         [Required]
-        public string Adress { get; set; }
+        public string Address { get; set; }
 
         public int Incomes { get; set; }
     }
