@@ -1,4 +1,4 @@
-﻿// Создание кода T4 для модели "C:\Users\Алексей\Desktop\1234\psc-dev-web-develop\site\Inspinia_MVC5\Models\BakeryModel.edmx" включено. 
+﻿// Создание кода T4 для модели "C:\Users\Алексей\Desktop\psc-dev-web\site\Inspinia_MVC5\Models\BakeryModel.edmx" включено. 
 // Чтобы включить формирование кода прежних версий, измените значение свойства "Стратегия создания кода" конструктора
 // на "Legacy ObjectContext". Это свойство доступно в окне "Свойства", если модель
 // открыта в конструкторе.

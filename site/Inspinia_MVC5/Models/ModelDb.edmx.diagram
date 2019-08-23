@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="d269ab8cf877492a8b12b67b9f0d0600" Name="Diagram1" ZoomLevel="55">
+        <EntityTypeShape EntityType="CardsDbModel.Card" Width="1.5" PointX="3" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="CardsDbModel.CardStatus" Width="1.5" PointX="1" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="CardsDbModel.CardType" Width="1.5" PointX="0.75" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="CardsDbModel.Operation" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="CardsDbModel.OperationType" Width="1.5" PointX="3" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="CardsDbModel.Owner" Width="1.5" PointX="0.75" PointY="7.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="CardsDbModel.Psce" Width="1.5" PointX="3" PointY="7.625" IsExpanded="true" />
+        <AssociationConnector Association="CardsDbModel.FK_Cards_CardStatuses" ManuallyRouted="false" />
+        <AssociationConnector Association="CardsDbModel.FK_Cards_CardTypes" ManuallyRouted="false" />
+        <AssociationConnector Association="CardsDbModel.FK_Cards_Owners" ManuallyRouted="false" />
+        <AssociationConnector Association="CardsDbModel.FK_Operations_Cards" ManuallyRouted="false" />
+        <AssociationConnector Association="CardsDbModel.FK_Operations_OperationTypes" ManuallyRouted="false" />
+        <AssociationConnector Association="CardsDbModel.FK_Operations_Psces" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

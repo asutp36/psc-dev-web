@@ -38,7 +38,7 @@ namespace Inspinia_MVC5.Controllers
         public ActionResult UpdateTable()
         {
             ViewBag.Operations = operations;
-
+            
             return PartialView("~/Views/Dashboards/UpdateTable.cshtml");
         }
 
