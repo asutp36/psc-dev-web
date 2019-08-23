@@ -19,6 +19,8 @@ namespace Inspinia_MVC5.Controllers
 
         IEnumerable<Income> incomes = dbIncomes.Incomes;
 
+        GetCardsOperations_Result GetCardsOperations = new GetCardsOperations_Result();
+
         public ActionResult Dashboard_1()
         {
             return View();
@@ -41,6 +43,15 @@ namespace Inspinia_MVC5.Controllers
             
             return PartialView("~/Views/Dashboards/UpdateTable.cshtml");
         }
+
+        //[HttpGet]
+        //[ActionName("Filter")]
+        //public ActionResult Filter()
+        //{
+        //    ViewBag.Operations = GetCardsOperations;
+
+        //    return ViewBag();
+        //}
 
         [HttpGet]
         [ActionName("UpdateTime")]
