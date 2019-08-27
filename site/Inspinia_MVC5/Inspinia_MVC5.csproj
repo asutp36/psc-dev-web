@@ -159,21 +159,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />
-    <Compile Include="Models\BakeryModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>BakeryModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\BakeryModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>BakeryModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\BakeryModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>BakeryModel.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Models\Card.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -213,7 +198,6 @@
     <Compile Include="Models\GetWashAmounts_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Income.cs" />
     <Compile Include="Models\Mode.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -232,27 +216,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelDb.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Models\ModelIncomes.cs" />
     <Compile Include="Models\Operation.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\OperationType.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Order.cs">
-      <DependentUpon>BakeryModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Owner.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Post.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Product.cs">
-      <DependentUpon>BakeryModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ProductGroup.cs">
-      <DependentUpon>BakeryModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Psce.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
@@ -449,16 +423,6 @@
     <Content Include="Images\profile_small2.jpg" />
     <Content Include="locales\en.json" />
     <Content Include="locales\es.json" />
-    <Content Include="Models\BakeryModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>BakeryModel.edmx</DependentUpon>
-      <LastGenOutput>BakeryModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\BakeryModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>BakeryModel.edmx</DependentUpon>
-      <LastGenOutput>BakeryModel.cs</LastGenOutput>
-    </Content>
     <Content Include="Models\ModelDb.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ModelDb.edmx</DependentUpon>
@@ -473,13 +437,6 @@
     <Content Include="Content\plugins\summernote\font\summernote.eot" />
     <Content Include="Content\plugins\summernote\font\summernote.ttf" />
     <Content Include="Content\plugins\summernote\font\summernote.woff" />
-    <EntityDeploy Include="Models\BakeryModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>BakeryModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\BakeryModel.edmx.diagram">
-      <DependentUpon>BakeryModel.edmx</DependentUpon>
-    </Content>
     <EntityDeploy Include="Models\ModelDb.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ModelDb.Designer.cs</LastGenOutput>
