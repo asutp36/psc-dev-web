@@ -85,6 +85,23 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Models\ModelDb.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ModelDb.edmx</DependentUpon>
+      <LastGenOutput>ModelDb.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\ModelDb.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ModelDb.edmx</DependentUpon>
+      <LastGenOutput>ModelDb.cs</LastGenOutput>
+    </Content>
+    <EntityDeploy Include="Models\ModelDb.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ModelDb.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\ModelDb.edmx.diagram">
+      <DependentUpon>ModelDb.edmx</DependentUpon>
+    </Content>
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -93,14 +110,42 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Card.cs" />
-    <Compile Include="Models\CardStatus.cs" />
-    <Compile Include="Models\CardType.cs" />
-    <Compile Include="Models\ModelDb.cs" />
-    <Compile Include="Models\Operation.cs" />
-    <Compile Include="Models\OperationType.cs" />
-    <Compile Include="Models\Owner.cs" />
-    <Compile Include="Models\Psce.cs" />
+    <Compile Include="Models\Card.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CardStatus.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CardType.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ModelDb.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelDb.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ModelDb.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ModelDb.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelDb.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Operation.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OperationType.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Owner.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Psce.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +160,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

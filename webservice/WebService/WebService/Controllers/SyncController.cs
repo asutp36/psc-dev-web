@@ -26,8 +26,8 @@ namespace WebService.Controllers
         {
             if (operation != null)
             {
-                //_model.Operations.Add(operation);
-                //_model.SaveChanges();
+                _model.Operations.Add(operation);
+                _model.SaveChanges();
 
                 var responseGood = Request.CreateResponse(HttpStatusCode.OK);
                 responseGood.Headers.Add("ServerID", "1488");
@@ -46,8 +46,8 @@ namespace WebService.Controllers
         {
             if (owner != null)
             {
-                //_model.Owners.Add(owner);
-                //_model.SaveChanges();
+                _model.Owners.Add(owner);
+                _model.SaveChanges();
 
                 var responseGood = Request.CreateResponse(HttpStatusCode.OK);
                 responseGood.Headers.Add("ServerID", "1488");
@@ -67,8 +67,8 @@ namespace WebService.Controllers
         {
             if (card != null)
             {
-                //_model.Cards.Add(card);
-                //_model.SaveChanges();
+                _model.Cards.Add(card);
+                _model.SaveChanges();
 
                 var responseGood = Request.CreateResponse(HttpStatusCode.OK);
                 responseGood.Headers.Add("ServerID", "1488");
