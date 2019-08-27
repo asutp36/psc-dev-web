@@ -1,7 +1,6 @@
 ﻿@{
     ViewBag.Title = "Панель 1";
 }
-
 <div class="wrapper wrapper-content">
     <div class="row">
         <div class="col-lg-3">
@@ -12,7 +11,7 @@
                 </div>
                 <div class="ibox-content">
                     <h1 class="no-margins">96 700 830</h1>
-@*                    <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>*@
+                    @*                    <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>*@
                     <small>с начала работы</small>
                 </div>
             </div>
@@ -64,12 +63,12 @@
                 <div class="ibox-title">
                     <h5>Карты</h5>
                     @*<div class="float-right">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-xs btn-white active">Today</button>
-                            <button type="button" class="btn btn-xs btn-white">Monthly</button>
-                            <button type="button" class="btn btn-xs btn-white">Annual</button>
-                        </div>
-                    </div>*@
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-xs btn-white active">Today</button>
+                                <button type="button" class="btn btn-xs btn-white">Monthly</button>
+                                <button type="button" class="btn btn-xs btn-white">Annual</button>
+                            </div>
+                        </div>*@
                 </div>
                 <div class="ibox-content">
                     <div class="row">
@@ -108,12 +107,73 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 
     <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox ">
+                    <div class="ibox-title">
+                        <div>
+                            <span class="float-right text-right">
+                                <small class="float-right">
+                                    <i class="fa fa-clock-o"> </i>
+                                    <div id="update-time"></div>
+                                </small>
+                            </span>
+                            <h3 class="font-bold no-margins">
+                                Операции
+                            </h3>
+                            <small>по картам</small>
+                        </div>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <table id="table-operation" class="table table-striped table-bordered table-hover dataTables-example">
+                            <thead>
+                                <tr>
+                                    <th><p>IDOperation</p></th>
+                                    <th><p>IDPcs</p></th>
+                                    <th><p>IDOperationType</p></th>
+                                    <th><p>IDCard</p></th>
+                                    <th><p>DTime</p></th>
+                                    <th><p>Amount</p></th>
+                                    <th><p>Balance</p></th>
+                                    <th><p>ServerID</p></th>
+                                </tr>
+                            </thead>
+                            <tbody id="op-table">
+
+                                @foreach (var o in ViewBag.Operations)
+                                {
+                                    <tr>
+                                        <td><p>@o.OperationID</p></td>
+                                        <td><p>@o.PscID</p></td>
+                                        <td><p>@o.OperationTypeID</p></td>
+                                        <td><p>@o.CardID</p></td>
+                                        <td><p>@o.DTime</p></td>
+                                        <td><p>@o.Amount</p></td>
+                                        <td><p>@o.Balance</p></td>
+                                        <td><p>@o.ServerID</p></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
         <div class="col-lg-6">
             <div class="ibox ">
                 <div class="ibox-title">
@@ -121,7 +181,7 @@
                         <span class="float-right text-right">
                             <small class="float-right">
                                 <i class="fa fa-clock-o"> </i>
-                                Обновлено в 21:40
+                                <div id="update-time"></div>
                             </small>
                         </span>
                         <h3 class="font-bold no-margins">
@@ -141,97 +201,31 @@
                         </a>
                     </div>
                 </div>
-                <div class="ibox-content">
-
+                <div id="op-table" class="ibox-content">
                     <table class="table table-striped table-bordered table-hover dataTables-example">
                         <thead>
                             <tr>
-                                <th>Регион</th>
-                                <th>Мойка</th>
-                                <th>Адрес</th>
-                                <th>Зачисления</th>
+                                <th><p>Регион</p></th>
+                                <th><p>Мойка</p></th>
+                                <th><p>Адрес</p></th>
+                                <th><p>Зачисление</p></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="gradeX">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М 1</td>
-                                <td>Волгоград Жукова</td>
-                                <td class="text-right">42 190</td>
-                            </tr>
-                            <tr class="gradeC">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М 2</td>
-                                <td>Волжский Ленина</td>
-                                <td class="text-right">34 110</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Курский регион</td>
-                                <td class="text-center">М 3</td>
-                                <td>Курск Малых</td>
-                                <td class="text-right">32 380</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Белгородский регион</td>
-                                <td class="text-center">М 4</td>
-                                <td>Губкин Космонавтов</td>
-                                <td class="text-right">16 180</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Белгородский регион</td>
-                                <td class="text-center">М 5</td>
-                                <td>Старый Оскол Угарова</td>
-                                <td class="text-right">19 530</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М 6</td>
-                                <td>Волгоград 30-летия Победы</td>
-                                <td class="text-right">36 290</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М 7</td>
-                                <td>Волгоград Фруктовая</td>
-                                <td class="text-right">28 550</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Тамбовский регион</td>
-                                <td class="text-center">М 8</td>
-                                <td>Мичуринск Автозаводская</td>
-                                <td class="text-right">33 700</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Тамбовский регион</td>
-                                <td class="text-center">М 9</td>
-                                <td>Мичуринск Советская</td>
-                                <td class="text-right">26 040</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Курский регион</td>
-                                <td class="text-center">М10</td>
-                                <td>Курск Пучковка</td>
-                                <td class="text-right">25 700</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Курский регион</td>
-                                <td class="text-center">М11</td>
-                                <td>Железногорск Ветеринарный</td>
-                                <td class="text-right">0</td>
-                            </tr>
-                            <tr class="gradeA">
-                                <td>Волгоградский регион</td>
-                                <td class="text-center">М12</td>
-                                <td>Волгоград Алехина</td>
-                                <td class="text-right">39 590</td>
-                            </tr>
+                            @foreach (var i in ViewBag.Incomes)
+                            {
+                                <tr>
+                                    <td><p>@i.Region</p></td>
+                                    <td><p>@i.WashName</p></td>
+                                    <td><p>@i.Address</p></td>
+                                    <td><p>@i.Incomes</p></td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
-
                 </div>
             </div>
         </div>
-
         <div class="col-lg-6">
             <div class="ibox ">
                 <div class="ibox-title">
@@ -251,19 +245,15 @@
         </div>
     </div>
 </div>
-
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
 }
-
 
 @section Scripts {
     @Scripts.Render("~/plugins/flot")
     @Scripts.Render("~/plugins/vectorMap")
     @Scripts.Render("~/plugins/peity")
     @Scripts.Render("~/plugins/dataTables")
-
-
 
 
     <script type="text/javascript">
@@ -534,7 +524,7 @@
 
             // отмасштабировать по Воронежской области
             var mapObj = $('#world-map').vectorMap('get', 'mapObject');
-            mapObj.setFocus({region: "RU-VOR"});
+            mapObj.setFocus({ region: "RU-VOR" });
 
 
             /////////////////////////////////////////////////////////////////////////////////////
@@ -559,8 +549,32 @@
             // DataTable
             /////////////////////////////////////////////////////////////////////////////////////
 
+            $(document).ready(function () {
+                // Setup - add a text input to each footer cell
+                $('#table-operation thead th').each(function () {
+                    var title = $(this).text();
+                    $(this).html('<input type="text" placeholder="' + title + '" />');
+                });
+
+                // DataTable
+                var table = $('#table-operation').DataTable();
+
+                // Apply the search
+                table.columns().every(function () {
+                    var that = this;
+
+                    $('input', this.header()).on('keyup change clear', function () {
+                        if (that.search() !== this.value) {
+                            that
+                                .search(this.value)
+                                .draw();
+                        }
+                    });
+                });
+            });
+
             $('.dataTables-example').DataTable({
-                searching: false,
+                searching: true,
                 paging: false,
                 language: {
                     processing: "Подождите...",
@@ -584,13 +598,13 @@
                         sortDescending: ": активировать для сортировки столбца по убыванию"
                     }
                 },
-                pageLength: 25,
+                pageLength: 10,
                 dom: '<"html5buttons"B>lTfgitp',
                 buttons: [
                     { extend: 'copy' },
                     { extend: 'csv' },
-                    { extend: 'excel', title: 'ExampleFile' },
-                    { extend: 'pdf', title: 'ExampleFile' },
+                    { extend: 'excel', title: 'Операции с картами' },
+                    { extend: 'pdf', title: 'Операции с картами' },
 
                     {
                         extend: 'print',
@@ -609,5 +623,40 @@
 
 
         });
+    </script>
+
+    <script type="text/javascript">
+                $(document).ready(function () {
+                    timedRefresh(50000);
+                });
+
+                function timedRefresh(timeoutPeriod) {
+                    let period = timeoutPeriod;
+                    let timedId = setInterval(
+                        function refreshData() {
+                            $.ajax({
+                                type: "GET",
+                                url: "@Url.Action("UpdateTime", "Dashboards")",
+                            }).done(function (result) {
+                                $('#update-time').html(result);
+                            });
+
+
+                            $.ajax({
+                                type: "GET",
+                                url: "@Url.Action("UpdateTable", "Dashboards")",
+                            }).done(function (result) {
+                                $('#op-table').html(result);
+                            });
+
+                                //if (надо увеличить период обновления){
+                                //    period *= 2;
+                                //}
+
+                                //alert('tick');
+                            },
+                            timeoutPeriod
+                    );
+                };
     </script>
 }
