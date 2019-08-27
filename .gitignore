@@ -325,3 +325,6 @@ ASALocalRun/
 .mfractor/
 /site/eco
 /webservice/WebService/eco-api
+*.mdf
+*.ldf
+*.zip
