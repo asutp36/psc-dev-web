@@ -252,10 +252,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\IncomeDb.mdf" />
-    <Content Include="App_Data\IncomeDb_log.ldf">
-      <DependentUpon>IncomeDb.mdf</DependentUpon>
-    </Content>
     <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
@@ -362,9 +358,11 @@
     <Content Include="Content\plugins\toastr\toastr.min.css" />
     <Content Include="Content\plugins\touchspin\jquery.bootstrap-touchspin.min.css" />
     <Content Include="favicon.ico" />
-    <Content Include="fonts\font-awesome\css\font-awesome.css" />
-    <Content Include="fonts\font-awesome\css\font-awesome.min.css" />
-    <Content Include="fonts\font-awesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\font-awesome\css\all.css" />
+    <Content Include="fonts\font-awesome\css\all.min.css" />
+    <Content Include="fonts\font-awesome\webfonts\fa-brands-400.svg" />
+    <Content Include="fonts\font-awesome\webfonts\fa-regular-400.svg" />
+    <Content Include="fonts\font-awesome\webfonts\fa-solid-900.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\style.css" />
@@ -381,25 +379,6 @@
     <Content Include="CodeTemplates\MvcView\Imports.include.t4" />
     <Content Include="CodeTemplates\MvcView\List.cs.t4" />
     <Content Include="CodeTemplates\MvcView\ModelMetadataFunctions.cs.include.t4" />
-    <Content Include="fonts\font-awesome\fonts\fontawesome-webfont.eot" />
-    <Content Include="fonts\font-awesome\fonts\fontawesome-webfont.ttf" />
-    <Content Include="fonts\font-awesome\fonts\fontawesome-webfont.woff" />
-    <Content Include="fonts\font-awesome\fonts\fontawesome-webfont.woff2" />
-    <Content Include="fonts\font-awesome\fonts\FontAwesome.otf" />
-    <Content Include="fonts\font-awesome\less\animated.less" />
-    <Content Include="fonts\font-awesome\less\bordered-pulled.less" />
-    <Content Include="fonts\font-awesome\less\core.less" />
-    <Content Include="fonts\font-awesome\less\fixed-width.less" />
-    <Content Include="fonts\font-awesome\less\font-awesome.less" />
-    <Content Include="fonts\font-awesome\less\icons.less" />
-    <Content Include="fonts\font-awesome\less\larger.less" />
-    <Content Include="fonts\font-awesome\less\list.less" />
-    <Content Include="fonts\font-awesome\less\mixins.less" />
-    <Content Include="fonts\font-awesome\less\path.less" />
-    <Content Include="fonts\font-awesome\less\rotated-flipped.less" />
-    <Content Include="fonts\font-awesome\less\stacked.less" />
-    <Content Include="fonts\font-awesome\less\variables.less" />
-    <Content Include="fonts\font-awesome\scss\font-awesome.scss" />
     <Content Include="fonts\font-awesome\scss\_animated.scss" />
     <Content Include="fonts\font-awesome\scss\_bordered-pulled.scss" />
     <Content Include="fonts\font-awesome\scss\_core.scss" />
@@ -408,7 +387,6 @@
     <Content Include="fonts\font-awesome\scss\_larger.scss" />
     <Content Include="fonts\font-awesome\scss\_list.scss" />
     <Content Include="fonts\font-awesome\scss\_mixins.scss" />
-    <Content Include="fonts\font-awesome\scss\_path.scss" />
     <Content Include="fonts\font-awesome\scss\_rotated-flipped.scss" />
     <Content Include="fonts\font-awesome\scss\_stacked.scss" />
     <Content Include="fonts\font-awesome\scss\_variables.scss" />
@@ -444,6 +422,36 @@
     <Content Include="Models\ModelDb.edmx.diagram">
       <DependentUpon>ModelDb.edmx</DependentUpon>
     </Content>
+    <Content Include="fonts\font-awesome\less\brands.less" />
+    <Content Include="fonts\font-awesome\less\fontawesome.less" />
+    <Content Include="fonts\font-awesome\less\regular.less" />
+    <Content Include="fonts\font-awesome\less\solid.less" />
+    <Content Include="fonts\font-awesome\less\v4-shims.less" />
+    <Content Include="fonts\font-awesome\less\_animated.less" />
+    <Content Include="fonts\font-awesome\less\_core.less" />
+    <Content Include="fonts\font-awesome\less\_icons.less" />
+    <Content Include="fonts\font-awesome\less\_larger.less" />
+    <Content Include="fonts\font-awesome\less\_shims.less" />
+    <Content Include="fonts\font-awesome\less\_variables.less" />
+    <Content Include="fonts\font-awesome\scss\brands.scss" />
+    <Content Include="fonts\font-awesome\scss\fontawesome.scss" />
+    <Content Include="fonts\font-awesome\scss\regular.scss" />
+    <Content Include="fonts\font-awesome\scss\solid.scss" />
+    <Content Include="fonts\font-awesome\scss\v4-shims.scss" />
+    <Content Include="fonts\font-awesome\scss\_shims.scss" />
+    <Content Include="fonts\font-awesome\webfonts\fa-brands-400.eot" />
+    <Content Include="fonts\font-awesome\webfonts\fa-brands-400.ttf" />
+    <Content Include="fonts\font-awesome\webfonts\fa-brands-400.woff" />
+    <Content Include="fonts\font-awesome\webfonts\fa-brands-400.woff2" />
+    <Content Include="fonts\font-awesome\webfonts\fa-regular-400.eot" />
+    <Content Include="fonts\font-awesome\webfonts\fa-regular-400.ttf" />
+    <Content Include="fonts\font-awesome\webfonts\fa-regular-400.woff" />
+    <Content Include="fonts\font-awesome\webfonts\fa-regular-400.woff2" />
+    <Content Include="fonts\font-awesome\webfonts\fa-solid-900.eot" />
+    <Content Include="fonts\font-awesome\webfonts\fa-solid-900.ttf" />
+    <Content Include="fonts\font-awesome\webfonts\fa-solid-900.woff" />
+    <Content Include="fonts\font-awesome\webfonts\fa-solid-900.woff2" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\Inspinia.pubxml" />
     <Content Include="Scripts\api\typehead_collection.json" />
     <Content Include="Images\a1.jpg" />
@@ -1662,6 +1670,7 @@
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
