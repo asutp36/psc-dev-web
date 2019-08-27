@@ -15,10 +15,6 @@ namespace Inspinia_MVC5.Controllers
         IEnumerable<Card> cards = db.Cards;
         IEnumerable<Operation> operations = db.Operations;
 
-        static ModelIncomes dbIncomes = new ModelIncomes();
-
-        IEnumerable<Income> incomes = dbIncomes.Incomes;
-
         GetCardsOperations_Result GetCardsOperations = new GetCardsOperations_Result();
 
         public ActionResult Dashboard_1()
@@ -30,9 +26,42 @@ namespace Inspinia_MVC5.Controllers
         {
             ViewBag.Cards = cards;
             ViewBag.Operations = operations;
-            ViewBag.Incomes = incomes;
+            ViewBag.Incomes = GetIncomes();
 
             return View();
+        }
+
+        public List<GetWashAmounts_Result> GetIncomes()
+        {
+            List<GetWashAmounts_Result> resultset = null;
+
+            //            DateTime dtEnd = DateTime.Today;
+            //            DateTime dtBeg = dtEnd.AddDays(-1);
+            DateTime dtEnd = new DateTime(2019, 6, 16);
+            DateTime dtBeg = dtEnd.AddDays(-1);
+
+                var prmRegionCode = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
+                prmRegionCode.Value = 0;
+
+                var prmWashCode = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+                prmWashCode.Value = DBNull.Value;
+
+                var prmPostCode = new System.Data.SqlClient.SqlParameter("@p_PostCode", System.Data.SqlDbType.NVarChar);
+                prmPostCode.Value = "";
+
+                var prmBeg = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+                prmBeg.Value = dtBeg;
+
+                var prmEnd = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+                prmEnd.Value = dtEnd;
+
+                var result = db.Database
+                    .SqlQuery<GetWashAmounts_Result>("GetWashAmounts @p_RegionCode, @p_WashCode, @p_PostCode, @p_DateBeg, @p_DateEnd", prmRegionCode, prmWashCode, prmPostCode, prmBeg, prmEnd)
+                    .ToList();
+
+                resultset = result;
+
+            return resultset;
         }
 
         [HttpGet]

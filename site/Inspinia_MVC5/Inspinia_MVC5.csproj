@@ -210,6 +210,9 @@
     <Compile Include="Models\GetCardsOperations_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetWashAmounts_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Income.cs" />
     <Compile Include="Models\Mode.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
