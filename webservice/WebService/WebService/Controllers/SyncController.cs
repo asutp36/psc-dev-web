@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -36,9 +37,25 @@ namespace WebService.Controllers
         {
             if (operation != null)
             {
-                _model.Operations.Add(operation);
-                _model.SaveChanges();
-
+                try
+                {
+                    if (_model.Database.Exists())
+                    {
+                        _model.Database.Connection.Open();
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+                        command.CommandText = "INSERT INTO Operations (IDPsc, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+                                                $" VALUES({operation.IDPsc}, {operation.IDOperationType}, {operation.IDCard}, {operation.DTime}, {operation.Amount}, {operation.Balance}, {operation.IDPsc}, {operation.IDOperation});" +
+                                                " SELECT SCOPE_IDENTITY()";
+                        int serverID = (int)command.ExecuteScalar();
+                        _model.Database.Connection.Close();
+                        //_model.Operations.Add(operation);
+                        //_model.SaveChanges();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
                 var responseGood = Request.CreateResponse(HttpStatusCode.OK);
                 responseGood.Headers.Add("ServerID", "1488");
                 return responseGood;
