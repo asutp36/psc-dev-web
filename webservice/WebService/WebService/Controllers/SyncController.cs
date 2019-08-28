@@ -8,16 +8,26 @@ using WebService.Models;
 
 namespace WebService.Controllers
 {
-    public class Coordinate { public int x { get; set; } public int y { get; set; } }
-
-
     public class SyncController : ApiController
     {
         private ModelDb _model = new Models.ModelDb();
 
         public string GetData()
         {
-            return "sync";
+            return _model.Database.Connection.State.ToString();
+        }
+
+        private void CheckConnection()
+        {
+            try
+            {
+                _model.Database.Connection.Close();
+                _model.Database.Connection.Open();
+            }
+            catch (Exception e)
+            {
+                new Exception(e.ToString());
+            }
         }
 
         [HttpPost]

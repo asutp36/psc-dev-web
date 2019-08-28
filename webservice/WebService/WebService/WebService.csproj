@@ -84,6 +84,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\CardsDb.mdf" />
+    <Content Include="App_Data\CardsDb_log.ldf">
+      <DependentUpon>CardsDb.mdf</DependentUpon>
+    </Content>
     <Content Include="Global.asax" />
     <Content Include="Models\ModelDb.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -158,9 +162,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
