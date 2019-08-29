@@ -204,25 +204,25 @@
                 <div id="op-table" class="ibox-content">
                     <div>
                         <label>Регион</label>
-                        <select>
-                            <option value="0">Все регионы</option>
+                        <select id="select-r" onchange="getRegion(this.value)">
+                            <option value="">Все регионы</option>
                             @foreach (var s in ViewBag.Incomes)
                             {
-                                <option>@s.region</option>
+                                <option value="@s.region">@s.region</option>
                             }
                         </select>
                     </div>
                     <div>
                         <label>Мойка</label>
-                        <select>
-                            <option value="0">Все мойки региона</option>
+                        <select id="select-w" >
+                            <option value="">Все мойки региона</option>
                             @foreach (var s in ViewBag.Incomes)
                             {
-                                <option>@s.washName</option>
+                                <option value="@s.washName">@s.washName</option>
                             }
                         </select>
                     </div>
-                    <table class="table table-striped table-bordered table-hover dataTables-example">
+                    <table id="table-incomes" class="table table-striped table-bordered table-hover dataTables-example">
                         <thead>
                             <tr>
                                 <th><p>Регион</p></th>
@@ -590,6 +590,30 @@
                                 .draw();
                         }
                     });
+                });
+            });
+
+            $('#select-r').change(function () {
+                var region = $(this).val();
+                $('#table-incomes tbody tr').each(function () {
+                    if ($(this).text().search(new RegExp(region, "i")) < 0) {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                });
+            });
+
+
+
+            $('#select-w').change(function () {
+                var region = $(this).val();
+                $('#table-incomes tbody tr').each(function () {
+                    if ($(this).text().search(new RegExp(region, "i")) < 0) {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
                 });
             });
 
