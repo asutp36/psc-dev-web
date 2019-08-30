@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using WebService.Models;
+using WebService.Controllers.Supplies;
 
 namespace WebService.Controllers
 {
@@ -15,6 +16,8 @@ namespace WebService.Controllers
 
         public string GetData()
         {
+            Logger.InitLogger();
+            Logger.Log.Info("Log отработал");
             return _model.Database.Connection.State.ToString();
         }
 
@@ -27,7 +30,7 @@ namespace WebService.Controllers
             }
             catch (Exception e)
             {
-                new Exception(e.ToString());
+                //_logger.Error(e.ToString());
             }
         }
 
@@ -43,7 +46,7 @@ namespace WebService.Controllers
                     {
                         _model.Database.Connection.Open();
                         DbCommand command = _model.Database.Connection.CreateCommand();
-                        command.CommandText = "INSERT INTO Operations (IDPsc, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+                        command.CommandText = "INSERT INTO [Operations] (IDPsc, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                 $" VALUES({operation.IDPsc}, {operation.IDOperationType}, {operation.IDCard}, {operation.DTime}, {operation.Amount}, {operation.Balance}, {operation.IDPsc}, {operation.IDOperation});" +
                                                 " SELECT SCOPE_IDENTITY()";
                         int serverID = (int)command.ExecuteScalar();
@@ -54,7 +57,8 @@ namespace WebService.Controllers
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.ToString());
+                    Logger.InitLogger();
+                    Logger.Log.Error(e.ToString());
                 }
                 var responseGood = Request.CreateResponse(HttpStatusCode.OK);
                 responseGood.Headers.Add("ServerID", "1488");
