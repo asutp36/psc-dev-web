@@ -17,6 +17,8 @@ namespace Inspinia_MVC5.Controllers
 
         GetCardsOperations_Result GetCardsOperations = new GetCardsOperations_Result();
 
+        static DateTime now = DateTime.Now;
+
         public ActionResult Dashboard_1()
         {
             return View();
@@ -26,19 +28,19 @@ namespace Inspinia_MVC5.Controllers
         {
             ViewBag.Cards = cards;
             ViewBag.Operations = operations;
-            ViewBag.Incomes = GetIncomes();
+            ViewBag.Incomes = GetIncomes(endTime : new DateTime(2019,6,6));
 
             return View();
         }
 
-        public List<GetWashAmounts_Result> GetIncomes()
+        public List<GetWashAmounts_Result> GetIncomes(DateTime endTime, string region="", string wash="", DateTime begTime = new DateTime())
         {
             List<GetWashAmounts_Result> resultset = null;
 
             //            DateTime dtEnd = DateTime.Today;
             //            DateTime dtBeg = dtEnd.AddDays(-1);
-            DateTime dtEnd = new DateTime(2019, 6, 16);
-            DateTime dtBeg = dtEnd.AddDays(-1);
+            DateTime dtEnd = endTime;
+            DateTime dtBeg = dtEnd.AddDays(-7);
 
                 var prmRegionCode = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
                 prmRegionCode.Value = 0;
@@ -47,7 +49,7 @@ namespace Inspinia_MVC5.Controllers
                 prmWashCode.Value = DBNull.Value;
 
                 var prmPostCode = new System.Data.SqlClient.SqlParameter("@p_PostCode", System.Data.SqlDbType.NVarChar);
-                prmPostCode.Value = "";
+                prmPostCode.Value = DBNull.Value;
 
                 var prmBeg = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
                 prmBeg.Value = dtBeg;
