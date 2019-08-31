@@ -17,6 +17,8 @@ namespace Inspinia_MVC5.Controllers
 
         GetCardsOperations_Result GetCardsOperations = new GetCardsOperations_Result();
 
+        static DateTime now = DateTime.Now;
+
         public ActionResult Dashboard_1()
         {
             return View();
@@ -24,42 +26,60 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult Dashboard_2()
         {
+            ViewBag.Cards = db.Cards;
+
             ViewBag.Cards = cards;
             ViewBag.Operations = operations;
-            ViewBag.Incomes = GetIncomes();
+
+            GetIncomesFromDBToday();
+
+            ViewBag.Regions = db.Regions;
+            ViewBag.Washes = db.Washes;
 
             return View();
         }
 
-        public List<GetWashAmounts_Result> GetIncomes()
+        private void GetIncomesFromDBToday()
+        {
+            ViewBag.Incomes = GetIncomesFromDB(DateTime.Today, DateTime.Now, "", "");
+        }
+
+        //public ActionResult GetIncomes()
+        //{
+
+        //}
+
+        public List<GetWashAmounts_Result> GetIncomesFromDB(DateTime begTime, DateTime endTime, string region, string wash)
         {
             List<GetWashAmounts_Result> resultset = null;
 
             //            DateTime dtEnd = DateTime.Today;
             //            DateTime dtBeg = dtEnd.AddDays(-1);
-            DateTime dtEnd = new DateTime(2019, 6, 16);
-            DateTime dtBeg = dtEnd.AddDays(-1);
 
-                var prmRegionCode = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
-                prmRegionCode.Value = 0;
+            var prmRegionCode = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
+            prmRegionCode.Value = 0;
 
-                var prmWashCode = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
-                prmWashCode.Value = DBNull.Value;
+            Int32 intval;
+            if (Int32.TryParse(region, out intval))
+                prmRegionCode.Value = intval;
 
-                var prmPostCode = new System.Data.SqlClient.SqlParameter("@p_PostCode", System.Data.SqlDbType.NVarChar);
-                prmPostCode.Value = "";
+            var prmWashCode = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            prmWashCode.Value = wash;
 
-                var prmBeg = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
-                prmBeg.Value = dtBeg;
+            var prmPostCode = new System.Data.SqlClient.SqlParameter("@p_PostCode", System.Data.SqlDbType.NVarChar);
+            prmPostCode.Value = DBNull.Value;
 
-                var prmEnd = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
-                prmEnd.Value = dtEnd;
+            var prmBeg = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            prmBeg.Value = begTime;
 
-                var result = db.Database
-                    .SqlQuery<GetWashAmounts_Result>("GetWashAmounts @p_RegionCode, @p_WashCode, @p_PostCode, @p_DateBeg, @p_DateEnd", prmRegionCode, prmWashCode, prmPostCode, prmBeg, prmEnd)
-                    .ToList();
+            var prmEnd = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEnd.Value = endTime;
 
-                resultset = result;
+            var result = db.Database
+                .SqlQuery<GetWashAmounts_Result>("GetWashAmounts @p_RegionCode, @p_WashCode, @p_PostCode, @p_DateBeg, @p_DateEnd", prmRegionCode, prmWashCode, prmPostCode, prmBeg, prmEnd)
+                .ToList();
+
+            resultset = result;
 
             return resultset;
         }
