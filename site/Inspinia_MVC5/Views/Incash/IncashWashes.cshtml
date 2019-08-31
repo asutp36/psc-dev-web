@@ -29,45 +29,34 @@
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label class="col-form-labe" for="order_id">Регион</label>
-                    <input type="text" id="order_id" name="order_id" value="" placeholder="Order ID" class="form-control">
+                    <label class="col-form-labe" for="region_code">Регион</label>
+                    <select name="region_code" id="region_code" class="form-control">
+                        <option value="1" selected="">Completed</option>
+                        <option value="0">Pending</option>
+                    </select>
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label class="col-form-labe" for="status">Order status</label>
-                    <input type="text" id="status" name="status" value="" placeholder="Status" class="form-control">
+                    <label class="col-form-labe" for="wash_code">Мойка</label>
+                    <select name="wash_code" id="wash_code" class="form-control">
+                        <option value="1" selected="">Completed</option>
+                        <option value="0">Pending</option>
+                    </select>
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label class="col-form-labe" for="customer">Customer</label>
-                    <input type="text" id="customer" name="customer" value="" placeholder="Customer" class="form-control">
+                    <label class="col-form-labe" for="reportrange">Период</label>
+                    <div id="reportrange" class="form-control">
+                        <i class="fa fa-calendar"></i>
+                        <span></span> <b class="caret"></b>
+                    </div>
                 </div>
-            </div>
+                </div>
         </div>
         <div class="row">
             <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="date_added">Date added</label>
-                    <div class="input-group date">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input id="date_added" type="text" class="form-control" value="03/04/2014">
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="date_modified">Date modified</label>
-                    <div class="input-group date">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input id="date_modified" type="text" class="form-control" value="03/06/2014">
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="amount">Amount</label>
-                    <input type="text" id="amount" name="amount" value="" placeholder="Amount" class="form-control">
-                </div>
             </div>
         </div>
 
@@ -114,15 +103,21 @@
 
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
 }
 
 @section Scripts {
     @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/dateRange")
+    @Scripts.Render("~/plugins/select2")
 
     <script type="text/javascript">
         $(document).ready(function () {
 
             $('.table_incashwashes').DataTable({
+                pageLength: 25,
                 dom: '<"html5buttons"B>lTfgitp',
                 buttons: [
                     { extend: 'excel', title: 'Report' },
@@ -142,6 +137,52 @@
                 ]
 
             });
+        });
+
+
+        $('input[name="daterange"]').daterangepicker();
+
+        $('#reportrange span').html(moment().subtract(29, 'days').format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
+
+        $('#reportrange').daterangepicker({
+            format: 'MM/DD/YYYY',
+            startDate: moment().subtract(29, 'days'),
+            endDate: moment(),
+            minDate: '01/01/2012',
+            maxDate: '12/31/2015',
+            dateLimit: { days: 60 },
+            showDropdowns: true,
+            showWeekNumbers: true,
+            timePicker: false,
+            timePickerIncrement: 1,
+            timePicker12Hour: true,
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            opens: 'right',
+            drops: 'down',
+            buttonClasses: ['btn', 'btn-sm'],
+            applyClass: 'btn-primary',
+            cancelClass: 'btn-default',
+            separator: ' to ',
+            locale: {
+                applyLabel: 'Submit',
+                cancelLabel: 'Cancel',
+                fromLabel: 'From',
+                toLabel: 'To',
+                customRangeLabel: 'Custom',
+                daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                firstDay: 1
+            }
+        }, function (start, end, label) {
+            console.log(start.toISOString(), end.toISOString(), label);
+            $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
         });
 
     </script>
