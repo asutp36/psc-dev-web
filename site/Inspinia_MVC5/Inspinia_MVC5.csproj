@@ -143,6 +143,7 @@
     <Compile Include="Controllers\GridOptionsController.cs" />
     <Compile Include="Controllers\DashboardsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IncashController.cs" />
     <Compile Include="Controllers\JsonController.cs" />
     <Compile Include="Controllers\LandingController.cs" />
     <Compile Include="Controllers\LayoutsController.cs" />
@@ -1819,6 +1820,7 @@
     <Content Include="Scripts\bootstrap.js.map" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Dashboards\UpdateTable.cshtml" />
+    <Content Include="Views\Incash\IncashWashes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
