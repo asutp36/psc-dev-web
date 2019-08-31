@@ -618,14 +618,52 @@
                 });
             });
 
+            $('#button-yesterday').click(function () {
+                var begT = new Date();
+
+                begT.setDate(begT.getDate() - 1)
+                begT.setHours(00)
+                begT.setMinutes(00)
+                begT.setSeconds(00)
+                var dateBeg = moment(begT).format('YYYY-MM-DDTHH:mm:ss')
+                $('#beg-time').val(dateBeg)
+
+                var endT = new Date();
+
+                endT.setDate(endT.getDate() - 1)
+                endT.setHours(23)
+                endT.setMinutes(59)
+                endT.setSeconds(59)
+                var dateEnd = moment(endT).format('YYYY-MM-DDTHH:mm:ss')
+                $('#end-time').val(dateEnd)
+            });
+
             $('#button-today').click(function () {
-                var endT, begT = new Date();
+                var begT = new Date();
 
                 begT.setHours(00)
                 begT.setMinutes(00)
                 begT.setSeconds(00)
                 var dateBeg = moment(begT).format('YYYY-MM-DDTHH:mm:ss')
                 $('#beg-time').val(dateBeg)
+
+                var endT = new Date();
+
+                var dateEnd = moment(endT).format('YYYY-MM-DDTHH:mm:ss')
+                $('#end-time').val(dateEnd)
+            });
+
+            $('#button-month').click(function () {
+                var begT = new Date();
+
+                begT.setDate(01)
+                begT.setHours(00)
+                begT.setMinutes(00)
+                begT.setSeconds(00)
+                var dateBeg = moment(begT).format('YYYY-MM-DDTHH:mm:ss')
+                $('#beg-time').val(dateBeg)
+
+                var endT = new Date();
 
                 var dateEnd = moment(endT).format('YYYY-MM-DDTHH:mm:ss')
                 $('#end-time').val(dateEnd)
