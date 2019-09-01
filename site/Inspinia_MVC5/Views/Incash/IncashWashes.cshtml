@@ -8,7 +8,7 @@
         <h2>Зачисления по мойкам</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action("Dashboard_2", "Dashboards")">На главную</a>
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
             </li>
             <li class="breadcrumb-item">
                 <a>Зачисления</a>
@@ -40,8 +40,11 @@
                 <div class="form-group">
                     <label class="col-form-labe" for="region_code">Регион</label>
                     <select name="region_code" id="region_code" class="form-control">
-                        <option value="1" selected="">Completed</option>
-                        <option value="0">Pending</option>
+                        <option value="0" selected="">Вся сеть автомоек</option>
+                        @foreach (var item in ViewBag.Regions)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
                     </select>
                 </div>
             </div>
@@ -49,8 +52,11 @@
                 <div class="form-group">
                     <label class="col-form-labe" for="wash_code">Мойка</label>
                     <select name="wash_code" id="wash_code" class="form-control">
-                        <option value="1" selected="">Completed</option>
-                        <option value="0">Pending</option>
+                        <option value="0" selected="">Все мойки сети</option>
+                        @foreach (var item in ViewBag.Washes)
+                        {
+                        <option value="@item.Code">@item.Code-@item.Name</option>
+                        }
                     </select>
                 </div>
             </div>

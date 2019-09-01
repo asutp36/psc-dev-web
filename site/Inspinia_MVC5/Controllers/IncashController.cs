@@ -11,6 +11,15 @@ namespace Inspinia_MVC5.Controllers
     public class IncashController : Controller
     {
         private ModelDb db = new ModelDb();
+        List<Region> _regions = null;
+        List<Wash> _washes = null;
+
+
+        public IncashController()
+        {
+            _regions = db.Regions.ToList();
+            _washes = db.Washes.ToList();
+        }
 
         public ActionResult ProductsGrid()
         {
@@ -21,6 +30,9 @@ namespace Inspinia_MVC5.Controllers
         {
             DateTime startDTime = new DateTime(2019, 6, 20, 0, 0, 0);
             DateTime stopDTime = new DateTime(2019, 6, 21, 0, 0, 0);
+
+            ViewBag.Regions = _regions;
+            ViewBag.Washes = _washes;
 
             ViewBag.Incomes = GetIncomesFromDB(startDTime, stopDTime, "", "");
 
