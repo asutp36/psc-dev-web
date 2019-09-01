@@ -306,7 +306,7 @@ namespace Inspinia_MVC5
 
             // Date range picker Styless
             bundles.Add(new StyleBundle("~/plugins/dateRangeStyles").Include(
-                      "~/Content/plugins/daterangepicker/daterangepicker-bs3.css"));
+                      "~/Content/plugins/daterangepicker/daterangepicker.css"));
 
             // Date range picker
             bundles.Add(new ScriptBundle("~/plugins/dateRange").Include(

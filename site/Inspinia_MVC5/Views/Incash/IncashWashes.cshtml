@@ -142,21 +142,21 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#reportrange span').html(moment().subtract(29, 'days').format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
+        $('#reportrange span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
 
         $('#reportrange').daterangepicker({
             "timePicker": true,
             "timePicker24Hour": true,
             "timePickerSeconds": true,
-            ranges: {
-                'вчера': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'сегодня': [moment(), moment()],
-                'текущий месяц': [moment().startOf('month'), moment().endOf('month')],
+            "ranges": {
+                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                'сегодня': [moment().startOf('day'), moment()],
+                'текущий месяц': [moment().startOf('month'), moment()],
                 'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
             },
             "locale": {
                 "format": "DD.MM.YYYY",
-                "separator": " - ",
+                "separator": " ",
                 "applyLabel": "Выбрать",
                 "cancelLabel": "Отмена",
                 "fromLabel": "From",
@@ -189,12 +189,14 @@
                 "firstDay": 1
             },
             "showCustomRangeLabel": false,
-            "startDate": "08/26/2019",
-            "endDate": "09/01/2019",
+            "alwaysShowCalendars": true,
+            "startDate": moment().subtract(1, 'days').startOf('day'),
+            "endDate": moment().subtract(1, 'days').endOf('day'),
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            $('#reportrange span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
         });
 
     </script>
