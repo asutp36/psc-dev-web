@@ -29,6 +29,15 @@
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
+                    <label class="col-form-labe" for="reportrange">Период</label>
+                    <div id="reportrange" class="form-control">
+                        <i class="fa fa-calendar"></i>
+                        <span></span> <b class="caret"></b>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
                     <label class="col-form-labe" for="region_code">Регион</label>
                     <select name="region_code" id="region_code" class="form-control">
                         <option value="1" selected="">Completed</option>
@@ -45,15 +54,6 @@
                     </select>
                 </div>
             </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="reportrange">Период</label>
-                    <div id="reportrange" class="form-control">
-                        <i class="fa fa-calendar"></i>
-                        <span></span> <b class="caret"></b>
-                    </div>
-                </div>
-                </div>
         </div>
         <div class="row">
             <div class="col-sm-4">
@@ -145,44 +145,56 @@
         $('#reportrange span').html(moment().subtract(29, 'days').format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
 
         $('#reportrange').daterangepicker({
-            format: 'MM/DD/YYYY',
-            startDate: moment().subtract(29, 'days'),
-            endDate: moment(),
-            minDate: '01/01/2012',
-            maxDate: '12/31/2015',
-            dateLimit: { days: 60 },
-            showDropdowns: true,
-            showWeekNumbers: true,
-            timePicker: false,
-            timePickerIncrement: 1,
-            timePicker12Hour: true,
+            "timePicker": true,
+            "timePicker24Hour": true,
+            "timePickerSeconds": true,
             ranges: {
-                'Today': [moment(), moment()],
-                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                'вчера': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'сегодня': [moment(), moment()],
+                'текущий месяц': [moment().startOf('month'), moment().endOf('month')],
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
             },
-            opens: 'right',
-            drops: 'down',
-            buttonClasses: ['btn', 'btn-sm'],
-            applyClass: 'btn-primary',
-            cancelClass: 'btn-default',
-            separator: ' to ',
-            locale: {
-                applyLabel: 'Submit',
-                cancelLabel: 'Cancel',
-                fromLabel: 'From',
-                toLabel: 'To',
-                customRangeLabel: 'Custom',
-                daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-                monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                firstDay: 1
-            }
+            "locale": {
+                "format": "DD.MM.YYYY",
+                "separator": " - ",
+                "applyLabel": "Выбрать",
+                "cancelLabel": "Отмена",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "Su",
+                    "Mo",
+                    "Tu",
+                    "We",
+                    "Th",
+                    "Fr",
+                    "Sa"
+                ],
+                "monthNames": [
+                    "January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December"
+                ],
+                "firstDay": 1
+            },
+            "showCustomRangeLabel": false,
+            "startDate": "08/26/2019",
+            "endDate": "09/01/2019",
+            "opens": "right",
+            "drops": "down"
         }, function (start, end, label) {
-            console.log(start.toISOString(), end.toISOString(), label);
-            $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
         });
 
     </script>
