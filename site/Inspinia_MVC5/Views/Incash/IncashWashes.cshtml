@@ -55,7 +55,7 @@
                         <option value="0" selected="">Все мойки сети</option>
                         @foreach (var item in ViewBag.Washes)
                         {
-                        <option value="@item.Code">@item.Code-@item.Name</option>
+                            <option value="@item.Code">@item.Code-@item.Name</option>
                         }
                     </select>
                 </div>
@@ -67,7 +67,7 @@
             <div class="col-sm-4">
             </div>
             <div class="col-sm-4">
-                <button type="button" class="btn  btn-block btn-outline btn-success font-bold">Показать</button>
+                <button type="button" id="btn-aply-filter" class="btn  btn-block btn-outline btn-success font-bold">Показать</button>
             </div>
         </div>
 
@@ -112,6 +112,11 @@
     </div>
 </div>
 
+<input id="filter-startdate" value="0"/>
+<input id="filter-stopdate" value="0"/>
+<input id="filter-region" value="0"/>
+<input id="filter-wash" value="0"/>
+
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
     @Styles.Render("~/plugins/dateRangeStyles")
@@ -150,8 +155,58 @@
                 ]
 
             });
+
+            $(document).on("change", '#region_code', function () {
+                $('#filter-region').val($(this).find(":selected").val());
+            });
+
+            $(document).on("change", '#wash_code', function () {
+                $('#filter-wash').val($(this).find(":selected").val());
+            });
+
+            $(document).on("click", "#btn-aply-filter", function () {
+                var order_id = $('#id-order').val();
+                @*var order = {};
+
+                var isCreated = false;
+
+                if (order_id == 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("CreateOrder","Orders")",
+                        data: { ordered_by: "@ViewBag.Ordered_By" }
+                    }).done(function (result) {
+                        $('#id-order').val(result.order_id);
+                        order_id = result.order_id;
+                        isCreated = UpdateOrder(order_id);
+                    });
+                }
+                else
+                {
+                    isCreated = UpdateOrder(order_id);
+                }*@
+
+                    //setTimeout(function () {
+                    //    $('#lbl-success').css("display", "inline-block");
+                    //    $('#btn-create-order').css("display", "inline-block");
+
+                    //    $('#btn-save-order').css("display", "none");
+                    //    $('.product-del').hide();
+                    //    $('.btn-minus-product').hide();
+                    //    $('.btn-plus-product').hide();
+                    //    $('.btn-group-group').hide();
+                    //    $('.btn-group-product').hide();
+                    //}, 1000);
+            });
         });
 
+        //function OnSelectedRegionChanged(select) {
+        //    var selectedOption = select.options[select.selectedIndex];
+        //    $('#filter-region').val(selectedOption);
+        //};
+
+        $('#filter-startdate').val(moment().subtract(1, 'days').startOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        $('#filter-stopdate').val(moment().subtract(1, 'days').endOf('day').format('DD.MM.YYYY HH:mm:ss'));
 
         $('input[name="daterange"]').daterangepicker();
 
@@ -210,6 +265,9 @@
         }, function (start, end, label) {
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
             $('#reportrange span').html(start.format('DD.MM.YYYY HH:mm:ss') + ' - ' + end.format('DD.MM.YYYY HH:mm:ss'));
+
+            $('#filter-startdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#filter-stopdate').val(end.format('DD.MM.YYYY HH:mm:ss'));
         });
 
     </script>
