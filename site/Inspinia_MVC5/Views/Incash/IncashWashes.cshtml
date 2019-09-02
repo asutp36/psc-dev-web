@@ -164,6 +164,30 @@
                 }).done(function (result) {
                     $('.table_incashes').find('.ibox-content').html(result);
                     //alert("FilterIncashes done");
+
+                    $('.table_incashwashes').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "searching": false,
+                        dom: '<"html5buttons"B>lTfgitp',
+                        buttons: [
+                            { extend: 'excel', title: 'Report' },
+                            { extend: 'pdf', title: 'Report' },
+
+                            {
+                                extend: 'print',
+                                customize: function (win) {
+                                    $(win.document.body).addClass('white-bg');
+                                    $(win.document.body).css('font-size', '10px');
+
+                                    $(win.document.body).find('table')
+                                        .addClass('compact')
+                                        .css('font-size', 'inherit');
+                                }
+                            }
+                        ]
+
+                    });
                 });
 
                     //setTimeout(function () {
