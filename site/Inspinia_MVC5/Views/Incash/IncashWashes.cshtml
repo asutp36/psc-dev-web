@@ -155,7 +155,7 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#reportrange span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
+        $('#reportrange span').html(moment().subtract(1, 'days').startOf('day').format('DD.MM.YYYY HH:mm:ss') + ' - ' + moment().subtract(1, 'days').endOf('day').format('DD.MM.YYYY HH:mm:ss'));
 
         $('#reportrange').daterangepicker({
             "timePicker": true,
@@ -209,7 +209,7 @@
             "drops": "down"
         }, function (start, end, label) {
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
-            $('#reportrange span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+            $('#reportrange span').html(start.format('DD.MM.YYYY HH:mm:ss') + ' - ' + end.format('DD.MM.YYYY HH:mm:ss'));
         });
 
     </script>
