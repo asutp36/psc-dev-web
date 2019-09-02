@@ -5,10 +5,12 @@
     <div class="row">
         <div class="col-lg-3">
             <div class="ibox ">
-                <div class="ibox-title">
-                    <span class="label label-info float-right">всего</span>
-                    <h5>Поступления</h5>
-                </div>
+                @*<a href="@Url.Action("IncashWashes", "Incash")">*@
+                    <div class="ibox-title">
+                        <span class="label label-info float-right">всего</span>
+                        <h5>Поступления</h5>
+                    </div>
+                @*</a>*@
                 <div class="ibox-content">
                     <h1 class="no-margins">96 700 830</h1>
                     @*                    <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>*@
@@ -18,14 +20,16 @@
         </div>
         <div class="col-lg-3">
             <div class="ibox ">
-                <div class="ibox-title">
-                    <span class="label label-success float-right">за месяц</span>
-                    <h5>Поступления</h5>
-                </div>
+                <a href="@Url.Action("IncashWashes", "Incash")">
+                    <div class="ibox-title">
+                        <span class="label label-success float-right">за месяц</span>
+                        <h5>Поступления</h5>
+                    </div>
+                </a>
                 <div class="ibox-content">
                     <h1 class="no-margins">4 274 560</h1>
                     <div class="stat-percent font-bold text-danger">4% <i class="fa fa-level-down"></i></div>
-                    <small>июнь 2019</small>
+                    <small>август 2019</small>
                 </div>
             </div>
         </div>
@@ -39,7 +43,7 @@
                 <div class="ibox-content">
                     <h1 class="no-margins">362 920</h1>
                     <div class="stat-percent font-bold text-info">11% <i class="fa fa-level-up"></i></div>
-                    <small>10 июня 2019</small>
+                    <small>01 сентября 2019</small>
                 </div>
             </div>
         </div>
@@ -52,7 +56,7 @@
                 <div class="ibox-content">
                     <h1 class="no-margins">1 062 150</h1>
                     @*<div class="stat-percent font-bold text-danger">38% <i class="fa fa-level-down"></i></div>*@
-                    <small>июнь 2019</small>
+                    <small>август 2019</small>
                 </div>
             </div>
         </div>
@@ -112,162 +116,6 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox ">
-                <div class="ibox-title">
-                    <div>
-                        <span class="float-right text-right">
-                            <small class="float-right">
-                                <i class="fa fa-clock-o"> </i>
-                                <div id="update-time"></div>
-                            </small>
-                        </span>
-                        <h3 class="font-bold no-margins">
-                            Операции
-                        </h3>
-                        <small>по картам</small>
-                    </div>
-                    <div class="ibox-tools">
-                        <a class="collapse-link">
-                            <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="ibox-content">
-                    <table id="table-operation" class="table table-striped table-bordered table-hover dataTables-example">
-                        <thead>
-                            <tr>
-                                <th><p>IDOperation</p></th>
-                                <th><p>IDPcs</p></th>
-                                <th><p>IDOperationType</p></th>
-                                <th><p>IDCard</p></th>
-                                <th><p>DTime</p></th>
-                                <th><p>Amount</p></th>
-                                <th><p>Balance</p></th>
-                                <th><p>LocalizedID</p></th>
-                            </tr>
-                        </thead>
-                        <tbody id="op-table">
-
-                            @foreach (var o in ViewBag.Operations)
-                            {
-                                <tr>
-                                    <td><p>@o.IDOperation</p></td>
-                                    <td><p>@o.IDPsc</p></td>
-                                    <td><p>@o.IDOperationType</p></td>
-                                    <td><p>@o.IDCard</p></td>
-                                    <td><p>@o.DTime</p></td>
-                                    <td><p>@o.Amount</p></td>
-                                    <td><p>@o.Balance</p></td>
-                                    <td><p>@o.LocalizedID</p></td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            <div class="ibox ">
-                <div class="ibox-title">
-                    <div>
-                        <span class="float-right text-right">
-                            <small class="float-right">
-                                <i class="fa fa-clock-o"> </i>
-                                <div id="update-time"></div>
-                            </small>
-                        </span>
-                        <h3 class="font-bold no-margins">
-                            Поступление за сутки
-                        </h3>
-                        <small>по мойкам</small>
-                    </div>
-                    <div class="ibox-tools">
-                        <a class="collapse-link">
-                            <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
-                        </a>
-                    </div>
-                </div>
-                <form action="">
-                    <div style="width:100%; height:1px; clear:both;"></div>
-                    <div style="float:left">
-                        <label for="select-region">Регион</label>
-                        <br />
-                        <select name="select-region" id="select-region">
-                            <option value="0">Все регионы</option>
-                            @foreach (var s in ViewBag.Incomes)
-                            {
-                                <option>@s.region</option>
-                            }
-                        </select>
-                    </div>
-                    <div style="float:right">
-                        <label for="select-wash">Мойка</label>
-                        <br />
-                        <select name=" select-wash" id="select-wash">
-                            <option value="">Все мойки выбранного региона</option>
-                            @foreach (var s in ViewBag.Incomes)
-                            {
-                                <option>@s.washName</option>
-                            }
-                        </select>
-                    </div>
-                    <div style="width:100%; height:1px; clear:both;"></div>
-                    <div>
-                        <label for="beg-time">Начала периода</label>
-                        <input type="datetime-local" id="beg-time" name="beg-time" " />
-                    </div>
-                    <div>
-                        <label for="end-time">Конец периода</label>
-                        <input type="datetime-local" id="end-time" name="end-time" />
-                    </div>
-                    <label>Всего зачислений по выбранным мойкам <label id="sum"></label></label>
-                    <br />
-                    <div style="width:100%; height:1px; clear:both;"></div>
-                    <input id="button-yesterday" style="float:left" type="button" value="Вчера" />
-                    <input id="button-today" style="float:left" type="button" value="Сегодня" />
-                    <input id="button-month" style="float:left" type="button" value="Месяц" />
-                    <div style="width:100%; height:1px; clear:both;"></div>
-                    <input type="button" value="Показать" />
-                </form>
-                <div id="op-table" class="ibox-content">
-                    <table id="table-incomes" class="table table-striped table-bordered table-hover dataTables-example">
-                        <thead>
-                            <tr>
-                                <th><p>Регион</p></th>
-                                <th><p>Мойка</p></th>
-                                <th><p>Адрес</p></th>
-                                <th><p>Зачисление</p></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var i in ViewBag.Incomes)
-                            {
-                                <tr>
-                                    <td><p>@i.region</p></td>
-                                    <td><p>@i.washName</p></td>
-                                    <td><p>@i.washAddress</p></td>
-                                    <td><b>@i.amount</b></td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
         <div class="col-lg-6">
             <div class="ibox ">
                 <div class="ibox-title">
