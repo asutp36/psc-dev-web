@@ -28,8 +28,14 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult IncashWashes()
         {
-            string startDTime = new DateTime(2019, 6, 20, 0, 0, 0).ToString();
-            string stopDTime = new DateTime(2019, 6, 21, 0, 0, 0).ToString();
+            DateTime beg = new DateTime(2019, 6, 20, 0, 0, 0);
+            DateTime end = new DateTime(2019, 6, 21, 0, 0, 0);
+
+            //DateTime beg = DateTime.Today.AddDays(-1);
+            //DateTime end = DateTime.Today.AddSeconds(-1);
+
+            string startDTime = beg.ToString();
+            string stopDTime = end.ToString();
 
             ViewBag.startDTime = startDTime;
             ViewBag.stopDTime = stopDTime;
