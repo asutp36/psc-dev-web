@@ -28,8 +28,8 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult IncashWashes()
         {
-            DateTime beg = new DateTime(2019, 6, 20, 0, 0, 0);
-            DateTime end = new DateTime(2019, 6, 21, 0, 0, 0);
+            DateTime beg = new DateTime(2019, 9, 1, 0, 0, 0);
+            DateTime end = new DateTime(2019, 9, 2, 0, 0, 0);
 
             //DateTime beg = DateTime.Today.AddDays(-1);
             //DateTime end = DateTime.Today.AddSeconds(-1);
