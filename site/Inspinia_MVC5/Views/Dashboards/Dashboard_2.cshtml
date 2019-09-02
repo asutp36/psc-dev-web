@@ -29,7 +29,7 @@
                 <div class="ibox-content">
                     <h1 class="no-margins">4 274 560</h1>
                     <div class="stat-percent font-bold text-danger">4% <i class="fa fa-level-down"></i></div>
-                    <small>август 2019</small>
+                    @*<small>август 2019</small>*@
                 </div>
             </div>
         </div>
@@ -38,12 +38,12 @@
                 <div class="ibox-title">
                     <span class="label label-success float-right">за сутки</span>
                     <h5>Поступления</h5>
-                    <span data-diameter="40" class="updating-chart">5,3,9,6,5,9,7,3,5,2,5,3,9,6,5,9,4,7,3,2,9,8,7,4,5,1,2,9,5,4,7,2,7,7,3,5,2</span>
+@*                    <span data-diameter="40" class="updating-chart">5,3,9,6,5,9,7,3,5,2,5,3,9,6,5,9,4,7,3,2,9,8,7,4,5,1,2,9,5,4,7,2,7,7,3,5,2</span>*@
                 </div>
                 <div class="ibox-content">
                     <h1 class="no-margins">362 920</h1>
                     <div class="stat-percent font-bold text-info">11% <i class="fa fa-level-up"></i></div>
-                    <small>01 сентября 2019</small>
+                    @*<small>01 сентября 2019</small>*@
                 </div>
             </div>
         </div>
@@ -56,7 +56,7 @@
                 <div class="ibox-content">
                     <h1 class="no-margins">1 062 150</h1>
                     @*<div class="stat-percent font-bold text-danger">38% <i class="fa fa-level-down"></i></div>*@
-                    <small>август 2019</small>
+                   @* <small>август 2019</small>*@
                 </div>
             </div>
         </div>
@@ -420,22 +420,22 @@
             mapObj.setFocus({ region: "RU-VOR" });
 
 
-            /////////////////////////////////////////////////////////////////////////////////////
-            // Ползущий график в поступлениях за сутки
-            /////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////
+            //// Ползущий график в поступлениях за сутки
+            ///////////////////////////////////////////////////////////////////////////////////////
 
-            var updatingChart = $(".updating-chart").peity("line", { fill: '#1ab394', stroke: '#169c81', width: 64 })
+            //var updatingChart = $(".updating-chart").peity("line", { fill: '#1ab394', stroke: '#169c81', width: 64 })
 
-            setInterval(function () {
-                var random = Math.round(Math.random() * 10)
-                var values = updatingChart.text().split(",")
-                values.shift()
-                values.push(random)
+            //setInterval(function () {
+            //    var random = Math.round(Math.random() * 10)
+            //    var values = updatingChart.text().split(",")
+            //    values.shift()
+            //    values.push(random)
 
-                updatingChart
-                    .text(values.join(","))
-                    .change()
-            }, 1000);
+            //    updatingChart
+            //        .text(values.join(","))
+            //        .change()
+            //}, 1000);
 
 
             /////////////////////////////////////////////////////////////////////////////////////
