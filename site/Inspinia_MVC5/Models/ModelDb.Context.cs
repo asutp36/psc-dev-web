@@ -46,6 +46,7 @@ namespace Inspinia_MVC5.Models
         public virtual DbSet<Psce> Psces { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Wash> Washes { get; set; }
+        public virtual DbSet<User> Users { get; set; }
     
         public virtual ObjectResult<GetCardsOperations_Result> GetCardsOperations(string p_Phone, string p_Cardnum, string p_CardTypeCode, string p_CardStatusName, string p_OperationTypeName, Nullable<System.DateTime> p_OperationDateBeg, Nullable<System.DateTime> p_OperationDateEnd, Nullable<int> p_LocalizedBy, Nullable<int> p_LocalizedID)
         {

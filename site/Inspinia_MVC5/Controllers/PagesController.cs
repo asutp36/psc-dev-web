@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
+using System.Web.Security;
 using System.Web.Mvc;
+
+using Inspinia_MVC5.Models;
+using Inspinia_MVC5.ViewModels;
 
 namespace Inspinia_MVC5.Controllers
 {
@@ -65,6 +69,39 @@ namespace Inspinia_MVC5.Controllers
             return View();
         }
 
-       
-	}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Login_2(LoginModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Поиск пользователя в БД
+                User user = null;
+                using (ModelDb db = new ModelDb())
+                {
+                    user = db.Users.FirstOrDefault(u => u.Login == model.Name && u.Password == model.Password);
+                }
+
+                if (user != null)
+                {
+                    FormsAuthentication.SetAuthCookie(model.Name, true);
+
+                    return RedirectToAction("IncashWashes", "Incash");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "No user");
+                }
+            }
+
+            return View(model);
+        }
+
+        public ActionResult Logoff()
+        {
+            FormsAuthentication.SignOut();
+
+            return View("Login_2");
+        }
+    }
 }
