@@ -73,5 +73,22 @@ namespace Inspinia_MVC5.Controllers
 
             return resultset;
         }
+
+//        public ActionResult FilterIncashes(DateTime begTime, DateTime endTime, string region, string wash)
+
+        // POST: Incash/FilterIncashes
+        [HttpPost]
+        public ActionResult FilterIncashes(string begTime, string endTime, string region, string wash)
+        {
+            //DateTime startDTime;
+            //DateTime.TryParse(begTime, out startDTime);
+
+            //DateTime stopDTime;
+            //DateTime.TryParse(endTime, out stopDTime);
+
+            //ViewBag.Incomes = GetIncomesFromDB(startDTime, stopDTime, region, wash);
+
+            return View();
+        }
     }
 }
