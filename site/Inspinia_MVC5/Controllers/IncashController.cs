@@ -28,23 +28,28 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult IncashWashes()
         {
-            DateTime startDTime = new DateTime(2019, 6, 20, 0, 0, 0);
-            DateTime stopDTime = new DateTime(2019, 6, 21, 0, 0, 0);
+            string startDTime = new DateTime(2019, 6, 20, 0, 0, 0).ToString();
+            string stopDTime = new DateTime(2019, 6, 21, 0, 0, 0).ToString();
 
+            ViewBag.startDTime = startDTime;
+            ViewBag.stopDTime = stopDTime;
             ViewBag.Regions = _regions;
             ViewBag.Washes = _washes;
 
-            ViewBag.Incomes = GetIncomesFromDB(startDTime, stopDTime, "", "");
+//            ViewBag.Incomes = GetIncomesFromDB(startDTime, stopDTime, "", "");
 
             return View();
         }
 
-        private List<GetWashAmounts_Result> GetIncomesFromDB(DateTime begTime, DateTime endTime, string region, string wash)
+        private List<GetWashAmounts_Result> GetIncomesFromDB(string begTime, string endTime, string region, string wash)
         {
             List<GetWashAmounts_Result> resultset = null;
 
-            //            DateTime dtEnd = DateTime.Today;
-            //            DateTime dtBeg = dtEnd.AddDays(-1);
+            DateTime startDTime;
+            DateTime.TryParse(begTime, out startDTime);
+
+            DateTime stopDTime;
+            DateTime.TryParse(endTime, out stopDTime);
 
             var prmRegionCode = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
             prmRegionCode.Value = 0;
@@ -74,21 +79,14 @@ namespace Inspinia_MVC5.Controllers
             return resultset;
         }
 
-//        public ActionResult FilterIncashes(DateTime begTime, DateTime endTime, string region, string wash)
+        //        public ActionResult FilterIncashes(DateTime begTime, DateTime endTime, string region, string wash)
 
-        // POST: Incash/FilterIncashes
-        [HttpPost]
+        // GET: /FilterIncashes/
         public ActionResult FilterIncashes(string begTime, string endTime, string region, string wash)
         {
-            //DateTime startDTime;
-            //DateTime.TryParse(begTime, out startDTime);
+            List<GetWashAmounts_Result> viewList = GetIncomesFromDB(begTime, endTime, region, wash);
 
-            //DateTime stopDTime;
-            //DateTime.TryParse(endTime, out stopDTime);
-
-            //ViewBag.Incomes = GetIncomesFromDB(startDTime, stopDTime, region, wash);
-
-            return View();
+            return PartialView("_IncashWashesList", viewList);
         }
     }
 }

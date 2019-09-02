@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetWashAmounts_Result>
+
+<table class="table table-striped table-bordered table-hover table_incashwashes">
+    <thead>
+        <tr>
+            <th data-hide="phone">Регион</th>
+            <th>Мойка</th>
+            <th data-hide="phone">Адрес</th>
+            <th>Зачисление</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in Model)
+        {
+            <tr>
+                <td>@i.region</td>
+                <td>@i.washName</td>
+                <td>@i.washAddress</td>
+                <td>@i.amount</td>
+            </tr>
+        }
+    </tbody>
+    @*<tfoot>
+            <tr>
+                <td colspan="7">
+                    <ul class="pagination float-right"></ul>
+                </td>
+            </tr>
+        </tfoot>*@
+</table>
