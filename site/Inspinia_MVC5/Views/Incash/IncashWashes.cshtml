@@ -90,10 +90,10 @@
     </div>
 </div>
 
-<input id="filter-startdate" value="0"/>
-<input id="filter-stopdate" value="0"/>
-<input id="filter-region" value="0"/>
-<input id="filter-wash" value="0"/>
+<input hidden id="filter-startdate" value="0"/>
+<input hidden id="filter-stopdate" value="0"/>
+<input hidden id="filter-region" value="0"/>
+<input hidden id="filter-wash" value="0"/>
 
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
@@ -187,7 +187,8 @@
                             }
                         ],
                         "language": {
-                            "zeroRecords": "Данные по заданному фильтру не найдены"
+                            "zeroRecords": "Данные по заданному фильтру не найдены",
+                            "emptyTable": "Данные по заданному фильтру не найдены"
                         }
                     });
                 });
