@@ -308,7 +308,7 @@
     <Content Include="Content\plugins\cropper\cropper.min.css" />
     <Content Include="Content\plugins\datapicker\datepicker3.css" />
     <Content Include="Content\plugins\dataTables\datatables.min.css" />
-    <Content Include="Content\plugins\daterangepicker\daterangepicker-bs3.css" />
+    <Content Include="Content\plugins\daterangepicker\daterangepicker.css" />
     <Content Include="Content\plugins\dropzone\basic.css" />
     <Content Include="Content\plugins\dropzone\dropzone.css" />
     <Content Include="Content\plugins\dualListbox\bootstrap-duallistbox.min.css" />

@@ -31,7 +31,7 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.Cards = cards;
             ViewBag.Operations = operations;
 
-            GetIncomesFromDBToday();
+            //GetIncomesFromDBToday();
 
             ViewBag.Regions = db.Regions;
             ViewBag.Washes = db.Washes;
