@@ -6,10 +6,10 @@
         <div class="col-lg-3">
             <div class="ibox ">
                 @*<a href="@Url.Action("IncashWashes", "Incash")">*@
-                    <div class="ibox-title">
-                        <span class="label label-info float-right">всего</span>
-                        <h5>Поступления</h5>
-                    </div>
+                <div class="ibox-title">
+                    <span class="label label-info float-right">всего</span>
+                    <h5>Поступления</h5>
+                </div>
                 @*</a>*@
                 <div class="ibox-content">
                     <h1 class="no-margins">106 221 090</h1>
@@ -20,16 +20,16 @@
         </div>
         <div class="col-lg-3">
             <div class="ibox ">
-                <a href="@Url.Action("IncashWashes", "Incash")">
-                    <div class="ibox-title">
-                        <span class="label label-success float-right">за месяц</span>
-                        <h5>Поступления</h5>
-                    </div>
-                </a>
+                <div class="ibox-title">
+                    <span class="label label-success float-right">за месяц</span>
+                    <h5>Поступления</h5>
+                </div>
                 <div class="ibox-content">
                     <h1 class="no-margins">9 057 340</h1>
                     @*<div class="stat-percent font-bold text-danger">4% <i class="fa fa-level-down"></i></div>*@
-                    <small>август 2019</small>
+                    <a href="@Url.Action("IncashWashes", "Incash", new { begTime = "01.08.2019 00:00:00", endTime = "31.08.2019 23:59:59", region = "0", wash = "0" })">
+                        <small>август 2019</small>
+                    </a>
                 </div>
             </div>
         </div>
@@ -38,12 +38,14 @@
                 <div class="ibox-title">
                     <span class="label label-success float-right">за вчера</span>
                     <h5>Поступления</h5>
-@*                    <span data-diameter="40" class="updating-chart">5,3,9,6,5,9,7,3,5,2,5,3,9,6,5,9,4,7,3,2,9,8,7,4,5,1,2,9,5,4,7,2,7,7,3,5,2</span>*@
+                    @*                    <span data-diameter="40" class="updating-chart">5,3,9,6,5,9,7,3,5,2,5,3,9,6,5,9,4,7,3,2,9,8,7,4,5,1,2,9,5,4,7,2,7,7,3,5,2</span>*@
                 </div>
                 <div class="ibox-content">
                     <h1 class="no-margins">419 040</h1>
                     @*<div class="stat-percent font-bold text-info">11% <i class="fa fa-level-up"></i></div>*@
-                    <small>01 сентября 2019</small>
+                    <a href="@Url.Action("IncashWashes", "Incash", new { begTime = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"), endTime =  DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"), region = "0", wash = "0" })">
+                        <small>@DateTime.Today.AddDays(-1).ToString("dd MMMM yyyy")</small>
+                    </a>
                 </div>
             </div>
         </div>
@@ -530,7 +532,7 @@
 
     </script>
 
-    <script type="text/javascript">
+    @*<script type="text/javascript">
         $(document).ready(function () {
             timedRefresh(10000);
         });
@@ -563,5 +565,5 @@
             timeoutPeriod
             );
         };
-    </script>
+    </script>*@
 }

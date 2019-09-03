@@ -19,30 +19,39 @@ namespace Inspinia_MVC5.Controllers
         {
             _regions = db.Regions.ToList();
             _washes = db.Washes.ToList();
+
+            ViewBag.Regions = _regions;
+            ViewBag.Washes = _washes;
         }
 
-        public ActionResult ProductsGrid()
+        public ActionResult IncashWashes(string begTime, string endTime, string region, string wash)
         {
+            //DateTime beg = new DateTime(2019, 9, 1, 0, 0, 0);
+            //DateTime end = new DateTime(2019, 9, 2, 0, 0, 0);
+
+            ////DateTime beg = DateTime.Today.AddDays(-1);
+            ////DateTime end = DateTime.Today.AddSeconds(-1);
+
+            //string startDTime = beg.ToString();
+            //string stopDTime = end.ToString();
+
+            ViewBag.startDTime = begTime;
+            ViewBag.stopDTime = endTime;
+            ViewBag.region = region;
+            ViewBag.wash = wash;
+
+            //            ViewBag.Incomes = GetIncomesFromDB(startDTime, stopDTime, "", "");
+
             return View();
         }
 
-        public ActionResult IncashWashes()
+        // GET: Incash/GetIncashWashesByRange
+        public ActionResult GetIncashWashesByRange(string begTime, string endTime, string region, string wash)
         {
-            DateTime beg = new DateTime(2019, 9, 1, 0, 0, 0);
-            DateTime end = new DateTime(2019, 9, 2, 0, 0, 0);
-
-            //DateTime beg = DateTime.Today.AddDays(-1);
-            //DateTime end = DateTime.Today.AddSeconds(-1);
-
-            string startDTime = beg.ToString();
-            string stopDTime = end.ToString();
-
-            ViewBag.startDTime = startDTime;
-            ViewBag.stopDTime = stopDTime;
-            ViewBag.Regions = _regions;
-            ViewBag.Washes = _washes;
-
-//            ViewBag.Incomes = GetIncomesFromDB(startDTime, stopDTime, "", "");
+            ViewBag.startDTime = begTime;
+            ViewBag.stopDTime = endTime;
+            ViewBag.region = region;
+            ViewBag.wash = wash;
 
             return View();
         }
@@ -59,7 +68,6 @@ namespace Inspinia_MVC5.Controllers
 
             var prmRegionCode = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
             prmRegionCode.Value = 0;
-
             Int32 intval;
             if (Int32.TryParse(region, out intval))
                 prmRegionCode.Value = intval;
@@ -71,10 +79,10 @@ namespace Inspinia_MVC5.Controllers
             prmPostCode.Value = DBNull.Value;
 
             var prmBeg = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
-            prmBeg.Value = begTime;
+            prmBeg.Value = startDTime;
 
             var prmEnd = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
-            prmEnd.Value = endTime;
+            prmEnd.Value = stopDTime;
 
             var result = db.Database
                 .SqlQuery<GetWashAmounts_Result>("GetWashAmounts @p_RegionCode, @p_WashCode, @p_PostCode, @p_DateBeg, @p_DateEnd", prmRegionCode, prmWashCode, prmPostCode, prmBeg, prmEnd)

@@ -83,15 +83,15 @@
         <div class="col-lg-12 table_incashes">
             <div class="ibox">
                 <div class="ibox-content">
-                    @Html.Action("FilterIncashes", "Incash", new { begTime = @ViewBag.startDTime, endTime = ViewBag.stopDTime, region = "0", wash = "0" })
+                    @Html.Action("FilterIncashes", "Incash", new { begTime = @ViewBag.startDTime, endTime = ViewBag.stopDTime, region = ViewBag.region, wash = ViewBag.wash })
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<input hidden id="filter-startdate" value="0"/>
-<input hidden id="filter-stopdate" value="0"/>
+<input hidden id="filter-startdate" value="@ViewBag.startDTime"/>
+<input hidden id="filter-stopdate" value="@ViewBag.stopDTime"/>
 <input hidden id="filter-region" value="0"/>
 <input hidden id="filter-wash" value="0"/>
 
@@ -212,12 +212,13 @@
         //    $('#filter-region').val(selectedOption);
         //};
 
-        $('#filter-startdate').val(moment().subtract(1, 'days').startOf('day').format('DD.MM.YYYY HH:mm:ss'));
-        $('#filter-stopdate').val(moment().subtract(1, 'days').endOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        //$('#filter-startdate').val(moment().subtract(1, 'days').startOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        //$('#filter-stopdate').val(moment().subtract(1, 'days').endOf('day').format('DD.MM.YYYY HH:mm:ss'));
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#reportrange span').html(moment().subtract(1, 'days').startOf('day').format('DD.MM.YYYY HH:mm:ss') + ' - ' + moment().subtract(1, 'days').endOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        //$('#reportrange span').html(moment().subtract(1, 'days').startOf('day').format('DD.MM.YYYY HH:mm:ss') + ' - ' + moment().subtract(1, 'days').endOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        $('#reportrange span').html(moment('@ViewBag.startDTime', 'DD.MM.YYYY HH:mm:ss').format('DD.MM.YYYY HH:mm:ss') + ' - ' + moment('@ViewBag.stopDTime', 'DD.MM.YYYY HH:mm:ss').format('DD.MM.YYYY HH:mm:ss'));
 
         $('#reportrange').daterangepicker({
             "timePicker": true,
@@ -265,8 +266,8 @@
             },
             "showCustomRangeLabel": false,
             "alwaysShowCalendars": true,
-            "startDate": moment().subtract(1, 'days').startOf('day'),
-            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "startDate": moment('@ViewBag.startDTime', 'DD.MM.YYYY HH:mm:ss'),
+            "endDate": moment('@ViewBag.stopDTime', 'DD.MM.YYYY HH:mm:ss'),
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {
@@ -278,6 +279,8 @@
             $('#filter-startdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
             $('#filter-stopdate').val(end.format('DD.MM.YYYY HH:mm:ss'));
         });
+        //"startDate": moment().subtract(1, 'days').startOf('day'),
+        //"endDate": moment().subtract(1, 'days').endOf('day'),
 
     </script>
 }
