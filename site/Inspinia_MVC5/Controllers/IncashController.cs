@@ -35,8 +35,16 @@ namespace Inspinia_MVC5.Controllers
             //string startDTime = beg.ToString();
             //string stopDTime = end.ToString();
 
-            ViewBag.startDTime = begTime;
-            ViewBag.stopDTime = endTime;
+            DateTime startDTime;
+            if (!DateTime.TryParse(begTime, out startDTime))
+                startDTime = DateTime.Today.AddDays(-1);
+
+            DateTime stopDTime;
+            if (!DateTime.TryParse(endTime, out stopDTime))
+                stopDTime = DateTime.Today.AddSeconds(-1);
+
+            ViewBag.startDTime = startDTime.ToString("dd.MM.yyyy HH:mm:ss");
+            ViewBag.stopDTime = stopDTime.ToString("dd.MM.yyyy HH:mm:ss");
             ViewBag.region = region;
             ViewBag.wash = wash;
 
@@ -61,19 +69,25 @@ namespace Inspinia_MVC5.Controllers
             List<GetWashAmounts_Result> resultset = null;
 
             DateTime startDTime;
-            DateTime.TryParse(begTime, out startDTime);
+            if (!DateTime.TryParse(begTime, out startDTime))
+                startDTime = DateTime.Today.AddDays(-1);
 
             DateTime stopDTime;
-            DateTime.TryParse(endTime, out stopDTime);
+            if (!DateTime.TryParse(endTime, out stopDTime))
+                stopDTime = DateTime.Today.AddSeconds(-1);
+
+            Int32 regionnum;
+            if (!Int32.TryParse(region, out regionnum))
+                regionnum = 0;
 
             var prmRegionCode = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
-            prmRegionCode.Value = 0;
-            Int32 intval;
-            if (Int32.TryParse(region, out intval))
-                prmRegionCode.Value = intval;
+            prmRegionCode.Value = regionnum;
 
             var prmWashCode = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
-            prmWashCode.Value = wash;
+            if (wash != null)
+                prmWashCode.Value = wash;
+            else
+                prmWashCode.Value = DBNull.Value;
 
             var prmPostCode = new System.Data.SqlClient.SqlParameter("@p_PostCode", System.Data.SqlDbType.NVarChar);
             prmPostCode.Value = DBNull.Value;
