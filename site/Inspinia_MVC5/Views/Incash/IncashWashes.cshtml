@@ -205,8 +205,30 @@
                     //    $('.btn-group-product').hide();
                     //}, 1000);
             });
+
+            //$(document).on("click", "#btn-go-to-wash", function () {
+            //    alert("onWashSelected3");
+            //});
         });
 
+
+        function onWashSelected2(selectedWashCode) {
+            var startDate = $('#filter-startdate').val();
+            var stopDate = $('#filter-stopdate').val();
+            var regionCode = $('#filter-region').val();
+            var washCode = selectedWashCode;
+
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("IncashPosts", "IncashWash")",
+                data: {
+                    begTime: startDate,
+                    endTime: stopDate,
+                    region: regionCode,
+                    wash: washCode
+                }
+            });
+        }
         //function OnSelectedRegionChanged(select) {
         //    var selectedOption = select.options[select.selectedIndex];
         //    $('#filter-region').val(selectedOption);
