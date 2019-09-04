@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Inspinia_MVC5.Models.GetWashAmounts_Result>
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetPostAmounts_Result>
 
 <table class="table table-striped table-bordered table-hover table_incashposts">
     <thead>
@@ -14,12 +14,14 @@
     <tbody>
         @foreach (var i in Model)
         {
-            <tr>
-                <td>@i.region</td>
-                <td>@i.washName</td>
-                <td>@i.washAddress</td>
-                <td>@i.amount</td>
-            </tr>
+        <tr>
+            <td>@i.Name</td>
+            <td>@i.amount</td>
+            <td>@i.m10</td>
+            <td>@i.b10</td>
+            <td>@i.b50</td>
+            <td>@i.b100</td>
+        </tr>
         }
     </tbody>
     @*<tfoot>

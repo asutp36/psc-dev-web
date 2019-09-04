@@ -67,6 +67,7 @@
           <Property Name="b500" Type="int" Nullable="false" />
           <Property Name="b1k" Type="int" Nullable="false" />
           <Property Name="m10" Type="int" Nullable="false" />
+          <Property Name="amount" Type="int" />
         </EntityType>
         <EntityType Name="Event">
           <Key>
@@ -470,6 +471,13 @@
           <Parameter Name="p_LocalizedBy" Type="int" Mode="In" />
           <Parameter Name="p_LocalizedID" Type="int" Mode="In" />
         </Function>
+        <Function Name="GetPostAmounts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_RegionCode" Type="int" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_PostCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+        </Function>
         <Function Name="GetWashAmounts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_RegionCode" Type="int" Mode="In" />
           <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
@@ -686,6 +694,13 @@
             <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
           </FunctionImport>
           <EntitySet Name="Users" EntityType="CardsDbModel.User" />
+          <FunctionImport Name="GetPostAmounts" ReturnType="Collection(CardsDbModel.GetPostAmounts_Result)">
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int32" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+            <Parameter Name="p_PostCode" Mode="In" Type="String" />
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetCardsOperations_Result">
           <Property Type="String" Name="Phone" Nullable="false" MaxLength="Max" />
@@ -769,6 +784,7 @@
           <Property Name="b1k" Type="Int32" Nullable="false" />
           <Property Name="m10" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Post" Relationship="CardsDbModel.FK_CountersTotal_Posts" FromRole="CountersTotal" ToRole="Post" />
+          <Property Name="amount" Type="Int32" />
         </EntityType>
         <EntityType Name="Event">
           <Key>
@@ -1194,6 +1210,20 @@
           <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Description" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
+        <ComplexType Name="GetPostAmounts_Result">
+          <Property Type="String" Name="region" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="IDWash" Nullable="false" />
+          <Property Type="String" Name="washName" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="washAddress" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="amount" Nullable="true" />
+          <Property Type="Int32" Name="m10" Nullable="true" />
+          <Property Type="Int32" Name="b10" Nullable="true" />
+          <Property Type="Int32" Name="b50" Nullable="true" />
+          <Property Type="Int32" Name="b100" Nullable="true" />
+          <Property Type="Int32" Name="b500" Nullable="true" />
+          <Property Type="Int32" Name="b1k" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1272,6 +1302,7 @@
           <EntitySetMapping Name="CountersTotals">
             <EntityTypeMapping TypeName="CardsDbModel.CountersTotal">
               <MappingFragment StoreEntitySet="CountersTotal">
+                <ScalarProperty Name="amount" ColumnName="amount" />
                 <ScalarProperty Name="m10" ColumnName="m10" />
                 <ScalarProperty Name="b1k" ColumnName="b1k" />
                 <ScalarProperty Name="b500" ColumnName="b500" />
@@ -1447,6 +1478,24 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetPostAmounts" FunctionName="Хранилище CardsDbModel.GetPostAmounts">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CardsDbModel.GetPostAmounts_Result">
+                <ScalarProperty Name="region" ColumnName="region" />
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+                <ScalarProperty Name="washName" ColumnName="washName" />
+                <ScalarProperty Name="washAddress" ColumnName="washAddress" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b500" ColumnName="b500" />
+                <ScalarProperty Name="b1k" ColumnName="b1k" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -218,7 +218,17 @@
             var regionCode = $('#filter-region').val();
             var washCode = selectedWashCode;
 
-            $.ajax({
+            //var data = {
+            //    begTime: startDate,
+            //    endTime: stopDate,
+            //    region: regionCode,
+            //    wash: washCode
+            //};
+
+            window.location.href = "/IncashWash/IncashPosts?begTime="+ startDate + "&endTime=" + stopDate + "&region=" + regionCode + "&wash=" + selectedWashCode;
+
+
+            @*$.ajax({
                 type: "GET",
                 url: "@Url.Action("IncashPosts", "IncashWash")",
                 data: {
@@ -227,7 +237,9 @@
                     region: regionCode,
                     wash: washCode
                 }
-            });
+            }).done(function (result) {
+                $('.').html(result);
+            });*@
         }
         //function OnSelectedRegionChanged(select) {
         //    var selectedOption = select.options[select.selectedIndex];

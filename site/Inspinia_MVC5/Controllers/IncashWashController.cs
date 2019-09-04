@@ -53,7 +53,7 @@ namespace Inspinia_MVC5.Controllers
             return View();
         }
 
-        private List<GetWashAmounts_Result> GetIncomesPostsFromDB(string begTime, string endTime, string region, string wash)
+        private List<GetPostAmounts_Result> GetIncomesPostsFromDB(string begTime, string endTime, string region, string wash)
         {
             List<GetPostAmounts_Result> resultset = null;
 
@@ -101,7 +101,7 @@ namespace Inspinia_MVC5.Controllers
         // GET: /FilterIncashes/
         public ActionResult FilterIncashes(string begTime, string endTime, string region, string wash)
         {
-            List<GetWashAmounts_Result> viewList = GetIncomesPostsFromDB(begTime, endTime, region, wash);
+            List<GetPostAmounts_Result> viewList = GetIncomesPostsFromDB(begTime, endTime, region, wash);
 
             return PartialView("_IncashPostsList", viewList);
         }
