@@ -144,6 +144,7 @@
     <Compile Include="Controllers\DashboardsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IncashController.cs" />
+    <Compile Include="Controllers\IncashWashController.cs" />
     <Compile Include="Controllers\JsonController.cs" />
     <Compile Include="Controllers\LandingController.cs" />
     <Compile Include="Controllers\LayoutsController.cs" />
@@ -1826,6 +1827,8 @@
     <Content Include="Views\Dashboards\UpdateTable.cshtml" />
     <Content Include="Views\Incash\IncashWashes.cshtml" />
     <Content Include="Views\Incash\_IncashWashesList.cshtml" />
+    <Content Include="Views\Incash\IncashPosts.cshtml" />
+    <Content Include="Views\Incash\_IncasPostsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

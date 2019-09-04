@@ -8,14 +8,14 @@ using Inspinia_MVC5.Models;
 
 namespace Inspinia_MVC5.Controllers
 {
-    public class IncashController : Controller
+    public class IncashWashController : Controller
     {
         private ModelDb db = new ModelDb();
         List<Region> _regions = null;
         List<Wash> _washes = null;
 
 
-        public IncashController()
+        public IncashWashController()
         {
             _regions = db.Regions.ToList();
             _washes = db.Washes.ToList();
@@ -24,7 +24,7 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.Washes = _washes;
         }
 
-        public ActionResult IncashWashes(string begTime, string endTime, string region, string wash)
+        public ActionResult IncashPosts(string begTime, string endTime, string region, string wash)
         {
             //DateTime beg = new DateTime(2019, 9, 1, 0, 0, 0);
             //DateTime end = new DateTime(2019, 9, 2, 0, 0, 0);
@@ -53,9 +53,9 @@ namespace Inspinia_MVC5.Controllers
             return View();
         }
 
-        private List<GetWashAmounts_Result> GetIncomesFromDB(string begTime, string endTime, string region, string wash)
+        private List<GetWashAmounts_Result> GetIncomesPostsFromDB(string begTime, string endTime, string region, string wash)
         {
-            List<GetWashAmounts_Result> resultset = null;
+            List<GetPostAmounts_Result> resultset = null;
 
             DateTime startDTime;
             if (!DateTime.TryParse(begTime, out startDTime))
@@ -88,7 +88,7 @@ namespace Inspinia_MVC5.Controllers
             prmEnd.Value = stopDTime;
 
             var result = db.Database
-                .SqlQuery<GetWashAmounts_Result>("GetWashAmounts @p_RegionCode, @p_WashCode, @p_PostCode, @p_DateBeg, @p_DateEnd", prmRegionCode, prmWashCode, prmPostCode, prmBeg, prmEnd)
+                .SqlQuery<GetPostAmounts_Result>("GetPostAmounts @p_RegionCode, @p_WashCode, @p_PostCode, @p_DateBeg, @p_DateEnd", prmRegionCode, prmWashCode, prmPostCode, prmBeg, prmEnd)
                 .ToList();
 
             resultset = result;
@@ -101,9 +101,9 @@ namespace Inspinia_MVC5.Controllers
         // GET: /FilterIncashes/
         public ActionResult FilterIncashes(string begTime, string endTime, string region, string wash)
         {
-            List<GetWashAmounts_Result> viewList = GetIncomesFromDB(begTime, endTime, region, wash);
+            List<GetWashAmounts_Result> viewList = GetIncomesPostsFromDB(begTime, endTime, region, wash);
 
-            return PartialView("_IncashWashesList", viewList);
+            return PartialView("_IncashPostsList", viewList);
         }
     }
 }
