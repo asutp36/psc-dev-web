@@ -150,6 +150,7 @@
     <Compile Include="Controllers\MailboxController.cs" />
     <Compile Include="Controllers\MetricsController.cs" />
     <Compile Include="Controllers\MiscellaneousController.cs" />
+    <Compile Include="Controllers\OperationsController.cs" />
     <Compile Include="Controllers\PagesController.cs" />
     <Compile Include="Controllers\ScaffoldingController.cs" />
     <Compile Include="Controllers\TablesController.cs" />
@@ -1821,6 +1822,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Dashboards\UpdateTable.cshtml" />
     <Content Include="Views\Incash\IncashWashes.cshtml" />
+    <Content Include="Views\Operations\OperationsCards.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
