@@ -11,14 +11,15 @@ namespace Inspinia_MVC5.Controllers
     public class OperationsController : Controller
     {
         private CardsDbEntities db = new CardsDbEntities();
-        List<Operation> _operations = null;
+        List<CardType> _cardTypes = null;
+        List<CardStatus> _cardStatuses = null;
         List<OperationType> _operationTypes = null;
-        List<Psce> _psces = null;
-        List<Card> _cards = null;
 
         public OperationsController()
         {
-
+            _cardTypes = db.CardTypes.ToList();
+            _cardStatuses = db.CardStatuses.ToList();
+            _operationTypes = db.OperationTypes.ToList();
         }
 
         public ActionResult ProductsGrid()
@@ -32,6 +33,9 @@ namespace Inspinia_MVC5.Controllers
             DateTime stopDTime = new DateTime(2019, 10, 21, 0, 0, 0);
 
             ViewBag.Operations = GetOperationsFromDB("","","","","",startDTime, stopDTime, 0,0);
+            ViewBag.CardTypes = _cardTypes;
+            ViewBag.CardStatuses = _cardStatuses;
+            ViewBag.OperationTypes = _operationTypes;
 
             return View();
         }

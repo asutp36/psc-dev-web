@@ -20,7 +20,9 @@
             <div class="ibox ">
                 <div class="ibox-title">
                     <span class="label label-success float-right">за месяц</span>
-                    <h5>Поступления</h5>
+                    <a href="@Url.Action("IncashWashes", "Incash")">
+                        <h5>Поступления</h5>
+                    </a>
                 </div>
                 <div class="ibox-content">
                     <h1 class="no-margins">4 274 560</h1>
@@ -61,14 +63,17 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h5>Карты</h5>
-                    @*<div class="float-right">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-xs btn-white active">Today</button>
-                                <button type="button" class="btn btn-xs btn-white">Monthly</button>
-                                <button type="button" class="btn btn-xs btn-white">Annual</button>
-                            </div>
-                        </div>*@
+                    <a href="@Url.Action("OperationsCards", "Operations")">
+
+                        <h5>Карты</h5>
+                    </a>
+                        @*<div class="float-right">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-xs btn-white active">Today</button>
+                    <button type="button" class="btn btn-xs btn-white">Monthly</button>
+                    <button type="button" class="btn btn-xs btn-white">Annual</button>
+                </div>
+            </div>*@
                 </div>
                 <div class="ibox-content">
                     <div class="row">
@@ -112,7 +117,7 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-12">
+        @*<div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
                     <div>
@@ -126,7 +131,7 @@
                             Операции
                         </h3>
                         <small>по картам</small>
-                    </div>
+                    </div> 
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -172,9 +177,9 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </div>*@
 
-        <div class="col-lg-6">
+        @*<div class="col-lg-6">
             <div class="ibox ">
                 <div class="ibox-title">
                     <div>
@@ -267,7 +272,7 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </div>*@
         <div class="col-lg-6">
             <div class="ibox ">
                 <div class="ibox-title">

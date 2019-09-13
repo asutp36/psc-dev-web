@@ -14,7 +14,7 @@
                 <a>Операции</a>
             </li>
             <li class="active breadcrumb-item">
-                <strong>По мойкам</strong>
+                <strong>По картам</strong>
             </li>
         </ol>
     </div>
@@ -29,48 +29,101 @@
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label class="col-form-labe" for="reportrange">Период</label>
-                    <div id="reportrange" class="form-control">
-                        <i class="fa fa-calendar"></i>
-                        <span></span> <b class="caret"></b>
-                    </div>
+                    <label class="col-form-labe" for="phone_input_filter">Телефон</label>
+                    <input type="text" id="phone_input_filter" name="phone_input_filter" placeholder="8-(___)-(___)-(__)-(__)" class="form-control" />
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label class="col-form-labe" for="region_code">Регион</label>
-                    <select name="region_code" id="region_code" class="form-control">
-                        <option value="0" selected="">Вся сеть автомоек</option>
-                        @*@foreach (var item in ViewBag.Regions)
+                    <label class="col-form-labe" for="card_num_input_filter">Номер карты</label>
+                    <input type="text" id="card_num_input_filter" name="card_num_input_filter" placeholder="" class="form-control" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-form-labe" for="card_type_input_filter">Регион</label>
+                    <select name="card_type_input_filter" id="card_type_input_filter" class="form-control">
+                        <option value="" selected=""></option>
+                        @foreach (var item in ViewBag.CardTypes)
                         {
                             <option value="@item.Code">@item.Name</option>
-                        }*@
-                    </select>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="wash_code">Мойка</label>
-                    <select name="wash_code" id="wash_code" class="form-control">
-                        <option value="0" selected="">Все мойки сети</option>
-                        @*@foreach (var item in ViewBag.Washes)
-                        {
-                            <option value="@item.Code">@item.Code-@item.Name</option>
-                        }*@
+                        }
                     </select>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-form-labe" for="card_status_input_filter">Статус карты</label>
+                    <select name="card_status_input_filter" id="card_status_input_filter" class="form-control">
+                        <option value="" selected=""></option>
+                        @foreach (var item in ViewBag.CardStatuses)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    </select>
+                </div>
             </div>
             <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-form-labe" for="operation_type_input_filter">Тип операции</label>
+                    <select name="operation_type_input_filter" id="operation_type_input_filter" class="form-control">
+                        <option value="" selected=""></option>
+                        @foreach (var item in ViewBag.OperationTypes)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    </select>    
+                </div>
             </div>
             <div class="col-sm-4">
-                <button type="button" class="btn  btn-block btn-outline btn-success font-bold">Показать</button>
+                <div class="form-group">
+                    <label class="col-form-labe" for="amount_input_filter">Сумма</label>
+                    <input type="text" id="amount_input_filter" name="amount_input_filter" placeholder="" class="form-control" />
+                </div>
             </div>
         </div>
-
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-form-labe" for="balance_input_filter">Баланс</label>
+                    <input type="text" id="balance_input_filter" name="balance_input_filter" class="form-control" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-form-labe" for="localized_by_input_filter">LocalizedBy</label>
+                    <input type="text" id="localized_by_input_filter" name="localized_by_input_filter" class="form-control" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-form-labe" for="localized_id_input_filter">LocalizedID</label>
+                    <input type="text" id="localized_id_input_filter" name="localized_id_input_filter" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-form-labe" for="time_operation_input_filter">Период</label>
+                    <div id="time_operation_input_filter" class="form-control">
+                        <i class="fa fa-calendar"></i>
+                        <span></span> <b class="caret"></b>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1">
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Период</label>
+                    <button type="button" id="btn_for_filter" class="btn  btn-block btn-outline btn-success font-bold">Показать</button>
+                </div>
+            </div>
+            <div class="col-sm-1">
+            </div>            
     </div>
 
     <div class="row">
@@ -86,7 +139,7 @@
                                 <th>Статус карты</th>
                                 <th data-hide="phone">Тип операции</th>
                                 <th>Время операции</th>
-                                <th data-hide="phone">Количество денег</th>
+                                <th data-hide="phone">Сумма</th>
                                 <th>Баланс</th>
                                 <th data-hide="phone">Localized By</th>
                                 <th>Localized ID</th>
@@ -167,9 +220,9 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#reportrange span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
+        $('#time_operation_input_filter span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
 
-        $('#reportrange').daterangepicker({
+        $('#time_operation_input_filter').daterangepicker({
             "timePicker": true,
             "timePicker24Hour": true,
             "timePickerSeconds": true,
@@ -221,7 +274,7 @@
             "drops": "down"
         }, function (start, end, label) {
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
-            $('#reportrange span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+            $('#time_operation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
         });
 
     </script>
