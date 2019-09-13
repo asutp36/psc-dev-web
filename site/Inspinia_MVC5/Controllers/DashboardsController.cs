@@ -10,7 +10,7 @@ namespace Inspinia_MVC5.Controllers
 {
     public class DashboardsController : HomeController
     {
-        static ModelDb db = new ModelDb();
+        static CardsDbEntities db = new CardsDbEntities();
 
         IEnumerable<Card> cards = db.Cards;
         IEnumerable<Operation> operations = db.Operations;

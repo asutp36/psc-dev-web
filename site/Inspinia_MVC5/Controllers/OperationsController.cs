@@ -10,7 +10,7 @@ namespace Inspinia_MVC5.Controllers
 
     public class OperationsController : Controller
     {
-        private ModelDb db = new ModelDb();
+        private CardsDbEntities db = new CardsDbEntities();
         List<Operation> _operations = null;
         List<OperationType> _operationTypes = null;
         List<Psce> _psces = null;
@@ -28,8 +28,8 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult OperationsCards()
         {
-            DateTime startDTime = new DateTime(2019, 6, 20, 0, 0, 0);
-            DateTime stopDTime = new DateTime(2019, 6, 21, 0, 0, 0);
+            DateTime startDTime = new DateTime(2019, 8, 1, 0, 0, 0);
+            DateTime stopDTime = new DateTime(2019, 10, 21, 0, 0, 0);
 
             ViewBag.Operations = GetOperationsFromDB("","","","","",startDTime, stopDTime, 0,0);
 

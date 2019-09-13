@@ -10,7 +10,7 @@ namespace Inspinia_MVC5.Controllers
 {
     public class IncashController : Controller
     {
-        private ModelDb db = new ModelDb();
+        private CardsDbEntities db = new CardsDbEntities();
         List<Region> _regions = null;
         List<Wash> _washes = null;
 

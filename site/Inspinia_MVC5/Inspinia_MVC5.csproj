@@ -238,6 +238,9 @@
     </Compile>
     <Compile Include="Models\ScaffoldingContext.cs" />
     <Compile Include="Models\ScaffoldingController.cs" />
+    <Compile Include="Models\vPostsAmount.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Wash.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -417,13 +420,6 @@
     <Content Include="Content\plugins\summernote\font\summernote.eot" />
     <Content Include="Content\plugins\summernote\font\summernote.ttf" />
     <Content Include="Content\plugins\summernote\font\summernote.woff" />
-    <EntityDeploy Include="Models\ModelDb.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>ModelDb.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\ModelDb.edmx.diagram">
-      <DependentUpon>ModelDb.edmx</DependentUpon>
-    </Content>
     <Content Include="fonts\font-awesome\less\brands.less" />
     <Content Include="fonts\font-awesome\less\fontawesome.less" />
     <Content Include="fonts\font-awesome\less\regular.less" />
@@ -453,6 +449,13 @@
     <Content Include="fonts\font-awesome\webfonts\fa-solid-900.ttf" />
     <Content Include="fonts\font-awesome\webfonts\fa-solid-900.woff" />
     <Content Include="fonts\font-awesome\webfonts\fa-solid-900.woff2" />
+    <EntityDeploy Include="Models\ModelDb.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ModelDb.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\ModelDb.edmx.diagram">
+      <DependentUpon>ModelDb.edmx</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\Inspinia.pubxml" />
     <Content Include="Scripts\api\typehead_collection.json" />
