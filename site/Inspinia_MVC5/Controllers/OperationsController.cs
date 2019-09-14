@@ -15,6 +15,8 @@ namespace Inspinia_MVC5.Controllers
         List<CardStatus> _cardStatuses = null;
         List<OperationType> _operationTypes = null;
 
+        List<object> testdb = new List<object>();
+
         public OperationsController()
         {
             _cardTypes = db.CardTypes.ToList();
@@ -32,12 +34,31 @@ namespace Inspinia_MVC5.Controllers
             DateTime startDTime = new DateTime(2019, 8, 1, 0, 0, 0);
             DateTime stopDTime = new DateTime(2019, 10, 21, 0, 0, 0);
 
-            ViewBag.Operations = GetOperationsFromDB("","","","","",startDTime, stopDTime, 0,0);
+            ViewBag.T_Operations = GetOperationsFromDB("","","","","",startDTime, stopDTime, 0,0);
             ViewBag.CardTypes = _cardTypes;
             ViewBag.CardStatuses = _cardStatuses;
             ViewBag.OperationTypes = _operationTypes;
 
             return View();
+        }
+
+        [HttpGet]
+        [ActionName("UpdateViewBagOperations")]
+        public ActionResult UpdateViewBagOperations(
+            string phone, string cardNum, string cardTypeCode, string cardStatusName,
+            string operationTypeName, string begTime, string endTime, int by, int id)
+        {
+            DateTime startDTime = new DateTime(2019, 8, 1, 0, 0, 0);
+            DateTime stopDTime = new DateTime(2019, 10, 21, 0, 0, 0);
+            ViewBag.T_Operations = GetOperationsFromDB(
+                phone, cardNum, cardTypeCode, cardStatusName,
+                operationTypeName, startDTime, stopDTime, by, id);
+            //ViewBag.Operations = GetOperationsFromDB("", "", "", "", "", startDTime, stopDTime, 0, 0);
+            ViewBag.CardTypes = _cardTypes;
+            ViewBag.CardStatuses = _cardStatuses;
+            ViewBag.OperationTypes = _operationTypes;
+
+            return PartialView("~/Views/Dashboards/Update_Operation_Table.cshtml");
         }
 
         private List<GetCardsOperations_Result> GetOperationsFromDB(

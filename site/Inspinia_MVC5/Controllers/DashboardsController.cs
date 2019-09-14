@@ -84,14 +84,14 @@ namespace Inspinia_MVC5.Controllers
             return resultset;
         }
 
-        [HttpGet]
-        [ActionName("UpdateTable")]
-        public ActionResult UpdateTable()
-        {
-            ViewBag.Operations = operations;
+        //[HttpGet]
+        //[ActionName("UpdateTable")]
+        //public ActionResult UpdateTable()
+        //{
+        //    ViewBag.Operations = operations;
             
-            return PartialView("~/Views/Dashboards/UpdateTable.cshtml");
-        }
+        //    return PartialView("~/Views/Dashboards/UpdateTable.cshtml");
+        //}
 
         //[HttpGet]
         //[ActionName("Filter")]

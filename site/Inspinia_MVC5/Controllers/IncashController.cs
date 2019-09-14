@@ -14,7 +14,6 @@ namespace Inspinia_MVC5.Controllers
         List<Region> _regions = null;
         List<Wash> _washes = null;
 
-
         public IncashController()
         {
             _regions = db.Regions.ToList();
