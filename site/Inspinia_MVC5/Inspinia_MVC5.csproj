@@ -197,6 +197,9 @@
     <Compile Include="Models\GetCardsOperations_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetPostAmounts_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetWashAmounts_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -1827,8 +1830,8 @@
     <Content Include="Views\Dashboards\UpdateTable.cshtml" />
     <Content Include="Views\Incash\IncashWashes.cshtml" />
     <Content Include="Views\Incash\_IncashWashesList.cshtml" />
-    <Content Include="Views\Incash\IncashPosts.cshtml" />
-    <Content Include="Views\Incash\_IncasPostsList.cshtml" />
+    <Content Include="Views\IncashWash\IncashPosts.cshtml" />
+    <Content Include="Views\IncashWash\_IncashPostsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
