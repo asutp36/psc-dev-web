@@ -35,6 +35,7 @@ namespace Inspinia_MVC5.Controllers
             DateTime stopDTime = new DateTime(2019, 10, 21, 0, 0, 0);
 
             ViewBag.T_Operations = GetOperationsFromDB("","","","","",startDTime, stopDTime, 0,0);
+
             ViewBag.CardTypes = _cardTypes;
             ViewBag.CardStatuses = _cardStatuses;
             ViewBag.OperationTypes = _operationTypes;
@@ -50,13 +51,10 @@ namespace Inspinia_MVC5.Controllers
         {
             DateTime startDTime = new DateTime(2019, 8, 1, 0, 0, 0);
             DateTime stopDTime = new DateTime(2019, 10, 21, 0, 0, 0);
+
             ViewBag.T_Operations = GetOperationsFromDB(
                 phone, cardNum, cardTypeCode, cardStatusName,
                 operationTypeName, startDTime, stopDTime, by, id);
-            //ViewBag.Operations = GetOperationsFromDB("", "", "", "", "", startDTime, stopDTime, 0, 0);
-            ViewBag.CardTypes = _cardTypes;
-            ViewBag.CardStatuses = _cardStatuses;
-            ViewBag.OperationTypes = _operationTypes;
 
             return PartialView("~/Views/Dashboards/Update_Operation_Table.cshtml");
         }

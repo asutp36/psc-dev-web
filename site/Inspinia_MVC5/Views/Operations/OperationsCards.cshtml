@@ -22,94 +22,94 @@
 
     </div>
 </div>
-    <div class="ibox-content m-b-sm border-bottom">
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="phone_input_filter">Телефон</label>
-                    <input type="text" id="phone_input_filter" name="phone_input_filter" placeholder="8-(___)-(___)-(__)-(__)" class="form-control" />
-                </div>
+<div class="ibox-content m-b-sm border-bottom">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="phone_input_filter">Телефон</label>
+                <input type="text" id="phone_input_filter" name="phone_input_filter" placeholder="8-(___)-(___)-(__)-(__)" class="form-control" />
             </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="card_num_input_filter">Номер карты</label>
-                    <input type="text" id="card_num_input_filter" name="card_num_input_filter" placeholder="" class="form-control" />
-                </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="card_num_input_filter">Номер карты</label>
+                <input type="text" id="card_num_input_filter" name="card_num_input_filter" placeholder="" class="form-control" />
             </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="localized_by_input_filter">LocalizedBy</label>
-                    <input type="text" id="localized_by_input_filter" name="localized_by_input_filter" class="form-control" />
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="localized_by_input_filter">LocalizedBy</label>
+                <input type="text" id="localized_by_input_filter" name="localized_by_input_filter" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="card_status_input_filter">Статус карты</label>
+                <select name="card_status_input_filter" id="card_status_input_filter" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.CardStatuses)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="operation_type_input_filter">Тип операции</label>
+                <select name="operation_type_input_filter" id="operation_type_input_filter" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.OperationTypes)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="card_type_input_filter">Тип карты</label>
+                <select name="card_type_input_filter" id="card_type_input_filter" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.CardTypes)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="form-group">
+                <label class="col-form-labe" for="time_operation_input_filter">Период</label>
+                <div id="time_operation_input_filter" class="form-control">
+                    <i class="fa fa-calendar"></i>
+                    <span></span> <b class="caret"></b>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="card_status_input_filter">Статус карты</label>
-                    <select name="card_status_input_filter" id="card_status_input_filter" class="form-control">
-                        <option value="" selected=""></option>
-                        @foreach (var item in ViewBag.CardStatuses)
-                        {
-                            <option value="@item.Code">@item.Name</option>
-                        }
-                    </select>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="operation_type_input_filter">Тип операции</label>
-                    <select name="operation_type_input_filter" id="operation_type_input_filter" class="form-control">
-                        <option value="" selected=""></option>
-                        @foreach (var item in ViewBag.OperationTypes)
-                        {
-                            <option value="@item.Code">@item.Name</option>
-                        }
-                    </select>    
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="localized_id_input_filter">LocalizedID</label>
-                    <input type="text" id="localized_id_input_filter" name="localized_id_input_filter" class="form-control" />
-                </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="localized_id_input_filter">LocalizedID</label>
+                <input type="text" id="localized_id_input_filter" name="localized_id_input_filter" class="form-control" />
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-8">
-                <div class="form-group">
-                    <label class="col-form-labe" for="time_operation_input_filter">Период</label>
-                    <div id="time_operation_input_filter" class="form-control">
-                        <i class="fa fa-calendar"></i>
-                        <span></span> <b class="caret"></b>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="card_type_input_filter">Тип карты</label>
-                    <select name="card_type_input_filter" id="card_type_input_filter" class="form-control">
-                        <option value="" selected=""></option>
-                        @foreach (var item in ViewBag.CardTypes)
-                        {
-                            <option value="@item.Code">@item.Name</option>
-                        }
-                    </select>
-                </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Показать</label>
+                <button type="button" id="btn_for_filter" onclick="a()" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-4">
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Показать</label>
-                    <button type="button" id="btn_for_filter" onclick="a()" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
-                </div>
-            </div>
-            <div class="col-sm-4">
-            </div>
+        <div class="col-sm-4">
         </div>
+    </div>
 
     <div class="row">
         <div class="col-lg-12">
@@ -133,32 +133,25 @@
                         <tbody id="table-oper">
                             @foreach (var o in ViewBag.T_Operations)
                             {
-                            <tr>
-                                <td>@o.Phone</td>
-                                <td>@o.CardNum</td>
-                                <td>@o.CardTypeName</td>
-                                <td>@o.CardStatusName</td>
-                                <td>@o.OperationTypeName</td>
-                                <td>@o.DTime</td>
-                                <td>@o.Amount</td>
-                                <td>@o.Balance</td>
-                                <td>@o.LocalizedBy</td>
-                                <td>@o.LocalizedID</td>
-                            </tr>
+                                <tr>
+                                    <td>@o.Phone</td>
+                                    <td>@o.CardNum</td>
+                                    <td>@o.CardTypeName</td>
+                                    <td>@o.CardStatusName</td>
+                                    <td>@o.OperationTypeName</td>
+                                    <td>@o.DTime</td>
+                                    <td>@o.Amount</td>
+                                    <td>@o.Balance</td>
+                                    <td>@o.LocalizedBy</td>
+                                    <td>@o.LocalizedID</td>
+                                </tr>
                             }
                         </tbody>
-                        @*<tfoot>
-                                <tr>
-                                    <td colspan="7">
-                                        <ul class="pagination float-right"></ul>
-                                    </td>
-                                </tr>
-                            </tfoot>*@
                     </table>
                 </div>
             </div>
         </div>
-    </div>        
+    </div>
 </div>
 
 @section Styles {
@@ -184,7 +177,6 @@
                 buttons: [
                     { extend: 'excel', title: 'Report' },
                     { extend: 'pdf', title: 'Report' },
-
                     {
                         extend: 'print',
                         customize: function (win) {
@@ -197,7 +189,6 @@
                         }
                     }
                 ]
-
             });
         });
 
@@ -262,9 +253,9 @@
             });
 
         function a() {
-            var ttt = $("#time_operation_input_filter").daterangepicker("getRange");
+            //var ttt = $("#time_operation_input_filter").data('dateRangePicker').startDate.format("YYYY-MM-DD");
             //var ttt = document.getElementById("time_operation_input_filter").data('daterangepicker').;
-            alert((ttt.start));
+            //alert(ttt);
             var phone = document.getElementById("phone_input_filter").value;
             var cardNum = document.getElementById("card_num_input_filter").value;
             var cardTypeCode = document.getElementById("card_type_input_filter").value;
@@ -272,8 +263,8 @@
             var operationTypeName = document.getElementById("operation_type_input_filter").value;
             var by = Number(document.getElementById("localized_by_input_filter").value);
             var id = Number(document.getElementById("localized_id_input_filter").value);
-            var bt = new Date(2019, 8, 1, 0, 0, 0);
-            var et = new Date(2019, 8, 30, 0, 0, 0);
+            //var bt = new Date(2019, 8, 1, 0, 0, 0);
+            //var et = new Date(2019, 8, 30, 0, 0, 0);
 
             $.ajax({
                 cache: false,
@@ -295,16 +286,9 @@
             }).done(function (result) {
                 $('#table-oper').html(result);
             });
-    
-            @*$.ajax({
-                    type: "GET",
-                url: "@Url.Action("Update_Operation_Table", "Dashboards")",
-            }).done(function (result) {
-                $('#table-op').html(result);*@
-    
+
             alert('finish!');
         };
-    
     </script>
 }
 
