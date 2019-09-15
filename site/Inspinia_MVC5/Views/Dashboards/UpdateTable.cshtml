@@ -1,13 +1,15 @@
 ﻿@foreach (var o in ViewBag.Operations)
-    {
-        <tr>
-            <td><p>@o.IDOperation</p></td>
-            <td><p>@o.IDPsc</p></td>
-            <td><p>@o.IDOperationType</p></td>
-            <td><p>@o.IDCard</p></td>
-            <td><p>@o.DTime</p></td>
-            <td><p>@o.Amount</p></td>
-            <td><p>@o.Balance</p></td>
-            <td><p>@o.LocalizedID</p></td>
-        </tr>
-    }
+{
+    <tr>
+        <td>@o.Phone</td>
+        <td>@o.CardNum</td>
+        <td>@o.CardTypeName</td>
+        <td>@o.CardStatusName</td>
+        <td>@o.OperationTypeName</td>
+        <td>@o.DTime</td>
+        <td>@o.Amount</td>
+        <td>@o.Balance</td>
+        <td>@o.LocalizedBy</td>
+        <td>@o.LocalizedID</td>
+    </tr>
+}

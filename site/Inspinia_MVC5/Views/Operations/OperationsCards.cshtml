@@ -1,0 +1,295 @@
+﻿
+@{
+    ViewBag.Title = "Операции по картам";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Операции по картам</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a>Операции</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>По картам</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+
+    </div>
+</div>
+<div class="ibox-content m-b-sm border-bottom">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="phone_input_filter">Телефон</label>
+                <input type="text" id="phone_input_filter" name="phone_input_filter" placeholder="8-(___)-(___)-(__)-(__)" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="card_num_input_filter">Номер карты</label>
+                <input type="text" id="card_num_input_filter" name="card_num_input_filter" placeholder="" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="localized_by_input_filter">LocalizedBy</label>
+                <input type="text" id="localized_by_input_filter" name="localized_by_input_filter" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="card_status_input_filter">Статус карты</label>
+                <select name="card_status_input_filter" id="card_status_input_filter" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.CardStatuses)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="operation_type_input_filter">Тип операции</label>
+                <select name="operation_type_input_filter" id="operation_type_input_filter" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.OperationTypes)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="card_type_input_filter">Тип карты</label>
+                <select name="card_type_input_filter" id="card_type_input_filter" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.CardTypes)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="form-group">
+                <label class="col-form-labe" for="time_operation_input_filter">Период</label>
+                <div id="time_operation_input_filter" class="form-control">
+                    <i class="fa fa-calendar"></i>
+                    <span></span> <b class="caret"></b>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="localized_id_input_filter">LocalizedID</label>
+                <input type="text" id="localized_id_input_filter" name="localized_id_input_filter" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Показать</label>
+                <button type="button" id="btn_for_filter" onclick="a()" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
+            </div>
+        </div>
+        <div class="col-sm-4">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content-more">
+                    <table id="table-op" class="table table-striped table-bordered table-hover table_incashwashes">
+                        <thead>
+                            <tr>
+                                <th data-hide="phone">Телефон</th>
+                                <th>Номер карты</th>
+                                <th data-hide="phone">Тип карты</th>
+                                <th>Статус карты</th>
+                                <th data-hide="phone">Тип операции</th>
+                                <th>Время операции</th>
+                                <th data-hide="phone">Сумма</th>
+                                <th>Баланс</th>
+                                <th data-hide="phone">Localized By</th>
+                                <th>Localized ID</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-oper">
+                            @foreach (var o in ViewBag.T_Operations)
+                            {
+                                <tr>
+                                    <td>@o.Phone</td>
+                                    <td>@o.CardNum</td>
+                                    <td>@o.CardTypeName</td>
+                                    <td>@o.CardStatusName</td>
+                                    <td>@o.OperationTypeName</td>
+                                    <td>@o.DTime</td>
+                                    <td>@o.Amount</td>
+                                    <td>@o.Balance</td>
+                                    <td>@o.LocalizedBy</td>
+                                    <td>@o.LocalizedID</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/dateRange")
+    @Scripts.Render("~/plugins/select2")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.table_incashwashes').DataTable({
+                "paging": false,
+                "info": false,
+                "searching": false,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    { extend: 'excel', title: 'Report' },
+                    { extend: 'pdf', title: 'Report' },
+                    {
+                        extend: 'print',
+                        customize: function (win) {
+                            $(win.document.body).addClass('white-bg');
+                            $(win.document.body).css('font-size', '10px');
+
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
+                        }
+                    }
+                ]
+            });
+        });
+
+
+        $('input[name="daterange"]').daterangepicker();
+
+        $('#time_operation_input_filter span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
+
+        $('#time_operation_input_filter').daterangepicker({
+            "timePicker": true,
+            "timePicker24Hour": true,
+            "timePickerSeconds": true,
+            "ranges": {
+                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                'сегодня': [moment().startOf('day'), moment()],
+                'текущий месяц': [moment().startOf('month'), moment()],
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "locale": {
+                "format": "DD.MM.YYYY",
+                "separator": " ",
+                "applyLabel": "Выбрать",
+                "cancelLabel": "Отмена",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "Вс",
+                    "Пн",
+                    "Вт",
+                    "Ср",
+                    "Чт",
+                    "Пт",
+                    "Сб"
+                ],
+                "monthNames": [
+                    "Январь",
+                    "Февраль",
+                    "Март",
+                    "Апрель",
+                    "Май",
+                    "Июнь",
+                    "Июль",
+                    "Август",
+                    "Сентябрь",
+                    "Октябрь",
+                    "Ноябрь",
+                    "Декабрь"
+                ],
+                "firstDay": 1
+            },
+            "showCustomRangeLabel": false,
+            "alwaysShowCalendars": true,
+            "startDate": moment().subtract(1, 'days').startOf('day'),
+            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "opens": "right",
+            "drops": "down"
+        }, function (start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            $('#time_operation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+            });
+
+        function a() {
+            //var ttt = $("#time_operation_input_filter").data('dateRangePicker').startDate.format("YYYY-MM-DD");
+            //var ttt = document.getElementById("time_operation_input_filter").data('daterangepicker').;
+            //alert(ttt);
+            var phone = document.getElementById("phone_input_filter").value;
+            var cardNum = document.getElementById("card_num_input_filter").value;
+            var cardTypeCode = document.getElementById("card_type_input_filter").value;
+            var cardStatusName = document.getElementById("card_status_input_filter").value;
+            var operationTypeName = document.getElementById("operation_type_input_filter").value;
+            var by = Number(document.getElementById("localized_by_input_filter").value);
+            var id = Number(document.getElementById("localized_id_input_filter").value);
+            //var bt = new Date(2019, 8, 1, 0, 0, 0);
+            //var et = new Date(2019, 8, 30, 0, 0, 0);
+
+            $.ajax({
+                cache: false,
+                data: {
+                    'phone': phone,
+                    'cardNum': cardNum,
+                    'cardTypeCode': cardTypeCode,
+                    'cardStatusName': cardStatusName,
+                    'operationTypeName': operationTypeName,
+                    'begTime': "",
+                    'endTime': "",
+                    'by': by,
+                    'id': id
+                },
+                error: function () {
+                    alert('Error occured');
+                },
+                url: "@Url.Action("UpdateViewBagOperations", "Operations")",
+            }).done(function (result) {
+                $('#table-oper').html(result);
+            });
+
+            alert('finish!');
+        };
+    </script>
+}
+
+
