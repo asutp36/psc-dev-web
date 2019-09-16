@@ -1834,10 +1834,11 @@
     <Content Include="Views\Dashboards\UpdateTable.cshtml" />
     <Content Include="Views\Incash\IncashWashes.cshtml" />
     <Content Include="Views\Operations\OperationsCards.cshtml" />
-    <Content Include="Views\Dashboards\Update_Operation_Table.cshtml" />
+    <Content Include="Views\Operations\Update_Operation_Table.cshtml" />
     <Content Include="Views\Incash\_IncashWashesList.cshtml" />
     <Content Include="Views\IncashWash\IncashPosts.cshtml" />
     <Content Include="Views\IncashWash\_IncashPostsList.cshtml" />
+    <Content Include="Views\Operations\_OperationsCardsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

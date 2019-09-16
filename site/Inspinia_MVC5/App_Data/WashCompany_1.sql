@@ -1,83 +1,4 @@
-USE [master]
-GO
-/****** Object:  Database [WashCompany]    Script Date: 15.09.2019 17:07:26 ******/
-CREATE DATABASE [WashCompany]
- CONTAINMENT = NONE
- ON  PRIMARY 
-( NAME = N'WashCompany', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL14.SQLEXPRESS\MSSQL\DATA\WashCompany.mdf' , SIZE = 21504KB , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
- LOG ON 
-( NAME = N'WashCompany_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL14.SQLEXPRESS\MSSQL\DATA\WashCompany_log.ldf' , SIZE = 2048KB , MAXSIZE = 2048GB , FILEGROWTH = 10%)
-GO
-ALTER DATABASE [WashCompany] SET COMPATIBILITY_LEVEL = 110
-GO
-IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
-begin
-EXEC [WashCompany].[dbo].[sp_fulltext_database] @action = 'enable'
-end
-GO
-ALTER DATABASE [WashCompany] SET ANSI_NULL_DEFAULT OFF 
-GO
-ALTER DATABASE [WashCompany] SET ANSI_NULLS OFF 
-GO
-ALTER DATABASE [WashCompany] SET ANSI_PADDING OFF 
-GO
-ALTER DATABASE [WashCompany] SET ANSI_WARNINGS OFF 
-GO
-ALTER DATABASE [WashCompany] SET ARITHABORT OFF 
-GO
-ALTER DATABASE [WashCompany] SET AUTO_CLOSE ON 
-GO
-ALTER DATABASE [WashCompany] SET AUTO_SHRINK ON 
-GO
-ALTER DATABASE [WashCompany] SET AUTO_UPDATE_STATISTICS ON 
-GO
-ALTER DATABASE [WashCompany] SET CURSOR_CLOSE_ON_COMMIT OFF 
-GO
-ALTER DATABASE [WashCompany] SET CURSOR_DEFAULT  GLOBAL 
-GO
-ALTER DATABASE [WashCompany] SET CONCAT_NULL_YIELDS_NULL OFF 
-GO
-ALTER DATABASE [WashCompany] SET NUMERIC_ROUNDABORT OFF 
-GO
-ALTER DATABASE [WashCompany] SET QUOTED_IDENTIFIER OFF 
-GO
-ALTER DATABASE [WashCompany] SET RECURSIVE_TRIGGERS OFF 
-GO
-ALTER DATABASE [WashCompany] SET  DISABLE_BROKER 
-GO
-ALTER DATABASE [WashCompany] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
-GO
-ALTER DATABASE [WashCompany] SET DATE_CORRELATION_OPTIMIZATION OFF 
-GO
-ALTER DATABASE [WashCompany] SET TRUSTWORTHY OFF 
-GO
-ALTER DATABASE [WashCompany] SET ALLOW_SNAPSHOT_ISOLATION OFF 
-GO
-ALTER DATABASE [WashCompany] SET PARAMETERIZATION SIMPLE 
-GO
-ALTER DATABASE [WashCompany] SET READ_COMMITTED_SNAPSHOT OFF 
-GO
-ALTER DATABASE [WashCompany] SET HONOR_BROKER_PRIORITY OFF 
-GO
-ALTER DATABASE [WashCompany] SET RECOVERY SIMPLE 
-GO
-ALTER DATABASE [WashCompany] SET  MULTI_USER 
-GO
-ALTER DATABASE [WashCompany] SET PAGE_VERIFY CHECKSUM  
-GO
-ALTER DATABASE [WashCompany] SET DB_CHAINING OFF 
-GO
-ALTER DATABASE [WashCompany] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
-GO
-ALTER DATABASE [WashCompany] SET TARGET_RECOVERY_TIME = 0 SECONDS 
-GO
-ALTER DATABASE [WashCompany] SET DELAYED_DURABILITY = DISABLED 
-GO
-ALTER DATABASE [WashCompany] SET QUERY_STORE = OFF
-GO
-USE [WashCompany]
-GO
-/****** Object:  Table [dbo].[CountersTotal]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[CountersTotal]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -99,7 +20,7 @@ CREATE TABLE [dbo].[CountersTotal](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[vPostsAmount]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  View [dbo].[vPostsAmount]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -112,7 +33,7 @@ SELECT        IDPost, DTime, amount
 FROM            dbo.CountersTotal
 WHERE        (1 = 1)
 GO
-/****** Object:  Table [dbo].[Cards]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[Cards]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -131,7 +52,7 @@ CREATE TABLE [dbo].[Cards](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[CardStatuses]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[CardStatuses]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -146,7 +67,7 @@ CREATE TABLE [dbo].[CardStatuses](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[CardTypes]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[CardTypes]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -161,7 +82,7 @@ CREATE TABLE [dbo].[CardTypes](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Companies]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[Companies]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -175,7 +96,7 @@ CREATE TABLE [dbo].[Companies](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[CountersOperating]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[CountersOperating]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -196,7 +117,7 @@ CREATE TABLE [dbo].[CountersOperating](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Event]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[Event]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -213,7 +134,7 @@ CREATE TABLE [dbo].[Event](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[EventCash]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[EventCash]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -240,7 +161,7 @@ CREATE TABLE [dbo].[EventCash](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[EventKind]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[EventKind]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -254,7 +175,7 @@ CREATE TABLE [dbo].[EventKind](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[EventMode]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[EventMode]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -271,7 +192,7 @@ CREATE TABLE [dbo].[EventMode](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[EventSimple]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[EventSimple]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -285,7 +206,7 @@ CREATE TABLE [dbo].[EventSimple](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Mode]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[Mode]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -300,7 +221,7 @@ CREATE TABLE [dbo].[Mode](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Operations]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[Operations]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -321,7 +242,7 @@ CREATE TABLE [dbo].[Operations](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[OperationTypes]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[OperationTypes]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -336,7 +257,7 @@ CREATE TABLE [dbo].[OperationTypes](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Owners]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[Owners]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -352,7 +273,7 @@ CREATE TABLE [dbo].[Owners](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Posts]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[Posts]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -368,7 +289,7 @@ CREATE TABLE [dbo].[Posts](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Psces]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[Psces]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -383,7 +304,7 @@ CREATE TABLE [dbo].[Psces](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Regions]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[Regions]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -399,7 +320,7 @@ CREATE TABLE [dbo].[Regions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -416,7 +337,7 @@ CREATE TABLE [dbo].[Users](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Wash]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  Table [dbo].[Wash]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -555,7 +476,7 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Wash] CHECK CONSTRAINT [FK_Wash_Regions]
 GO
-/****** Object:  StoredProcedure [dbo].[GetCardsOperations]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  StoredProcedure [dbo].[GetCardsOperations]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -606,7 +527,7 @@ BEGIN
     order by o.DTime
 END
 GO
-/****** Object:  StoredProcedure [dbo].[GetPostAmounts]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  StoredProcedure [dbo].[GetPostAmounts]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -651,7 +572,7 @@ BEGIN
 	order by w.IDWash, p.Name
 END
 GO
-/****** Object:  StoredProcedure [dbo].[GetWashAmounts]    Script Date: 15.09.2019 17:07:26 ******/
+/****** Object:  StoredProcedure [dbo].[GetWashAmounts]    Script Date: 15.09.2019 17:35:00 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -811,8 +732,4 @@ End
 ' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'vPostsAmount'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'vPostsAmount'
-GO
-USE [master]
-GO
-ALTER DATABASE [WashCompany] SET  READ_WRITE 
 GO

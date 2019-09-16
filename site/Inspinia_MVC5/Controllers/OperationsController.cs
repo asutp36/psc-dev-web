@@ -16,55 +16,72 @@ namespace Inspinia_MVC5.Controllers
         List<CardStatus> _cardStatuses = null;
         List<OperationType> _operationTypes = null;
 
-        List<object> testdb = new List<object>();
-
         public OperationsController()
         {
             _cardTypes = db.CardTypes.ToList();
             _cardStatuses = db.CardStatuses.ToList();
             _operationTypes = db.OperationTypes.ToList();
-        }
-
-        public ActionResult ProductsGrid()
-        {
-            return View();
-        }
-
-        public ActionResult OperationsCards()
-        {
-            DateTime startDTime = new DateTime(2019, 8, 1, 0, 0, 0);
-            DateTime stopDTime = new DateTime(2019, 10, 21, 0, 0, 0);
-
-            ViewBag.T_Operations = GetOperationsFromDB("","","","","",startDTime, stopDTime, 0,0);
 
             ViewBag.CardTypes = _cardTypes;
             ViewBag.CardStatuses = _cardStatuses;
             ViewBag.OperationTypes = _operationTypes;
+        }
+
+        public ActionResult OperationsCards(
+            string phone, string cardNum, string cardTypeCode, string cardStatusName,
+            string operationTypeName, string begTime, string endTime, int by, int id)
+        {
+            DateTime startDTime;
+            if (!DateTime.TryParse(begTime, out startDTime))
+                startDTime = DateTime.Today.AddDays(-1);
+
+            DateTime stopDTime;
+            if (!DateTime.TryParse(endTime, out stopDTime))
+                stopDTime = DateTime.Today.AddSeconds(-1);
+
+            //ViewBag.T_Operations = GetOperationsFromDB("","","","","",startDTime, stopDTime, 0,0);
+
+            ViewBag.phone = phone;
+            ViewBag.cardNum = cardNum;
+            ViewBag.cardTypeCode = cardTypeCode;
+            ViewBag.cardStatusName = cardStatusName;
+            ViewBag.operationTypeName = operationTypeName;
+            ViewBag.startDTime = startDTime.ToString("dd.MM.yyyy HH:mm:ss");
+            ViewBag.stopDTime = stopDTime.ToString("dd.MM.yyyy HH:mm:ss");
+            ViewBag.by = by;
+            ViewBag.id = id;
 
             return View();
         }
 
-        [HttpGet]
-        [ActionName("UpdateViewBagOperations")]
+        //[HttpGet]
+        //[ActionName("UpdateViewBagOperations")]
         public ActionResult UpdateViewBagOperations(
             string phone, string cardNum, string cardTypeCode, string cardStatusName,
             string operationTypeName, string begTime, string endTime, int by, int id)
         {
-            DateTime startDTime = new DateTime(2019, 8, 1, 0, 0, 0);
-            DateTime stopDTime = new DateTime(2019, 10, 21, 0, 0, 0);
+            //ViewBag.T_Operations = GetOperationsFromDB(phone, cardNum, cardTypeCode, cardStatusName,operationTypeName, begTime, endTime, by, id);
 
-            ViewBag.T_Operations = GetOperationsFromDB(
+            List<GetCardsOperations_Result> viewList = GetOperationsFromDB(
                 phone, cardNum, cardTypeCode, cardStatusName,
-                operationTypeName, startDTime, stopDTime, by, id);
+                operationTypeName, begTime, endTime, by, id);
 
-            return PartialView("~/Views/Dashboards/Update_Operation_Table.cshtml");
+            return PartialView("_OperationsCardsList", viewList);
         }
 
         private List<GetCardsOperations_Result> GetOperationsFromDB(
             string phone, string cardNum, string cardTypeCode, string cardStatusName, 
-            string operationTypeName, DateTime begTime, DateTime endTime, int by, int id)
+            string operationTypeName, string begTime, string endTime, int by, int id)
         {
             List<GetCardsOperations_Result> resultset = null;
+
+            DateTime startDTime;
+            if (!DateTime.TryParse(begTime, out startDTime))
+                startDTime = DateTime.Today.AddDays(-1);
+
+            DateTime stopDTime;
+            if (!DateTime.TryParse(endTime, out stopDTime))
+                stopDTime = DateTime.Today.AddSeconds(-1);
 
             var prmPhone = new System.Data.SqlClient.SqlParameter("@p_Phone", System.Data.SqlDbType.NVarChar);
             prmPhone.Value = phone;
@@ -82,10 +99,10 @@ namespace Inspinia_MVC5.Controllers
             prmOperationTypeName.Value = operationTypeName;
 
             var prmOperationDateBeg = new System.Data.SqlClient.SqlParameter("@p_OperationDateBeg", System.Data.SqlDbType.DateTime);
-            prmOperationDateBeg.Value = begTime;
+            prmOperationDateBeg.Value = startDTime;
 
             var prmOperationDateEnd = new System.Data.SqlClient.SqlParameter("@p_OperationDateEnd", System.Data.SqlDbType.DateTime);
-            prmOperationDateEnd.Value = endTime;
+            prmOperationDateEnd.Value = stopDTime;
 
             var prmLocalizedBy = new System.Data.SqlClient.SqlParameter("@p_LocalizedBy", System.Data.SqlDbType.Int);
             prmLocalizedBy.Value = by;
