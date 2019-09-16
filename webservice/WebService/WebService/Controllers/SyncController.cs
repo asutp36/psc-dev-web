@@ -7,12 +7,13 @@ using System.Net.Http;
 using System.Web.Http;
 using WebService.Models;
 using WebService.Controllers.Supplies;
+//using System.Data.SqlClient;
 
 namespace WebService.Controllers
 {
     public class SyncController : ApiController
     {
-        private ModelDb _model = new Models.ModelDb();
+        private ModelDb _model = new ModelDb();
 
         public string GetData()
         {
@@ -47,20 +48,32 @@ namespace WebService.Controllers
                         _model.Database.Connection.Open();
                         Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
-                        DbCommand command = _model.Database.Connection.CreateCommand();                        
-                        command.CommandText = "INSERT INTO Operations (IDPsc, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+                        string query = "INSERT INTO Operations (IDPsc, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                 $" VALUES({operation.IDPsc}, {operation.IDOperationType}, {operation.IDCard}, \'{operation.DTime.ToString("yyyyMMdd HH:mm:ss")}\', {operation.Amount}, {operation.Balance}, {operation.IDPsc}, {operation.IDOperation});" +
+                                                " SELECT SCOPE_IDENTITY()";
+
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+
+                        command.CommandText = "INSERT INTO Operations (IDPsc, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+                                                $" VALUES({operation.IDPsc}, {operation.IDOperationType}, {operation.IDCard}, \'{operation.DTime.ToString("yyyyMMdd HH:mm:ss")}\', {operation.Amount}, {operation.Balance}, {operation.IDPsc}, {operation.IDOperation});" + 
                                                 " SELECT SCOPE_IDENTITY()";
                         Logger.Log.Debug("Command is: " + command.CommandText);
 
+                        // command.ExecuteNonQuery();
+
+                        // DbCommand comm2 = _model.Database.Connection.CreateCommand();
+                        // comm2.CommandText = "SELECT SCOPE_IDENTITY()";
+
+                        // var rr = comm2.ExecuteScalar();
+                        // int serverID = (System.Data.SqlDbType.Int)rr;
                         int serverID = (int)command.ExecuteScalar();
 
                         _model.Database.Connection.Close();
 
-                        Logger.Log.Debug("Результат:" + serverID);
+                        //Logger.Log.Debug("ServerID:" + serverID);
 
                         var responseGood = Request.CreateResponse(HttpStatusCode.OK);
-                        responseGood.Headers.Add("ServerID", serverID.ToString());
+                        //responseGood.Headers.Add("ServerID", serverID.ToString());
                         return responseGood;
                     }
 
@@ -95,15 +108,16 @@ namespace WebService.Controllers
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "INSERT INTO Owners (Phone, LocalizedBy, LocalizedID)" +
-                //                                $" VALUES({owner.Phone}, {owner.IDPsc}, {owner.IDOwner});" +
+                                                $" VALUES('{owner.Phone}', {owner.LocalizedBy}, {owner.IDOwner});" +
                                                 " SELECT SCOPE_IDENTITY()";
+
                         Logger.Log.Debug("Command is: " + command.CommandText);
 
-                        int serverID = (int)command.ExecuteScalar();
+                        var id = command.ExecuteScalar();
+                        Int32 serverID = Convert.ToInt32(id.ToString());
+                        Logger.Log.Debug("Added serverID:" + serverID);
 
                         _model.Database.Connection.Close();
-
-                        Logger.Log.Debug("Результат:" + serverID);
 
                         var responseGood = Request.CreateResponse(HttpStatusCode.OK);
                         responseGood.Headers.Add("ServerID", serverID.ToString());
