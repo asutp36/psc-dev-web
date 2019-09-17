@@ -7,7 +7,6 @@ using Inspinia_MVC5.Models;
 
 namespace Inspinia_MVC5.Controllers
 {
-
     public class OperationsController : Controller
     {
         private ModelDb db = new ModelDb();
@@ -28,8 +27,7 @@ namespace Inspinia_MVC5.Controllers
         }
 
         public ActionResult OperationsCards(
-            string phone, string cardNum, string cardTypeCode, string cardStatusName,
-            string operationTypeName, string begTime, string endTime, int by, int id)
+            string begTime, string endTime)
         {
             DateTime startDTime;
             if (!DateTime.TryParse(begTime, out startDTime))
@@ -41,15 +39,15 @@ namespace Inspinia_MVC5.Controllers
 
             //ViewBag.T_Operations = GetOperationsFromDB("","","","","",startDTime, stopDTime, 0,0);
 
-            ViewBag.phone = phone;
-            ViewBag.cardNum = cardNum;
-            ViewBag.cardTypeCode = cardTypeCode;
-            ViewBag.cardStatusName = cardStatusName;
-            ViewBag.operationTypeName = operationTypeName;
+            //ViewBag.phone = phone;
+            //ViewBag.cardNum = cardNum;
+            //ViewBag.cardTypeCode = cardTypeCode;
+            //ViewBag.cardStatusName = cardStatusName;
+            //ViewBag.operationTypeName = operationTypeName;
             ViewBag.startDTime = startDTime.ToString("dd.MM.yyyy HH:mm:ss");
             ViewBag.stopDTime = stopDTime.ToString("dd.MM.yyyy HH:mm:ss");
-            ViewBag.by = by;
-            ViewBag.id = id;
+            //ViewBag.by = Convert.ToInt32(by);
+            //ViewBag.id = Convert.ToInt32(id);
 
             return View();
         }
@@ -58,7 +56,7 @@ namespace Inspinia_MVC5.Controllers
         //[ActionName("UpdateViewBagOperations")]
         public ActionResult UpdateViewBagOperations(
             string phone, string cardNum, string cardTypeCode, string cardStatusName,
-            string operationTypeName, string begTime, string endTime, int by, int id)
+            string operationTypeName, string begTime, string endTime, string by, string id)
         {
             //ViewBag.T_Operations = GetOperationsFromDB(phone, cardNum, cardTypeCode, cardStatusName,operationTypeName, begTime, endTime, by, id);
 
@@ -71,7 +69,7 @@ namespace Inspinia_MVC5.Controllers
 
         private List<GetCardsOperations_Result> GetOperationsFromDB(
             string phone, string cardNum, string cardTypeCode, string cardStatusName, 
-            string operationTypeName, string begTime, string endTime, int by, int id)
+            string operationTypeName, string begTime, string endTime, string by, string id)
         {
             List<GetCardsOperations_Result> resultset = null;
 
@@ -105,10 +103,10 @@ namespace Inspinia_MVC5.Controllers
             prmOperationDateEnd.Value = stopDTime;
 
             var prmLocalizedBy = new System.Data.SqlClient.SqlParameter("@p_LocalizedBy", System.Data.SqlDbType.Int);
-            prmLocalizedBy.Value = by;
+            prmLocalizedBy.Value = Convert.ToInt32(by);
 
             var prmLocalizedID = new System.Data.SqlClient.SqlParameter("@p_LocalizedID", System.Data.SqlDbType.Int);
-            prmLocalizedID.Value = id;
+            prmLocalizedID.Value = Convert.ToInt32(id);
 
             var result = db.Database
                 .SqlQuery<GetCardsOperations_Result>("GetCardsOperations @p_Phone, @p_CardNum, @p_CardTypeCode, @p_CardStatusName," +
