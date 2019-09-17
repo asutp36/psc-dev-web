@@ -37,29 +37,23 @@ namespace Inspinia_MVC5.Controllers
             if (!DateTime.TryParse(endTime, out stopDTime))
                 stopDTime = DateTime.Today.AddSeconds(-1);
 
-            //ViewBag.T_Operations = GetOperationsFromDB("","","","","",startDTime, stopDTime, 0,0);
-
-            //ViewBag.phone = phone;
-            //ViewBag.cardNum = cardNum;
-            //ViewBag.cardTypeCode = cardTypeCode;
-            //ViewBag.cardStatusName = cardStatusName;
-            //ViewBag.operationTypeName = operationTypeName;
+            ViewBag.phone = "";
+            ViewBag.cardNum = "";
+            ViewBag.cardTypeCode = "";
+            ViewBag.cardStatusName = "";
+            ViewBag.operationTypeName = "";
             ViewBag.startDTime = startDTime.ToString("dd.MM.yyyy HH:mm:ss");
             ViewBag.stopDTime = stopDTime.ToString("dd.MM.yyyy HH:mm:ss");
-            //ViewBag.by = Convert.ToInt32(by);
-            //ViewBag.id = Convert.ToInt32(id);
+            ViewBag.by = null;
+            ViewBag.id = null;
 
             return View();
         }
 
-        //[HttpGet]
-        //[ActionName("UpdateViewBagOperations")]
         public ActionResult UpdateViewBagOperations(
             string phone, string cardNum, string cardTypeCode, string cardStatusName,
             string operationTypeName, string begTime, string endTime, string by, string id)
         {
-            //ViewBag.T_Operations = GetOperationsFromDB(phone, cardNum, cardTypeCode, cardStatusName,operationTypeName, begTime, endTime, by, id);
-
             List<GetCardsOperations_Result> viewList = GetOperationsFromDB(
                 phone, cardNum, cardTypeCode, cardStatusName,
                 operationTypeName, begTime, endTime, by, id);
