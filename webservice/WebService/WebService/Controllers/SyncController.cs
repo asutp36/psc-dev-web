@@ -48,32 +48,27 @@ namespace WebService.Controllers
                         _model.Database.Connection.Open();
                         Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
-                        string query = "INSERT INTO Operations (IDPsc, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
-                                                $" VALUES({operation.IDPsc}, {operation.IDOperationType}, {operation.IDCard}, \'{operation.DTime.ToString("yyyyMMdd HH:mm:ss")}\', {operation.Amount}, {operation.Balance}, {operation.IDPsc}, {operation.IDOperation});" +
-                                                " SELECT SCOPE_IDENTITY()";
+                        //string query = "INSERT INTO Operations (IDPsc, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+                        //                        $" VALUES({operation.IDPsc}, {operation.IDOperationType}, {operation.IDCard}, \'{operation.DTime.ToString("yyyyMMdd HH:mm:ss")}\', {operation.Amount}, {operation.Balance}, {operation.IDPsc}, {operation.IDOperation});" +
+                        //                        " SELECT SCOPE_IDENTITY()";
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
 
-                        command.CommandText = "INSERT INTO Operations (IDPsc, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
-                                                $" VALUES({operation.IDPsc}, {operation.IDOperationType}, {operation.IDCard}, \'{operation.DTime.ToString("yyyyMMdd HH:mm:ss")}\', {operation.Amount}, {operation.Balance}, {operation.IDPsc}, {operation.IDOperation});" + 
+                        command.CommandText = "INSERT INTO Operations (IDCard, IDPsc, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+                                                $" VALUES((select IDCard from Cards where LocalizedBy =  {operation.LocalizedBy} and LocalizedID = {operation.IDCard}), " +
+                                                $"{operation.LocalizedBy}, {operation.IDOperationType}, \'{operation.DTime.ToString("yyyyMMdd HH:mm:ss")}\', {operation.Amount}, {operation.Balance}, {operation.LocalizedBy}, {operation.IDOperation});" + 
                                                 " SELECT SCOPE_IDENTITY()";
+
                         Logger.Log.Debug("Command is: " + command.CommandText);
 
-                        // command.ExecuteNonQuery();
-
-                        // DbCommand comm2 = _model.Database.Connection.CreateCommand();
-                        // comm2.CommandText = "SELECT SCOPE_IDENTITY()";
-
-                        // var rr = comm2.ExecuteScalar();
-                        // int serverID = (System.Data.SqlDbType.Int)rr;
-                        int serverID = (int)command.ExecuteScalar();
+                        var id = command.ExecuteScalar();
+                        Int32 serverID = Convert.ToInt32(id.ToString());
+                        Logger.Log.Debug("Operation added serverID:" + serverID);
 
                         _model.Database.Connection.Close();
 
-                        //Logger.Log.Debug("ServerID:" + serverID);
-
                         var responseGood = Request.CreateResponse(HttpStatusCode.OK);
-                        //responseGood.Headers.Add("ServerID", serverID.ToString());
+                        responseGood.Headers.Add("ServerID", serverID.ToString());
                         return responseGood;
                     }
 
@@ -115,7 +110,7 @@ namespace WebService.Controllers
 
                         var id = command.ExecuteScalar();
                         Int32 serverID = Convert.ToInt32(id.ToString());
-                        Logger.Log.Debug("Added serverID:" + serverID);
+                        Logger.Log.Debug("Owner added serverID:" + serverID);
 
                         _model.Database.Connection.Close();
 
@@ -156,15 +151,17 @@ namespace WebService.Controllers
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "INSERT INTO Cards (IDOwner, CardNum, IDCardStatus, IDCardType, LocalizedBy, LocalizedID)" +
-              //                                  $" VALUES({card.IDOwner}, {card.CardNum}, {card.IDCardStatus}, {card.IDCardType}, {card.IDPsc}, {card.IDCard});" +
+                                                $" VALUES((select IDOwner from Owners where LocalizedBy =  {card.LocalizedBy} and LocalizedID = {card.IDOwner}), " +
+                                                $" {card.CardNum}, {card.IDCardStatus}, {card.IDCardType}, {card.LocalizedBy}, {card.IDCard});" +
                                                 " SELECT SCOPE_IDENTITY()";
+
                         Logger.Log.Debug("Command is: " + command.CommandText);
 
-                        int serverID = (int)command.ExecuteScalar();
+                        var id = command.ExecuteScalar();
+                        Int32 serverID = Convert.ToInt32(id.ToString());
+                        Logger.Log.Debug("Card added serverID:" + serverID);
 
                         _model.Database.Connection.Close();
-
-                        Logger.Log.Debug("Результат:" + serverID);
 
                         var responseGood = Request.CreateResponse(HttpStatusCode.OK);
                         responseGood.Headers.Add("ServerID", serverID.ToString());
