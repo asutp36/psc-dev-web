@@ -135,6 +135,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AppViewsController.cs" />
+    <Compile Include="Controllers\CardsController.cs" />
     <Compile Include="Controllers\CSSAnimationsController.cs" />
     <Compile Include="Controllers\EcommerceController.cs" />
     <Compile Include="Controllers\FormsController.cs" />
@@ -1837,6 +1838,8 @@
     <Content Include="Views\IncashWash\IncashPosts.cshtml" />
     <Content Include="Views\IncashWash\_IncashPostsList.cshtml" />
     <Content Include="Views\Operations\_OperationsCardsList.cshtml" />
+    <Content Include="Views\Cards\Cards.cshtml" />
+    <Content Include="Views\Cards\_CardsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

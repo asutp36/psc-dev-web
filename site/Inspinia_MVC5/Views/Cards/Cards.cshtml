@@ -1,0 +1,131 @@
+﻿@{
+    ViewBag.Title = "Карты";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Карты</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a>Тут может быть надпись</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Тут тоже</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+
+    </div>
+</div>
+<div class="ibox-content m-b-sm border-bottom">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="phone_input_filter">Телефон</label>
+                <input type="text" id="phone_input_filter" name="phone_input_filter" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="card_num_input_filter">Номер карты</label>
+                <input type="text" id="card_num_input_filter" name="card_num_input_filter" placeholder="" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="localized_by_input_filter">LocalizedBy</label>
+                <input type="text" id="localized_by_input_filter" name="localized_by_input_filter" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="card_status_input_filter">Статус карты</label>
+                <select name="card_status_input_filter" id="card_status_input_filter" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.CardStatuses)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="operation_type_input_filter">Тип операции</label>
+                <select name="operation_type_input_filter" id="operation_type_input_filter" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.OperationTypes)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="card_type_input_filter">Тип карты</label>
+                <select name="card_type_input_filter" id="card_type_input_filter" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.CardTypes)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="form-group">
+                <label class="col-form-labe" for="time_operation_input_filter">Период</label>
+                <div id="time_operation_input_filter" class="form-control">
+                    <i class="fa fa-calendar"></i>
+                    <span></span> <b class="caret"></b>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="localized_id_input_filter">LocalizedID</label>
+                <input type="text" id="localized_id_input_filter" name="localized_id_input_filter" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @*<label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Показать</label>*@
+                <button type="button" id="btn-for-filter" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
+            </div>
+        </div>
+        <div class="col-sm-4">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 table-operations">
+            <div class="ibox">
+                <div class="ibox-content-more">
+                    @Html.Action("UpdateViewBagOperations", "Operations", new {
+                    phone = ViewBag.phone,
+                    cardNum = ViewBag.cardNum,
+                    cardTypeCode = ViewBag.cardTypeCode,
+                    cardStatusName = ViewBag.cardStatusName,
+                    operationTypeName = ViewBag.operationTypeName,
+                    begTime = ViewBag.startDTime,
+                    endTime = ViewBag.stopDTime,
+                    by = ViewBag.by,
+                    id = ViewBag.id})
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
