@@ -68,26 +68,26 @@
             <div class="ibox ">
                 <div class="ibox-title">
                     <a href="@Url.Action("OperationsCards", "Operations", new {
-                            //phone = "8",
-                            //cardNum = "0",
-                            //cardTypeCode = "0",
-                            //cardStatusName = "0",
-                            //operationTypeName = "0",
                             begTime = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                             endTime = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"),
-                            //by = "0",
-                            //id = "0"
+                        })">
+
+                        <h5>Операции по картам</h5>
+                    </a>
+                    <a href="@Url.Action("Cards", "Cards", new {
+                            begTime = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                            endTime = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                         })">
 
                         <h5>Карты</h5>
                     </a>
-                        @*<div class="float-right">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-xs btn-white active">Today</button>
-                    <button type="button" class="btn btn-xs btn-white">Monthly</button>
-                    <button type="button" class="btn btn-xs btn-white">Annual</button>
-                </div>
-            </div>*@
+                    @*<div class="float-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-xs btn-white active">Today</button>
+                <button type="button" class="btn btn-xs btn-white">Monthly</button>
+                <button type="button" class="btn btn-xs btn-white">Annual</button>
+            </div>
+        </div>*@
                 </div>
                 <div class="ibox-content">
                     <div class="row">

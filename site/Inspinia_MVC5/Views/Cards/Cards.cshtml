@@ -10,40 +10,36 @@
                 <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
             </li>
             <li class="breadcrumb-item">
-                <a>Тут может быть надпись</a>
-            </li>
-            <li class="active breadcrumb-item">
-                <strong>Тут тоже</strong>
+                <a>Карты</a>
             </li>
         </ol>
     </div>
     <div class="col-lg-2">
-
     </div>
 </div>
 <div class="ibox-content m-b-sm border-bottom">
     <div class="row">
-        <div class="col-sm-4">
-            <div class="form-group">
-                <label class="col-form-labe" for="phone_input_filter">Телефон</label>
-                <input type="text" id="phone_input_filter" name="phone_input_filter" class="form-control" />
-            </div>
-        </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <div class="form-group">
                 <label class="col-form-labe" for="card_num_input_filter">Номер карты</label>
-                <input type="text" id="card_num_input_filter" name="card_num_input_filter" placeholder="" class="form-control" />
+                <input type="text" id="card_num_input_filter" name="card_num_input_filter" class="form-control" />
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <div class="form-group">
-                <label class="col-form-labe" for="localized_by_input_filter">LocalizedBy</label>
-                <input type="text" id="localized_by_input_filter" name="localized_by_input_filter" class="form-control" />
+                <div class="form-group">
+                    <label class="col-form-labe" for="card_type_input_filter">Тип карты</label>
+                    <select name="card_type_input_filter" id="card_type_input_filter" class="form-control">
+                        <option value="" selected=""></option>
+                        @foreach (var item in ViewBag.CardTypes)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <div class="form-group">
                 <label class="col-form-labe" for="card_status_input_filter">Статус карты</label>
                 <select name="card_status_input_filter" id="card_status_input_filter" class="form-control">
@@ -55,45 +51,76 @@
                 </select>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <div class="form-group">
-                <label class="col-form-labe" for="operation_type_input_filter">Тип операции</label>
-                <select name="operation_type_input_filter" id="operation_type_input_filter" class="form-control">
+                <label class="col-form-labe" for="balance_input_filter">Баланс</label>
+                <input type="text" id="balance_input_filter" name="balance_input_filter" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-labe" for="date_activation_input_filter">Дата активации</label>
+                <div id="date_activation_input_filter" class="form-control">
+                    <i class="fa fa-calendar"></i>
+                    <span></span> <b class="caret"></b>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-labe" for="date_last_operation_input_filter">Дата последней операции</label>
+                <div id="date_last_operation_input_filter" class="form-control">
+                    <i class="fa fa-calendar"></i>
+                    <span></span> <b class="caret"></b>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-labe" for="place_activation_input_filter">Место активаации</label>
+                <select name="place_activation_input_filter" id="place_activation_input_filter" class="form-control">
                     <option value="" selected=""></option>
-                    @foreach (var item in ViewBag.OperationTypes)
+                    @foreach (var item in ViewBag.Psces)
                     {
-                        <option value="@item.Code">@item.Name</option>
+                        <option value="@item.IDWash">@item.Name</option>
                     }
                 </select>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-6">
             <div class="form-group">
-                <label class="col-form-labe" for="card_type_input_filter">Тип карты</label>
-                <select name="card_type_input_filter" id="card_type_input_filter" class="form-control">
+                <label class="col-form-labe" for="place_last_operation_input_filter">Место последней операции</label>
+                <select name="place_last_operation_input_filter" id="place_last_operation_input_filter" class="form-control">
                     <option value="" selected=""></option>
-                    @foreach (var item in ViewBag.CardTypes)
+                    @foreach (var item in ViewBag.Psces)
                     {
-                        <option value="@item.Code">@item.Name</option>
+                        <option value="@item.IDWash">@item.Name</option>
                     }
                 </select>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-8">
+        <div class="col-sm-4">
             <div class="form-group">
-                <label class="col-form-labe" for="time_operation_input_filter">Период</label>
-                <div id="time_operation_input_filter" class="form-control">
-                    <i class="fa fa-calendar"></i>
-                    <span></span> <b class="caret"></b>
-                </div>
+                <label class="col-form-labe" for="sum_incashes_input_filter">Сумма пополнений</label>
+                <input type="text" id="sum_incashes_input_filter" name="sum_incashes_input_filter" class="form-control" />
             </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">
-                <label class="col-form-labe" for="localized_id_input_filter">LocalizedID</label>
-                <input type="text" id="localized_id_input_filter" name="localized_id_input_filter" class="form-control" />
+                <label class="col-form-labe" for="sum_chargde_off_input_filter">Сумма списаний</label>
+                <input type="text" id="sum_chargde_off_input_filter" name="sum_chargde_off_input_filter" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe" for="amount_operations_input_filter">Количество операции</label>
+                <input type="text" id="amount_operations_input_filter" name="amount_operations_input_filter" class="form-control" />
             </div>
         </div>
     </div>
@@ -111,21 +138,299 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-12 table-operations">
+        <div class="col-lg-12 table-cards">
             <div class="ibox">
                 <div class="ibox-content-more">
-                    @Html.Action("UpdateViewBagOperations", "Operations", new {
-                    phone = ViewBag.phone,
-                    cardNum = ViewBag.cardNum,
-                    cardTypeCode = ViewBag.cardTypeCode,
-                    cardStatusName = ViewBag.cardStatusName,
-                    operationTypeName = ViewBag.operationTypeName,
-                    begTime = ViewBag.startDTime,
-                    endTime = ViewBag.stopDTime,
-                    by = ViewBag.by,
-                    id = ViewBag.id})
+                    @Html.Action("UpdateViewBagCards", "Cards", new
+                {
+                   cardNum = ViewBag.cardNum,
+                   cardType = ViewBag.cardTypeCode,
+                   cardStatus = ViewBag.cardStatusName,
+                   balance = ViewBag.balance,
+                   startDateActivation = ViewBag.startDateActivation,
+                   endDateActivation = ViewBag.stopDateActivation,
+                   placeActivation = ViewBag.placeActivation,
+                   startDateLO = ViewBag.startDateLO,
+                   endDateLO = ViewBag.stopDateLO,
+                   placeLO = ViewBag.placeLO,
+                   sumIncashes = ViewBag.sumIncashes,
+                   sumChardgeOff = ViewBag.sumChardgeOff,
+                   amountOperations = ViewBag.amountOperations})
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<input id="filter-startdateactivation" value="@ViewBag.startDateActivation" />
+<input id="filter-stopdateactivation" value="@ViewBag.stopDateActivation" />
+<input id="filter-startdatelastop" value="@ViewBag.startDateLO" />
+<input id="filter-stopdatelastop" value="@ViewBag.stopDateLO" />
+<input id="filter-cardNum" value="@ViewBag.cardNum" />
+<input id="filter-cardTypeCode" value="@ViewBag.cardTypeCode" />
+<input id="filter-cardStatusName" value="@ViewBag.cardStatusName" />
+<input id="filter-balance" value="@ViewBag.balance" />
+<input id="filter-placeactivation" value="@ViewBag.placeActivation" />
+<input id="filter-placelastop" value="@ViewBag.placeLO" />
+<input id="filter-sumincashes" value="@ViewBag.sumIncashes" />
+<input id="filter-sumchardgeoff" value="@ViewBag.sumChardgeOff" />
+<input id="filter-amountoperations" value="@ViewBag.amountOperations" />
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/dateRange")
+    @Scripts.Render("~/plugins/select2")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.table_incashwashes').DataTable({
+                "paging": false,
+                "info": false,
+                "searching": false,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    { extend: 'excel', title: 'Report' },
+                    { extend: 'pdf', title: 'Report' },
+                    {
+                        extend: 'print',
+                        customize: function (win) {
+                            $(win.document.body).addClass('white-bg');
+                            $(win.document.body).css('font-size', '10px');
+
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
+                        }
+                    }
+                ]
+            });
+
+            $(document).on("change", '#card_num_input_filter', function () {
+                $('#filter-cardNum').val($(this).val());
+            });
+            $(document).on("change", '#card_type_input_filter', function () {
+                $('#filter-cardTypeCode').val($(this).find(":selected").val());
+            });
+            $(document).on("change", '#card_status_input_filter', function () {
+                $('#filter-cardStatusName').val($(this).find(":selected").val());
+            });
+            $(document).on("change", '#balance_input_filter', function () {
+                $('#filter-balance').val($(this).val());
+            });
+            $(document).on("change", '#place_activation_input_filter', function () {
+                $('#filter-placeactivation').val($(this).find(":selected").val());
+            });
+            $(document).on("change", '#place_last_operation_input_filter', function () {
+                $('#filter-placelastop').val($(this).find(":selected").val());
+            });
+            $(document).on("change", '#sum_incashes_input_filter', function () {
+                $('#filter-sumincashes').val($(this).val());
+            });
+            $(document).on("change", '#sum_chardge_off_input_filter', function () {
+                $('#filter-sumchardgeoff').val($(this).val());
+            });
+            $(document).on("change", '#amount_operations_input_filter', function () {
+                $('#filter-amountoperations').val($(this).val());
+            });
+
+            $(document).on("click", "#btn-for-filter", function () {
+                var startDateActivation = $('#filter-startdateactivation').val();
+                var stopDateActivation = $('#filter-stopdateactivation').val();
+                var startDate = $('#filter-startdate').val();
+                var stopDate = $('#filter-stopdate').val();
+                var phone = $("#filter-phone").val();
+                var cardNum = $("#filter-cardNum").val();
+                var cardTypeCode = $("#filter-cardTypeCode").val()
+                var cardStatusName = $("#filter-cardStatusName").val();
+                var operationTypeName = $("#filter-operationTypeName").val();
+                var by = Number($("#filter-by").val());
+                var id = Number($("#filter-id").val());
+
+                $.ajax({
+                    type: "GET",
+                    cache: false,
+                    data: {
+                        phone: phone,
+                        cardNum: cardNum,
+                        cardTypeCode: cardTypeCode,
+                        cardStatusName: cardStatusName,
+                        operationTypeName: operationTypeName,
+                        begTime: startDate,
+                        endTime: stopDate,
+                        by: by,
+                        id: id
+                    },
+                    success: function () {
+                        $('.alert-success').fadeIn('slow');
+                        $('.alert-success').delay(3000).fadeOut('slow');
+                    },
+                    error: function () {
+                        alert('Error occured');
+                    },
+                    url: "@Url.Action("UpdateViewBagCards", "Cards")",
+                }).done(function (result) {
+                    $('.table-cards').find('.ibox-content-more').html(result);
+
+                    $('.table_incashwashes').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "searching": false,
+                        dom: '<"html5buttons"B>lTfgitp',
+                        buttons: [
+                            { extend: 'excel', title: 'Report' },
+                            { extend: 'pdf', title: 'Report' },
+
+                            {
+                                extend: 'print',
+                                customize: function (win) {
+                                    $(win.document.body).addClass('white-bg');
+                                    $(win.document.body).css('font-size', '10px');
+
+                                    $(win.document.body).find('table')
+                                        .addClass('compact')
+                                        .css('font-size', 'inherit');
+                                }
+                            }
+                        ],
+                        "language": {
+                            "zeroRecords": "Данные по заданному фильтру не найдены",
+                            "emptyTable": "Данные по заданному фильтру не найдены"
+                        }
+                    });
+                });
+            });
+        });
+
+
+        $('input[name="daterange"]').daterangepicker();
+
+        $('#date_activation_input_filter span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
+
+        $('#date_activation_input_filter').daterangepicker({
+            "timePicker": true,
+            "timePicker24Hour": true,
+            "timePickerSeconds": true,
+            "ranges": {
+                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                'сегодня': [moment().startOf('day'), moment()],
+                'текущий месяц': [moment().startOf('month'), moment()],
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "locale": {
+                "format": "DD.MM.YYYY",
+                "separator": " ",
+                "applyLabel": "Выбрать",
+                "cancelLabel": "Отмена",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "Вс",
+                    "Пн",
+                    "Вт",
+                    "Ср",
+                    "Чт",
+                    "Пт",
+                    "Сб"
+                ],
+                "monthNames": [
+                    "Январь",
+                    "Февраль",
+                    "Март",
+                    "Апрель",
+                    "Май",
+                    "Июнь",
+                    "Июль",
+                    "Август",
+                    "Сентябрь",
+                    "Октябрь",
+                    "Ноябрь",
+                    "Декабрь"
+                ],
+                "firstDay": 1
+            },
+            "showCustomRangeLabel": false,
+            "alwaysShowCalendars": true,
+            "startDate": moment().subtract(1, 'days').startOf('day'),
+            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "opens": "right",
+            "drops": "down"
+        }, function (start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            $('#date_activation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+
+            $('#filter-startdateactivation').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#filter-stopdateactivation').val(end.format('DD.MM.YYYY HH:mm:ss'));
+        });
+
+        $('#date_last_operation_input_filter span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
+
+        $('#date_last_operation_input_filter').daterangepicker({
+            "timePicker": true,
+            "timePicker24Hour": true,
+            "timePickerSeconds": true,
+            "ranges": {
+                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                'сегодня': [moment().startOf('day'), moment()],
+                'текущий месяц': [moment().startOf('month'), moment()],
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "locale": {
+                "format": "DD.MM.YYYY",
+                "separator": " ",
+                "applyLabel": "Выбрать",
+                "cancelLabel": "Отмена",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "Вс",
+                    "Пн",
+                    "Вт",
+                    "Ср",
+                    "Чт",
+                    "Пт",
+                    "Сб"
+                ],
+                "monthNames": [
+                    "Январь",
+                    "Февраль",
+                    "Март",
+                    "Апрель",
+                    "Май",
+                    "Июнь",
+                    "Июль",
+                    "Август",
+                    "Сентябрь",
+                    "Октябрь",
+                    "Ноябрь",
+                    "Декабрь"
+                ],
+                "firstDay": 1
+            },
+            "showCustomRangeLabel": false,
+            "alwaysShowCalendars": true,
+            "startDate": moment().subtract(1, 'days').startOf('day'),
+            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "opens": "right",
+            "drops": "down"
+        }, function (start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            $('#date_last_operation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+
+            $('#filter-startdatelastop').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#filter-stopdatelastop').val(end.format('DD.MM.YYYY HH:mm:ss'));
+        });
+
+    </script>
+}
