@@ -188,6 +188,16 @@
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="IDCompany" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
         <EntityType Name="Users">
           <Key>
             <PropertyRef Name="IDUser" />
@@ -460,6 +470,26 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="GetCardList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_Phone" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_Cardnum" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_CardTypeCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_CardStatusName" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_BalanceMin" Type="int" Mode="In" />
+          <Parameter Name="p_BalanceMax" Type="int" Mode="In" />
+          <Parameter Name="p_ActivationDateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_ActivationDateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_ActivationBy" Type="int" Mode="In" />
+          <Parameter Name="p_LastOperationDateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_LastOperationDateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_LastOperationBy" Type="int" Mode="In" />
+          <Parameter Name="p_IncreaseSumMin" Type="int" Mode="In" />
+          <Parameter Name="p_IncreaseSumMax" Type="int" Mode="In" />
+          <Parameter Name="p_DecreaseSumMin" Type="int" Mode="In" />
+          <Parameter Name="p_DEcreaseSumMax" Type="int" Mode="In" />
+          <Parameter Name="p_CountOperationMin" Type="int" Mode="In" />
+          <Parameter Name="p_CountOperationMax" Type="int" Mode="In" />
+        </Function>
         <Function Name="GetCardsOperations" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_Phone" Type="nvarchar" Mode="In" />
           <Parameter Name="p_Cardnum" Type="nvarchar" Mode="In" />
@@ -504,6 +534,7 @@
           <EntitySet Name="Posts" EntityType="Self.Posts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Psces" EntityType="Self.Psces" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Regions" EntityType="Self.Regions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Wash" EntityType="Self.Wash" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Cards_CardStatuses" Association="Self.FK_Cards_CardStatuses">
@@ -595,6 +626,40 @@
             <Parameter Name="p_LocalizedBy" Mode="In" Type="Int32" />
             <Parameter Name="p_LocalizedID" Mode="In" Type="Int32" />
           </FunctionImport>
+          <FunctionImport Name="GetWashAmounts" ReturnType="Collection(CardsDbModel.GetWashAmounts_Result)">
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int32" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+            <Parameter Name="p_PostCode" Mode="In" Type="String" />
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="GetPostAmounts" ReturnType="Collection(CardsDbModel.GetPostAmounts_Result)">
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int32" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+            <Parameter Name="p_PostCode" Mode="In" Type="String" />
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="GetCardList" ReturnType="Collection(CardsDbModel.GetCardList_Result)">
+            <Parameter Name="p_Phone" Mode="In" Type="String" />
+            <Parameter Name="p_Cardnum" Mode="In" Type="String" />
+            <Parameter Name="p_CardTypeCode" Mode="In" Type="String" />
+            <Parameter Name="p_CardStatusName" Mode="In" Type="String" />
+            <Parameter Name="p_BalanceMin" Mode="In" Type="Int32" />
+            <Parameter Name="p_BalanceMax" Mode="In" Type="Int32" />
+            <Parameter Name="p_ActivationDateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_ActivationDateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_ActivationBy" Mode="In" Type="Int32" />
+            <Parameter Name="p_LastOperationDateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_LastOperationDateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_LastOperationBy" Mode="In" Type="Int32" />
+            <Parameter Name="p_IncreaseSumMin" Mode="In" Type="Int32" />
+            <Parameter Name="p_IncreaseSumMax" Mode="In" Type="Int32" />
+            <Parameter Name="p_DecreaseSumMin" Mode="In" Type="Int32" />
+            <Parameter Name="p_DEcreaseSumMax" Mode="In" Type="Int32" />
+            <Parameter Name="p_CountOperationMin" Mode="In" Type="Int32" />
+            <Parameter Name="p_CountOperationMax" Mode="In" Type="Int32" />
+          </FunctionImport>
           <EntitySet Name="Cards" EntityType="CardsDbModel.Card" />
           <EntitySet Name="CardStatuses" EntityType="CardsDbModel.CardStatus" />
           <EntitySet Name="CardTypes" EntityType="CardsDbModel.CardType" />
@@ -613,6 +678,8 @@
           <EntitySet Name="Posts" EntityType="CardsDbModel.Post" />
           <EntitySet Name="Psces" EntityType="CardsDbModel.Psce" />
           <EntitySet Name="Regions" EntityType="CardsDbModel.Region" />
+          <EntitySet Name="sysdiagrams" EntityType="CardsDbModel.sysdiagram" />
+          <EntitySet Name="Users" EntityType="CardsDbModel.User" />
           <EntitySet Name="Washes" EntityType="CardsDbModel.Wash" />
           <AssociationSet Name="FK_Cards_CardStatuses" Association="CardsDbModel.FK_Cards_CardStatuses">
             <End Role="CardStatus" EntitySet="CardStatuses" />
@@ -686,21 +753,6 @@
             <End Role="Region" EntitySet="Regions" />
             <End Role="Wash" EntitySet="Washes" />
           </AssociationSet>
-          <FunctionImport Name="GetWashAmounts" ReturnType="Collection(CardsDbModel.GetWashAmounts_Result)">
-            <Parameter Name="p_RegionCode" Mode="In" Type="Int32" />
-            <Parameter Name="p_WashCode" Mode="In" Type="String" />
-            <Parameter Name="p_PostCode" Mode="In" Type="String" />
-            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
-            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
-          </FunctionImport>
-          <EntitySet Name="Users" EntityType="CardsDbModel.User" />
-          <FunctionImport Name="GetPostAmounts" ReturnType="Collection(CardsDbModel.GetPostAmounts_Result)">
-            <Parameter Name="p_RegionCode" Mode="In" Type="Int32" />
-            <Parameter Name="p_WashCode" Mode="In" Type="String" />
-            <Parameter Name="p_PostCode" Mode="In" Type="String" />
-            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
-            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
-          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetCardsOperations_Result">
           <Property Type="String" Name="Phone" Nullable="false" MaxLength="Max" />
@@ -712,6 +764,40 @@
           <Property Type="Int32" Name="Amount" Nullable="false" />
           <Property Type="Int32" Name="Balance" Nullable="false" />
           <Property Type="Int32" Name="ServerID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="GetWashAmounts_Result">
+          <Property Type="String" Name="region" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="washName" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="washAddress" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="amount" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetPostAmounts_Result">
+          <Property Type="String" Name="region" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="IDWash" Nullable="false" />
+          <Property Type="String" Name="washName" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="washAddress" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="amount" Nullable="true" />
+          <Property Type="Int32" Name="m10" Nullable="true" />
+          <Property Type="Int32" Name="b10" Nullable="true" />
+          <Property Type="Int32" Name="b50" Nullable="true" />
+          <Property Type="Int32" Name="b100" Nullable="true" />
+          <Property Type="Int32" Name="b500" Nullable="true" />
+          <Property Type="Int32" Name="b1k" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetCardList_Result">
+          <Property Type="String" Name="Phone" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="CardNum" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="CardTypeName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="CardStatusName" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="Balance" Nullable="false" />
+          <Property Type="DateTime" Name="ActivationDate" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="ActivationBy" Nullable="false" />
+          <Property Type="DateTime" Name="LastOperationDate" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="LastOperationBy" Nullable="false" />
+          <Property Type="Int32" Name="IncreaseSum" Nullable="false" />
+          <Property Type="Int32" Name="DecreaseSum" Nullable="false" />
+          <Property Type="Int32" Name="CountOperation" Nullable="true" />
         </ComplexType>
         <EntityType Name="Card">
           <Key>
@@ -783,8 +869,8 @@
           <Property Name="b500" Type="Int32" Nullable="false" />
           <Property Name="b1k" Type="Int32" Nullable="false" />
           <Property Name="m10" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Post" Relationship="CardsDbModel.FK_CountersTotal_Posts" FromRole="CountersTotal" ToRole="Post" />
           <Property Name="amount" Type="Int32" />
+          <NavigationProperty Name="Post" Relationship="CardsDbModel.FK_CountersTotal_Posts" FromRole="CountersTotal" ToRole="Post" />
         </EntityType>
         <EntityType Name="Event">
           <Key>
@@ -928,6 +1014,26 @@
           <Property Name="IDCompany" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Company" Relationship="CardsDbModel.FK_Regions_Companies" FromRole="Region" ToRole="Company" />
           <NavigationProperty Name="Washes" Relationship="CardsDbModel.FK_Wash_Regions" FromRole="Region" ToRole="Wash" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="IDUser" />
+          </Key>
+          <Property Name="IDUser" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Login" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Wash">
           <Key>
@@ -1194,36 +1300,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <ComplexType Name="GetWashAmounts_Result">
-          <Property Type="String" Name="region" Nullable="false" MaxLength="100" />
-          <Property Type="String" Name="washName" Nullable="false" MaxLength="5" />
-          <Property Type="String" Name="washAddress" Nullable="true" MaxLength="100" />
-          <Property Type="Int32" Name="amount" Nullable="true" />
-        </ComplexType>
-        <EntityType Name="User">
-          <Key>
-            <PropertyRef Name="IDUser" />
-          </Key>
-          <Property Name="IDUser" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Login" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <ComplexType Name="GetPostAmounts_Result">
-          <Property Type="String" Name="region" Nullable="false" MaxLength="100" />
-          <Property Type="Int32" Name="IDWash" Nullable="false" />
-          <Property Type="String" Name="washName" Nullable="false" MaxLength="5" />
-          <Property Type="String" Name="washAddress" Nullable="true" MaxLength="100" />
-          <Property Type="String" Name="Name" Nullable="true" MaxLength="100" />
-          <Property Type="Int32" Name="amount" Nullable="true" />
-          <Property Type="Int32" Name="m10" Nullable="true" />
-          <Property Type="Int32" Name="b10" Nullable="true" />
-          <Property Type="Int32" Name="b50" Nullable="true" />
-          <Property Type="Int32" Name="b100" Nullable="true" />
-          <Property Type="Int32" Name="b500" Nullable="true" />
-          <Property Type="Int32" Name="b1k" Nullable="true" />
-        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1242,6 +1318,52 @@
                 <ScalarProperty Name="Amount" ColumnName="Amount" />
                 <ScalarProperty Name="Balance" ColumnName="Balance" />
                 <ScalarProperty Name="ServerID" ColumnName="ServerID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetWashAmounts" FunctionName="Хранилище CardsDbModel.GetWashAmounts">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CardsDbModel.GetWashAmounts_Result">
+                <ScalarProperty Name="region" ColumnName="region" />
+                <ScalarProperty Name="washName" ColumnName="washName" />
+                <ScalarProperty Name="washAddress" ColumnName="washAddress" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetPostAmounts" FunctionName="Хранилище CardsDbModel.GetPostAmounts">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CardsDbModel.GetPostAmounts_Result">
+                <ScalarProperty Name="region" ColumnName="region" />
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+                <ScalarProperty Name="washName" ColumnName="washName" />
+                <ScalarProperty Name="washAddress" ColumnName="washAddress" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b500" ColumnName="b500" />
+                <ScalarProperty Name="b1k" ColumnName="b1k" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetCardList" FunctionName="Хранилище CardsDbModel.GetCardList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CardsDbModel.GetCardList_Result">
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="CardNum" ColumnName="CardNum" />
+                <ScalarProperty Name="CardTypeName" ColumnName="CardTypeName" />
+                <ScalarProperty Name="CardStatusName" ColumnName="CardStatusName" />
+                <ScalarProperty Name="Balance" ColumnName="Balance" />
+                <ScalarProperty Name="ActivationDate" ColumnName="ActivationDate" />
+                <ScalarProperty Name="ActivationBy" ColumnName="ActivationBy" />
+                <ScalarProperty Name="LastOperationDate" ColumnName="LastOperationDate" />
+                <ScalarProperty Name="LastOperationBy" ColumnName="LastOperationBy" />
+                <ScalarProperty Name="IncreaseSum" ColumnName="IncreaseSum" />
+                <ScalarProperty Name="DecreaseSum" ColumnName="DecreaseSum" />
+                <ScalarProperty Name="CountOperation" ColumnName="CountOperation" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -1446,27 +1568,17 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Washes">
-            <EntityTypeMapping TypeName="CardsDbModel.Wash">
-              <MappingFragment StoreEntitySet="Wash">
-                <ScalarProperty Name="IDRegion" ColumnName="IDRegion" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="CardsDbModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="GetWashAmounts" FunctionName="Хранилище CardsDbModel.GetWashAmounts">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="CardsDbModel.GetWashAmounts_Result">
-                <ScalarProperty Name="region" ColumnName="region" />
-                <ScalarProperty Name="washName" ColumnName="washName" />
-                <ScalarProperty Name="washAddress" ColumnName="washAddress" />
-                <ScalarProperty Name="amount" ColumnName="amount" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="CardsDbModel.User">
               <MappingFragment StoreEntitySet="Users">
@@ -1478,24 +1590,17 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="GetPostAmounts" FunctionName="Хранилище CardsDbModel.GetPostAmounts">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="CardsDbModel.GetPostAmounts_Result">
-                <ScalarProperty Name="region" ColumnName="region" />
-                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
-                <ScalarProperty Name="washName" ColumnName="washName" />
-                <ScalarProperty Name="washAddress" ColumnName="washAddress" />
+          <EntitySetMapping Name="Washes">
+            <EntityTypeMapping TypeName="CardsDbModel.Wash">
+              <MappingFragment StoreEntitySet="Wash">
+                <ScalarProperty Name="IDRegion" ColumnName="IDRegion" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="amount" ColumnName="amount" />
-                <ScalarProperty Name="m10" ColumnName="m10" />
-                <ScalarProperty Name="b10" ColumnName="b10" />
-                <ScalarProperty Name="b50" ColumnName="b50" />
-                <ScalarProperty Name="b100" ColumnName="b100" />
-                <ScalarProperty Name="b500" ColumnName="b500" />
-                <ScalarProperty Name="b1k" ColumnName="b1k" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
