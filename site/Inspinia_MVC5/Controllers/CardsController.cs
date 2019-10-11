@@ -26,7 +26,6 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.Psces = _psces;
         }
 
-        //LO - LastOperation
         public ActionResult Cards(string begTimeLO, string endTimeLO)
         {
             DateTime startDTimeLO;
@@ -37,99 +36,156 @@ namespace Inspinia_MVC5.Controllers
             if (!DateTime.TryParse(endTimeLO, out stopDTimeLO))
                 stopDTimeLO = DateTime.Today.AddSeconds(-1);
 
+            ViewBag.phone = "";
             ViewBag.cardNum = "";
             ViewBag.cardTypeCode = "";
             ViewBag.cardStatusName = "";
-            ViewBag.balance = "";
-            ViewBag.startDateActivation = "";
-            ViewBag.stopDateActivasion = "";
-            ViewBag.placeActivation = "";
-            ViewBag.startDateLO = startDTimeLO.ToString("dd.MM.yyyy HH:mm:ss");
-            ViewBag.stopDateLO = stopDTimeLO.ToString("dd.MM.yyyy HH:mm:ss");
-            ViewBag.placeLO = "";
-            ViewBag.sumIncashes = "";
-            ViewBag.sumChardgeOff = "";
-            ViewBag.amountOperations = "";
+            ViewBag.balanceMin = null;
+            ViewBag.balanceMax = null;
+            ViewBag.activationDateBeg = null;
+            ViewBag.activationDateEnd = null;
+            ViewBag.activationBy = null;
+            ViewBag.lastOperationDateBeg = startDTimeLO.ToString("dd.MM.yyyy HH:mm:ss");
+            ViewBag.lastOperationDateEnd = stopDTimeLO.ToString("dd.MM.yyyy HH:mm:ss");
+            ViewBag.lastOperationBy = null;
+            ViewBag.increaseSumMin = null;
+            ViewBag.increaseSumMax = null;
+            ViewBag.decreaseSumMin = null;
+            ViewBag.decreaseSumMax = null;
+            ViewBag.countOperationMin = null;
+            ViewBag.countOperationMax = null;
 
             return View();
         }
 
-        public ActionResult UpdateViewBagCards(string cardNum, string cardType, string cardStatus,
-            string balance, string startDateActivation, string endDateActivation, string placeActivation,
-            string startDateLO, string endDateLO, string placeLO, string sumIncashes, string sumChardgeOff, string amountOperations)
+        public ActionResult UpdateViewBagCards(
+            string phone,
+            string cardNum,
+            string cardTypeCode,
+            string cardStatusName,
+            string balanceMin,
+            string balanceMax,
+            string activationDateBeg,
+            string activationDateEnd,
+            string activationBy,
+            string lastOperationDateBeg,
+            string lastOperationDateEnd,
+            string lastOperationBy,
+            string increaseSumMin,
+            string increaseSumMax,
+            string decreaseSumMin,
+            string decreaseSumMax,
+            string countOperationMin,
+            string countOperationMax
+            )
         {
-            //List<GetCards_Result> viewList = GetCardsFromDB(cardNum, cardType, cardStatus, balance, startDateActivation,
-            //endDateActivation, placeActivation, startDateLO, endDateLO, placeLO, sumIncashes, sumChardgeOff, amountOperations);
+            List<GetCardList_Result> viewList = GetCardsFromDB(phone, cardNum, cardTypeCode, cardStatusName, balanceMin,
+            balanceMax, activationDateBeg, activationDateEnd, activationBy, lastOperationDateBeg, lastOperationDateEnd,
+            lastOperationBy, increaseSumMin, increaseSumMax, decreaseSumMin, decreaseSumMax, countOperationMin, countOperationMax);
 
-            //return PartialView("_CardsList", viewList);
-            return null;
+            return PartialView("_CardsList", viewList);
         }
 
-        //private List<GetCards_Result> GetCardsFromDB(string cardNum, string cardType, string cardStatus,
-        //    string balance, string startDateActivation, string endDateActivation, string placeActivation,
-        //    string startDateLO, string endDateLO, string placeLO, string sumIncashes, string sumChardgeOff, string amountOperations)
-        //{
-        //    List<GetCards_Result> resultset = null;
+        private List<GetCardList_Result> GetCardsFromDB(
+            string phone,
+            string cardNum,
+            string cardTypeCode,
+            string cardStatusName,
+            string balanceMin,
+            string balanceMax,
+            string activationDateBeg,
+            string activationDateEnd,
+            string activationBy,
+            string lastOperationDateBeg,
+            string lastOperationDateEnd,
+            string lastOperationBy,
+            string increaseSumMin,
+            string increaseSumMax,
+            string decreaseSumMin,
+            string decreaseSumMax,
+            string countOperationMin,
+            string countOperationMax
+            )
+        {
+            List<GetCardList_Result> resultset = null;
 
-        //    DateTime startDTimeLO;
-        //    if (!DateTime.TryParse(startDateLO, out startDTimeLO))
-        //        startDTimeLO = DateTime.Today.AddDays(-1);
+            DateTime startDTimeLO;
+            if (!DateTime.TryParse(lastOperationDateBeg, out startDTimeLO))
+                startDTimeLO = DateTime.Today.AddDays(-1);
 
-        //    DateTime stopDTimeLO;
-        //    if (!DateTime.TryParse(endDateLO, out stopDTimeLO))
-        //        stopDTimeLO = DateTime.Today.AddSeconds(-1);
+            DateTime stopDTimeLO;
+            if (!DateTime.TryParse(lastOperationDateEnd, out stopDTimeLO))
+                stopDTimeLO = DateTime.Today.AddSeconds(-1);
 
-        //    var prmCardNum = new System.Data.SqlClient.SqlParameter("@p_CardNum", System.Data.SqlDbType.NVarChar);
-        //    prmCardNum.Value = cardNum;
+            var prmPhone = new System.Data.SqlClient.SqlParameter("@p_Phone", System.Data.SqlDbType.NVarChar);
+            prmPhone.Value = phone;
 
-        //    var prmCardTypeCode = new System.Data.SqlClient.SqlParameter("@p_CardTypeCode", System.Data.SqlDbType.NVarChar);
-        //    prmCardTypeCode.Value = cardType;
+            var prmCardNum = new System.Data.SqlClient.SqlParameter("@p_CardNum", System.Data.SqlDbType.NVarChar);
+            prmCardNum.Value = cardNum;
 
-        //    var prmCardStatusName = new System.Data.SqlClient.SqlParameter("@p_CardStatusName", System.Data.SqlDbType.NVarChar);
-        //    prmCardStatusName.Value = cardStatus;
+            var prmCardTypeCode = new System.Data.SqlClient.SqlParameter("@p_CardTypeCode", System.Data.SqlDbType.NVarChar);
+            prmCardTypeCode.Value = cardTypeCode;
 
-        //    var prmBalance = new System.Data.SqlClient.SqlParameter("@p_Balance", System.Data.SqlDbType.Int);
-        //    prmBalance.Value = balance;
+            var prmCardStatusName = new System.Data.SqlClient.SqlParameter("@p_CardStatusName", System.Data.SqlDbType.NVarChar);
+            prmCardStatusName.Value = cardStatusName;
 
-        //    var prmStartDateActivation = new System.Data.SqlClient.SqlParameter("@p_ActivationCardDateBeg", System.Data.SqlDbType.DateTime);
-        //    prmStartDateActivation.Value = startDateActivation;
+            var prmBalanceMin = new System.Data.SqlClient.SqlParameter("@p_BalanceMin", System.Data.SqlDbType.Int);
+            prmBalanceMin.Value = Convert.ToInt32(balanceMin);
 
-        //    var prmEndDateActivation= new System.Data.SqlClient.SqlParameter("@p_ActivationCardDateEnd", System.Data.SqlDbType.DateTime);
-        //    prmEndDateActivation.Value = endDateActivation;
+            var prmBalanceMax = new System.Data.SqlClient.SqlParameter("@p_BalanceMax", System.Data.SqlDbType.Int);
+            prmBalanceMax.Value = Convert.ToInt32(balanceMax);
 
-        //    var prmPlaceActivation = new System.Data.SqlClient.SqlParameter("@p_PlaceActivationCard", System.Data.SqlDbType.NVarChar);
-        //    prmPlaceActivation.Value = placeActivation;
+            var prmActivationDateBeg = new System.Data.SqlClient.SqlParameter("@p_ActivationDateBeg", System.Data.SqlDbType.DateTime);
+            prmActivationDateBeg.Value = activationDateBeg;
 
-        //    var prmStartDateLO= new System.Data.SqlClient.SqlParameter("@p_LastOperationDateBeg", System.Data.SqlDbType.DateTime);
-        //    prmStartDateLO.Value = startDateLO;
+            var prmActivationDateEnd = new System.Data.SqlClient.SqlParameter("@p_ActivationDateEnd", System.Data.SqlDbType.DateTime);
+            prmActivationDateEnd.Value = activationDateEnd;
 
-        //    var prmEndDateLO= new System.Data.SqlClient.SqlParameter("@p_LastOperationDateEnd", System.Data.SqlDbType.DateTime);
-        //    prmEndDateLO.Value = endDateLO;
+            var prmActivationBy = new System.Data.SqlClient.SqlParameter("@p_ActivationBy", System.Data.SqlDbType.Int);
+            prmActivationBy.Value = Convert.ToInt32(activationBy);
 
-        //    var prmPlaceLO = new System.Data.SqlClient.SqlParameter("@p_PlaceLastOperation", System.Data.SqlDbType.NVarChar);
-        //    prmPlaceLO.Value = placeLO;
+            var prmLastOperationDateBeg = new System.Data.SqlClient.SqlParameter("@p_LastOperationDateBeg", System.Data.SqlDbType.DateTime);
+            prmLastOperationDateBeg.Value = lastOperationDateBeg;
 
-        //    var prmSumIncahes = new System.Data.SqlClient.SqlParameter("@p_SumIncahes", System.Data.SqlDbType.Int);
-        //    prmSumIncahes.Value = Convert.ToInt32(sumIncashes);
+            var prmLastOperationDateEnd = new System.Data.SqlClient.SqlParameter("@p_LastOperationDateEnd", System.Data.SqlDbType.DateTime);
+            prmLastOperationDateEnd.Value = lastOperationDateEnd;
 
-        //    var prmSumChardgeOff = new System.Data.SqlClient.SqlParameter("@p_SumChardgeOff", System.Data.SqlDbType.Int);
-        //    prmSumChardgeOff.Value = Convert.ToInt32(sumChardgeOff);
+            var prmLastOperationBy = new System.Data.SqlClient.SqlParameter("@p_LastOperationBy", System.Data.SqlDbType.Int);
+            prmLastOperationBy.Value = Convert.ToInt32(lastOperationBy);
 
-        //    var prmAmountOperations = new System.Data.SqlClient.SqlParameter("@p_AmountOperations", System.Data.SqlDbType.Int);
-        //    prmAmountOperations.Value = Convert.ToInt32(amountOperations);
+            var prmIncreaseSumMin = new System.Data.SqlClient.SqlParameter("@p_IncreaseSumMin", System.Data.SqlDbType.Int);
+            prmIncreaseSumMin.Value = Convert.ToInt32(increaseSumMin);
 
-        //    var result = db.Database
-        //        .SqlQuery<GetCards_Result>("GetCards @p_CardNum, @p_CardTypeCode, @p_CardStatusName, @p_Balance," +
-        //            "@p_ActivationCardDateBeg, @p_ActivationCardDateEnd, @p_PlaceActivationCard, @p_LastOperationDateBeg, @p_LastOperationDateEnd" +
-        //            "@p_PlaceLastOperation, @p_SumIncashes, @p_SumChardgeOff, @p_AmountOperations", prmCardNum,
-        //            prmCardTypeCode, prmCardStatusName, prmBalance, prmStartDateActivation, prmEndDateActivation, prmPlaceActivation,
-        //            prmStartDateLO, prmEndDateLO, prmPlaceLO, prmPlaceLO, prmSumIncahes, prmSumChardgeOff, prmAmountOperations)
-        //        .ToList();
+            var prmIncreaseSumMax = new System.Data.SqlClient.SqlParameter("@p_IncreaseSumMax", System.Data.SqlDbType.Int);
+            prmIncreaseSumMax.Value = Convert.ToInt32(increaseSumMax);
 
-        //    resultset = result;
+            var prmDecreaseSumMin = new System.Data.SqlClient.SqlParameter("@p_DecreaseSumMin", System.Data.SqlDbType.Int);
+            prmDecreaseSumMin.Value = Convert.ToInt32(decreaseSumMin);
 
-        //    return resultset;
-        //}
+            var prmDecreaseSumMax = new System.Data.SqlClient.SqlParameter("@p_DEcreaseSumMax", System.Data.SqlDbType.Int);
+            prmDecreaseSumMax.Value = Convert.ToInt32(decreaseSumMax);
+
+            var prmCountOperationMin = new System.Data.SqlClient.SqlParameter("@p_CountOperationMin", System.Data.SqlDbType.Int);
+            prmCountOperationMin.Value = Convert.ToInt32(countOperationMin);
+
+            var prmCountOperationMax = new System.Data.SqlClient.SqlParameter("@p_CountOperationMax", System.Data.SqlDbType.Int);
+            prmCountOperationMax.Value = Convert.ToInt32(countOperationMax);
+
+            var result = db.Database
+                .SqlQuery<GetCardList_Result>(
+                    "GetCardList @p_Phone, @p_CardNum, @p_CardTypeCode, @p_CardStatusName, @p_BalanceMin," +
+                    "@p_BalanceMax, @p_ActivationDateBeg, @p_ActivationDateEnd, @p_ActivationBy, @p_LastOperationDateBeg, " +
+                    "@p_LastOperationDateEnd, @p_LastOperationBy, @p_IncreaseSumMin, @p_IncreaseSumMax, @p_DecreaseSumMin, " +
+                    "@p_DEcreaseSumMax, @p_CountOperationMin, @p_CountOperationMax", 
+                    prmPhone, prmCardNum, prmCardTypeCode, prmCardStatusName, prmBalanceMin, prmBalanceMin, prmActivationDateBeg, 
+                    prmActivationDateEnd, prmActivationBy, prmLastOperationDateBeg, prmLastOperationDateBeg, prmLastOperationBy, 
+                    prmIncreaseSumMin, prmIncreaseSumMax, prmDecreaseSumMin, prmDecreaseSumMax, prmCountOperationMin, prmCountOperationMax)
+                .ToList();
+
+            resultset = result;
+
+            return resultset;
+        }
         // GET: Cards
         public ActionResult Index()
         {

@@ -105,19 +105,42 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe" for="phone_input_filter">Телефон</label>
+                <input type="text" id="phone_input_filter" name="phone_input_filter" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-3">
             <div class="form-group">
                 <label class="col-form-labe" for="sum_incashes_input_filter">Сумма пополнений</label>
-                <input type="text" id="sum_incashes_input_filter" name="sum_incashes_input_filter" class="form-control" />
+                <div id="range_slider" class="noUi-target noUi-ltr noUi-horizontal noUi-background">
+                    <div class="noUi-base">
+                        <div class="noUi-origin noUi-connect noUi-draggable" style="left: 23.2777%;">
+                            <div class="noUi-handle noUi-handle-lower">
+                            </div>
+                        </div>
+                        <div class="noUi-origin noUi-background" style="left: 62.3157%;">
+                            <div class="noUi-handle noUi-handle-upper">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <div class="form-group">
                 <label class="col-form-labe" for="sum_chargde_off_input_filter">Сумма списаний</label>
-                <input type="text" id="sum_chargde_off_input_filter" name="sum_chargde_off_input_filter" class="form-control" />
+                <div class="d-flex justify-content-center my-4">
+                    <span class="font-weight-bold purple-text mr-2 mt-1">0</span>
+                    <form class="range-field w-75">
+                        <input class="border-0" type="range" min="0" max="100" />
+                    </form>
+                    <span class="font-weight-bold purple-text ml-2 mt-1">100</span>
+                </div>            
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <div class="form-group">
                 <label class="col-form-labe" for="amount_operations_input_filter">Количество операции</label>
                 <input type="text" id="amount_operations_input_filter" name="amount_operations_input_filter" class="form-control" />
@@ -142,39 +165,50 @@
             <div class="ibox">
                 <div class="ibox-content-more">
                     @Html.Action("UpdateViewBagCards", "Cards", new
-                {
+               {
+                   phone = ViewBag.phone,
                    cardNum = ViewBag.cardNum,
-                   cardType = ViewBag.cardTypeCode,
-                   cardStatus = ViewBag.cardStatusName,
-                   balance = ViewBag.balance,
-                   startDateActivation = ViewBag.startDateActivation,
-                   endDateActivation = ViewBag.stopDateActivation,
-                   placeActivation = ViewBag.placeActivation,
-                   startDateLO = ViewBag.startDateLO,
-                   endDateLO = ViewBag.stopDateLO,
-                   placeLO = ViewBag.placeLO,
-                   sumIncashes = ViewBag.sumIncashes,
-                   sumChardgeOff = ViewBag.sumChardgeOff,
-                   amountOperations = ViewBag.amountOperations})
+                   cardTypeCode = ViewBag.cardTypeCode,
+                   cardStatusName = ViewBag.cardStatusName,
+                   balanceMin = ViewBag.balanceMin,
+                   balanceMax = ViewBag.balanceMax,
+                   activationDateBeg = ViewBag.activationDateBeg,
+                   activationDateEnd = ViewBag.activationDateEnd,
+                   activationBy = ViewBag.activationBy,
+                   lastOperationDateBeg = ViewBag.lastOperationDateBeg,
+                   lastOperationDateEnd = ViewBag.lastOperationDateEnd,
+                   lastOperationBy = ViewBag.lastOperationBy,
+                   increaseSumMin = ViewBag.increaseSumMin,
+                   increaseSumMax= ViewBag.increaseSumMax,
+                   decreaseSumMin = ViewBag.decreaseSumMin,
+                   decreaseSumMax = ViewBag.decreaseSumMax,
+                   countOperationMin = ViewBag.countOperaionMin,
+                   countOperationMax = ViewBag.countOperaionMin
+                })
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<input id="filter-startdateactivation" value="@ViewBag.startDateActivation" />
-<input id="filter-stopdateactivation" value="@ViewBag.stopDateActivation" />
-<input id="filter-startdatelastop" value="@ViewBag.startDateLO" />
-<input id="filter-stopdatelastop" value="@ViewBag.stopDateLO" />
+<input id="filter-phone" value="@ViewBag.phone" />
 <input id="filter-cardNum" value="@ViewBag.cardNum" />
 <input id="filter-cardTypeCode" value="@ViewBag.cardTypeCode" />
 <input id="filter-cardStatusName" value="@ViewBag.cardStatusName" />
-<input id="filter-balance" value="@ViewBag.balance" />
-<input id="filter-placeactivation" value="@ViewBag.placeActivation" />
-<input id="filter-placelastop" value="@ViewBag.placeLO" />
-<input id="filter-sumincashes" value="@ViewBag.sumIncashes" />
-<input id="filter-sumchardgeoff" value="@ViewBag.sumChardgeOff" />
-<input id="filter-amountoperations" value="@ViewBag.amountOperations" />
+<input id="filter-balancemin" value="@ViewBag.balanceMin" />
+<input id="filter-balancemax" value="@ViewBag.balanceMax" />
+<input id="filter-activationdatebeg" value="@ViewBag.activationDateBeg" />
+<input id="filter-activationdateend" value="@ViewBag.activationDateEnd" />
+<input id="filter-activationby" value="@ViewBag.activationBy" />
+<input id="filter-lastoperationdatebeg" value="@ViewBag.lastOperationDateBeg" />
+<input id="filter-lastoperationdateend" value="@ViewBag.lastOperationDateEnd" />
+<input id="filter-lastoperationby" value="@ViewBag.lastOperationBy" />
+<input id="filter-increasesummin" value="@ViewBag.increaseSumMin" />
+<input id="filter-increasesummax" value="@ViewBag.increaseSumMax" />
+<input id="filter-decreasesummin" value="@ViewBag.decreaseSumMin" />
+<input id="filter-decreasesummax" value="@ViewBag.decreaseSumMax" />
+<input id="filter-countoperationmin" value="@ViewBag.countOperationMin" />
+<input id="filter-countoperationmax" value="@ViewBag.countOperationMax" />
 
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
@@ -216,6 +250,10 @@
             $(document).on("change", '#card_num_input_filter', function () {
                 $('#filter-cardNum').val($(this).val());
             });
+
+            $(document).on("change", '#card_num_input_filter', function () {
+                $('#filter-cardNum').val($(this).val());
+            });
             $(document).on("change", '#card_type_input_filter', function () {
                 $('#filter-cardTypeCode').val($(this).find(":selected").val());
             });
@@ -244,29 +282,36 @@
             $(document).on("click", "#btn-for-filter", function () {
                 var startDateActivation = $('#filter-startdateactivation').val();
                 var stopDateActivation = $('#filter-stopdateactivation').val();
-                var startDate = $('#filter-startdate').val();
-                var stopDate = $('#filter-stopdate').val();
-                var phone = $("#filter-phone").val();
+                var startDateLO = $('#filter-startdatelastop').val();
+                var stopDateLO = $('#filter-stopdatelastop').val();
                 var cardNum = $("#filter-cardNum").val();
                 var cardTypeCode = $("#filter-cardTypeCode").val()
                 var cardStatusName = $("#filter-cardStatusName").val();
-                var operationTypeName = $("#filter-operationTypeName").val();
-                var by = Number($("#filter-by").val());
-                var id = Number($("#filter-id").val());
+                var balance = $("#filter-balance").val();
+                var placeActivation = $("#filter-placeactivation").val();
+                var placeLO = $("#filter-placelastop").val();
+                var sumIncashes = $("#filter-sumincashes").val();
+                var sumChardgeOff = $("#filter-sumchardgeoff").val();
+                var amountOperations = $("#filter-amountoperations").val();
 
                 $.ajax({
                     type: "GET",
                     cache: false,
                     data: {
-                        phone: phone,
                         cardNum: cardNum,
-                        cardTypeCode: cardTypeCode,
-                        cardStatusName: cardStatusName,
-                        operationTypeName: operationTypeName,
-                        begTime: startDate,
-                        endTime: stopDate,
-                        by: by,
-                        id: id
+                        cardType: cardTypeCode,
+                        cardStatus: cardStatusName,
+                        balance: balance,
+                        startDateActivation: startDateActivation,
+                        endDateActivation: stopDateActivation,
+                        placeActivation: placeActivation,
+                        startDateLO: startDateLO,
+                        endDateLO: stopDateLO,
+                        placeLO: placeLO,
+                        sumIncashes: sumIncashes,
+                        sumChardgeOff: sumChardgeOff,
+                        amountOperations: amountOperations
+
                     },
                     success: function () {
                         $('.alert-success').fadeIn('slow');

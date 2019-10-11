@@ -1,8 +1,9 @@
-﻿@*@model IEnumerable<Inspinia_MVC5.Models.GetCards_Result>*@
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetCardList_Result>
 
 <table id="table-crd" class="table table-striped table-bordered table-hover table_incashwashes">
     <thead>
         <tr>
+            <th>Телефон</th>
             <th>Номер карты</th>
             <th>Тип карты</th>
             <th>Статус карты</th>
@@ -13,25 +14,26 @@
             <th>Место последней операции</th>
             <th>Сумма пополнений</th>
             <th>Сумма списаний</th>
-            <th>Количество операции</th>
+            <th>Количество операций</th>
         </tr>
     </thead>
     <tbody id="table-c">
-        @*@foreach (var m in Model)
+        @foreach (var m in Model)
         {
-            <tr>
-                <td>@m.CardNum</td>
-                <td>@m.CardTypeName</td>
-                <td>@m.CardStatusName</td>
-                <td>@m.Balance</td>
-                <td>@m.DateActivation</td>
-                <td>@m.PlaceActivation</td>
-                <td>@m.DateLastOperation</td>
-                <td>@m.PlaceLastOperation</td>
-                <td>@m.SumIncashes</td>
-                <td>@m.SumChardgeOff</td>
-                <td>@m.AmountOperation</td>
-            </tr>
-        }*@
+        <tr>
+            <td>@m.Phone</td>
+            <td>@m.CardNum</td>
+            <td>@m.CardTypeName</td>
+            <td>@m.CardStatusName</td>
+            <td>@m.Balance</td>
+            <td>@m.ActivationDate</td>
+            <td>@m.ActivationBy</td>
+            <td>@m.LastOperationDate</td>
+            <td>@m.LastOperationBy</td>
+            <td>@m.IncreaseSum</td>
+            <td>@m.DecreaseSum</td>
+            <td>@m.CountOperation</td>
+        </tr>
+        }
     </tbody>
 </table>
