@@ -183,7 +183,7 @@
                    decreaseSumMin = ViewBag.decreaseSumMin,
                    decreaseSumMax = ViewBag.decreaseSumMax,
                    countOperationMin = ViewBag.countOperaionMin,
-                   countOperationMax = ViewBag.countOperaionMin
+                   countOperationMax = ViewBag.countOperaionMax
                 })
                 </div>
             </div>
@@ -247,8 +247,8 @@
                 ]
             });
 
-            $(document).on("change", '#card_num_input_filter', function () {
-                $('#filter-cardNum').val($(this).val());
+            $(document).on("change", '#phone_input_filter', function () {
+                $('#filter-phone').val($(this).val());
             });
 
             $(document).on("change", '#card_num_input_filter', function () {
@@ -280,38 +280,47 @@
             });
 
             $(document).on("click", "#btn-for-filter", function () {
-                var startDateActivation = $('#filter-startdateactivation').val();
-                var stopDateActivation = $('#filter-stopdateactivation').val();
-                var startDateLO = $('#filter-startdatelastop').val();
-                var stopDateLO = $('#filter-stopdatelastop').val();
-                var cardNum = $("#filter-cardNum").val();
-                var cardTypeCode = $("#filter-cardTypeCode").val()
-                var cardStatusName = $("#filter-cardStatusName").val();
-                var balance = $("#filter-balance").val();
-                var placeActivation = $("#filter-placeactivation").val();
-                var placeLO = $("#filter-placelastop").val();
-                var sumIncashes = $("#filter-sumincashes").val();
-                var sumChardgeOff = $("#filter-sumchardgeoff").val();
-                var amountOperations = $("#filter-amountoperations").val();
+                var phone = $('#filter-phone').val();
+                var cardNum = $('#filter-cardNum').val();
+                var cardTypeCode = $('#filter-cardTypeCode').val();
+                var cardStatusName = $('#filter-cardStatusName').val();
+                var balancemin = $('#filter-balancemin').val();
+                var balancemax = $('#filter-balancemax').val();
+                var activationdatebeg = $('#filter-activationdatebeg').val();
+                var activationdateend = $('#filter-activationdateend').val();
+                var activationby = $('#filter-activationby').val();
+                var lastoperationdatebeg = $('#filter-lastoperationdatebeg').val();
+                var lastoperationdateend = $('#filter-lastoperationdateend').val();
+                var lastoperationby = $('#filter-lastoperationby').val();
+                var increasesummin = $('#filter-increasesummin').val();
+                var increasesummax = $('#filter-increasesummax').val();
+                var decreasesummin = $('#filter-decreasesummin').val();
+                var decreasesummax = $('#filter-decreasesummax').val();
+                var countoperationmin = $('#filter-countoperationmin').val();
+                var countoperationmax = $('#filter-countoperationmax').val();
 
                 $.ajax({
                     type: "GET",
                     cache: false,
                     data: {
+                        phone: phone,
                         cardNum: cardNum,
-                        cardType: cardTypeCode,
-                        cardStatus: cardStatusName,
-                        balance: balance,
-                        startDateActivation: startDateActivation,
-                        endDateActivation: stopDateActivation,
-                        placeActivation: placeActivation,
-                        startDateLO: startDateLO,
-                        endDateLO: stopDateLO,
-                        placeLO: placeLO,
-                        sumIncashes: sumIncashes,
-                        sumChardgeOff: sumChardgeOff,
-                        amountOperations: amountOperations
-
+                        cardTypeCode: cardTypeCode,
+                        cardStatusName: cardStatusName,
+                        balanceMin: balancemin,
+                        balanceMax: balancemax,
+                        activationDateBeg: activationdatebeg,
+                        activationDateEnd: activationdateend,
+                        activationBy: activationby,
+                        lastOperationDateBeg: lastoperationdatebeg,
+                        lastOPerationDateEnd: lastoperationdateend,
+                        lastOperationBy: lastoperationby,
+                        increaseSumMin: increasesummin,
+                        increaseSumMax: increasesummax,
+                        decreaseSumMin: decreasesummin,
+                        decreaseSumMax: decreasesummax,
+                        countOperationMin: countoperationmin,
+                        countOperationMax: countoperationmax
                     },
                     success: function () {
                         $('.alert-success').fadeIn('slow');
