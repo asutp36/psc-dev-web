@@ -21,6 +21,12 @@
     <div class="row">
         <div class="col-sm-3">
             <div class="form-group">
+                <label class="col-form-labe" for="phone_input_filter">Телефон</label>
+                <input type="text" id="phone_input_filter" name="phone_input_filter" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
                 <label class="col-form-labe" for="card_num_input_filter">Номер карты</label>
                 <input type="text" id="card_num_input_filter" name="card_num_input_filter" class="form-control" />
             </div>
@@ -51,12 +57,6 @@
                 </select>
             </div>
         </div>
-        <div class="col-sm-3">
-            <div class="form-group">
-                <label class="col-form-labe" for="balance_input_filter">Баланс</label>
-                <input type="text" id="balance_input_filter" name="balance_input_filter" class="form-control" />
-            </div>
-        </div>
     </div>
     <div class="row">
         <div class="col-sm-6">
@@ -81,8 +81,8 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">
-                <label class="col-form-labe" for="place_activation_input_filter">Место активаации</label>
-                <select name="place_activation_input_filter" id="place_activation_input_filter" class="form-control">
+                <label class="col-form-labe" for="activation_by_input_filter">Место активаации</label>
+                <select name="activation_by_input_filter" id="activation_by_input_filter" class="form-control">
                     <option value="" selected=""></option>
                     @foreach (var item in ViewBag.Psces)
                     {
@@ -93,8 +93,8 @@
         </div>
         <div class="col-sm-6">
             <div class="form-group">
-                <label class="col-form-labe" for="place_last_operation_input_filter">Место последней операции</label>
-                <select name="place_last_operation_input_filter" id="place_last_operation_input_filter" class="form-control">
+                <label class="col-form-labe" for="last_operation_by_input_filter">Место последней операции</label>
+                <select name="last_operation_by_input_filter" id="last_operation_by_input_filter" class="form-control">
                     <option value="" selected=""></option>
                     @foreach (var item in ViewBag.Psces)
                     {
@@ -107,43 +107,26 @@
     <div class="row">
         <div class="col-sm-3">
             <div class="form-group">
-                <label class="col-form-labe" for="phone_input_filter">Телефон</label>
-                <input type="text" id="phone_input_filter" name="phone_input_filter" class="form-control" />
+                <label class="col-form-labe" for="balanceslider">Баланс</label>
+                <div id="balanceslider"> </div>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="form-group">
-                <label class="col-form-labe" for="sum_incashes_input_filter">Сумма пополнений</label>
-                <div id="range_slider" class="noUi-target noUi-ltr noUi-horizontal noUi-background">
-                    <div class="noUi-base">
-                        <div class="noUi-origin noUi-connect noUi-draggable" style="left: 23.2777%;">
-                            <div class="noUi-handle noUi-handle-lower">
-                            </div>
-                        </div>
-                        <div class="noUi-origin noUi-background" style="left: 62.3157%;">
-                            <div class="noUi-handle noUi-handle-upper">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <label class="col-form-labe" for="increasesumslider">Сумма пополнений</label>
+                <div id="increasesumslider"> </div>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="form-group">
-                <label class="col-form-labe" for="sum_chargde_off_input_filter">Сумма списаний</label>
-                <div class="d-flex justify-content-center my-4">
-                    <span class="font-weight-bold purple-text mr-2 mt-1">0</span>
-                    <form class="range-field w-75">
-                        <input class="border-0" type="range" min="0" max="100" />
-                    </form>
-                    <span class="font-weight-bold purple-text ml-2 mt-1">100</span>
-                </div>            
+                <label class="col-form-labe" for="decreasesumslider">Сумма списаний</label>
+                <div id="decreasesumslider"> </div>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="form-group">
-                <label class="col-form-labe" for="amount_operations_input_filter">Количество операции</label>
-                <input type="text" id="amount_operations_input_filter" name="amount_operations_input_filter" class="form-control" />
+                <label class="col-form-labe" for="countoperationslider">Количество операций</label>
+                <div id="countoperationslider"> </div>
             </div>
         </div>
     </div>
@@ -210,10 +193,17 @@
 <input id="filter-countoperationmin" value="@ViewBag.countOperationMin" />
 <input id="filter-countoperationmax" value="@ViewBag.countOperationMax" />
 
+<div class="row">saasd</div>
+<div class="row">saasd</div>
+<div class="row">saasd</div>
+<div class="row">saasd</div>
+<div class="row">saasd</div>
+
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
     @Styles.Render("~/plugins/dateRangeStyles")
     @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/nouiSliderStyles")
 }
 
 @section Scripts {
@@ -221,6 +211,7 @@
     @Scripts.Render("~/plugins/dataPicker")
     @Scripts.Render("~/plugins/dateRange")
     @Scripts.Render("~/plugins/select2")
+    @Scripts.Render("~/plugins/nouiSlider")
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -247,6 +238,89 @@
                 ]
             });
 
+            $('#balanceslider').noUiSlider({
+                range: {
+                    'min':1,
+                    'max':10000
+
+                }
+                , start: [40, 8000]
+                , tooltips: [true, true]
+                , behaviour: 'drag'               
+                , step: 1
+                
+            });
+            $('#increasesumslider').noUiSlider({
+                range: {
+                    'min': 1,
+                    'max': 10000
+
+                }
+                , start: [40, 4000]
+                , behaviour: 'drag-fixed'               
+                , step: 1
+                , slide: function () {
+                    var values = $(this).val();
+                    $("span").text(
+                        values[0] +
+                        " - " +
+                        values[1]
+                    );
+                }
+            });
+            $('#decreasesumslider').noUiSlider({
+                range: {
+                    'min': 1,
+                    'max': 10000
+
+                }
+                , start: [40, 2000]
+                , behaviour: 'drag-fixed'               
+                , step: 1
+                , slide: function () {
+                    var values = $(this).val();
+                    $("span").text(
+                        values[0] +
+                        " - " +
+                        values[1]
+                    );
+                }
+            });
+            $('#countoperationslider').noUiSlider({
+                start: [0, 150],
+                connect: true,
+                tooltips: true,
+                step: 1,
+                range: {
+                    'min': 1,
+                    'max': 1000
+                }
+            });
+            $(document).on("change", '#balanceslider', function () {
+                $('#filter-balancemin').val($(this).val()[0]);
+            });
+            $(document).on("change", '#balanceslider', function () {
+                $('#filter-balancemax').val($(this).val()[1]);
+            });
+            $(document).on("change", '#increasesumslider', function () {
+                $('#filter-increasesummin').val($(this).val()[0]);
+            });
+            $(document).on("change", '#increasesumslider', function () {
+                $('#filter-increasesummax').val($(this).val()[1]);
+            });
+            $(document).on("change", '#decreasesumslider', function () {
+                $('#filter-decreasesummin').val($(this).val()[0]);
+            });
+            $(document).on("change", '#decreasesumslider', function () {
+                $('#filter-decreasesummax').val($(this).val()[1]);
+            });
+            $(document).on("change", '#countoperationslider', function () {
+                $('#filter-countoperationmin').val($(this).val()[0]);
+            });
+            $(document).on("change", '#countoperationslider', function () {
+                $('#filter-countoperationmax').val($(this).val()[1]);
+            });
+
             $(document).on("change", '#phone_input_filter', function () {
                 $('#filter-phone').val($(this).val());
             });
@@ -263,8 +337,11 @@
             $(document).on("change", '#balance_input_filter', function () {
                 $('#filter-balance').val($(this).val());
             });
-            $(document).on("change", '#place_activation_input_filter', function () {
-                $('#filter-placeactivation').val($(this).find(":selected").val());
+            $(document).on("change", '#activation_by_input_filter', function () {
+                $('#filter-activationby').val($(this).find(":selected").val());
+            });
+            $(document).on("change", '#last_operation_by_input_filter', function () {
+                $('#filter-lastoperationby').val($(this).find(":selected").val());
             });
             $(document).on("change", '#place_last_operation_input_filter', function () {
                 $('#filter-placelastop').val($(this).find(":selected").val());

@@ -26,7 +26,7 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.Psces = _psces;
         }
 
-        public ActionResult Cards(string begTimeLO, string endTimeLO)
+        public ActionResult Cards(string begTimeLO, string endTimeLO, string begTimeActivation, string endTimeActivation)
         {
             DateTime startDTimeLO;
             if (!DateTime.TryParse(begTimeLO, out startDTimeLO))
@@ -36,14 +36,22 @@ namespace Inspinia_MVC5.Controllers
             if (!DateTime.TryParse(endTimeLO, out stopDTimeLO))
                 stopDTimeLO = DateTime.Today.AddSeconds(-1);
 
+            DateTime startDTimeActivation;
+            if (!DateTime.TryParse(begTimeActivation, out startDTimeActivation))
+                startDTimeActivation = DateTime.Today.AddMonths(-3);
+
+            DateTime stopDTimeActivation;
+            if (!DateTime.TryParse(endTimeActivation, out stopDTimeActivation))
+                stopDTimeActivation = DateTime.Today.AddSeconds(-1);
+
             ViewBag.phone = "";
             ViewBag.cardNum = "";
             ViewBag.cardTypeCode = "";
             ViewBag.cardStatusName = "";
             ViewBag.balanceMin = null;
             ViewBag.balanceMax = null;
-            ViewBag.activationDateBeg = null;
-            ViewBag.activationDateEnd = null;
+            ViewBag.activationDateBeg = startDTimeActivation.ToString("dd.MM.yyyy HH:mm:ss");
+            ViewBag.activationDateEnd = stopDTimeActivation.ToString("dd.MM.yyyy HH:mm:ss");
             ViewBag.activationBy = null;
             ViewBag.lastOperationDateBeg = startDTimeLO.ToString("dd.MM.yyyy HH:mm:ss");
             ViewBag.lastOperationDateEnd = stopDTimeLO.ToString("dd.MM.yyyy HH:mm:ss");
@@ -176,9 +184,9 @@ namespace Inspinia_MVC5.Controllers
                     "GetCardList @p_Phone, @p_CardNum, @p_CardTypeCode, @p_CardStatusName, @p_BalanceMin," +
                     "@p_BalanceMax, @p_ActivationDateBeg, @p_ActivationDateEnd, @p_ActivationBy, @p_LastOperationDateBeg, " +
                     "@p_LastOperationDateEnd, @p_LastOperationBy, @p_IncreaseSumMin, @p_IncreaseSumMax, @p_DecreaseSumMin, " +
-                    "@p_DEcreaseSumMax, @p_CountOperationMin, @p_CountOperationMax", 
-                    prmPhone, prmCardNum, prmCardTypeCode, prmCardStatusName, prmBalanceMin, prmBalanceMin, prmActivationDateBeg, 
-                    prmActivationDateEnd, prmActivationBy, prmLastOperationDateBeg, prmLastOperationDateBeg, prmLastOperationBy, 
+                    "@p_DEcreaseSumMax, @p_CountOperationMin, @p_CountOperationMax",
+                    prmPhone, prmCardNum, prmCardTypeCode, prmCardStatusName, prmBalanceMin, prmBalanceMax, prmActivationDateBeg, 
+                    prmActivationDateEnd, prmActivationBy, prmLastOperationDateBeg, prmLastOperationDateEnd, prmLastOperationBy, 
                     prmIncreaseSumMin, prmIncreaseSumMax, prmDecreaseSumMin, prmDecreaseSumMax, prmCountOperationMin, prmCountOperationMax)
                 .ToList();
 
