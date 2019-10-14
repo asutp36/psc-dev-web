@@ -11,6 +11,13 @@ namespace TryParseReports
     {
         static void Main(string[] args)
         {
+            
+
+            Console.ReadKey();
+        }
+
+        private void ParseXls()
+        {
             Excel.Application excel = new Excel.Application();
             Excel.Workbook workbook = excel.Workbooks.Open(@"D:\Programs\Работа\psc-dev-web\TryParseReports\m8-08.10.2019.xls");
             Excel.Worksheet worksheet = workbook.Worksheets["Данные"] as Excel.Worksheet;
@@ -31,12 +38,8 @@ namespace TryParseReports
                 Console.WriteLine();
             }
 
-
-            //worksheet = null;
             workbook.Close();
             excel.Quit();
-
-            Console.ReadKey();
         }
     }
 }
