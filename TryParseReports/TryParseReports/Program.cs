@@ -15,11 +15,15 @@ namespace TryParseReports
             Excel.Workbook workbook = excel.Workbooks.Open(@"D:\Programs\Работа\psc-dev-web\TryParseReports\m8-08.10.2019.xls");
             Excel.Worksheet worksheet = workbook.Worksheets["Данные"] as Excel.Worksheet;
 
-            object[,] someData = (worksheet.Range["A2", "A16"] as Excel.Range).Value;
+            object[,] data = worksheet.UsedRange.Value;
 
-            for(int r = 1; r < someData.GetLength(0); r++)
-                for (int c = 1; c <= someData.GetLength(1); c++)
-                    Console.WriteLine(someData[r, c].ToString());
+            for (int r = 3; r < data.GetLength(0); r++)
+            {
+                for (int c = 1; c <= data.GetLength(1); c++)
+                    Console.Write(data[r, c].ToString() + ' ');
+                Console.WriteLine();
+            }
+
 
             //worksheet = null;
             workbook.Close();
