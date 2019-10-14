@@ -184,42 +184,5 @@ namespace WebService.Controllers
 
             return responseBad;
         }
-
-        [HttpPost]
-        [ActionName("file")]
-        public HttpResponseMessage PostFile()
-        {
-            Logger.InitLogger();
-
-            try
-            {
-                var request = HttpContext.Current.Request;
-
-                if (request.Files.Count < 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NoContent);
-                }
-
-                foreach (string file in request.Files)
-                {
-                    var postedFile = request.Files[file];
-                    var filePath = HttpContext.Current.Server.MapPath("~/" + "\\Uploads\\" + postedFile.FileName);
-                    postedFile.SaveAs(filePath);
-                    Logger.Log.Debug("File saved to: " + filePath.ToString());
-                }
-
-                var responseGood = Request.CreateResponse(HttpStatusCode.OK);
-                //responseGood.Headers.Add("ServerID", serverID.ToString());
-                return responseGood;
-            }
-
-            catch (Exception ex)
-            {
-                Logger.Log.Error(ex.Message.ToString());
-            }
-
-            return Request.CreateResponse(HttpStatusCode.NoContent);
-        }
-
     }
 }
