@@ -42,6 +42,7 @@
         <AssociationConnector Association="CardsDbModel.FK_Posts_Wash" />
         <AssociationConnector Association="CardsDbModel.FK_Pcses_Wash" />
         <AssociationConnector Association="CardsDbModel.FK_Wash_Regions" />
+        <EntityTypeShape EntityType="CardsDbModel.User" Width="1.5" PointX="0.75" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

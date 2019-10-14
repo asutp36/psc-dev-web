@@ -46,6 +46,7 @@ namespace Inspinia_MVC5.Models
         public virtual DbSet<Psce> Psces { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Wash> Washes { get; set; }
+        public virtual DbSet<User> Users { get; set; }
     
         public virtual ObjectResult<GetCardsOperations_Result> GetCardsOperations(string p_Phone, string p_Cardnum, string p_CardTypeCode, string p_CardStatusName, string p_OperationTypeName, Nullable<System.DateTime> p_OperationDateBeg, Nullable<System.DateTime> p_OperationDateEnd, Nullable<int> p_LocalizedBy, Nullable<int> p_LocalizedID)
         {
@@ -111,6 +112,31 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_DateEnd", typeof(System.DateTime));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetWashAmounts_Result>("GetWashAmounts", p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter, p_DateBegParameter, p_DateEndParameter);
+        }
+    
+        public virtual ObjectResult<GetPostAmounts_Result> GetPostAmounts(Nullable<int> p_RegionCode, string p_WashCode, string p_PostCode, Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        {
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(int));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetPostAmounts_Result>("GetPostAmounts", p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter, p_DateBegParameter, p_DateEndParameter);
         }
     }
 }
