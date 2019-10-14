@@ -7,6 +7,8 @@ using System.Net.Http;
 using System.Web.Http;
 using WebService.Models;
 using WebService.Controllers.Supplies;
+using System.IO;
+using System.Web;
 //using System.Data.SqlClient;
 
 namespace WebService.Controllers
@@ -183,13 +185,40 @@ namespace WebService.Controllers
             return responseBad;
         }
 
-        [HttpGet]
-        [ActionName("test")]
-        public string Test(int x, int y)
+        [HttpPost]
+        [ActionName("file")]
+        public HttpResponseMessage PostFile()
         {
-            int x1 = x * 2;
-            //int y1 = int.Parse(y) * 2;
-            return "x1=" + x1.ToString() + "y1=" + y.ToString();
+            Logger.InitLogger();
+
+            try
+            {
+                var request = HttpContext.Current.Request;
+
+                if (request.Files.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                }
+
+                foreach (string file in request.Files)
+                {
+                    var postedFile = request.Files[file];
+                    var filePath = HttpContext.Current.Server.MapPath("~/" + "\\Uploads\\" + postedFile.FileName);
+                    postedFile.SaveAs(filePath);
+                    Logger.Log.Debug("File saved to: " + filePath.ToString());
+                }
+
+                var responseGood = Request.CreateResponse(HttpStatusCode.OK);
+                //responseGood.Headers.Add("ServerID", serverID.ToString());
+                return responseGood;
+            }
+
+            catch (Exception ex)
+            {
+                Logger.Log.Error(ex.Message.ToString());
+            }
+
+            return Request.CreateResponse(HttpStatusCode.NoContent);
         }
 
     }
