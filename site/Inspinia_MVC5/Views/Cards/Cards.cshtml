@@ -83,7 +83,7 @@
             <div class="form-group">
                 <label class="col-form-labe" for="activation_by_input_filter">Место активаации</label>
                 <select name="activation_by_input_filter" id="activation_by_input_filter" class="form-control">
-                    <option value="" selected=""></option>
+                    <option value="0" selected=""></option>
                     @foreach (var item in ViewBag.Psces)
                     {
                         <option value="@item.IDWash">@item.Name</option>
@@ -95,7 +95,7 @@
             <div class="form-group">
                 <label class="col-form-labe" for="last_operation_by_input_filter">Место последней операции</label>
                 <select name="last_operation_by_input_filter" id="last_operation_by_input_filter" class="form-control">
-                    <option value="" selected=""></option>
+                    <option value="0" selected=""></option>
                     @foreach (var item in ViewBag.Psces)
                     {
                         <option value="@item.IDWash">@item.Name</option>
@@ -108,25 +108,25 @@
         <div class="col-sm-3">
             <div class="form-group">
                 <label class="col-form-labe" for="balanceslider">Баланс</label>
-                <div id="balanceslider"> </div>
+                <input id="balanceslider">
             </div>
         </div>
         <div class="col-sm-3">
             <div class="form-group">
                 <label class="col-form-labe" for="increasesumslider">Сумма пополнений</label>
-                <div id="increasesumslider"> </div>
+                <input id="increasesumslider">
             </div>
         </div>
         <div class="col-sm-3">
             <div class="form-group">
                 <label class="col-form-labe" for="decreasesumslider">Сумма списаний</label>
-                <div id="decreasesumslider"> </div>
+                <input id="decreasesumslider">
             </div>
         </div>
         <div class="col-sm-3">
             <div class="form-group">
                 <label class="col-form-labe" for="countoperationslider">Количество операций</label>
-                <div id="countoperationslider"> </div>
+                <input id="countoperationslider">
             </div>
         </div>
     </div>
@@ -204,9 +204,11 @@
     @Styles.Render("~/plugins/dateRangeStyles")
     @Styles.Render("~/plugins/dataPickerStyles")
     @Styles.Render("~/plugins/nouiSliderStyles")
+    @Styles.Render("~/Content/plugins/ionRangeSlider/ionRangeStyles")
 }
 
 @section Scripts {
+    @Scripts.Render("~/plugins/ionRange")
     @Scripts.Render("~/plugins/dataTables")
     @Scripts.Render("~/plugins/dataPicker")
     @Scripts.Render("~/plugins/dateRange")
@@ -238,93 +240,96 @@
                 ]
             });
 
-            $('#balanceslider').noUiSlider({
-                range: {
-                    'min':1,
-                    'max':10000
+            $('#balanceslider').ionRangeSlider({
+                values_separator:" — ",
+                skin:"square",
+                min: 0,
+                max: 5000,
+                type: 'double',
+                prefix: "р. ",
+                prettify: false,
+                hasGrid: true,
+                drag_interval: true,
+                min_interval: null,
+                max_interval: null
+            });
 
-                }
-                , start: [40, 8000]
-                , tooltips: [true, true]
-                , behaviour: 'drag'               
-                , step: 1
-                
-            });
-            $('#increasesumslider').noUiSlider({
-                range: {
-                    'min': 1,
-                    'max': 10000
+            $('#filter-balancemin').val($("#balanceslider").data("ionRangeSlider").result.from);
+            $('#filter-balancemax').val($("#balanceslider").data("ionRangeSlider").result.to);
 
-                }
-                , start: [40, 4000]
-                , behaviour: 'drag-fixed'               
-                , step: 1
-                , slide: function () {
-                    var values = $(this).val();
-                    $("span").text(
-                        values[0] +
-                        " - " +
-                        values[1]
-                    );
-                }
-            });
-            $('#decreasesumslider').noUiSlider({
-                range: {
-                    'min': 1,
-                    'max': 10000
-
-                }
-                , start: [40, 2000]
-                , behaviour: 'drag-fixed'               
-                , step: 1
-                , slide: function () {
-                    var values = $(this).val();
-                    $("span").text(
-                        values[0] +
-                        " - " +
-                        values[1]
-                    );
-                }
-            });
-            $('#countoperationslider').noUiSlider({
-                start: [0, 150],
-                connect: true,
-                tooltips: true,
-                step: 1,
-                range: {
-                    'min': 1,
-                    'max': 1000
-                }
-            });
             $(document).on("change", '#balanceslider', function () {
-                $('#filter-balancemin').val($(this).val()[0]);
+                $('#filter-balancemin').val($("#balanceslider").data("ionRangeSlider").result.from);
+                $('#filter-balancemax').val($("#balanceslider").data("ionRangeSlider").result.to);
             });
-            $(document).on("change", '#balanceslider', function () {
-                $('#filter-balancemax').val($(this).val()[1]);
+
+            $('#increasesumslider').ionRangeSlider({
+                values_separator: " — ",
+                skin: "square",
+                min: 0,
+                max: 5000,
+                type: 'double',
+                prefix: "р. ",
+                prettify: false,
+                hasGrid: true,
+                drag_interval: true,
+                min_interval: null,
+                max_interval: null
             });
+
+            $('#filter-increasesummin').val($("#increasesumslider").data("ionRangeSlider").result.from);
+            $('#filter-increasesummax').val($("#increasesumslider").data("ionRangeSlider").result.to);
+
             $(document).on("change", '#increasesumslider', function () {
-                $('#filter-increasesummin').val($(this).val()[0]);
+                $('#filter-increasesummin').val($("#increasesumslider").data("ionRangeSlider").result.from);
+                $('#filter-increasesummax').val($("#increasesumslider").data("ionRangeSlider").result.to);
             });
-            $(document).on("change", '#increasesumslider', function () {
-                $('#filter-increasesummax').val($(this).val()[1]);
+
+            $('#decreasesumslider').ionRangeSlider({
+                values_separator: " — ",
+                skin: "square",
+                min: 0,
+                max: 5000,
+                type: 'double',
+                prefix: "р. ",
+                prettify: false,
+                hasGrid: true,
+                drag_interval: true,
+                min_interval: null,
+                max_interval: null
             });
+
+            $('#filter-decreasesummin').val($("#decreasesumslider").data("ionRangeSlider").result.from);
+            $('#filter-decreasesummax').val($("#decreasesumslider").data("ionRangeSlider").result.to);
+
             $(document).on("change", '#decreasesumslider', function () {
-                $('#filter-decreasesummin').val($(this).val()[0]);
+                $('#filter-decreasesummin').val($("#decreasesumslider").data("ionRangeSlider").result.from);
+                $('#filter-decreasesummax').val($("#decreasesumslider").data("ionRangeSlider").result.to);
             });
-            $(document).on("change", '#decreasesumslider', function () {
-                $('#filter-decreasesummax').val($(this).val()[1]);
+
+            $('#countoperationslider').ionRangeSlider({
+                values_separator: " — ",
+                skin: "square",
+                min: 0,
+                max: 5000,
+                type: 'double',
+                prefix: "",
+                prettify: false,
+                hasGrid: true,
+                drag_interval: true,
+                min_interval: null,
+                max_interval: null
             });
+            $('#filter-countoperationmin').val($("#countoperationslider").data("ionRangeSlider").result.from);
+            $('#filter-countoperationmax').val($("#countoperationslider").data("ionRangeSlider").result.to);
+
             $(document).on("change", '#countoperationslider', function () {
-                $('#filter-countoperationmin').val($(this).val()[0]);
-            });
-            $(document).on("change", '#countoperationslider', function () {
-                $('#filter-countoperationmax').val($(this).val()[1]);
+                $('#filter-countoperationmin').val($("#countoperationslider").data("ionRangeSlider").result.from);
+                $('#filter-countoperationmax').val($("#countoperationslider").data("ionRangeSlider").result.to);
             });
 
             $(document).on("change", '#phone_input_filter', function () {
                 $('#filter-phone').val($(this).val());
             });
-
             $(document).on("change", '#card_num_input_filter', function () {
                 $('#filter-cardNum').val($(this).val());
             });
@@ -334,26 +339,15 @@
             $(document).on("change", '#card_status_input_filter', function () {
                 $('#filter-cardStatusName').val($(this).find(":selected").val());
             });
-            $(document).on("change", '#balance_input_filter', function () {
-                $('#filter-balance').val($(this).val());
-            });
+
+            $('#filter-activationby').val($('#activation_by_input_filter').find(":selected").val());
             $(document).on("change", '#activation_by_input_filter', function () {
                 $('#filter-activationby').val($(this).find(":selected").val());
             });
+
+            $('#filter-lastoperationby').val($('#last_operation_by_input_filter').find(":selected").val());
             $(document).on("change", '#last_operation_by_input_filter', function () {
                 $('#filter-lastoperationby').val($(this).find(":selected").val());
-            });
-            $(document).on("change", '#place_last_operation_input_filter', function () {
-                $('#filter-placelastop').val($(this).find(":selected").val());
-            });
-            $(document).on("change", '#sum_incashes_input_filter', function () {
-                $('#filter-sumincashes').val($(this).val());
-            });
-            $(document).on("change", '#sum_chardge_off_input_filter', function () {
-                $('#filter-sumchardgeoff').val($(this).val());
-            });
-            $(document).on("change", '#amount_operations_input_filter', function () {
-                $('#filter-amountoperations').val($(this).val());
             });
 
             $(document).on("click", "#btn-for-filter", function () {
@@ -443,7 +437,7 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#date_activation_input_filter span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
+        $('#date_activation_input_filter span').html(moment().subtract(1, 'months').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
 
         $('#date_activation_input_filter').daterangepicker({
             "timePicker": true,
@@ -499,8 +493,8 @@
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
             $('#date_activation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
 
-            $('#filter-startdateactivation').val(start.format('DD.MM.YYYY HH:mm:ss'));
-            $('#filter-stopdateactivation').val(end.format('DD.MM.YYYY HH:mm:ss'));
+            $('#filter-activationdatebeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#filter-activationdateend').val(end.format('DD.MM.YYYY HH:mm:ss'));
         });
 
         $('#date_last_operation_input_filter span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
@@ -559,8 +553,8 @@
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
             $('#date_last_operation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
 
-            $('#filter-startdatelastop').val(start.format('DD.MM.YYYY HH:mm:ss'));
-            $('#filter-stopdatelastop').val(end.format('DD.MM.YYYY HH:mm:ss'));
+            $('#filter-lastoperationdatebeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#filter-lastoperationdateend').val(end.format('DD.MM.YYYY HH:mm:ss'));
         });
 
     </script>

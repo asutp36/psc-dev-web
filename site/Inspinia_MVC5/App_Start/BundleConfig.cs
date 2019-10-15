@@ -168,7 +168,7 @@ namespace Inspinia_MVC5
 
             // ionRange 
             bundles.Add(new ScriptBundle("~/plugins/ionRange").Include(
-                      "~/Scripts/plugins/ionRangeSlider/ion.rangeSlider.min.js"));
+                      "~/Scripts/plugins/ionRangeSlider/ion.rangeSlider.js"));
 
             // dataPicker styles
             bundles.Add(new StyleBundle("~/plugins/dataPickerStyles").Include(
