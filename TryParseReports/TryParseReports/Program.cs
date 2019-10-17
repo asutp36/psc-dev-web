@@ -11,12 +11,17 @@ namespace TryParseReports
     {
         static void Main(string[] args)
         {
-            
+            ParseXls();
 
             Console.ReadKey();
         }
 
-        private void ParseXls()
+        private void ParseCsv()
+        {
+
+        }
+
+        private static void ParseXls()
         {
             Excel.Application excel = new Excel.Application();
             Excel.Workbook workbook = excel.Workbooks.Open(@"D:\Programs\Работа\psc-dev-web\TryParseReports\m8-08.10.2019.xls");

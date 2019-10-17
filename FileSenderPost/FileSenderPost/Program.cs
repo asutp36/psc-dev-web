@@ -27,10 +27,6 @@ namespace FileSenderPost
                     Logger.Log.Debug("Sent file: " + ConfigurationSettings.AppSettings["filesDirectory"] + filename);
                 }
             }
-
-            string result = PostRequestFile(@"D:\Programs\Работа\FileSenderPost\m8-08.10.2019.xml");
-            Console.WriteLine(result);
-            Console.ReadKey();
         }
 
         static string PostRequestFile(string path)
