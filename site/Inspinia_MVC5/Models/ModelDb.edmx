@@ -470,7 +470,33 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="FuncMaxVal" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+          <Parameter Name="val" Type="int" Mode="In" />
+        </Function>
+        <Function Name="FuncMinVal" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+          <Parameter Name="val" Type="int" Mode="In" />
+        </Function>
         <Function Name="GetCardList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_Phone" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_Cardnum" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_CardTypeCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_CardStatusName" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_BalanceMin" Type="int" Mode="In" />
+          <Parameter Name="p_BalanceMax" Type="int" Mode="In" />
+          <Parameter Name="p_ActivationDateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_ActivationDateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_ActivationBy" Type="int" Mode="In" />
+          <Parameter Name="p_LastOperationDateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_LastOperationDateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_LastOperationBy" Type="int" Mode="In" />
+          <Parameter Name="p_IncreaseSumMin" Type="int" Mode="In" />
+          <Parameter Name="p_IncreaseSumMax" Type="int" Mode="In" />
+          <Parameter Name="p_DecreaseSumMin" Type="int" Mode="In" />
+          <Parameter Name="p_DecreaseSumMax" Type="int" Mode="In" />
+          <Parameter Name="p_CountOperationMin" Type="int" Mode="In" />
+          <Parameter Name="p_CountOperationMax" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetCardListMinMaxDiapasons" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_Phone" Type="nvarchar" Mode="In" />
           <Parameter Name="p_Cardnum" Type="nvarchar" Mode="In" />
           <Parameter Name="p_CardTypeCode" Type="nvarchar" Mode="In" />
@@ -656,7 +682,7 @@
             <Parameter Name="p_IncreaseSumMin" Mode="In" Type="Int32" />
             <Parameter Name="p_IncreaseSumMax" Mode="In" Type="Int32" />
             <Parameter Name="p_DecreaseSumMin" Mode="In" Type="Int32" />
-            <Parameter Name="p_DEcreaseSumMax" Mode="In" Type="Int32" />
+            <Parameter Name="p_DecreaseSumMax" Mode="In" Type="Int32" />
             <Parameter Name="p_CountOperationMin" Mode="In" Type="Int32" />
             <Parameter Name="p_CountOperationMax" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -753,6 +779,26 @@
             <End Role="Region" EntitySet="Regions" />
             <End Role="Wash" EntitySet="Washes" />
           </AssociationSet>
+          <FunctionImport Name="GetCardListMinMaxDiapasons" ReturnType="Collection(CardsDbModel.GetCardListMinMaxDiapasons_Result)">
+            <Parameter Name="p_Phone" Mode="In" Type="String" />
+            <Parameter Name="p_Cardnum" Mode="In" Type="String" />
+            <Parameter Name="p_CardTypeCode" Mode="In" Type="String" />
+            <Parameter Name="p_CardStatusName" Mode="In" Type="String" />
+            <Parameter Name="p_BalanceMin" Mode="In" Type="Int32" />
+            <Parameter Name="p_BalanceMax" Mode="In" Type="Int32" />
+            <Parameter Name="p_ActivationDateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_ActivationDateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_ActivationBy" Mode="In" Type="Int32" />
+            <Parameter Name="p_LastOperationDateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_LastOperationDateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_LastOperationBy" Mode="In" Type="Int32" />
+            <Parameter Name="p_IncreaseSumMin" Mode="In" Type="Int32" />
+            <Parameter Name="p_IncreaseSumMax" Mode="In" Type="Int32" />
+            <Parameter Name="p_DecreaseSumMin" Mode="In" Type="Int32" />
+            <Parameter Name="p_DEcreaseSumMax" Mode="In" Type="Int32" />
+            <Parameter Name="p_CountOperationMin" Mode="In" Type="Int32" />
+            <Parameter Name="p_CountOperationMax" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetCardsOperations_Result">
           <Property Type="String" Name="Phone" Nullable="false" MaxLength="Max" />
@@ -1300,6 +1346,16 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="GetCardListMinMaxDiapasons_Result">
+          <Property Type="Int32" Name="BalanceMin" Nullable="true" />
+          <Property Type="Int32" Name="BalanceMax" Nullable="true" />
+          <Property Type="Int32" Name="IncreaseSumMin" Nullable="true" />
+          <Property Type="Int32" Name="IncreaseSumMax" Nullable="true" />
+          <Property Type="Int32" Name="DecreaseSumMin" Nullable="true" />
+          <Property Type="Int32" Name="DecreaseSumMax" Nullable="true" />
+          <Property Type="Int32" Name="CountOperationMin" Nullable="true" />
+          <Property Type="Int32" Name="CountOperationMax" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1601,6 +1657,20 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetCardListMinMaxDiapasons" FunctionName="Хранилище CardsDbModel.GetCardListMinMaxDiapasons">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CardsDbModel.GetCardListMinMaxDiapasons_Result">
+                <ScalarProperty Name="BalanceMin" ColumnName="BalanceMin" />
+                <ScalarProperty Name="BalanceMax" ColumnName="BalanceMax" />
+                <ScalarProperty Name="IncreaseSumMin" ColumnName="IncreaseSumMin" />
+                <ScalarProperty Name="IncreaseSumMax" ColumnName="IncreaseSumMax" />
+                <ScalarProperty Name="DecreaseSumMin" ColumnName="DecreaseSumMin" />
+                <ScalarProperty Name="DecreaseSumMax" ColumnName="DecreaseSumMax" />
+                <ScalarProperty Name="CountOperationMin" ColumnName="CountOperationMin" />
+                <ScalarProperty Name="CountOperationMax" ColumnName="CountOperationMax" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -62,18 +62,32 @@
         <div class="col-sm-6">
             <div class="form-group">
                 <label class="col-form-labe" for="date_activation_input_filter">Дата активации</label>
-                <div id="date_activation_input_filter" class="form-control">
-                    <i class="fa fa-calendar"></i>
-                    <span></span> <b class="caret"></b>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <div id="date_activation_input_filter" class="form-control">
+                            <i class="fa fa-calendar"></i>
+                            <span></span> <b class="caret"></b>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button id="clear_drp_activation" type="button" class="btn btn-outline-danger">&#10008;</button>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-sm-6">
             <div class="form-group">
                 <label class="col-form-labe" for="date_last_operation_input_filter">Дата последней операции</label>
-                <div id="date_last_operation_input_filter" class="form-control">
-                    <i class="fa fa-calendar"></i>
-                    <span></span> <b class="caret"></b>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <div id="date_last_operation_input_filter" class="form-control">
+                            <i class="fa fa-calendar"></i>
+                            <span></span> <b class="caret"></b>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button id="clear_drp_last_op" type="button" class="btn btn-outline-danger">&#10008;</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -81,7 +95,7 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">
-                <label class="col-form-labe" for="activation_by_input_filter">Место активаации</label>
+                <label class="col-form-labe" for="activation_by_input_filter">Место активации</label>
                 <select name="activation_by_input_filter" id="activation_by_input_filter" class="form-control">
                     <option value="0" selected=""></option>
                     @foreach (var item in ViewBag.Psces)
@@ -139,7 +153,12 @@
                 <button type="button" id="btn-for-filter" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-2">
+        </div>
+        <div class="col-sm-2">
+            <button id="clear_all_filters" type="button" class="btn btn-outline-danger">
+                Очистить всё
+            </button>
         </div>
     </div>
 
@@ -174,36 +193,29 @@
     </div>
 </div>
 
-<input id="filter-phone" value="@ViewBag.phone" />
-<input id="filter-cardNum" value="@ViewBag.cardNum" />
-<input id="filter-cardTypeCode" value="@ViewBag.cardTypeCode" />
-<input id="filter-cardStatusName" value="@ViewBag.cardStatusName" />
-<input id="filter-balancemin" value="@ViewBag.balanceMin" />
-<input id="filter-balancemax" value="@ViewBag.balanceMax" />
-<input id="filter-activationdatebeg" value="@ViewBag.activationDateBeg" />
-<input id="filter-activationdateend" value="@ViewBag.activationDateEnd" />
-<input id="filter-activationby" value="@ViewBag.activationBy" />
-<input id="filter-lastoperationdatebeg" value="@ViewBag.lastOperationDateBeg" />
-<input id="filter-lastoperationdateend" value="@ViewBag.lastOperationDateEnd" />
-<input id="filter-lastoperationby" value="@ViewBag.lastOperationBy" />
-<input id="filter-increasesummin" value="@ViewBag.increaseSumMin" />
-<input id="filter-increasesummax" value="@ViewBag.increaseSumMax" />
-<input id="filter-decreasesummin" value="@ViewBag.decreaseSumMin" />
-<input id="filter-decreasesummax" value="@ViewBag.decreaseSumMax" />
-<input id="filter-countoperationmin" value="@ViewBag.countOperationMin" />
-<input id="filter-countoperationmax" value="@ViewBag.countOperationMax" />
-
-<div class="row">saasd</div>
-<div class="row">saasd</div>
-<div class="row">saasd</div>
-<div class="row">saasd</div>
-<div class="row">saasd</div>
+<input hidden id="filter-phone" value="@ViewBag.phone" />
+<input hidden id="filter-cardNum" value="@ViewBag.cardNum" />
+<input hidden id="filter-cardTypeCode" value="@ViewBag.cardTypeCode" />
+<input hidden id="filter-cardStatusName" value="@ViewBag.cardStatusName" />
+<input hidden id="filter-balancemin" value="@ViewBag.balanceMin" />
+<input hidden id="filter-balancemax" value="@ViewBag.balanceMax" />
+<input hidden id="filter-activationdatebeg" value="@ViewBag.activationDateBeg" />
+<input hidden id="filter-activationdateend" value="@ViewBag.activationDateEnd" />
+<input hidden id="filter-activationby" value="@ViewBag.activationBy" />
+<input hidden id="filter-lastoperationdatebeg" value="@ViewBag.lastOperationDateBeg" />
+<input hidden id="filter-lastoperationdateend" value="@ViewBag.lastOperationDateEnd" />
+<input hidden id="filter-lastoperationby" value="@ViewBag.lastOperationBy" />
+<input hidden id="filter-increasesummin" value="@ViewBag.increaseSumMin" />
+<input hidden id="filter-increasesummax" value="@ViewBag.increaseSumMax" />
+<input hidden id="filter-decreasesummin" value="@ViewBag.decreaseSumMin" />
+<input hidden id="filter-decreasesummax" value="@ViewBag.decreaseSumMax" />
+<input hidden id="filter-countoperationmin" value="@ViewBag.countOperationMin" />
+<input hidden id="filter-countoperationmax" value="@ViewBag.countOperationMax" />
 
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
     @Styles.Render("~/plugins/dateRangeStyles")
     @Styles.Render("~/plugins/dataPickerStyles")
-    @Styles.Render("~/plugins/nouiSliderStyles")
     @Styles.Render("~/Content/plugins/ionRangeSlider/ionRangeStyles")
 }
 
@@ -213,7 +225,6 @@
     @Scripts.Render("~/plugins/dataPicker")
     @Scripts.Render("~/plugins/dateRange")
     @Scripts.Render("~/plugins/select2")
-    @Scripts.Render("~/plugins/nouiSlider")
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -242,9 +253,9 @@
 
             $('#balanceslider').ionRangeSlider({
                 values_separator:" — ",
-                skin:"square",
-                min: 0,
-                max: 5000,
+                skin:"round",
+                min: @ViewBag.DiapasonBalanceMin,
+                max: @ViewBag.DiapasonBalanceMax,
                 type: 'double',
                 prefix: "р. ",
                 prettify: false,
@@ -264,9 +275,9 @@
 
             $('#increasesumslider').ionRangeSlider({
                 values_separator: " — ",
-                skin: "square",
-                min: 0,
-                max: 5000,
+                skin: "round",
+                min: @ViewBag.DiapasonIncreaseSumMin,
+                max: @ViewBag.DiapasonIncreaseSumMax,
                 type: 'double',
                 prefix: "р. ",
                 prettify: false,
@@ -286,9 +297,9 @@
 
             $('#decreasesumslider').ionRangeSlider({
                 values_separator: " — ",
-                skin: "square",
-                min: 0,
-                max: 5000,
+                skin: "round",
+                min: @ViewBag.DiapasonDecreaseSumMin,
+                max: @ViewBag.DiapasonDecreaseSumMax,
                 type: 'double',
                 prefix: "р. ",
                 prettify: false,
@@ -308,9 +319,9 @@
 
             $('#countoperationslider').ionRangeSlider({
                 values_separator: " — ",
-                skin: "square",
-                min: 0,
-                max: 5000,
+                skin: "round",
+                min: @ViewBag.DiapasonCountOperationMin,
+                max: @ViewBag.DiapasonCountOperationMax,
                 type: 'double',
                 prefix: "",
                 prettify: false,
@@ -348,6 +359,41 @@
             $('#filter-lastoperationby').val($('#last_operation_by_input_filter').find(":selected").val());
             $(document).on("change", '#last_operation_by_input_filter', function () {
                 $('#filter-lastoperationby').val($(this).find(":selected").val());
+            });
+
+            $(document).on("click", "#clear_drp_activation", function () {
+                $('#date_activation_input_filter span').empty();
+                $('#filter-activationdatebeg').val("");
+                $('#filter-activationdateend').val("");
+            });
+
+            $(document).on("click", "#clear_drp_last_op", function () {
+                $('#date_last_operation_input_filter span').empty();
+                $('#filter-lastoperationdatebeg').val("");
+                $('#filter-lastoperationdateend').val("");
+            });
+
+            $(document).on("click", "#clear_all_filters", function () {
+                $('#clear_drp_activation').click();
+                $('#clear_drp_last_op').click();
+
+                $('#phone_input_filter').val("");
+                $('#card_num_input_filter').val("");
+                $('#card_type_input_filter').val("");
+                $('#card_status_input_filter').val("");
+                $('#activation_by_input_filter').val("0");
+                $('#last_operation_by_input_filter').val("0");
+
+                $('#filter-phone').val("");
+                $('#filter-cardNum').val("");
+                $('#filter-cardTypeCode').val("");
+                $('#filter-cardStatusName').val("");
+                $('#filter-activationby').val(0);
+                $('#filter-lastoperationby').val(0);
+                $('#balanceslider').data("ionRangeSlider").update({ from: @ViewBag.DiapasonBalanceMin, to: @ViewBag.DiapasonBalanceMax});
+                $('#increasesumslider').data("ionRangeSlider").update({ from: @ViewBag.DiapasonIncreaseSumMin, to: @ViewBag.DiapasonIncreaseSumMax});
+                $('#decreasesumslider').data("ionRangeSlider").update({ from: @ViewBag.DiapasonDecreaseSumMin, to: @ViewBag.DiapasonDecreaseSumMax});
+                $('#countoperationslider').data("ionRangeSlider").update({ from: @ViewBag.DiapasonCountOperationMin, to: @ViewBag.DiapasonCountOperationMax});
             });
 
             $(document).on("click", "#btn-for-filter", function () {

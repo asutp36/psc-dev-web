@@ -533,20 +533,20 @@ Build date: 2018-12-12 00:07:25
 }
 .irs--round .irs-line {
   top: 36px;
-  height: 4px;
+  height: 2px;
   background-color: #dee4ec;
   border-radius: 4px;
 }
 .irs--round .irs-bar {
   top: 36px;
-  height: 4px;
-  background-color: #006cfa;
+  height: 2px;
+  background-color: lightseagreen;
 }
 .irs--round .irs-bar--single {
   border-radius: 4px 0 0 4px;
 }
 .irs--round .irs-shadow {
-  height: 4px;
+  height: 2px;
   bottom: 21px;
   background-color: rgba(222, 228, 236, 0.5);
 }
@@ -554,10 +554,10 @@ Build date: 2018-12-12 00:07:25
   top: 26px;
   width: 24px;
   height: 24px;
-  border: 4px solid #006cfa;
+  border: 2px solid lightseagreen;
   background-color: white;
   border-radius: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 255, 0.3);
+  box-shadow: 0 1px 3px rgba(32, 178, 170, 0.5);
 }
 .irs--round .irs-handle.state_hover,
 .irs--round .irs-handle:hover {
@@ -579,10 +579,10 @@ Build date: 2018-12-12 00:07:25
   font-size: 14px;
   line-height: 1;
   text-shadow: none;
-  padding: 3px 5px;
-  background-color: #006cfa;
+  padding: 3px 3px;
+  background-color: lightseagreen;
   color: white;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 .irs--round .irs-from:before,
 .irs--round .irs-to:before,
@@ -597,7 +597,7 @@ Build date: 2018-12-12 00:07:25
   margin-left: -3px;
   overflow: hidden;
   border: 3px solid transparent;
-  border-top-color: #006cfa;
+  border-top-color: lightseagreen;
 }
 .irs--round .irs-grid {
   height: 25px;
@@ -616,8 +616,8 @@ Build date: 2018-12-12 00:07:25
   height: 60px;
 }
 .irs--square .irs-line {
-  top: 31px;
-  height: 4px;
+  top: 32px;
+  height: 2px;
   background-color: #dedede;
 }
     .irs--square .irs-bar {
@@ -659,7 +659,7 @@ Build date: 2018-12-12 00:07:25
         font-size: 14px;
         line-height: 1;
         text-shadow: none;
-        padding: 3px 5px;
+        padding: 3px 3px;
         background-color: LightSeaGreen;
         color: white;
     }

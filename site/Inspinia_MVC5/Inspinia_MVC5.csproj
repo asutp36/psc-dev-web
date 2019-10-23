@@ -196,6 +196,9 @@
     <Compile Include="Models\EventSimple.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetCardListMinMaxDiapasons_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetCardList_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
