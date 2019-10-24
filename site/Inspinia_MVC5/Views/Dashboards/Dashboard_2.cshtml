@@ -83,6 +83,13 @@
 
                         <h5>Карты</h5>
                     </a>
+                    <a href="@Url.Action("OperationsCardsTypedWash", "OperationsTypedWash", new {
+                            begTime = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                            endTime = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                        })">
+
+                        <h5>Операции по картам типизированной мойки</h5>
+                    </a>
                     @*<div class="float-right">
             <div class="btn-group">
                 <button type="button" class="btn btn-xs btn-white active">Today</button>

@@ -152,6 +152,7 @@
     <Compile Include="Controllers\MailboxController.cs" />
     <Compile Include="Controllers\MetricsController.cs" />
     <Compile Include="Controllers\MiscellaneousController.cs" />
+    <Compile Include="Controllers\OperationsTypedWashController.cs" />
     <Compile Include="Controllers\OperationsController.cs" />
     <Compile Include="Controllers\PagesController.cs" />
     <Compile Include="Controllers\ScaffoldingController.cs" />
@@ -1847,6 +1848,8 @@
     <Content Include="Views\Operations\_OperationsCardsList.cshtml" />
     <Content Include="Views\Cards\Cards.cshtml" />
     <Content Include="Views\Cards\_CardsList.cshtml" />
+    <Content Include="Views\OperationsTypedWash\OperationsCardsTypedWash.cshtml" />
+    <Content Include="Views\OperationsTypedWash\_OperationsCardsTypedWashList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

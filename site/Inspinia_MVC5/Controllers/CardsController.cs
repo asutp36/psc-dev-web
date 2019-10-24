@@ -120,14 +120,6 @@ namespace Inspinia_MVC5.Controllers
         {
             List<GetCardList_Result> resultset = null;
 
-            DateTime startDTimeLO;
-            if (!DateTime.TryParse(lastOperationDateBeg, out startDTimeLO))
-                startDTimeLO = DateTime.Today.AddDays(-1);
-
-            DateTime stopDTimeLO;
-            if (!DateTime.TryParse(lastOperationDateEnd, out stopDTimeLO))
-                stopDTimeLO = DateTime.Today.AddSeconds(-1);
-
             var prmPhone = new System.Data.SqlClient.SqlParameter("@p_Phone", System.Data.SqlDbType.NVarChar);
             prmPhone.Value = phone;
 
@@ -290,7 +282,8 @@ namespace Inspinia_MVC5.Controllers
                     "@p_DecreaseSumMax, @p_CountOperationMin, @p_CountOperationMax",
                     prmPhone, prmCardNum, prmCardTypeCode, prmCardStatusName, prmBalanceMin, prmBalanceMax, prmActivationDateBeg,
                     prmActivationDateEnd, prmActivationBy, prmLastOperationDateBeg, prmLastOperationDateEnd, prmLastOperationBy,
-                    prmIncreaseSumMin, prmIncreaseSumMax, prmDecreaseSumMin, prmDecreaseSumMax, prmCountOperationMin, prmCountOperationMax).ToList();
+                    prmIncreaseSumMin, prmIncreaseSumMax, prmDecreaseSumMin, prmDecreaseSumMax, prmCountOperationMin, prmCountOperationMax)
+                .ToList();
 
             ViewBag.DiapasonBalanceMin = result[0].BalanceMin;
             ViewBag.DiapasonBalanceMax = result[0].BalanceMax;
