@@ -117,6 +117,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\NotifyController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\Supplies\FinanceJson.cs" />
     <Compile Include="Controllers\Supplies\Logger.cs" />
     <Compile Include="Controllers\Supplies\Message.cs" />
     <Compile Include="Controllers\Supplies\ResponseSendMessage.cs" />

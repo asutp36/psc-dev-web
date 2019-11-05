@@ -184,5 +184,53 @@ namespace WebService.Controllers
 
             return responseBad;
         }
+
+        [HttpPost]
+        [ActionName("finance")]
+        public HttpResponseMessage PostFinance([FromBody]FinanceJson finance)
+        {
+            Logger.InitLogger();
+            if (finance != null)
+            {
+                try
+                {
+                    if (_model.Database.Exists())
+                    {
+                        _model.Database.Connection.Open();
+                        Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
+
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+                        command.CommandText = "INSERT INTO Finance (IDDevice, IDFinanceType, DTime, Amount)" +
+                                                $" VALUES((select IDDevice from Device where ServerID = {finance.DeviceServerID}), " +
+                                                $" (select IDFinanceType from FinanceType where ServerID = {finance.FinanceTypeServerID}), \'{finance.DTime.ToString("yyyyMMdd HH:mm:ss")}\'," +
+                                                $" {finance.Amount}); SELECT SCOPE_IDENTITY()";
+
+                        Logger.Log.Debug("Command is: " + command.CommandText);
+
+                        var id = command.ExecuteScalar();
+                        Int32 serverID = Convert.ToInt32(id.ToString());
+                        Logger.Log.Debug("Card added serverID:" + serverID);
+
+                        _model.Database.Connection.Close();
+
+                        var responseGood = Request.CreateResponse(HttpStatusCode.OK);
+                        responseGood.Headers.Add("ServerID", serverID.ToString());
+                        return responseGood;
+                    }
+
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "База данных не найдена");
+                }
+
+                catch (Exception e)
+                {
+                    Logger.Log.Error(e.Message.ToString());
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                }
+            }
+
+            var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
+
+            return responseBad;
+        }
     }
 }
