@@ -12,20 +12,21 @@ namespace WebService.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Owner
+    public partial class FinanceType
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Owner()
+        public FinanceType()
         {
-            this.Cards = new HashSet<Card>();
+            this.Finances = new HashSet<Finance>();
         }
     
-        public int IDOwner { get; set; }
-        public string Phone { get; set; }
-        public int LocalizedBy { get; set; }
-        public int LocalizedID { get; set; }
+        public int IDFinanceType { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public Nullable<int> ServerID { get; set; }
+        public string ServerMessage { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Card> Cards { get; set; }
+        public virtual ICollection<Finance> Finances { get; set; }
     }
 }

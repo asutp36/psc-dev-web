@@ -12,22 +12,17 @@ namespace WebService.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Operation
+    public partial class Finance
     {
-        public int IDOperation { get; set; }
-        public int IDPsc { get; set; }
-        public int IDOperationType { get; set; }
-        public int IDCard { get; set; }
+        public int IDFinance { get; set; }
+        public int IDDevice { get; set; }
+        public int IDFinanceType { get; set; }
         public System.DateTime DTime { get; set; }
         public int Amount { get; set; }
-        public int Balance { get; set; }
-        public int LocalizedBy { get; set; }
-        public int LocalizedID { get; set; }
-        public string Functions { get; set; }
-        public string Details { get; set; }
+        public Nullable<int> ServerID { get; set; }
+        public string ServerMessage { get; set; }
     
-        public virtual Card Card { get; set; }
-        public virtual OperationType OperationType { get; set; }
-        public virtual Psce Psce { get; set; }
+        public virtual Device Device { get; set; }
+        public virtual FinanceType FinanceType { get; set; }
     }
 }

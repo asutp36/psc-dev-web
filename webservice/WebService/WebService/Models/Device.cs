@@ -12,20 +12,22 @@ namespace WebService.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Owner
+    public partial class Device
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Owner()
+        public Device()
         {
-            this.Cards = new HashSet<Card>();
+            this.Finances = new HashSet<Finance>();
         }
     
-        public int IDOwner { get; set; }
-        public string Phone { get; set; }
-        public int LocalizedBy { get; set; }
-        public int LocalizedID { get; set; }
+        public int IDDevice { get; set; }
+        public string Name { get; set; }
+        public string Code { get; set; }
+        public int IDWash { get; set; }
+        public int ServerID { get; set; }
     
+        public virtual Wash Wash { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Card> Cards { get; set; }
+        public virtual ICollection<Finance> Finances { get; set; }
     }
 }

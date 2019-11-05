@@ -12,20 +12,20 @@ namespace WebService.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Owner
+    public partial class Region
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Owner()
+        public Region()
         {
-            this.Cards = new HashSet<Card>();
+            this.Washes = new HashSet<Wash>();
         }
     
-        public int IDOwner { get; set; }
-        public string Phone { get; set; }
-        public int LocalizedBy { get; set; }
-        public int LocalizedID { get; set; }
+        public int IDRegion { get; set; }
+        public short Code { get; set; }
+        public string Name { get; set; }
+        public int IDCompany { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Card> Cards { get; set; }
+        public virtual ICollection<Wash> Washes { get; set; }
     }
 }

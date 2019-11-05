@@ -209,7 +209,7 @@ namespace WebService.Controllers
 
                         var id = command.ExecuteScalar();
                         Int32 serverID = Convert.ToInt32(id.ToString());
-                        Logger.Log.Debug("Card added serverID:" + serverID);
+                        Logger.Log.Debug("Finance added serverID:" + serverID);
 
                         _model.Database.Connection.Close();
 

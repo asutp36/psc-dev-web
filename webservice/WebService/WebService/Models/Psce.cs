@@ -26,5 +26,6 @@ namespace WebService.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Operation> Operations { get; set; }
+        public virtual Wash Wash { get; set; }
     }
 }

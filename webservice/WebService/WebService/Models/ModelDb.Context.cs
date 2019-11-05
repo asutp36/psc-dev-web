@@ -34,5 +34,76 @@ namespace WebService.Models
         public virtual DbSet<OperationType> OperationTypes { get; set; }
         public virtual DbSet<Owner> Owners { get; set; }
         public virtual DbSet<Psce> Psces { get; set; }
+        public virtual DbSet<Device> Devices { get; set; }
+        public virtual DbSet<Finance> Finances { get; set; }
+        public virtual DbSet<FinanceType> FinanceTypes { get; set; }
+        public virtual DbSet<Region> Regions { get; set; }
+        public virtual DbSet<Wash> Washes { get; set; }
+    
+        public virtual ObjectResult<GetCardsOperations_Result> GetCardsOperations(string p_Phone, string p_Cardnum, string p_CardTypeCode, string p_CardStatusName, string p_OperationTypeName, Nullable<System.DateTime> p_OperationDateBeg, Nullable<System.DateTime> p_OperationDateEnd, Nullable<int> p_LocalizedBy, Nullable<int> p_LocalizedID)
+        {
+            var p_PhoneParameter = p_Phone != null ?
+                new ObjectParameter("p_Phone", p_Phone) :
+                new ObjectParameter("p_Phone", typeof(string));
+    
+            var p_CardnumParameter = p_Cardnum != null ?
+                new ObjectParameter("p_Cardnum", p_Cardnum) :
+                new ObjectParameter("p_Cardnum", typeof(string));
+    
+            var p_CardTypeCodeParameter = p_CardTypeCode != null ?
+                new ObjectParameter("p_CardTypeCode", p_CardTypeCode) :
+                new ObjectParameter("p_CardTypeCode", typeof(string));
+    
+            var p_CardStatusNameParameter = p_CardStatusName != null ?
+                new ObjectParameter("p_CardStatusName", p_CardStatusName) :
+                new ObjectParameter("p_CardStatusName", typeof(string));
+    
+            var p_OperationTypeNameParameter = p_OperationTypeName != null ?
+                new ObjectParameter("p_OperationTypeName", p_OperationTypeName) :
+                new ObjectParameter("p_OperationTypeName", typeof(string));
+    
+            var p_OperationDateBegParameter = p_OperationDateBeg.HasValue ?
+                new ObjectParameter("p_OperationDateBeg", p_OperationDateBeg) :
+                new ObjectParameter("p_OperationDateBeg", typeof(System.DateTime));
+    
+            var p_OperationDateEndParameter = p_OperationDateEnd.HasValue ?
+                new ObjectParameter("p_OperationDateEnd", p_OperationDateEnd) :
+                new ObjectParameter("p_OperationDateEnd", typeof(System.DateTime));
+    
+            var p_LocalizedByParameter = p_LocalizedBy.HasValue ?
+                new ObjectParameter("p_LocalizedBy", p_LocalizedBy) :
+                new ObjectParameter("p_LocalizedBy", typeof(int));
+    
+            var p_LocalizedIDParameter = p_LocalizedID.HasValue ?
+                new ObjectParameter("p_LocalizedID", p_LocalizedID) :
+                new ObjectParameter("p_LocalizedID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCardsOperations_Result>("GetCardsOperations", p_PhoneParameter, p_CardnumParameter, p_CardTypeCodeParameter, p_CardStatusNameParameter, p_OperationTypeNameParameter, p_OperationDateBegParameter, p_OperationDateEndParameter, p_LocalizedByParameter, p_LocalizedIDParameter);
+        }
+    
+        public virtual ObjectResult<GetWashAmounts_Result> GetWashAmounts(Nullable<int> p_RegionCode, string p_WashCode, string p_PostCode, Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        {
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(int));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetWashAmounts_Result>("GetWashAmounts", p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter, p_DateBegParameter, p_DateEndParameter);
+        }
     }
 }
