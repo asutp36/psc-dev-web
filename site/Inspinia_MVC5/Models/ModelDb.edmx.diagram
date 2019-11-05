@@ -44,6 +44,12 @@
         <AssociationConnector Association="CardsDbModel.FK_Posts_Wash" />
         <AssociationConnector Association="CardsDbModel.FK_Pcses_Wash" />
         <AssociationConnector Association="CardsDbModel.FK_Wash_Regions" />
+        <EntityTypeShape EntityType="CardsDbModel.Device" Width="1.5" PointX="7.5" PointY="22.5" />
+        <EntityTypeShape EntityType="CardsDbModel.Finance" Width="1.5" PointX="9.75" PointY="25.25" />
+        <EntityTypeShape EntityType="CardsDbModel.FinanceType" Width="1.5" PointX="7.5" PointY="25.5" />
+        <AssociationConnector Association="CardsDbModel.FK_Device_Wash" />
+        <AssociationConnector Association="CardsDbModel.FK_Finance_Device" />
+        <AssociationConnector Association="CardsDbModel.FK_Finance_FinanceType" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

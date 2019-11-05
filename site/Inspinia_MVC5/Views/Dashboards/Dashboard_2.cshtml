@@ -67,29 +67,48 @@
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <a href="@Url.Action("OperationsCards", "Operations", new {
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <a href="@Url.Action("OperationsCards", "Operations", new {
                             begTime = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                             endTime = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                         })">
 
-                        <h5>Операции по картам</h5>
-                    </a>
-                    <a href="@Url.Action("Cards", "Cards", new {
+                                <h5>Операции по картам</h5>
+                            </a>
+                        </div>
+                        <div class="col-sm-6">
+                            <a href="@Url.Action("Cards", "Cards", new {
                             begTimeLO = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                             endTimeLO = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                             begTimeActivation = DateTime.Today.AddMonths(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                             endTimeActivation = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")
                         })">
 
-                        <h5>Карты</h5>
-                    </a>
-                    <a href="@Url.Action("OperationsCardsTypedWash", "OperationsTypedWash", new {
+                                <h5>Карты</h5>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <a href="@Url.Action("OperationsCardsTypedWash", "OperationsTypedWash", new {
                             begTime = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                             endTime = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                         })">
 
-                        <h5>Операции по картам типизированной мойки</h5>
-                    </a>
+                                <h5>Операции по картам типизированной мойки</h5>
+                            </a>
+                        </div>
+                        <div class="col-sm-6">
+                            <a href="@Url.Action("FinanceOperations", "Finance", new {
+                            begTime = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                            endTime = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                        })">
+
+                                <h5>Финансовые операции</h5>
+                            </a>
+                        </div>
+                    </div>
                     @*<div class="float-right">
             <div class="btn-group">
                 <button type="button" class="btn btn-xs btn-white active">Today</button>

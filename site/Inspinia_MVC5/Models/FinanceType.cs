@@ -12,28 +12,21 @@ namespace Inspinia_MVC5.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Wash
+    public partial class FinanceType
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Wash()
+        public FinanceType()
         {
-            this.Posts = new HashSet<Post>();
-            this.Psces = new HashSet<Psce>();
-            this.Devices = new HashSet<Device>();
+            this.Finances = new HashSet<Finance>();
         }
     
-        public int IDWash { get; set; }
+        public int IDFinanceType { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        public string Address { get; set; }
-        public int IDRegion { get; set; }
+        public Nullable<int> ServerID { get; set; }
+        public string ServerMessage { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Post> Posts { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Psce> Psces { get; set; }
-        public virtual Region Region { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Device> Devices { get; set; }
+        public virtual ICollection<Finance> Finances { get; set; }
     }
 }

@@ -48,6 +48,9 @@ namespace Inspinia_MVC5.Models
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Wash> Washes { get; set; }
+        public virtual DbSet<Device> Devices { get; set; }
+        public virtual DbSet<Finance> Finances { get; set; }
+        public virtual DbSet<FinanceType> FinanceTypes { get; set; }
     
         public virtual ObjectResult<GetCardsOperations_Result> GetCardsOperations(string p_Phone, string p_Cardnum, string p_CardTypeCode, string p_CardStatusName, string p_OperationTypeName, Nullable<System.DateTime> p_OperationDateBeg, Nullable<System.DateTime> p_OperationDateEnd, Nullable<int> p_LocalizedBy, Nullable<int> p_LocalizedID)
         {
@@ -292,6 +295,19 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_CountOperationMax", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCardListMinMaxDiapasons_Result>("GetCardListMinMaxDiapasons", p_PhoneParameter, p_CardnumParameter, p_CardTypeCodeParameter, p_CardStatusNameParameter, p_BalanceMinParameter, p_BalanceMaxParameter, p_ActivationDateBegParameter, p_ActivationDateEndParameter, p_ActivationByParameter, p_LastOperationDateBegParameter, p_LastOperationDateEndParameter, p_LastOperationByParameter, p_IncreaseSumMinParameter, p_IncreaseSumMaxParameter, p_DecreaseSumMinParameter, p_DEcreaseSumMaxParameter, p_CountOperationMinParameter, p_CountOperationMaxParameter);
+        }
+    
+        public virtual ObjectResult<GetFinanceList_Result> GetFinanceList(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFinanceList_Result>("GetFinanceList", p_DateBegParameter, p_DateEndParameter);
         }
     }
 }

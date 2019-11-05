@@ -138,6 +138,7 @@
     <Compile Include="Controllers\CardsController.cs" />
     <Compile Include="Controllers\CSSAnimationsController.cs" />
     <Compile Include="Controllers\EcommerceController.cs" />
+    <Compile Include="Controllers\FinanceController.cs" />
     <Compile Include="Controllers\FormsController.cs" />
     <Compile Include="Controllers\GalleryController.cs" />
     <Compile Include="Controllers\GraphsController.cs" />
@@ -182,6 +183,9 @@
     <Compile Include="Models\CountersTotal.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Device.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Event.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -197,6 +201,12 @@
     <Compile Include="Models\EventSimple.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Finance.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\FinanceType.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetCardListMinMaxDiapasons_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -204,6 +214,9 @@
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetCardsOperations_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetFinanceList_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetPostAmounts_Result.cs">
@@ -1850,6 +1863,8 @@
     <Content Include="Views\Cards\_CardsList.cshtml" />
     <Content Include="Views\OperationsTypedWash\OperationsCardsTypedWash.cshtml" />
     <Content Include="Views\OperationsTypedWash\_OperationsCardsTypedWashList.cshtml" />
+    <Content Include="Views\Finance\FinanceOperations.cshtml" />
+    <Content Include="Views\Finance\_FinanceOperationsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
