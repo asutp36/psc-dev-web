@@ -164,7 +164,7 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#time-operation-filter span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
+        $('#time-operation-filter span').html(moment().startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
 
         $('#time-operation-filter').daterangepicker({
             "timePicker": true,

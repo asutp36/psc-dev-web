@@ -90,10 +90,10 @@
     </div>
 </div>
 
-<input id="filter-startdate" value="@ViewBag.startDTime"/>
-<input id="filter-stopdate" value="@ViewBag.stopDTime"/>
-<input id="filter-region" value="0"/>
-<input id="filter-wash" value="0"/>
+<input hidden id="filter-startdate" value="@ViewBag.startDTime"/>
+<input hidden id="filter-stopdate" value="@ViewBag.stopDTime"/>
+<input hidden id="filter-region" value="0"/>
+<input hidden id="filter-wash" value="0"/>
 
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
