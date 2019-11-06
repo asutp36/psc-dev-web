@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Финансовые операции";
 }
 
@@ -20,6 +19,51 @@
     </div>
 </div>
 <div class="ibox-content m-b-sm border-bottom">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <span class="label label-info float-left">После инкассации</span>
+                    <h5>Поступления на макете</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins">"сумма"</h1>
+                    <small>@DateTime.Now</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h2 class="label label-info float-left">Количество купюр</h2>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <h1><span class="badge badge-pill badge-primary">50 р.</span></h1><br>
+                        <h4>10</h4>
+                    </div>
+                    <div class="col-sm-2">
+                        <span class="btn btn-primary">
+                            100 р. <span class="badge badge-light">39</span>
+                            <span class="sr-only">unread messages</span>
+                        </span>
+                    </div>
+                    <div class="col-2">
+                        <h1>200&nbsp;р.<br /><span class="badge badge-primary">18</span></h1>
+
+                    </div>
+                    <div class="col-sm-2">
+                        <h4 class="label label-success">500 р.</h4><br>
+                        <h4 class="label">13</h4>
+                    </div>
+                    <div class="col-sm-2">
+                        <h4 class="label label-success">1000 р.</h4><br>
+                        <h4 class="label">14</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-10">
             <div class="form-group">
@@ -81,7 +125,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            var t = $('.table_incashwashes').DataTable({
+            $('.table_incashwashes').DataTable({
                 "paging": false,
                 "info": false,
                 "searching": false,
@@ -101,13 +145,6 @@
                         }
                     }
                 ]
-            });
-
-            t.on('draw.dt', function () {
-                var PageInfo = $('.table_incashwashes').DataTable().page.info();
-                t.column(0, { page: 'current' }).nodes().each(function (cell, i) {
-                    cell.innerHTML = i + 1 + PageInfo.start;
-                });
             });
 
             $(document).on("click", "#clear_drp_op", function () {
