@@ -6,16 +6,18 @@
             <th>Дата</th>
             <th>Тип операции</th>
             <th>Сумма</th>
+            <th>Устройство</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var m in Model)
         {
-            <tr>
-                <td>@m.DTime</td>
-                <td>@m.Name</td>
-                <td>@m.Amount</td>
-            </tr>
+        <tr>
+            <td>@m.DTime</td>
+            <td>@m.Name</td>
+            <td>@m.Amount</td>
+            <td>Макет</td>
+        </tr>
         }
     </tbody>
 </table>
