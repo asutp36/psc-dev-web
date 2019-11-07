@@ -135,8 +135,10 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AppViewsController.cs" />
+    <Compile Include="Controllers\CardsController.cs" />
     <Compile Include="Controllers\CSSAnimationsController.cs" />
     <Compile Include="Controllers\EcommerceController.cs" />
+    <Compile Include="Controllers\FinanceController.cs" />
     <Compile Include="Controllers\FormsController.cs" />
     <Compile Include="Controllers\GalleryController.cs" />
     <Compile Include="Controllers\GraphsController.cs" />
@@ -151,6 +153,7 @@
     <Compile Include="Controllers\MailboxController.cs" />
     <Compile Include="Controllers\MetricsController.cs" />
     <Compile Include="Controllers\MiscellaneousController.cs" />
+    <Compile Include="Controllers\OperationsTypedWashController.cs" />
     <Compile Include="Controllers\OperationsController.cs" />
     <Compile Include="Controllers\PagesController.cs" />
     <Compile Include="Controllers\ScaffoldingController.cs" />
@@ -180,6 +183,9 @@
     <Compile Include="Models\CountersTotal.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Device.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Event.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -195,7 +201,22 @@
     <Compile Include="Models\EventSimple.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Finance.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\FinanceType.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCardListMinMaxDiapasons_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCardList_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetCardsOperations_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetFinanceList_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetPostAmounts_Result.cs">
@@ -1564,6 +1585,7 @@
     <Content Include="Scripts\plugins\i18next\i18next.min.js" />
     <Content Include="Scripts\plugins\iCheck\icheck.min.js" />
     <Content Include="Scripts\plugins\idle-timer\idle-timer.min.js" />
+    <Content Include="Scripts\plugins\ionRangeSlider\ion.rangeSlider.js" />
     <Content Include="Scripts\plugins\ionRangeSlider\ion.rangeSlider.min.js" />
     <Content Include="Scripts\plugins\jasny\jasny-bootstrap.min.js" />
     <Content Include="Scripts\plugins\jeditable\jquery.jeditable.js" />
@@ -1829,11 +1851,17 @@
     <Content Include="Scripts\bootstrap.js.map" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Incash\IncashWashes.cshtml" />
+    <Content Include="Views\Operations\OperationsCards.cshtml" />
     <Content Include="Views\Incash\_IncashWashesList.cshtml" />
     <Content Include="Views\IncashWash\IncashPosts.cshtml" />
     <Content Include="Views\IncashWash\_IncashPostsList.cshtml" />
-    <Content Include="Views\Operations\OperationsCards.cshtml" />
     <Content Include="Views\Operations\_OperationsCardsList.cshtml" />
+    <Content Include="Views\Cards\Cards.cshtml" />
+    <Content Include="Views\Cards\_CardsList.cshtml" />
+    <Content Include="Views\OperationsTypedWash\OperationsCardsTypedWash.cshtml" />
+    <Content Include="Views\OperationsTypedWash\_OperationsCardsTypedWashList.cshtml" />
+    <Content Include="Views\Finance\FinanceOperations.cshtml" />
+    <Content Include="Views\Finance\_FinanceOperationsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

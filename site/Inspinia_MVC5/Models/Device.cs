@@ -12,26 +12,21 @@ namespace Inspinia_MVC5.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Card
+    public partial class Device
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Card()
+        public Device()
         {
-            this.Operations = new HashSet<Operation>();
+            this.Finances = new HashSet<Finance>();
         }
     
-        public int IDCard { get; set; }
-        public int IDOwner { get; set; }
-        public string CardNum { get; set; }
-        public int IDCardStatus { get; set; }
-        public int IDCardType { get; set; }
-        public int LocalizedBy { get; set; }
-        public int LocalizedID { get; set; }
+        public int IDDevice { get; set; }
+        public string Name { get; set; }
+        public string Code { get; set; }
+        public int IDWash { get; set; }
     
-        public virtual CardStatus CardStatus { get; set; }
-        public virtual CardType CardType { get; set; }
-        public virtual Owner Owner { get; set; }
+        public virtual Wash Wash { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Operation> Operations { get; set; }
+        public virtual ICollection<Finance> Finances { get; set; }
     }
 }

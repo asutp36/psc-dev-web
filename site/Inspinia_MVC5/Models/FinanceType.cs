@@ -12,26 +12,21 @@ namespace Inspinia_MVC5.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Card
+    public partial class FinanceType
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Card()
+        public FinanceType()
         {
-            this.Operations = new HashSet<Operation>();
+            this.Finances = new HashSet<Finance>();
         }
     
-        public int IDCard { get; set; }
-        public int IDOwner { get; set; }
-        public string CardNum { get; set; }
-        public int IDCardStatus { get; set; }
-        public int IDCardType { get; set; }
-        public int LocalizedBy { get; set; }
-        public int LocalizedID { get; set; }
+        public int IDFinanceType { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public Nullable<int> ServerID { get; set; }
+        public string ServerMessage { get; set; }
     
-        public virtual CardStatus CardStatus { get; set; }
-        public virtual CardType CardType { get; set; }
-        public virtual Owner Owner { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Operation> Operations { get; set; }
+        public virtual ICollection<Finance> Finances { get; set; }
     }
 }

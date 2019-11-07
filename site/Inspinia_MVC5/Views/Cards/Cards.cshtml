@@ -1,0 +1,607 @@
+﻿@{
+    ViewBag.Title = "Карты";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Карты</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Карты</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="ibox-content m-b-sm border-bottom">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe" for="phone_input_filter">Телефон</label>
+                <input type="text" id="phone_input_filter" name="phone_input_filter" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe" for="card_num_input_filter">Номер карты</label>
+                <input type="text" id="card_num_input_filter" name="card_num_input_filter" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <div class="form-group">
+                    <label class="col-form-labe" for="card_type_input_filter">Тип карты</label>
+                    <select name="card_type_input_filter" id="card_type_input_filter" class="form-control">
+                        <option value="" selected=""></option>
+                        @foreach (var item in ViewBag.CardTypes)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe" for="card_status_input_filter">Статус карты</label>
+                <select name="card_status_input_filter" id="card_status_input_filter" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.CardStatuses)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-labe" for="date_activation_input_filter">Дата активации</label>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <div id="date_activation_input_filter" class="form-control">
+                            <i class="fa fa-calendar"></i>
+                            <span></span> <b class="caret"></b>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button id="clear_drp_activation" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-labe" for="date_last_operation_input_filter">Дата последней операции</label>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <div id="date_last_operation_input_filter" class="form-control">
+                            <i class="fa fa-calendar"></i>
+                            <span></span> <b class="caret"></b>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button id="clear_drp_last_op" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-labe" for="activation_by_input_filter">Место активации</label>
+                <select name="activation_by_input_filter" id="activation_by_input_filter" class="form-control">
+                    <option value="0" selected=""></option>
+                    @foreach (var item in ViewBag.Psces)
+                    {
+                        <option value="@item.IDWash">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-labe" for="last_operation_by_input_filter">Место последней операции</label>
+                <select name="last_operation_by_input_filter" id="last_operation_by_input_filter" class="form-control">
+                    <option value="0" selected=""></option>
+                    @foreach (var item in ViewBag.Psces)
+                    {
+                        <option value="@item.IDWash">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe" for="balanceslider">Баланс</label>
+                <input id="balanceslider">
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe" for="increasesumslider">Сумма пополнений</label>
+                <input id="increasesumslider">
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe" for="decreasesumslider">Сумма списаний</label>
+                <input id="decreasesumslider">
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe" for="countoperationslider">Количество операций</label>
+                <input id="countoperationslider">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @*<label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Показать</label>*@
+                <button type="button" id="btn-for-filter" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
+            </div>
+        </div>
+        <div class="col-sm-2">
+        </div>
+        <div class="col-sm-2">
+            <button id="clear_all_filters" type="button" class="btn btn-outline-danger">
+                Очистить всё
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 table-cards">
+            <div class="ibox">
+                <div class="ibox-content-more">
+                    @Html.Action("UpdateViewBagCards", "Cards", new
+               {
+                   phone = ViewBag.phone,
+                   cardNum = ViewBag.cardNum,
+                   cardTypeCode = ViewBag.cardTypeCode,
+                   cardStatusName = ViewBag.cardStatusName,
+                   balanceMin = ViewBag.balanceMin,
+                   balanceMax = ViewBag.balanceMax,
+                   activationDateBeg = ViewBag.activationDateBeg,
+                   activationDateEnd = ViewBag.activationDateEnd,
+                   activationBy = ViewBag.activationBy,
+                   lastOperationDateBeg = ViewBag.lastOperationDateBeg,
+                   lastOperationDateEnd = ViewBag.lastOperationDateEnd,
+                   lastOperationBy = ViewBag.lastOperationBy,
+                   increaseSumMin = ViewBag.increaseSumMin,
+                   increaseSumMax= ViewBag.increaseSumMax,
+                   decreaseSumMin = ViewBag.decreaseSumMin,
+                   decreaseSumMax = ViewBag.decreaseSumMax,
+                   countOperationMin = ViewBag.countOperaionMin,
+                   countOperationMax = ViewBag.countOperaionMax
+                })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input hidden id="filter-phone" value="@ViewBag.phone" />
+<input hidden id="filter-cardNum" value="@ViewBag.cardNum" />
+<input hidden id="filter-cardTypeCode" value="@ViewBag.cardTypeCode" />
+<input hidden id="filter-cardStatusName" value="@ViewBag.cardStatusName" />
+<input hidden id="filter-balancemin" value="@ViewBag.balanceMin" />
+<input hidden id="filter-balancemax" value="@ViewBag.balanceMax" />
+<input hidden id="filter-activationdatebeg" value="@ViewBag.activationDateBeg" />
+<input hidden id="filter-activationdateend" value="@ViewBag.activationDateEnd" />
+<input hidden id="filter-activationby" value="@ViewBag.activationBy" />
+<input hidden id="filter-lastoperationdatebeg" value="@ViewBag.lastOperationDateBeg" />
+<input hidden id="filter-lastoperationdateend" value="@ViewBag.lastOperationDateEnd" />
+<input hidden id="filter-lastoperationby" value="@ViewBag.lastOperationBy" />
+<input hidden id="filter-increasesummin" value="@ViewBag.increaseSumMin" />
+<input hidden id="filter-increasesummax" value="@ViewBag.increaseSumMax" />
+<input hidden id="filter-decreasesummin" value="@ViewBag.decreaseSumMin" />
+<input hidden id="filter-decreasesummax" value="@ViewBag.decreaseSumMax" />
+<input hidden id="filter-countoperationmin" value="@ViewBag.countOperationMin" />
+<input hidden id="filter-countoperationmax" value="@ViewBag.countOperationMax" />
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/Content/plugins/ionRangeSlider/ionRangeStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/ionRange")
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/dateRange")
+    @Scripts.Render("~/plugins/select2")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.table_incashwashes').DataTable({
+                "paging": false,
+                "info": false,
+                "searching": false,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    { extend: 'excel', title: 'Report' },
+                    { extend: 'pdf', title: 'Report' },
+                    {
+                        extend: 'print',
+                        customize: function (win) {
+                            $(win.document.body).addClass('white-bg');
+                            $(win.document.body).css('font-size', '10px');
+
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
+                        }
+                    }
+                ]
+            });
+
+            $('#balanceslider').ionRangeSlider({
+                values_separator:" — ",
+                skin:"round",
+                min: @ViewBag.DiapasonBalanceMin,
+                max: @ViewBag.DiapasonBalanceMax,
+                type: 'double',
+                prefix: "р. ",
+                prettify: false,
+                hasGrid: true,
+                drag_interval: true,
+                min_interval: null,
+                max_interval: null
+            });
+
+            $('#filter-balancemin').val($("#balanceslider").data("ionRangeSlider").result.from);
+            $('#filter-balancemax').val($("#balanceslider").data("ionRangeSlider").result.to);
+
+            $(document).on("change", '#balanceslider', function () {
+                $('#filter-balancemin').val($("#balanceslider").data("ionRangeSlider").result.from);
+                $('#filter-balancemax').val($("#balanceslider").data("ionRangeSlider").result.to);
+            });
+
+            $('#increasesumslider').ionRangeSlider({
+                values_separator: " — ",
+                skin: "round",
+                min: @ViewBag.DiapasonIncreaseSumMin,
+                max: @ViewBag.DiapasonIncreaseSumMax,
+                type: 'double',
+                prefix: "р. ",
+                prettify: false,
+                hasGrid: true,
+                drag_interval: true,
+                min_interval: null,
+                max_interval: null
+            });
+
+            $('#filter-increasesummin').val($("#increasesumslider").data("ionRangeSlider").result.from);
+            $('#filter-increasesummax').val($("#increasesumslider").data("ionRangeSlider").result.to);
+
+            $(document).on("change", '#increasesumslider', function () {
+                $('#filter-increasesummin').val($("#increasesumslider").data("ionRangeSlider").result.from);
+                $('#filter-increasesummax').val($("#increasesumslider").data("ionRangeSlider").result.to);
+            });
+
+            $('#decreasesumslider').ionRangeSlider({
+                values_separator: " — ",
+                skin: "round",
+                min: @ViewBag.DiapasonDecreaseSumMin,
+                max: @ViewBag.DiapasonDecreaseSumMax,
+                type: 'double',
+                prefix: "р. ",
+                prettify: false,
+                hasGrid: true,
+                drag_interval: true,
+                min_interval: null,
+                max_interval: null
+            });
+
+            $('#filter-decreasesummin').val($("#decreasesumslider").data("ionRangeSlider").result.from);
+            $('#filter-decreasesummax').val($("#decreasesumslider").data("ionRangeSlider").result.to);
+
+            $(document).on("change", '#decreasesumslider', function () {
+                $('#filter-decreasesummin').val($("#decreasesumslider").data("ionRangeSlider").result.from);
+                $('#filter-decreasesummax').val($("#decreasesumslider").data("ionRangeSlider").result.to);
+            });
+
+            $('#countoperationslider').ionRangeSlider({
+                values_separator: " — ",
+                skin: "round",
+                min: @ViewBag.DiapasonCountOperationMin,
+                max: @ViewBag.DiapasonCountOperationMax,
+                type: 'double',
+                prefix: "",
+                prettify: false,
+                hasGrid: true,
+                drag_interval: true,
+                min_interval: null,
+                max_interval: null
+            });
+            $('#filter-countoperationmin').val($("#countoperationslider").data("ionRangeSlider").result.from);
+            $('#filter-countoperationmax').val($("#countoperationslider").data("ionRangeSlider").result.to);
+
+            $(document).on("change", '#countoperationslider', function () {
+                $('#filter-countoperationmin').val($("#countoperationslider").data("ionRangeSlider").result.from);
+                $('#filter-countoperationmax').val($("#countoperationslider").data("ionRangeSlider").result.to);
+            });
+
+            $(document).on("change", '#phone_input_filter', function () {
+                $('#filter-phone').val($(this).val());
+            });
+            $(document).on("change", '#card_num_input_filter', function () {
+                $('#filter-cardNum').val($(this).val());
+            });
+            $(document).on("change", '#card_type_input_filter', function () {
+                $('#filter-cardTypeCode').val($(this).find(":selected").val());
+            });
+            $(document).on("change", '#card_status_input_filter', function () {
+                $('#filter-cardStatusName').val($(this).find(":selected").val());
+            });
+
+            $('#filter-activationby').val($('#activation_by_input_filter').find(":selected").val());
+            $(document).on("change", '#activation_by_input_filter', function () {
+                $('#filter-activationby').val($(this).find(":selected").val());
+            });
+
+            $('#filter-lastoperationby').val($('#last_operation_by_input_filter').find(":selected").val());
+            $(document).on("change", '#last_operation_by_input_filter', function () {
+                $('#filter-lastoperationby').val($(this).find(":selected").val());
+            });
+
+            $(document).on("click", "#clear_drp_activation", function () {
+                $('#date_activation_input_filter span').empty();
+                $('#filter-activationdatebeg').val("");
+                $('#filter-activationdateend').val("");
+            });
+
+            $(document).on("click", "#clear_drp_last_op", function () {
+                $('#date_last_operation_input_filter span').empty();
+                $('#filter-lastoperationdatebeg').val("");
+                $('#filter-lastoperationdateend').val("");
+            });
+
+            $(document).on("click", "#clear_all_filters", function () {
+                $('#clear_drp_activation').click();
+                $('#clear_drp_last_op').click();
+
+                $('#phone_input_filter').val("");
+                $('#card_num_input_filter').val("");
+                $('#card_type_input_filter').val("");
+                $('#card_status_input_filter').val("");
+                $('#activation_by_input_filter').val("0");
+                $('#last_operation_by_input_filter').val("0");
+
+                $('#filter-phone').val("");
+                $('#filter-cardNum').val("");
+                $('#filter-cardTypeCode').val("");
+                $('#filter-cardStatusName').val("");
+                $('#filter-activationby').val(0);
+                $('#filter-lastoperationby').val(0);
+                $('#balanceslider').data("ionRangeSlider").update({ from: @ViewBag.DiapasonBalanceMin, to: @ViewBag.DiapasonBalanceMax});
+                $('#increasesumslider').data("ionRangeSlider").update({ from: @ViewBag.DiapasonIncreaseSumMin, to: @ViewBag.DiapasonIncreaseSumMax});
+                $('#decreasesumslider').data("ionRangeSlider").update({ from: @ViewBag.DiapasonDecreaseSumMin, to: @ViewBag.DiapasonDecreaseSumMax});
+                $('#countoperationslider').data("ionRangeSlider").update({ from: @ViewBag.DiapasonCountOperationMin, to: @ViewBag.DiapasonCountOperationMax});
+            });
+
+            $(document).on("click", "#btn-for-filter", function () {
+                var phone = $('#filter-phone').val();
+                var cardNum = $('#filter-cardNum').val();
+                var cardTypeCode = $('#filter-cardTypeCode').val();
+                var cardStatusName = $('#filter-cardStatusName').val();
+                var balancemin = $('#filter-balancemin').val();
+                var balancemax = $('#filter-balancemax').val();
+                var activationdatebeg = $('#filter-activationdatebeg').val();
+                var activationdateend = $('#filter-activationdateend').val();
+                var activationby = $('#filter-activationby').val();
+                var lastoperationdatebeg = $('#filter-lastoperationdatebeg').val();
+                var lastoperationdateend = $('#filter-lastoperationdateend').val();
+                var lastoperationby = $('#filter-lastoperationby').val();
+                var increasesummin = $('#filter-increasesummin').val();
+                var increasesummax = $('#filter-increasesummax').val();
+                var decreasesummin = $('#filter-decreasesummin').val();
+                var decreasesummax = $('#filter-decreasesummax').val();
+                var countoperationmin = $('#filter-countoperationmin').val();
+                var countoperationmax = $('#filter-countoperationmax').val();
+
+                $.ajax({
+                    type: "GET",
+                    cache: false,
+                    data: {
+                        phone: phone,
+                        cardNum: cardNum,
+                        cardTypeCode: cardTypeCode,
+                        cardStatusName: cardStatusName,
+                        balanceMin: balancemin,
+                        balanceMax: balancemax,
+                        activationDateBeg: activationdatebeg,
+                        activationDateEnd: activationdateend,
+                        activationBy: activationby,
+                        lastOperationDateBeg: lastoperationdatebeg,
+                        lastOPerationDateEnd: lastoperationdateend,
+                        lastOperationBy: lastoperationby,
+                        increaseSumMin: increasesummin,
+                        increaseSumMax: increasesummax,
+                        decreaseSumMin: decreasesummin,
+                        decreaseSumMax: decreasesummax,
+                        countOperationMin: countoperationmin,
+                        countOperationMax: countoperationmax
+                    },
+                    success: function () {
+                        $('.alert-success').fadeIn('slow');
+                        $('.alert-success').delay(3000).fadeOut('slow');
+                    },
+                    error: function () {
+                        alert('Error occured');
+                    },
+                    url: "@Url.Action("UpdateViewBagCards", "Cards")",
+                }).done(function (result) {
+                    $('.table-cards').find('.ibox-content-more').html(result);
+
+                    $('.table_incashwashes').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "searching": false,
+                        dom: '<"html5buttons"B>lTfgitp',
+                        buttons: [
+                            { extend: 'excel', title: 'Report' },
+                            { extend: 'pdf', title: 'Report' },
+
+                            {
+                                extend: 'print',
+                                customize: function (win) {
+                                    $(win.document.body).addClass('white-bg');
+                                    $(win.document.body).css('font-size', '10px');
+
+                                    $(win.document.body).find('table')
+                                        .addClass('compact')
+                                        .css('font-size', 'inherit');
+                                }
+                            }
+                        ],
+                        "language": {
+                            "zeroRecords": "Данные по заданному фильтру не найдены",
+                            "emptyTable": "Данные по заданному фильтру не найдены"
+                        }
+                    });
+                });
+            });
+        });
+
+
+        $('input[name="daterange"]').daterangepicker();
+
+        $('#date_activation_input_filter span').html(moment().subtract(1, 'months').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
+
+        $('#date_activation_input_filter').daterangepicker({
+            "timePicker": true,
+            "timePicker24Hour": true,
+            "timePickerSeconds": true,
+            "ranges": {
+                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                'сегодня': [moment().startOf('day'), moment()],
+                'текущий месяц': [moment().startOf('month'), moment()],
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "locale": {
+                "format": "DD.MM.YYYY",
+                "separator": " ",
+                "applyLabel": "Выбрать",
+                "cancelLabel": "Отмена",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "Вс",
+                    "Пн",
+                    "Вт",
+                    "Ср",
+                    "Чт",
+                    "Пт",
+                    "Сб"
+                ],
+                "monthNames": [
+                    "Январь",
+                    "Февраль",
+                    "Март",
+                    "Апрель",
+                    "Май",
+                    "Июнь",
+                    "Июль",
+                    "Август",
+                    "Сентябрь",
+                    "Октябрь",
+                    "Ноябрь",
+                    "Декабрь"
+                ],
+                "firstDay": 1
+            },
+            "showCustomRangeLabel": false,
+            "alwaysShowCalendars": true,
+            "startDate": moment().subtract(1, 'days').startOf('day'),
+            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "opens": "right",
+            "drops": "down"
+        }, function (start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            $('#date_activation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+
+            $('#filter-activationdatebeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#filter-activationdateend').val(end.format('DD.MM.YYYY HH:mm:ss'));
+        });
+
+        $('#date_last_operation_input_filter span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
+
+        $('#date_last_operation_input_filter').daterangepicker({
+            "timePicker": true,
+            "timePicker24Hour": true,
+            "timePickerSeconds": true,
+            "ranges": {
+                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                'сегодня': [moment().startOf('day'), moment()],
+                'текущий месяц': [moment().startOf('month'), moment()],
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "locale": {
+                "format": "DD.MM.YYYY",
+                "separator": " ",
+                "applyLabel": "Выбрать",
+                "cancelLabel": "Отмена",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "Вс",
+                    "Пн",
+                    "Вт",
+                    "Ср",
+                    "Чт",
+                    "Пт",
+                    "Сб"
+                ],
+                "monthNames": [
+                    "Январь",
+                    "Февраль",
+                    "Март",
+                    "Апрель",
+                    "Май",
+                    "Июнь",
+                    "Июль",
+                    "Август",
+                    "Сентябрь",
+                    "Октябрь",
+                    "Ноябрь",
+                    "Декабрь"
+                ],
+                "firstDay": 1
+            },
+            "showCustomRangeLabel": false,
+            "alwaysShowCalendars": true,
+            "startDate": moment().subtract(1, 'days').startOf('day'),
+            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "opens": "right",
+            "drops": "down"
+        }, function (start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            $('#date_last_operation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+
+            $('#filter-lastoperationdatebeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#filter-lastoperationdateend').val(end.format('DD.MM.YYYY HH:mm:ss'));
+        });
+
+    </script>
+}

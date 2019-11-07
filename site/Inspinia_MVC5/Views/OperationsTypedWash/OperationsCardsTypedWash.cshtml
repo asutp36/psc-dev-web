@@ -1,17 +1,25 @@
 ﻿
 @{
-    ViewBag.Title = "Операции по картам";
+    ViewBag.Title = "Операции по картам типизированной мойки";
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Операции по картам</h2>
+        <h2>Операции по картам типизированной мойки</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
             </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("OperationsCards", "Operations", new {
+                            begTime = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                            endTime = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                        })">
+                    Операции по картам
+                </a>
+            </li>
             <li class="active breadcrumb-item">
-                <strong>Операции по картам</strong>
+                <strong>Типизированной мойки</strong>
             </li>
         </ol>
     </div>
@@ -21,54 +29,34 @@
 </div>
 <div class="ibox-content m-b-sm border-bottom">
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-7">
             <div class="form-group">
-                <label class="col-form-labe" for="phone_input_filter">Телефон</label>
-                <input type="text" id="phone_input_filter" name="phone_input_filter" class="form-control" />
+                <label class="col-form-labe" for="time-operation-filter">Время операции</label>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <div id="time-operation-filter" name="time-operation-filter" class="form-control">
+                            <i class="fa fa-calendar"></i>
+                            <span></span> <b class="caret"></b>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button id="clear_drp_op" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-5">
             <div class="form-group">
-                <label class="col-form-labe" for="card_num_input_filter">Номер карты</label>
-                <input type="text" id="card_num_input_filter" name="card_num_input_filter" placeholder="" class="form-control" />
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                <label class="col-form-labe" for="localized_by_input_filter">LocalizedBy</label>
-                <input type="text" id="localized_by_input_filter" name="localized_by_input_filter" class="form-control" />
+                <label class="col-form-labe" for="details-filter">Подробности</label>
+                <input type="text" id="details-filter" name="details-filter" placeholder="" class="form-control" />
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <div class="form-group">
-                <label class="col-form-labe" for="card_status_input_filter">Статус карты</label>
-                <select name="card_status_input_filter" id="card_status_input_filter" class="form-control">
-                    <option value="" selected=""></option>
-                    @foreach (var item in ViewBag.CardStatuses)
-                    {
-                        <option value="@item.Code">@item.Name</option>
-                    }
-                </select>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                <label class="col-form-labe" for="operation_type_input_filter">Тип операции</label>
-                <select name="operation_type_input_filter" id="operation_type_input_filter" class="form-control">
-                    <option value="" selected=""></option>
-                    @foreach (var item in ViewBag.OperationTypes)
-                    {
-                        <option value="@item.Code">@item.Name</option>
-                    }
-                </select>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                <label class="col-form-labe" for="card_type_input_filter">Тип карты</label>
-                <select name="card_type_input_filter" id="card_type_input_filter" class="form-control">
+                <label class="col-form-labe" for="operation-filter">Операция</label>
+                <select name="operation-filter" id="operation-filter" class="form-control">
                     <option value="" selected=""></option>
                     @foreach (var item in ViewBag.CardTypes)
                     {
@@ -77,66 +65,81 @@
                 </select>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-8">
+        <div class="col-sm-3">
             <div class="form-group">
-                <label class="col-form-labe" for="time_operation_input_filter">Период</label>
-                <div id="time_operation_input_filter" class="form-control">
-                    <i class="fa fa-calendar"></i>
-                    <span></span> <b class="caret"></b>
-                </div>
+                <label class="col-form-labe" for="place-filter">Место</label>
+                <select name="place-filter" id="place-filter" class="form-control">
+                    <option value="0" selected=""></option>
+                    @foreach (var item in ViewBag.Psces)
+                    {
+                        <option value="@item.IDPsc">@item.Name</option>
+                    }
+                </select>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <div class="form-group">
-                <label class="col-form-labe" for="localized_id_input_filter">LocalizedID</label>
-                <input type="text" id="localized_id_input_filter" name="localized_id_input_filter" class="form-control" />
+                <label class="col-form-labe" for="function-filter">Функции</label>
+                <select name="function-filter" id="function-filter" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.CardStatuses)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe" for="card-num-filter">Номер карты</label>
+                <input type="text" id="card-num-filter" name="card-num-filter" placeholder="" class="form-control" />
             </div>
         </div>
     </div>
+
     <div class="row">
         <div class="col-sm-4">
         </div>
         <div class="col-sm-4">
             <div class="form-group">
                 @*<label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Показать</label>*@
-                <button type="button" id="btn-for-filter"  class="btn btn-block btn-outline btn-success font-bold">Показать</button>
+                <button type="button" id="btn-for-filter" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-2">
+        </div>
+        <div class="col-sm-2">
+            <button id="clear_all_filters" type="button" class="btn btn-outline-danger">
+                Очистить всё
+            </button>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-lg-12 table-operations">
+        <div class="col-lg-12 table-operations-typed-wash">
             <div class="ibox">
                 <div class="ibox-content-more">
-                    @Html.Action("UpdateViewBagOperations", "Operations", new {
-                    phone = ViewBag.phone,
-                    cardNum = ViewBag.cardNum,
-                    cardTypeCode = ViewBag.cardTypeCode,
-                    cardStatusName = ViewBag.cardStatusName,
-                    operationTypeName = ViewBag.operationTypeName,
-                    begTime = ViewBag.startDTime,
-                    endTime = ViewBag.stopDTime,
-                    by = ViewBag.by,
-                    id = ViewBag.id})
+                    @Html.Action("UpdateViewBagOperationsCardsTypedWash", "OperationsTypedWash", new {
+                       begTime = ViewBag.timeOperationBeg,
+                       endTime = ViewBag.timeOperationEnd,
+                       cardNum = ViewBag.cardNum,
+                       operation = ViewBag.operation,
+                       psc = ViewBag.psc,
+                       function = ViewBag.function,
+                       details = ViewBag.details})
                 </div>
             </div>
         </div>
     </div>
+    <input hidden id="filter-timeoperationbeg" value="@ViewBag.timeOperationBeg" />
+    <input hidden id="filter-timeoperationend" value="@ViewBag.timeOperationEnd" />
+    <input hidden id="filter-cardnum" value="@ViewBag.cardNum" />
+    <input hidden id="filter-operation" value="@ViewBag.operation" />
+    <input hidden id="filter-place" value="@ViewBag.psc" />
+    <input hidden id="filter-function" value="@ViewBag.function" />
+    <input hidden id="filter-details" value="@ViewBag.details" />
 </div>
 
-<input hidden id="filter-startdate" value="@ViewBag.startDTime" />
-<input hidden id="filter-stopdate" value="@ViewBag.stopDTime" />
-<input hidden id="filter-phone" value="@ViewBag.phone" />
-<input hidden id="filter-cardNum" value="@ViewBag.cardNum" />
-<input hidden id="filter-cardTypeCode" value="@ViewBag.cardTypeCode" />
-<input hidden id="filter-cardStatusName" value="@ViewBag.cardStatusName" />
-<input hidden id="filter-operationTypeName" value="@ViewBag.operationTypeName" />
-<input hidden id="filter-by" value="@ViewBag.by" />
-<input hidden id="filter-id" value="@ViewBag.id" />
 
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
@@ -175,55 +178,67 @@
                 ]
             });
 
-            $(document).on("change", '#phone_input_filter', function () {
-                $('#filter-phone').val($(this).val());
+            $(document).on("change", '#card-num-filter', function () {
+                $('#filter-cardnum').val($(this).val());
+            });
+            $(document).on("change", '#operation-filter', function () {
+                $('#filter-operation').val($(this).find(":selected").val());
+            });
+            $('#filter-place').val($('#place-filter').find(":selected").val());
+            $(document).on("change", '#place-filter', function () {
+                $('#filter-place').val($(this).find(":selected").val());
+            });
+            $(document).on("change", '#function-filter', function () {
+                $('#filter-function').val($(this).find(":selected").val());
+            });
+            $(document).on("change", '#details-filter', function () {
+                $('#filter-details').val($(this).val());
             });
 
-            $(document).on("change", '#card_num_input_filter', function () {
-                $('#filter-cardNum').val($(this).val());
-            });
-            $(document).on("change", '#card_type_input_filter', function () {
-                $('#filter-cardTypeCode').val($(this).find(":selected").val());
-            });
-
-            $(document).on("change", '#card_status_input_filter', function () {
-                $('#filter-cardStatusName').val($(this).find(":selected").val());
-            });
-            $(document).on("change", '#operation_type_input_filter', function () {
-                $('#filter-operationTypeName').val($(this).find(":selected").val());
+            $(document).on("click", "#clear_drp_op", function () {
+                $('#time-operation-filter span').empty();
+                $('#filter-timeoperationbeg').val("");
+                $('#filter-timeoperationend').val("");
             });
 
-            $(document).on("change", '#localized_by_input_filter', function () {
-                $('#filter-by').val($(this).val());
+            $(document).on("click", "#clear_all_filters", function () {
+                $('#clear_drp_op').click();
+
+                $('#card-num-filter').val("");
+                $('#operation-filter').val("");
+                $('#place-filter').val("0");
+                $('#function-filter').val("");
+                $('#details-filter').val("");
+
+                $('#filter-cardnum').val("");
+                $('#filter-operation').val("");
+                $('#filter-place').val(0);
+                $('#filter-function').val("");
+                $('#filter-details').val("");
             });
-            $(document).on("change", '#localized_id_input_filter', function () {
-                $('#filter-id').val($(this).val());
-            });
+
 
             $(document).on("click", "#btn-for-filter", function () {
-                var startDate = $('#filter-startdate').val();
-                var stopDate = $('#filter-stopdate').val();
-                var phone = $("#filter-phone").val();
-                var cardNum = $("#filter-cardNum").val();
-                var cardTypeCode = $("#filter-cardTypeCode").val()
-                var cardStatusName = $("#filter-cardStatusName").val();
-                var operationTypeName = $("#filter-operationTypeName").val();
-                var by = Number($("#filter-by").val());
-                var id = Number($("#filter-id").val());
+                var startDate = $('#filter-timeoperationbeg').val();
+                var stopDate = $('#filter-timeoperationend').val();
+                var cardNum = $("#filter-cardnum").val();
+                var operation = $("#filter-operation").val()
+                var place = $("#filter-place").val();
+                var functionn = $("#filter-function").val();
+                var details = $("#filter-details").val();
+
 
                 $.ajax({
                     type: "GET",
                     cache: false,
                     data: {
-                        phone: phone,
-                        cardNum: cardNum,
-                        cardTypeCode: cardTypeCode,
-                        cardStatusName: cardStatusName,
-                        operationTypeName: operationTypeName,
                         begTime: startDate,
                         endTime: stopDate,
-                        by: by,
-                        id: id
+                        cardNum: cardNum,
+                        operation: operation,
+                        psc: place,
+                        function: functionn,
+                        details: details
                     },
                     success: function () {
                         $('.alert-success').fadeIn('slow');
@@ -232,9 +247,9 @@
                     error: function () {
                         alert('Error occured');
                     },
-                    url: "@Url.Action("UpdateViewBagOperations", "Operations")",
+                    url: "@Url.Action("UpdateViewBagOperationsCardsTypedWash", "OperationsTypedWash")",
                 }).done(function (result) {
-                    $('.table-operations').find('.ibox-content-more').html(result);
+                    $('.table-operations-typed-wash').find('.ibox-content-more').html(result);
 
                     $('.table_incashwashes').DataTable({
                         "paging": false,
@@ -269,9 +284,9 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#time_operation_input_filter span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
+        $('#time-operation-filter span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
 
-        $('#time_operation_input_filter').daterangepicker({
+        $('#time-operation-filter').daterangepicker({
             "timePicker": true,
             "timePicker24Hour": true,
             "timePickerSeconds": true,
@@ -323,12 +338,10 @@
             "drops": "down"
         }, function (start, end, label) {
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
-            $('#time_operation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
-            
-            $('#filter-startdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
-            $('#filter-stopdate').val(end.format('DD.MM.YYYY HH:mm:ss'));
+            $('#time-operation-filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+
+            $('#filter-timeoperationbeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#filter-timeoperationend').val(end.format('DD.MM.YYYY HH:mm:ss'));
         });
     </script>
 }
-
-
