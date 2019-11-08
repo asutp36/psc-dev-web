@@ -19,7 +19,24 @@
     </div>
 </div>
 <div class="ibox-content m-b-sm border-bottom">
-    <div class="row" style="height: 200px;">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Время операции</h5>
+                </div>
+                <div class="ibox-content">
+                    <div id="time-operation-filter" name="time-operation-filter" class="form-control">
+                        <i class="fa fa-calendar"></i>
+                        <span></span> <b class="caret"></b>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                @*<label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Показать</label>*@
+                <button type="button" id="btn-for-filter" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
+            </div>
+        </div>
         <div class="col-sm-3">
             <div class="ibox ">
                 <div class="ibox-title">
@@ -28,11 +45,13 @@
                 </div>
                 <div class="ibox-content">
                     <h1 class="no-margins">987 654</h1>
-                    <small>@DateTime.Today.AddDays(-1).ToString("dd MMMM yyyy")</small>
+                </div>
+                <div class="ibox-content-more">
+                    <small>@DateTime.Now.ToString("dd MMMM yyyy")</small>
                 </div>
             </div>
         </div>
-        <div class="col-sm-9">
+        <div class="col-sm-5">
             <div class="ibox ">
                 <div class="ibox-title">
                     <span class="label label-success float-right">по номиналу</span>
@@ -42,36 +61,6 @@
                     <canvas id="popChart" height="140" weight="250"></canvas>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-10">
-            <div class="form-group">
-                <label class="col-form-labe" for="time-operation-filter">Время операции</label>
-                <div class="row">
-                    <div class="col-sm-10">
-                        <div id="time-operation-filter" name="time-operation-filter" class="form-control">
-                            <i class="fa fa-calendar"></i>
-                            <span></span> <b class="caret"></b>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <button hidden id="clear_drp_op" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-4">
-        </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                @*<label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Показать</label>*@
-                <button type="button" id="btn-for-filter" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
-            </div>
-        </div>
-        <div class="col-sm-4">
         </div>
     </div>
     <div class="row">
