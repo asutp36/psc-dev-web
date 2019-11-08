@@ -20,45 +20,27 @@
 </div>
 <div class="ibox-content m-b-sm border-bottom">
     <div class="row">
-        <div class="col-lg-4">
+        <div class="col-lg-3">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <span class="label label-info float-left">После инкассации</span>
-                    <h5>Поступления на макете</h5>
+                    <span class="label label-success float-right">макет</span>
+                    <h5>Поступления</h5>
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins">"сумма"</h1>
-                    <small>@DateTime.Now</small>
+                    <h1 class="no-margins">987 654</h1>
+                    <small>@DateTime.Today.AddDays(-1).ToString("dd MMMM yyyy")</small>
                 </div>
             </div>
         </div>
-        <div class="col-lg-8">
+        <div class="col-lg-9">
             <div class="ibox ">
                 <div class="ibox-title">
-                    <h2 class="label label-info float-left">Количество купюр</h2>
+                    <span class="label label-success float-right">по номиналу</span>
+                    <h5>Количество купюр</h5>
                 </div>
-                <div class="row">
-                    <div class="col-sm-2">
-                        <h1><span class="badge badge-pill badge-primary">50 р.</span></h1><br>
-                        <h4>10</h4>
-                    </div>
-                    <div class="col-sm-2">
-                        <span class="btn btn-primary">
-                            100 р. <span class="badge badge-light">39</span>
-                            <span class="sr-only">unread messages</span>
-                        </span>
-                    </div>
-                    <div class="col-2">
-                        <h1>200&nbsp;р.<br /><span class="badge badge-primary">18</span></h1>
-
-                    </div>
-                    <div class="col-sm-2">
-                        <h4 class="label label-success">500 р.</h4><br>
-                        <h4 class="label">13</h4>
-                    </div>
-                    <div class="col-sm-2">
-                        <h4 class="label label-success">1000 р.</h4><br>
-                        <h4 class="label">14</h4>
+                <div class="ibox-content">
+                    <div>
+                        <canvas id="doughnutChart" height="140"></canvas>
                     </div>
                 </div>
             </div>
@@ -121,9 +103,34 @@
     @Scripts.Render("~/plugins/dataPicker")
     @Scripts.Render("~/plugins/dateRange")
     @Scripts.Render("~/plugins/select2")
+    @Scripts.Render("~/plugins/chartjs")
 
     <script type="text/javascript">
         $(document).ready(function () {
+
+            var doughnutData = {
+                labels: ["50 р.", "100 р.", "200 р.", "500 р.", "1000 р."],
+                datasets: [{
+                    data: [102, 78, 22, 31, 9],
+                    backgroundColor: ["#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba"]
+                }]
+            };
+
+
+            var doughnutOptions = {
+                responsive: true,
+                legend: {
+                    position: 'left'
+                }
+            };
+
+
+            var ctx = document.getElementById("doughnutChart").getContext("2d");
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: doughnutData,
+                options: doughnutOptions
+            });
 
             $('.table_incashwashes').DataTable({
                 "paging": false,
