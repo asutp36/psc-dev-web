@@ -95,7 +95,7 @@ namespace Inspinia_MVC5
 
             // ChartJS chart
             bundles.Add(new ScriptBundle("~/plugins/chartJs").Include(
-                      "~/Scripts/plugins/chartjs/Chart.min.js"));
+                      "~/Scripts/plugins/chartjs/Chart.js"));
 
             // iCheck css styles
             bundles.Add(new StyleBundle("~/Content/plugins/iCheck/iCheckStyles").Include(
