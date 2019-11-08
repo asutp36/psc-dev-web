@@ -38,10 +38,8 @@
                     <span class="label label-success float-right">по номиналу</span>
                     <h5>Количество купюр</h5>
                 </div>
-                <div class="ibox-content">
-                    <div>
-                        <canvas id="doughnutChart" height="140"></canvas>
-                    </div>
+                <div class="ibox-content text-center">
+                    <canvas id="popChart" height="110" weight="250"></canvas>
                 </div>
             </div>
         </div>
@@ -108,29 +106,53 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            var doughnutData = {
-                labels: ["50", "100", "200", "500", "1 000"],
-                datasets: [{
-                    data: [102, 78, 22, 31, 9],
-                    backgroundColor: ["#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba"]
-                }]
-            };
-
-
-            var doughnutOptions = {
-                responsive: true,
-                legend: {
-                    position: 'left'
-                }
-            };
-
-
-            var ctx = document.getElementById("doughnutChart").getContext("2d");
-            new Chart(ctx, {
+            var popCanvas = document.getElementById("popChart");
+            var barChart = new Chart(popCanvas, {
                 type: 'doughnut',
-                data: doughnutData,
-                options: doughnutOptions
+                data: {
+                    labels: ["50", "100", "200", "500", "1 000"],
+                    datasets: [{
+                        data: [102, 78, 22, 31, 9],
+                        backgroundColor: ["#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba"]
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: false,
+                    animation: {
+                        animateScale: true
+                    },
+                    legend: {
+                        position: 'left'
+                    },
+                    rotation: Math.PI * 1,
+                    circumference: Math.PI * 1,
+                }
             });
+
+            //var doughnutData = {
+            //    labels: ["50", "100", "200", "500", "1 000"],
+            //    datasets: [{
+            //        data: [102, 78, 22, 31, 9],
+            //        backgroundColor: ["#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba"]
+            //    }]
+            //};
+
+
+            //var doughnutOptions = {
+            //    responsive: false,
+            //    legend: {
+            //        position: 'left'
+            //    }
+            //};
+
+
+            //var ctx = document.getElementById("doughnutChart").getContext("2d");
+            //new Chart(ctx, {
+            //    type: 'doughnut',
+            //    data: doughnutData,
+            //    options: doughnutOptions
+            //});
 
             $('.table_incashwashes').DataTable({
                 "paging": false,
