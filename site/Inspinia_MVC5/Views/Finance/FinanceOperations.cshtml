@@ -37,7 +37,7 @@
                 <button type="button" id="btn-for-filter" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
             </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3 finance-operations-summary">
             <div class="ibox ">
                 <div class="ibox-title">
                     <span class="label label-success float-right">макет</span>
@@ -224,7 +224,7 @@
                 });
 
 
-                @*$.ajax({
+                $.ajax({
                     type: "GET",
                     cache: false,
                     data: {
@@ -238,37 +238,11 @@
                     error: function () {
                         alert('Error occured');
                     },
-                    url: "@Url.Action("UpdateViewBagFinanceOperations", "Finance")",
+                    url: "@Url.Action("UpdateFinanceOperationsSummary", "Finance")",
                 }).done(function (result) {
-                    $('.table-finance-operations').find('.ibox-content-more').html(result);
+                    $('.finance-operations-summary').find('.ibox-content').html(result);
 
-                    $('.table_incashwashes').DataTable({
-                        "paging": false,
-                        "info": false,
-                        "searching": false,
-                        dom: '<"html5buttons"B>lTfgitp',
-                        buttons: [
-                            { extend: 'excel', title: 'Report' },
-                            { extend: 'pdf', title: 'Report' },
-
-                            {
-                                extend: 'print',
-                                customize: function (win) {
-                                    $(win.document.body).addClass('white-bg');
-                                    $(win.document.body).css('font-size', '10px');
-
-                                    $(win.document.body).find('table')
-                                        .addClass('compact')
-                                        .css('font-size', 'inherit');
-                                }
-                            }
-                        ],
-                        "language": {
-                            "zeroRecords": "Данные по заданному фильтру не найдены",
-                            "emptyTable": "Данные по заданному фильтру не найдены"
-                        }
-                    });
-                    });*@
+                });
 
 
             });
@@ -325,8 +299,8 @@
             },
             "showCustomRangeLabel": false,
             "alwaysShowCalendars": true,
-            "startDate": moment().subtract(1, 'days').startOf('day'),
-            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "startDate": moment().startOf('day'),
+            "endDate": moment().endOf('day'),
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {

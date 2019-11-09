@@ -101,8 +101,8 @@
                         </div>
                         <div class="col-sm-6">
                             <a href="@Url.Action("FinanceOperations", "Finance", new {
-                            begTime = DateTime.Today.AddDays(-3).ToString("dd.MM.yyyy HH:mm:ss"),
-                            endTime = DateTime.Today.AddSeconds(-3).ToString("dd.MM.yyyy HH:mm:ss"),
+                            begTime = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss"),
+                            endTime = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss"),
                         })">
 
                                 <h5>Финансовые операции</h5>
