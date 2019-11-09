@@ -70,6 +70,46 @@ namespace Inspinia_MVC5.Controllers
             return resultset;
         }
 
+        public ActionResult UpdateFinanceOperationsSummary(string begTime, string endTime)
+        {
+            Int32 summary = GetFinanceOperationsSummary(begTime, endTime);
+
+            return PartialView("_FinanceOperationsList", summary);
+        }
+
+        private Int32 GetFinanceOperationsSummary(string begTime, string endTime)
+        {
+            Int32 summary = 0;
+
+            var prmDateBeg = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            if (begTime == "")
+            {
+                prmDateBeg.Value = new DateTime(2000, 1, 1);
+            }
+            else
+            {
+                prmDateBeg.Value = begTime;
+            }
+
+            var prmDateEnd = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            if (endTime == "")
+            {
+                prmDateEnd.Value = DateTime.Now;
+            }
+            else
+            {
+                prmDateEnd.Value = endTime;
+            }
+
+            var result = db.Database
+                .SqlQuery<GetFinanceList_Result>("GetFinanceSummary @p_DateBeg, @p_DateEnd", prmDateBeg, prmDateEnd).ToList();
+
+            //if(result)
+            //resultset = result;
+
+            return summary;
+        }
+
         // GET: Finance
         public ActionResult Index()
         {

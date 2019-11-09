@@ -67,7 +67,13 @@
           <Property Name="b500" Type="int" Nullable="false" />
           <Property Name="b1k" Type="int" Nullable="false" />
           <Property Name="m10" Type="int" Nullable="false" />
-          <Property Name="amount" Type="int" />
+          <Property Name="amount" Type="int" Nullable="false" />
+          <Property Name="a_b10" Type="int" Nullable="false" />
+          <Property Name="a_b50" Type="int" Nullable="false" />
+          <Property Name="a_b100" Type="int" Nullable="false" />
+          <Property Name="a_b500" Type="int" Nullable="false" />
+          <Property Name="a_b1k" Type="int" Nullable="false" />
+          <Property Name="a_m10" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Device">
           <Key>
@@ -77,6 +83,7 @@
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="IDWash" Type="int" Nullable="false" />
+          <Property Name="ServerID" Type="int" />
         </EntityType>
         <EntityType Name="Event">
           <Key>
@@ -175,6 +182,8 @@
           <Property Name="Balance" Type="int" Nullable="false" />
           <Property Name="LocalizedBy" Type="int" Nullable="false" />
           <Property Name="LocalizedID" Type="int" Nullable="false" />
+          <Property Name="Functions" Type="nvarchar" MaxLength="500" />
+          <Property Name="Details" Type="nvarchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="OperationTypes">
           <Key>
@@ -555,7 +564,7 @@
           <Parameter Name="p_IncreaseSumMin" Type="int" Mode="In" />
           <Parameter Name="p_IncreaseSumMax" Type="int" Mode="In" />
           <Parameter Name="p_DecreaseSumMin" Type="int" Mode="In" />
-          <Parameter Name="p_DecreaseSumMax" Type="int" Mode="In" />
+          <Parameter Name="p_DEcreaseSumMax" Type="int" Mode="In" />
           <Parameter Name="p_CountOperationMin" Type="int" Mode="In" />
           <Parameter Name="p_CountOperationMax" Type="int" Mode="In" />
         </Function>
@@ -590,7 +599,15 @@
           <Parameter Name="p_LocalizedBy" Type="int" Mode="In" />
           <Parameter Name="p_LocalizedID" Type="int" Mode="In" />
         </Function>
+        <Function Name="GetFinanceByNominals" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+        </Function>
         <Function Name="GetFinanceList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="GetFinanceSummary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
         </Function>
@@ -763,7 +780,7 @@
             <Parameter Name="p_IncreaseSumMin" Mode="In" Type="Int32" />
             <Parameter Name="p_IncreaseSumMax" Mode="In" Type="Int32" />
             <Parameter Name="p_DecreaseSumMin" Mode="In" Type="Int32" />
-            <Parameter Name="p_DecreaseSumMax" Mode="In" Type="Int32" />
+            <Parameter Name="p_DEcreaseSumMax" Mode="In" Type="Int32" />
             <Parameter Name="p_CountOperationMin" Mode="In" Type="Int32" />
             <Parameter Name="p_CountOperationMax" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -898,6 +915,14 @@
             <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
             <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
           </FunctionImport>
+          <FunctionImport Name="GetFinanceByNominals" ReturnType="Collection(CardsDbModel.GetFinanceByNominals_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="GetFinanceSummary" ReturnType="Collection(CardsDbModel.GetFinanceSummary_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetCardsOperations_Result">
           <Property Type="String" Name="Phone" Nullable="false" MaxLength="Max" />
@@ -1014,8 +1039,14 @@
           <Property Name="b500" Type="Int32" Nullable="false" />
           <Property Name="b1k" Type="Int32" Nullable="false" />
           <Property Name="m10" Type="Int32" Nullable="false" />
-          <Property Name="amount" Type="Int32" />
+          <Property Name="amount" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Post" Relationship="CardsDbModel.FK_CountersTotal_Posts" FromRole="CountersTotal" ToRole="Post" />
+          <Property Name="a_b10" Type="Int32" Nullable="false" />
+          <Property Name="a_b50" Type="Int32" Nullable="false" />
+          <Property Name="a_b100" Type="Int32" Nullable="false" />
+          <Property Name="a_b500" Type="Int32" Nullable="false" />
+          <Property Name="a_b1k" Type="Int32" Nullable="false" />
+          <Property Name="a_m10" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Event">
           <Key>
@@ -1106,6 +1137,8 @@
           <NavigationProperty Name="Card" Relationship="CardsDbModel.FK_Operations_Cards" FromRole="Operation" ToRole="Card" />
           <NavigationProperty Name="OperationType" Relationship="CardsDbModel.FK_Operations_OperationTypes" FromRole="Operation" ToRole="OperationType" />
           <NavigationProperty Name="Psce" Relationship="CardsDbModel.FK_Operations_Pcses" FromRole="Operation" ToRole="Psce" />
+          <Property Name="Functions" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Details" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="OperationType">
           <Key>
@@ -1456,6 +1489,7 @@
           <Property Name="IDWash" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Wash" Relationship="CardsDbModel.FK_Device_Wash" FromRole="Device" ToRole="Wash" />
           <NavigationProperty Name="Finances" Relationship="CardsDbModel.FK_Finance_Device" FromRole="Device" ToRole="Finance" />
+          <Property Name="ServerID" Type="Int32" />
         </EntityType>
         <EntityType Name="Finance">
           <Key>
@@ -1528,6 +1562,15 @@
           <Property Type="DateTime" Name="DTime" Nullable="false" Precision="23" />
           <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
           <Property Type="Int32" Name="Amount" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="GetFinanceByNominals_Result">
+          <Property Type="String" Name="Code" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="c" Nullable="true" />
+          <Property Type="Int32" Name="s" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="GetFinanceSummary_Result">
+          <Property Type="Int32" Name="s" Nullable="true" />
+          <Property Type="Int32" Name="d" Nullable="false" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1653,6 +1696,12 @@
           <EntitySetMapping Name="CountersTotals">
             <EntityTypeMapping TypeName="CardsDbModel.CountersTotal">
               <MappingFragment StoreEntitySet="CountersTotal">
+                <ScalarProperty Name="a_m10" ColumnName="a_m10" />
+                <ScalarProperty Name="a_b1k" ColumnName="a_b1k" />
+                <ScalarProperty Name="a_b500" ColumnName="a_b500" />
+                <ScalarProperty Name="a_b100" ColumnName="a_b100" />
+                <ScalarProperty Name="a_b50" ColumnName="a_b50" />
+                <ScalarProperty Name="a_b10" ColumnName="a_b10" />
                 <ScalarProperty Name="amount" ColumnName="amount" />
                 <ScalarProperty Name="m10" ColumnName="m10" />
                 <ScalarProperty Name="b1k" ColumnName="b1k" />
@@ -1737,6 +1786,8 @@
           <EntitySetMapping Name="Operations">
             <EntityTypeMapping TypeName="CardsDbModel.Operation">
               <MappingFragment StoreEntitySet="Operations">
+                <ScalarProperty Name="Details" ColumnName="Details" />
+                <ScalarProperty Name="Functions" ColumnName="Functions" />
                 <ScalarProperty Name="LocalizedID" ColumnName="LocalizedID" />
                 <ScalarProperty Name="LocalizedBy" ColumnName="LocalizedBy" />
                 <ScalarProperty Name="Balance" ColumnName="Balance" />
@@ -1836,6 +1887,7 @@
           <EntitySetMapping Name="Devices">
             <EntityTypeMapping TypeName="CardsDbModel.Device">
               <MappingFragment StoreEntitySet="Device">
+                <ScalarProperty Name="ServerID" ColumnName="ServerID" />
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -1873,6 +1925,23 @@
                 <ScalarProperty Name="DTime" ColumnName="DTime" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Amount" ColumnName="Amount" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetFinanceByNominals" FunctionName="Хранилище CardsDbModel.GetFinanceByNominals">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CardsDbModel.GetFinanceByNominals_Result">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="c" ColumnName="c" />
+                <ScalarProperty Name="s" ColumnName="s" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetFinanceSummary" FunctionName="Хранилище CardsDbModel.GetFinanceSummary">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CardsDbModel.GetFinanceSummary_Result">
+                <ScalarProperty Name="s" ColumnName="s" />
+                <ScalarProperty Name="d" ColumnName="d" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

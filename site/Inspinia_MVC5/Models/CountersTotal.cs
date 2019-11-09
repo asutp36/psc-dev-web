@@ -23,7 +23,13 @@ namespace Inspinia_MVC5.Models
         public int b500 { get; set; }
         public int b1k { get; set; }
         public int m10 { get; set; }
-        public Nullable<int> amount { get; set; }
+        public int amount { get; set; }
+        public int a_b10 { get; set; }
+        public int a_b50 { get; set; }
+        public int a_b100 { get; set; }
+        public int a_b500 { get; set; }
+        public int a_b1k { get; set; }
+        public int a_m10 { get; set; }
     
         public virtual Post Post { get; set; }
     }

@@ -24,6 +24,7 @@ namespace Inspinia_MVC5.Models
         public string Name { get; set; }
         public string Code { get; set; }
         public int IDWash { get; set; }
+        public Nullable<int> ServerID { get; set; }
     
         public virtual Wash Wash { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

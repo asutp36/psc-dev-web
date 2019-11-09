@@ -23,6 +23,8 @@ namespace Inspinia_MVC5.Models
         public int Balance { get; set; }
         public int LocalizedBy { get; set; }
         public int LocalizedID { get; set; }
+        public string Functions { get; set; }
+        public string Details { get; set; }
     
         public virtual Card Card { get; set; }
         public virtual OperationType OperationType { get; set; }
