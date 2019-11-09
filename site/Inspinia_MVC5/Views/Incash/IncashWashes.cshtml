@@ -211,6 +211,10 @@
             //});
         });
 
+        function getBaseUrl() {
+            var re = new RegExp(/^.*\/\/[^\/]+/);
+            return re.exec(window.location.href);
+        }
 
         function onWashSelected2(selectedWashCode) {
             var startDate = $('#filter-startdate').val();
