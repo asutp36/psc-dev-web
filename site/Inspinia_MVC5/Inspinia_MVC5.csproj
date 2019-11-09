@@ -129,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
+    <Folder Include="Scripts\plugins\chartJs\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -1350,7 +1351,6 @@
     <Content Include="Scripts\plugins\bootstrapTour\bootstrap-tour.min.js" />
     <Content Include="Scripts\plugins\c3\c3.min.js" />
     <Content Include="Scripts\plugins\chartist\chartist.min.js" />
-    <Content Include="Scripts\plugins\chartJs\Chart.min.js" />
     <Content Include="Scripts\plugins\chosen\chosen.jquery.js" />
     <Content Include="Scripts\plugins\clipboard\clipboard.min.js" />
     <Content Include="Scripts\plugins\clockpicker\clockpicker.js" />
