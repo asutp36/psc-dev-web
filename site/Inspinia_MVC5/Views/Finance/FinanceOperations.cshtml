@@ -44,7 +44,9 @@
                     <h5>Поступления</h5>
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins">987 654</h1>
+                    @Html.Action("UpdateFinanceOperationsSummary", "Finance", new {
+                       begTime = ViewBag.timeOperationBeg,
+                       endTime = ViewBag.timeOperationEnd})
                 </div>
                 <div class="ibox-content-more">
                     <small>@DateTime.Now.ToString("dd MMMM yyyy")</small>

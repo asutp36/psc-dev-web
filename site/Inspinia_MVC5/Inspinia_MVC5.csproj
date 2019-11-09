@@ -217,7 +217,13 @@
     <Compile Include="Models\GetCardsOperations_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetFinanceByNominals_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetFinanceList_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetFinanceSummary_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetPostAmounts_Result.cs">
@@ -1862,6 +1868,7 @@
     <Content Include="Views\OperationsTypedWash\_OperationsCardsTypedWashList.cshtml" />
     <Content Include="Views\Finance\FinanceOperations.cshtml" />
     <Content Include="Views\Finance\_FinanceOperationsList.cshtml" />
+    <Content Include="Views\Finance\_FinanceOperationsSummary.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

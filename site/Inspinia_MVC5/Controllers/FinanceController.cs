@@ -74,7 +74,7 @@ namespace Inspinia_MVC5.Controllers
         {
             Int32 summary = GetFinanceOperationsSummary(begTime, endTime);
 
-            return PartialView("_FinanceOperationsList", summary);
+            return PartialView("_FinanceOperationsSummary", summary);
         }
 
         private Int32 GetFinanceOperationsSummary(string begTime, string endTime)
@@ -102,10 +102,12 @@ namespace Inspinia_MVC5.Controllers
             }
 
             var result = db.Database
-                .SqlQuery<GetFinanceList_Result>("GetFinanceSummary @p_DateBeg, @p_DateEnd", prmDateBeg, prmDateEnd).ToList();
+                .SqlQuery<GetFinanceSummary_Result>("GetFinanceSummary @p_DateBeg, @p_DateEnd", prmDateBeg, prmDateEnd).ToList();
 
-            //if(result)
-            //resultset = result;
+            List<GetFinanceSummary_Result> resultset = result;
+
+            if (resultset[0].s.HasValue)
+                summary = resultset[0].s.Value;
 
             return summary;
         }
