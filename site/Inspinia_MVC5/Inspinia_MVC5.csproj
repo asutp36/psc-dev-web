@@ -1869,6 +1869,7 @@
     <Content Include="Views\Finance\FinanceOperations.cshtml" />
     <Content Include="Views\Finance\_FinanceOperationsList.cshtml" />
     <Content Include="Views\Finance\_FinanceOperationsSummary.cshtml" />
+    <Content Include="Views\Finance\_FinanceOperationsByNominals.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

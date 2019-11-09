@@ -53,14 +53,19 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-5">
+        <div class="col-sm-5 finance-operations-chart">
             <div class="ibox ">
                 <div class="ibox-title">
                     <span class="label label-success float-right">по номиналу</span>
                     <h5>Количество купюр</h5>
                 </div>
-                <div class="ibox-content">
+                <div class="ibox-content-chart">
                     <canvas id="popChart" height="140" weight="250"></canvas>
+                </div>
+                <div class="ibox-content">
+                    @Html.Action("UpdateFinanceOperationsByNominals", "Finance", new {
+                       begTime = ViewBag.timeOperationBeg,
+                       endTime = ViewBag.timeOperationEnd})
                 </div>
             </div>
         </div>
@@ -103,7 +108,7 @@
                 data: {
                     labels: ["50", "100", "200", "500", "1 000"],
                     datasets: [{
-                        data: [102, 78, 22, 31, 9],
+                        data: [0, 0, 0, 0, 0],
                         backgroundColor: ["#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba"]
                     }]
                 },
@@ -242,6 +247,52 @@
                 }).done(function (result) {
                     $('.finance-operations-summary').find('.ibox-content').html(result);
 
+                });
+
+
+                $.ajax({
+                    type: "GET",
+                    cache: false,
+                    data: {
+                        begTime: startDate,
+                        endTime: stopDate,
+                    },
+                    //success: function () {
+                    //    $('.alert-success').fadeIn('slow');
+                    //    $('.alert-success').delay(3000).fadeOut('slow');
+                    //},
+                    error: function () {
+                        alert('Error occured');
+                    },
+                    url: "@Url.Action("UpdateFinanceOperationsByNominals", "Finance")",
+                }).done(function (result) {
+                    $('.finance-operations-chart').find('.ibox-content').html(result);
+
+                    var chartdata = eval(result);
+
+                    var popCanvas = document.getElementById("popChart");
+                    var barChart = new Chart(popCanvas, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ["50", "100", "200", "500", "1 000"],
+                            datasets: [{
+                                data: chartdata,
+                                backgroundColor: ["#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba"]
+                            }]
+                        },
+                        options: {
+                            maintainAspectRatio: false,
+                            responsive: false,
+                            animation: {
+                                animateScale: true
+                            },
+                            legend: {
+                                position: 'left'
+                            },
+                            rotation: Math.PI * 1,
+                            circumference: Math.PI * 1,
+                        }
+                    });
                 });
 
 
