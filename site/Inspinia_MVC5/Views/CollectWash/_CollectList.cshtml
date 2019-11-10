@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetCollectWashList_Result>
+
+<table id="table-collect-wash" class="table table-striped table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Регион</th>
+            <th>Мойка</th>
+            <th>Адрес</th>
+            <th>Сумма инкассации</th>
+            <th>m10</th>
+            <th>b10</th>
+            <th>b50</th>
+            <th>b100</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+        <tr>
+            <td>@m.region</td>
+            <td>@m.washName</td>
+            <td>@m.washAddress</td>
+            <td>@m.sm</td>
+            <td>@m.m10</td>
+            <td>@m.b10</td>
+            <td>@m.b50</td>
+            <td>@m.b100</td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+

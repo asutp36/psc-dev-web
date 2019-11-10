@@ -334,5 +334,30 @@ namespace Inspinia_MVC5.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFinanceSummary_Result>("GetFinanceSummary", p_DateBegParameter, p_DateEndParameter);
         }
+    
+        public virtual ObjectResult<GetCollectWashList_Result> GetCollectWashList(Nullable<int> p_RegionCode, string p_WashCode, string p_PostCode, Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        {
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(int));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCollectWashList_Result>("GetCollectWashList", p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter, p_DateBegParameter, p_DateEndParameter);
+        }
     }
 }

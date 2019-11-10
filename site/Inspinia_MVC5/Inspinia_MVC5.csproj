@@ -136,6 +136,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AppViewsController.cs" />
     <Compile Include="Controllers\CardsController.cs" />
+    <Compile Include="Controllers\CollectWashController.cs" />
     <Compile Include="Controllers\CSSAnimationsController.cs" />
     <Compile Include="Controllers\EcommerceController.cs" />
     <Compile Include="Controllers\FinanceController.cs" />
@@ -214,6 +215,9 @@
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetCardsOperations_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCollectWashList_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetFinanceByNominals_Result.cs">
@@ -1870,6 +1874,8 @@
     <Content Include="Views\Finance\_FinanceOperationsList.cshtml" />
     <Content Include="Views\Finance\_FinanceOperationsSummary.cshtml" />
     <Content Include="Views\Finance\_FinanceOperationsByNominals.cshtml" />
+    <Content Include="Views\CollectWash\CollectList.cshtml" />
+    <Content Include="Views\CollectWash\_CollectList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
