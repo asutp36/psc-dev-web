@@ -86,7 +86,7 @@ namespace Inspinia_MVC5.Controllers
                 {
                     FormsAuthentication.SetAuthCookie(model.Name, true);
 
-                    return RedirectToAction("IncashWashes", "Incash");
+                    return RedirectToAction("Dashboard_2", "Dashboards");
                 }
                 else
                 {

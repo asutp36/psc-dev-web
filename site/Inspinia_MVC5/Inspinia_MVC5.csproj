@@ -129,7 +129,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
-    <Folder Include="Scripts\plugins\chartJs\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -137,6 +136,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AppViewsController.cs" />
     <Compile Include="Controllers\CardsController.cs" />
+    <Compile Include="Controllers\CollectWashController.cs" />
     <Compile Include="Controllers\CSSAnimationsController.cs" />
     <Compile Include="Controllers\EcommerceController.cs" />
     <Compile Include="Controllers\FinanceController.cs" />
@@ -218,7 +218,16 @@
     <Compile Include="Models\GetCardsOperations_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetCollectWashList_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetFinanceByNominals_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetFinanceList_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetFinanceSummary_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetPostAmounts_Result.cs">
@@ -265,9 +274,6 @@
     </Compile>
     <Compile Include="Models\ScaffoldingContext.cs" />
     <Compile Include="Models\ScaffoldingController.cs" />
-    <Compile Include="Models\sysdiagram.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\User.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -1355,6 +1361,7 @@
     <Content Include="Scripts\plugins\bootstrapTour\bootstrap-tour.min.js" />
     <Content Include="Scripts\plugins\c3\c3.min.js" />
     <Content Include="Scripts\plugins\chartist\chartist.min.js" />
+    <Content Include="Scripts\plugins\chartJs\Chart.js" />
     <Content Include="Scripts\plugins\chosen\chosen.jquery.js" />
     <Content Include="Scripts\plugins\clipboard\clipboard.min.js" />
     <Content Include="Scripts\plugins\clockpicker\clockpicker.js" />
@@ -1866,6 +1873,10 @@
     <Content Include="Views\OperationsTypedWash\_OperationsCardsTypedWashList.cshtml" />
     <Content Include="Views\Finance\FinanceOperations.cshtml" />
     <Content Include="Views\Finance\_FinanceOperationsList.cshtml" />
+    <Content Include="Views\Finance\_FinanceOperationsSummary.cshtml" />
+    <Content Include="Views\Finance\_FinanceOperationsByNominals.cshtml" />
+    <Content Include="Views\CollectWash\CollectList.cshtml" />
+    <Content Include="Views\CollectWash\_CollectList.cshtml" />
     <Content Include="Views\Pricing\NewPricesView.cshtml" />
   </ItemGroup>
   <ItemGroup>

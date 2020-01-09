@@ -23,7 +23,6 @@
         <EntityTypeShape EntityType="CardsDbModel.Post" Width="1.5" PointX="7.5" PointY="12.625" />
         <EntityTypeShape EntityType="CardsDbModel.Psce" Width="1.5" PointX="7.5" PointY="7.75" />
         <EntityTypeShape EntityType="CardsDbModel.Region" Width="1.5" PointX="3" PointY="11.375" />
-        <EntityTypeShape EntityType="CardsDbModel.sysdiagram" Width="1.5" PointX="0.75" PointY="0.75" />
         <EntityTypeShape EntityType="CardsDbModel.User" Width="1.5" PointX="2.75" PointY="0.75" />
         <EntityTypeShape EntityType="CardsDbModel.Wash" Width="1.5" PointX="5.25" PointY="11.25" />
         <AssociationConnector Association="CardsDbModel.FK_Cards_CardStatuses" />
