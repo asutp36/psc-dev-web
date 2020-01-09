@@ -22,5 +22,157 @@
 </div>
 
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="ibox ">
+                <div class="ibox-title">
+                   <h2>Отметьте посты  <small>где нужно изменить цену</small></h2>
+                </div>
+                <div class="ibox-content">
 
+                    <div id="jstree1">
+                        <ul>
+                            @foreach (var m in Model)
+                            {
+                                <li class="jstree">
+                                    @m.Name
+                                    <ul>
+                                        @foreach (var n in m.Washes)
+                                        {
+                                            <li>
+                                                @n.Name
+                                            <ul>
+                                                @foreach (var k in n.Posts)
+                                                {
+                                                    <li id="@k.IDPost">@k.Name</li>
+                                                }
+                                            </ul>
+                                        </li>
+                                    }
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <hr />
+                    <h4>Выбранные посты:</h4>
+                    <p id="output"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h2>Введите цену <small>на каждый режим</small></h2>
+
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-lg-6 my-2">
+                            <span class="label label-info">1-й режим</span>
+                            <input id="1-input" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                        </div>
+                        <div class="col-lg-6 my-2">
+                            <span class="label label-info">2-й режим</span>
+                            <input id="2-input" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 my-2">
+                            <span class="label label-info">3-й режим</span>
+                            <input id="3-input" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                        </div>
+                        <div class="col-lg-6 my-2">
+                            <span class="label label-info">4-й режим</span>
+                            <input id="4-input" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 my-2">
+                            <span class="label label-info">5-й режим</span>
+                            <input id="5-input" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                        </div>
+                        <div class="col-lg-6 my-2">
+                            <span class="label label-info">6-й режим</span>
+                            <input id="6-input" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 my-2">
+                            <span class="label label-info">7-й режим</span>
+                            <input id="7-input" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                        </div>
+                        <div class="col-lg-6 my-2">
+                            <span class="label label-info">8-й режим</span>
+                            <input id="8-input" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                        </div>
+                    </div>
+                    <div class="form-group align-items-center">
+                        <button type="button" id="btn-save" class="btn btn-outline btn-success font-bold">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/jsTree")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/jsTree")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#jstree1').jstree({
+                'core': {
+                    'themes': {
+                        'variant' : 'large'
+                    },
+                    'check_callback': true,
+                    'mulptiple': false,
+                    'animation': 0
+                },
+                'checkbox': {
+                    'keep_selected_style':true
+                },
+                'plugins': ['wholerow', 'types', 'checkbox'],
+                'types': {
+                    'default': {
+                        'icon': 'fa fa-circle'
+                    }
+
+                }
+            });
+            $('#jstree1').on('changed.jstree', function (e, data) {
+                var objects = data.instance.get_selected(true)
+                var leaves = $.grep(objects, function (o) { return data.instance.is_leaf(o) })
+                var outputList = [];
+                $.each(leaves, function (i, o) {
+                    outputList.push($(o).attr('id'))
+                })
+                var list = $('#output')
+                list.empty()
+                $.each(leaves, function (i, o) {
+                    $('<span/>').text($(o).attr('id')+",  ").appendTo(list)
+                })
+            })
+        });
+
+        function validate(evt) {
+            var theEvent = evt || window.event;
+            var key = theEvent.keyCode || theEvent.which;
+            key = String.fromCharCode(key);
+            var regex = /[0-9]|\./;
+            if (!regex.test(key)) {
+                theEvent.returnValue = false;
+                if (theEvent.preventDefault) theEvent.preventDefault();
+            }
+        }
+
+    </script>
+
+}
