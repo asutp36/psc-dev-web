@@ -4,6 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Inspinia_MVC5.Models;
+using Newtonsoft.Json;
+using Inspinia_MVC5.Helpers;
+using System.Net;
+using System.Text;
+using System.IO;
 
 namespace Inspinia_MVC5.Controllers
 {
@@ -18,21 +23,65 @@ namespace Inspinia_MVC5.Controllers
             _regions = db.Regions.ToList();
         }
 
-        public void SaveNewPrices(int pr1, int pr2, int pr3, int pr4, int pr5, int pr6, int pr7, int pr8, List<int> posts)
+        public void SaveNewPrices(List<List<string>> prices, List<int> posts)
         {
-            List<int> prices = new List<int>();
-
-            prices.Add(pr1);
-            prices.Add(pr2);
-            prices.Add(pr3);
-            prices.Add(pr4);
-            prices.Add(pr5);
-            prices.Add(pr6);
-            prices.Add(pr7);
-            prices.Add(pr8);
-
-            //отправка запроса на изменение цен на каждом посте
+            if (prices != null && posts != null)
+            {
+                string data = JsonConvert.SerializeObject(new ChangePricesData(posts, prices));
+                string testlog = SendPrices(data);
+            }
             //return View("NewPricesView", _regions);
+        }
+
+        public string SendPrices(string json)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/97i13-1578754305/post");
+
+            //request.Host = "api.myeco24.ru";
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Method = "POST";
+
+            byte[] postBytes = Encoding.UTF8.GetBytes(json);
+
+            request.ContentType = "application/json";
+            request.Accept = "application/json";
+            request.ContentLength = postBytes.Length;
+
+            Stream requestStream = request.GetRequestStream();
+
+            requestStream.Write(postBytes, 0, postBytes.Length);
+            requestStream.Close();
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    return response.ToString();
+                }
+                else
+                {
+                    string result;
+                    using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+                    {
+                        result = rdr.ReadToEnd();
+                    }
+
+                    return String.Format("httpStatusCode: {0}; {1}", response.StatusCode, result);
+                }
+            }
+            catch (WebException ex)
+            {
+                HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
+
+                string result;
+                using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))
+                {
+                    result = rdr.ReadToEnd();
+                }
+                return result + "\nStatusCode: " + webResponse.StatusCode;
+            }
         }
 
         public ActionResult NewPricesView()

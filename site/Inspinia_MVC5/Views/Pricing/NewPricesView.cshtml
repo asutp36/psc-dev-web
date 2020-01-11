@@ -64,47 +64,46 @@
             <div class="ibox ">
                 <div class="ibox-title">
                     <h2>Введите цену <small>на каждый режим</small></h2>
-
                 </div>
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">1-й режим</span>
-                            <input id="price-1" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="price11" id="price-1" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">2-й режим</span>
-                            <input id="price-2" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="price22" id="price-2" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">3-й режим</span>
-                            <input id="price-3" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="price33" id="price-3" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">4-й режим</span>
-                            <input id="price-4" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="price44" id="price-4" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">5-й режим</span>
-                            <input id="price-5" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="price55" id="price-5" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">6-й режим</span>
-                            <input id="price-6" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="price66" id="price-6" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">7-й режим</span>
-                            <input id="price-7" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="price77" id="price-7" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">8-й режим</span>
-                            <input id="price-8" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="price88" id="price-8" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                     </div>
                     <div class="form-group align-items-center">
@@ -130,37 +129,103 @@
         $(document).ready(function () {
 
             $(document).on("click", "#btn-save", function () {
-                var price1 = $('#price-1').val();
-                var price2 = $('#price-2').val();
-                var price3 = $('#price-3').val();
-                var price4 = $('#price-4').val();
-                var price5 = $('#price-5').val();
-                var price6 = $('#price-6').val();
-                var price7 = $('#price-7').val();
-                var price8 = $('#price-8').val();
+                var prices = [];
+
+                if ($('#price-1').val() != "") {
+                    var price = [];
+                    price.push($('#price-1').attr('name'));
+                    price.push($('#price-1').val());
+
+                    prices.push(price);
+                }
+
+                if ($('#price-2').val() != "") {
+                    var price = [];
+                    price.push($('#price-2').attr('name'));
+                    price.push($('#price-2').val());
+
+                    prices.push(price);
+                }
+
+                if ($('#price-3').val() != "") {
+                    var price = [];
+                    price.push($('#price-3').attr('name'));
+                    price.push($('#price-3').val());
+
+                    prices.push(price);
+                }
+
+                if ($('#price-4').val() != "") {
+                    var price = [];
+                    price.push($('#price-4').attr('name'));
+                    price.push($('#price-4').val());
+
+                    prices.push(price);
+                }
+
+                if ($('#price-5').val() != "") {
+                    var price = [];
+                    price.push($('#price-5').attr('name'));
+                    price.push($('#price-5').val());
+
+                    prices.push(price);
+                }
+
+                if ($('#price-6').val() != "") {
+                    var price = [];
+                    price.push($('#price-6').attr('name'));
+                    price.push($('#price-6').val());
+
+                    prices.push(price);
+                }
+
+                if ($('#price-7').val() != "") {
+                    var price = [];
+                    price.push($('#price-7').attr('name'));
+                    price.push($('#price-7').val());
+
+                    prices.push(price);
+                }
+
+                if ($('#price-8').val() != "") {
+                    var price = [];
+                    price.push($('#price-8').attr('name'));
+                    price.push($('#price-8').val());
+
+                    prices.push(price);
+                }
+
                 var posts = outputList;
 
-                $.ajax({
-                    type: "POST",
-                    cache: false,
-                    data: {
-                        pr1: price1,
-                        pr2: price2,
-                        pr3: price3,
-                        pr4: price4,
-                        pr5: price5,
-                        pr6: price6,
-                        pr7: price7,
-                        pr8: price8,
-                        posts: posts
-                    },
-                    error: function () {
-                        alert('Возникла ошибка!/nПроверьте правильность введенных данных!');
-                    },
-                    url: "@Url.Action("SaveNewPrices", "Pricing")",
-                }).done(function (result) {
-                    document.location.reload();
-                });
+                if (prices == "" && posts == "") {
+                    alert("Посты не выбраны, цены не заполнены!")
+                }
+                else {
+                    if (prices == "") {
+                        alert("Введите цены!")
+                    }
+                    else {
+                        if (posts == "") {
+                            alert("Выберите посты!")
+                        }
+                        else {
+                            $.ajax({
+                            type: "POST",
+                            cache: false,
+                            data: {
+                                prices: prices,
+                                posts: posts
+                            },
+                            error: function () {
+                                alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
+                            },
+                            url: "@Url.Action("SaveNewPrices", "Pricing")",
+                                }).done(function (result) {
+                                    document.location.reload();
+                            });
+                        }
+                    }
+                }
             });
 
             $('#jstree1').jstree({
