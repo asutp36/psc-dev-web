@@ -23,14 +23,14 @@ namespace Inspinia_MVC5.Controllers
             _regions = db.Regions.ToList();
         }
 
-        public void SaveNewPrices(List<List<string>> prices, List<int> posts)
+        public ActionResult SaveNewPrices(List<List<string>> prices, List<int> posts)
         {
             if (prices != null && posts != null)
             {
                 string data = JsonConvert.SerializeObject(new ChangePricesData(posts, prices));
                 string testlog = SendPrices(data);
             }
-            //return View("NewPricesView", _regions);
+            return View("NewPricesView", _regions);
         }
 
         public string SendPrices(string json)

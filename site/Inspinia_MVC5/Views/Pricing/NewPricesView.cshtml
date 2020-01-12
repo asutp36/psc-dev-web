@@ -22,11 +22,17 @@
 </div>
 
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
+    <div id="alert-common" class="alert alert-danger">
+        Посты не выбраны, цены не заполнены!
+    </div>
     <div class="row">
         <div class="col-lg-6">
             <div class="ibox ">
+                <div id="alert-posts" class="alert alert-warning">
+                    Выберите посты!
+                </div>
                 <div class="ibox-title">
-                   <h2>Отметьте посты  <small>где нужно изменить цену</small></h2>
+                    <h2>Отметьте посты  <small>где нужно изменить цену</small></h2>
                 </div>
                 <div class="ibox-content">
 
@@ -41,14 +47,14 @@
                                         {
                                             <li>
                                                 @n.Name
-                                            <ul>
-                                                @foreach (var k in n.Posts)
-                                                {
-                                                    <li id="@k.IDPost">@k.Name</li>
-                                                }
-                                            </ul>
-                                        </li>
-                                    }
+                                                <ul>
+                                                    @foreach (var k in n.Posts)
+                                                    {
+                                                        <li id="@k.IDPost">@k.Name</li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
                                     </ul>
                                 </li>
                             }
@@ -62,6 +68,9 @@
         </div>
         <div class="col-lg-6">
             <div class="ibox ">
+                <div id="alert-prices" class="alert alert-warning">
+                    Введите цену!
+                </div>
                 <div class="ibox-title">
                     <h2>Введите цену <small>на каждый режим</small></h2>
                 </div>
@@ -125,6 +134,9 @@
 
     <script type="text/javascript">
         var outputList = [];
+        $('#alert-common').hide()
+        $('#alert-prices').hide()
+        $('#alert-posts') .hide()
 
         $(document).ready(function () {
 
@@ -145,15 +157,26 @@
                 var posts = outputList;
 
                 if (prices == "" && posts == "") {
-                    alert("Посты не выбраны, цены не заполнены!")
+                    $('#alert-prices').hide('fade')
+                    $('#alert-posts').hide('fade')
+                    $('#alert-common').show('fade') // в этом варианте алёрты не скрываются со временем; скрываются при каких-либо действиях;
+
+                    // в этом варианте алёрты скрываются; скрывается через 10 секунд после появления;
+                    //$('#alert-common').fadeTo(10000, 500).slideUp(500, function () {
+                    //    $('#alert-common').slideUp(500)
+                    //})
                 }
                 else {
                     if (prices == "") {
-                        alert("Введите цены!")
+                        $('#alert-common').hide('fade')
+                        $('#alert-posts') .hide('fade')
+                        $('#alert-prices').show('fade')
                     }
                     else {
                         if (posts == "") {
-                            alert("Выберите посты!")
+                            $('#alert-prices').hide('fade')
+                            $('#alert-common').hide('fade')
+                            $('#alert-posts') .show('fade')
                         }
                         else {
                             $.ajax({
@@ -168,7 +191,7 @@
                             },
                             url: "@Url.Action("SaveNewPrices", "Pricing")",
                                 }).done(function (result) {
-                                    document.location.reload();
+                                    $('#wrapper').html(result);
                             });
                         }
                     }
