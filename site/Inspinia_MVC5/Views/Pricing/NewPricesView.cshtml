@@ -131,68 +131,15 @@
             $(document).on("click", "#btn-save", function () {
                 var prices = [];
 
-                if ($('#price-1').val() != "") {
-                    var price = [];
-                    price.push($('#price-1').attr('name'));
-                    price.push($('#price-1').val());
+                for (let i = 1; i < 9; i++) {
+                    var curid = '#price-' + i;
+                    if ($(curid).val() != "") {
+                        var price = [];
+                        price.push($(curid).attr('name'));
+                        price.push($(curid).val());
 
-                    prices.push(price);
-                }
-
-                if ($('#price-2').val() != "") {
-                    var price = [];
-                    price.push($('#price-2').attr('name'));
-                    price.push($('#price-2').val());
-
-                    prices.push(price);
-                }
-
-                if ($('#price-3').val() != "") {
-                    var price = [];
-                    price.push($('#price-3').attr('name'));
-                    price.push($('#price-3').val());
-
-                    prices.push(price);
-                }
-
-                if ($('#price-4').val() != "") {
-                    var price = [];
-                    price.push($('#price-4').attr('name'));
-                    price.push($('#price-4').val());
-
-                    prices.push(price);
-                }
-
-                if ($('#price-5').val() != "") {
-                    var price = [];
-                    price.push($('#price-5').attr('name'));
-                    price.push($('#price-5').val());
-
-                    prices.push(price);
-                }
-
-                if ($('#price-6').val() != "") {
-                    var price = [];
-                    price.push($('#price-6').attr('name'));
-                    price.push($('#price-6').val());
-
-                    prices.push(price);
-                }
-
-                if ($('#price-7').val() != "") {
-                    var price = [];
-                    price.push($('#price-7').attr('name'));
-                    price.push($('#price-7').val());
-
-                    prices.push(price);
-                }
-
-                if ($('#price-8').val() != "") {
-                    var price = [];
-                    price.push($('#price-8').attr('name'));
-                    price.push($('#price-8').val());
-
-                    prices.push(price);
+                        prices.push(price);
+                    }
                 }
 
                 var posts = outputList;

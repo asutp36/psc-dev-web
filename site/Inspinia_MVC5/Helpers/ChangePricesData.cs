@@ -30,9 +30,9 @@ namespace Inspinia_MVC5.Helpers
 
         public int price { get; set; }
 
-        public Price(string f, int price)
+        public Price(string function, int price)
         {
-            this.function = f;
+            this.function = function;
             this.price = price;
         }
     }
