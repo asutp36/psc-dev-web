@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Inspinia_MVC5.Models.Region>
+﻿@model IEnumerable<Inspinia_MVC5.Models.Company>
 
 @{
     ViewBag.Title = "Ценообразование";
@@ -38,19 +38,27 @@
 
                     <div id="jstree1">
                         <ul>
-                            @foreach (var m in Model)
+                            @foreach (var c in Model)
                             {
                                 <li class="jstree">
-                                    @m.Name
+                                    @c.Name
                                     <ul>
-                                        @foreach (var n in m.Washes)
+                                        @foreach (var m in c.Regions)
                                         {
                                             <li>
-                                                @n.Name
+                                                @m.Name
                                                 <ul>
-                                                    @foreach (var k in n.Posts)
+                                                    @foreach (var n in m.Washes)
                                                     {
-                                                        <li id="@k.IDPost">@k.Name</li>
+                                                        <li>
+                                                            @n.Name
+                                                            <ul>
+                                                                @foreach (var k in n.Posts)
+                                                                {
+                                                                    <li id="@k.IDPost">@k.Name</li>
+                                                                }
+                                                            </ul>
+                                                        </li>
                                                     }
                                                 </ul>
                                             </li>
@@ -161,7 +169,7 @@
                     $('#alert-posts').hide('fade')
                     $('#alert-common').show('fade') // в этом варианте алёрты не скрываются со временем; скрываются при каких-либо действиях;
 
-                    // в этом варианте алёрты скрываются; скрывается через 10 секунд после появления;
+                    // в этом варианте алёрты скрываются со временем; скрывается через 10 секунд после появления;
                     //$('#alert-common').fadeTo(10000, 500).slideUp(500, function () {
                     //    $('#alert-common').slideUp(500)
                     //})
@@ -213,7 +221,8 @@
                 'plugins': ['wholerow', 'types', 'checkbox'],
                 'types': {
                     'default': {
-                        'icon': 'fa fa-circle'
+                        //'icon': 'fa fa-circle'
+                        'icon': false
                     }
 
                 }
@@ -228,7 +237,7 @@
                 var list = $('#output')
                 list.empty()
                 $.each(leaves, function (i, o) {
-                    $('<span/>').text($(o).attr('id')+",  ").appendTo(list)
+                    $('<span/>').text($(o).attr('id')+" ").appendTo(list)
                 })
             })
         });

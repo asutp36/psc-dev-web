@@ -16,11 +16,11 @@ namespace Inspinia_MVC5.Controllers
     {
         private ModelDb db = new ModelDb();
 
-        List<Region> _regions = null;
+        List<Company> _companies = null;
 
         public PricingController()
         {
-            _regions = db.Regions.ToList();
+            _companies = db.Companies.ToList();
         }
 
         public ActionResult SaveNewPrices(List<List<string>> prices, List<int> posts)
@@ -30,7 +30,7 @@ namespace Inspinia_MVC5.Controllers
                 string data = JsonConvert.SerializeObject(new ChangePricesData(posts, prices));
                 string testlog = SendPrices(data);
             }
-            return View("NewPricesView", _regions);
+            return View("NewPricesView", _companies);
         }
 
         public string SendPrices(string json)
@@ -86,7 +86,7 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult NewPricesView()
         {
-            return View(_regions);
+            return View(_companies);
         }
     }
 }
