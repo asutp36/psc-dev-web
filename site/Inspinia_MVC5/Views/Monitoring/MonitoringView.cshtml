@@ -1,0 +1,118 @@
+﻿@model IEnumerable<Inspinia_MVC5.Models.Company>
+
+@{
+    ViewBag.Title = "Мониторинг";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Мониторинг</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Мониторинг</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight ecommerce">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h2>Выберите пост  <small>за которым хотите наблюдать</small></h2>
+                </div>
+                <div class="ibox-content">
+
+                    <div id="jstree1">
+                        <ul>
+                            @foreach (var c in Model)
+                            {
+                                <li class="jstree">
+                                    @c.Name
+                                    <ul>
+                                        @foreach (var m in c.Regions)
+                                        {
+                                            <li>
+                                                @m.Name
+                                                <ul>
+                                                    @foreach (var n in m.Washes)
+                                                    {
+                                                        <li>
+                                                            @n.Name
+                                                            <ul>
+                                                                @foreach (var k in n.Posts)
+                                                                {
+                                                                    <li class="my-2" id="@k.IDPost">
+                                                                        <button type="button" class="btn btn-outline btn-info" onclick="select_post(@k.IDPost)">@k.Name</button>
+                                                                    </li>
+                                                                }
+                                                            </ul>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="cur_post" class="col-lg-6">
+
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/jsTree")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/jsTree")
+
+    <script type="text/javascript">
+
+        function select_post(IDPost) {
+            $.ajax({
+                type: "POST",
+                cache: false,
+                data: {
+                    IDPost: IDPost
+                },
+                error: function () {
+                    alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
+                },
+                url: "@Url.Action("PostMonitoringView", "Monitoring")",
+            }).done(function (result) {
+                $('#cur_post').html(result);
+            });
+        }
+
+        $(document).ready(function () {
+            $('#jstree1').jstree({
+                'core': {
+                    'themes': {
+                        'responsive': true
+                    }
+                },
+                'plugins': ['wholerow', 'types'],
+                'types': {
+                    'default': {
+                        //'icon': 'fa fa-circle'
+                        'icon': false
+                    }
+
+                }
+            });
+        });
+    </script>
+}

@@ -154,6 +154,7 @@
     <Compile Include="Controllers\MailboxController.cs" />
     <Compile Include="Controllers\MetricsController.cs" />
     <Compile Include="Controllers\MiscellaneousController.cs" />
+    <Compile Include="Controllers\MonitoringController.cs" />
     <Compile Include="Controllers\OperationsTypedWashController.cs" />
     <Compile Include="Controllers\OperationsController.cs" />
     <Compile Include="Controllers\PagesController.cs" />
@@ -1879,6 +1880,8 @@
     <Content Include="Views\CollectWash\CollectList.cshtml" />
     <Content Include="Views\CollectWash\_CollectList.cshtml" />
     <Content Include="Views\Pricing\NewPricesView.cshtml" />
+    <Content Include="Views\Monitoring\MonitoringView.cshtml" />
+    <Content Include="Views\Monitoring\PostMonitoringView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
