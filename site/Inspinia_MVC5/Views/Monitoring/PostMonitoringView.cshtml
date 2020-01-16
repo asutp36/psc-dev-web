@@ -1,13 +1,11 @@
-﻿@model int
+﻿@model Inspinia_MVC5.Models.Post
 
 <div class="ibox ">
     <div class="ibox-title">
-        @*<h2>Регион: @Model.Wash.Region.Name --> Мойка: @Model.Wash.Name --> <strong>Пост: @Model.Name</strong></h2>*@
+        <h2>@Model.Wash.Region.Name/@Model.Wash.Name/<strong>Пост @Model.Name</strong></h2>
     </div>
     <div class="ibox-content">
-        @Model
-        @*@DateTime.Now.ToString("hh.mm.ss.ffffff");*@
-
+        @Model.Code
     </div>
 </div>
 

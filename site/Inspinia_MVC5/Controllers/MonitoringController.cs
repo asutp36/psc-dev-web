@@ -51,10 +51,9 @@ namespace Inspinia_MVC5.Controllers
         public ActionResult PostMonitoringView(int IDPost)
         {
             post = _posts.Find(x => x.IDPost == IDPost);
+            post.Code = GetSec().ToString();
 
-            int sec = GetSec();
-
-            return PartialView("PostMonitoringView", sec);
+            return PartialView("PostMonitoringView", post);
         }
     }
 }

@@ -48,8 +48,8 @@
                                                             <ul>
                                                                 @foreach (var k in n.Posts)
                                                                 {
-                                                                    <li class="my-2" id="@k.IDPost">
-                                                                        <button type="button" class="btn btn-outline btn-info" onclick="select_post(@k.IDPost)">@k.Name</button>
+                                                                    <li class="my-1" onclick="select_post(@k.IDPost)" id="@k.IDPost">
+                                                                        @k.Name
                                                                     </li>
                                                                 }
                                                             </ul>
