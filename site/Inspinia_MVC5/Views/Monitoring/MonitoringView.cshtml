@@ -72,6 +72,8 @@
     </div>
 </div>
 
+<input hidden id="cur_idpost" />
+
 @section Styles {
     @Styles.Render("~/Content/plugins/jsTree")
 }
@@ -81,15 +83,33 @@
 
     <script type="text/javascript">
 
+        function show() {
+            let id = $('#cur_idpost').val()
+        $.ajax({
+            type: "GET",
+            cache: false,
+            data: {
+                IDPost: id
+            },
+            error: function () {
+                console.log('Возникла ошибка!');
+            },
+            url: "@Url.Action("PostMonitoringView", "Monitoring")",
+        }).done(function (result) {
+            $('#cur_post').html(result);
+        });
+        }
+
         function select_post(IDPost) {
+            $('#cur_idpost').val(IDPost);
             $.ajax({
-                type: "POST",
+                type: "GET",
                 cache: false,
                 data: {
                     IDPost: IDPost
                 },
                 error: function () {
-                    alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
+                    alert('Возникла ошибка!');
                 },
                 url: "@Url.Action("PostMonitoringView", "Monitoring")",
             }).done(function (result) {

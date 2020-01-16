@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Inspinia_MVC5.Models;
@@ -27,11 +29,32 @@ namespace Inspinia_MVC5.Controllers
             return View(_companies);
         }
 
+        public int GetSec()
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/eco-api/api/dynamic/time");
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Method = "GET";
+            request.Accept = "application/json";
+
+            var response = (HttpWebResponse)request.GetResponse();
+
+            string result;
+            using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+            {
+                result = rdr.ReadToEnd();
+            }
+
+            return int.Parse(result);
+        }
+
         public ActionResult PostMonitoringView(int IDPost)
         {
             post = _posts.Find(x => x.IDPost == IDPost);
 
-            return PartialView("PostMonitoringView", post);
+            int sec = GetSec();
+
+            return PartialView("PostMonitoringView", sec);
         }
     }
 }

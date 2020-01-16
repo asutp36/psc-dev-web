@@ -1,31 +1,16 @@
-﻿@model Inspinia_MVC5.Models.Post
+﻿@model int
 
 <div class="ibox ">
     <div class="ibox-title">
-        <h2>Регион: @Model.Wash.Region.Name --> Мойка: @Model.Wash.Name --> <strong>Пост: @Model.Name</strong></h2>
+        @*<h2>Регион: @Model.Wash.Region.Name --> Мойка: @Model.Wash.Name --> <strong>Пост: @Model.Name</strong></h2>*@
     </div>
     <div class="ibox-content">
-        @DateTime.Now.ToString("hh.mm.ss.ffffff");
+        @Model
+        @*@DateTime.Now.ToString("hh.mm.ss.ffffff");*@
 
     </div>
 </div>
 
 <script>
-    function show() {
-        $.ajax({
-            type: "POST",
-            cache: false,
-            data: {
-                IDPost: @Model.IDPost
-            },
-            error: function () {
-                console.log('Возникла ошибка!\nПроверьте правильность введенных данных!');
-            },
-            url: "@Url.Action("PostMonitoringView", "Monitoring")",
-        }).done(function (result) {
-            $('#cur_post').html(result);
-        });
-    }
-    
-    setTimeout(show, 1);
+    setTimeout(show, 100);
 </script>
