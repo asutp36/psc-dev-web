@@ -22,7 +22,7 @@
 
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-5">
             <div class="ibox ">
                 <div class="ibox-title">
                     <h2>Выберите пост  <small>за которым хотите наблюдать</small></h2>
@@ -66,8 +66,28 @@
                 </div>
             </div>
         </div>
-        <div id="cur_post" class="col-lg-6">
-
+        <div class="col-lg-7">
+            <div id="post" class="ibox ">
+                <div id="cur_post" class="ibox-content">
+                </div>
+                <div class="ibox-content-more">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <input id="increase-balance" required type="text" onkeypress="validate(event)" class="form-control" placeholder="Введите сумму" />
+                        </div>
+                        <div class="col-lg-4"></div>
+                        <div class="col-lg-4">
+                            <button type="submit" id="btn-increase" class="btn btn-outline btn-success font-bold">Внести</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="alert-sum" class="alert alert-warning">
+                Введите сумму!
+            </div>
+            <div id="alert-success" class="alert alert-success">
+                Запрос на внесение суммы отправлен!
+            </div>
         </div>
     </div>
 </div>
@@ -82,6 +102,23 @@
     @Scripts.Render("~/plugins/jsTree")
 
     <script type="text/javascript">
+
+        $('#alert-sum').hide()
+        $('#alert-success').hide()
+
+        var timeid = -1;
+        $('#post').hide()
+
+        function validate(evt) {
+            var theEvent = evt || window.event;
+            var key = theEvent.keyCode || theEvent.which;
+            key = String.fromCharCode(key);
+            var regex = /[0-9]/;
+            if (!regex.test(key)) {
+                theEvent.returnValue = false;
+                if (theEvent.preventDefault) theEvent.preventDefault();
+            }
+        }
 
         function show() {
             let id = $('#cur_idpost').val()
@@ -101,6 +138,15 @@
         }
 
         function select_post(IDPost) {
+
+            $('#alert-sum').hide()
+            $('#alert-success').hide()
+
+            if (timeid != -1) {
+                clearInterval(timeid);
+                timeid = -1;
+            }
+
             $('#cur_idpost').val(IDPost);
             $.ajax({
                 type: "GET",
@@ -111,10 +157,17 @@
                 error: function () {
                     alert('Возникла ошибка!');
                 },
+                success: function () {
+                    if (timeid == -1) {
+                        timeid = setInterval(show, 500);
+                    }
+                    $('#post').show('fade')
+                },
                 url: "@Url.Action("PostMonitoringView", "Monitoring")",
             }).done(function (result) {
                 $('#cur_post').html(result);
-            });
+                });
+
         }
 
         $(document).ready(function () {
@@ -130,7 +183,35 @@
                         //'icon': 'fa fa-circle'
                         'icon': false
                     }
+                }
+            });
 
+            $(document).on("click", "#btn-increase", function () {
+                if ($('#increase-balance').val() != "") {
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        data: {
+                            IDPost: $('#cur_idpost').val(),
+                            sum: $('#increase-balance').val()
+                        },
+                        error: function () {
+                            alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
+                        },
+                        success: function ()
+                        {
+                            $('#alert-sum').hide()
+                            $('#increase-balance').val("")
+                            $('#alert-success').show('fade')
+                        },
+                        url: "@Url.Action("IncreaseBalance", "Monitoring")",
+                    }).done(function (result) {
+                        $('#cur_post').html(result);
+                    });
+                }
+                else {
+                    $('#alert-success').hide()
+                    $('#alert-sum').show('fade')
                 }
             });
         });

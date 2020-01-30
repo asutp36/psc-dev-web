@@ -1,14 +1,19 @@
 ﻿@model Inspinia_MVC5.Models.Post
 
-<div class="ibox ">
-    <div class="ibox-title">
-        <h2>@Model.Wash.Region.Name/@Model.Wash.Name/<strong>Пост @Model.Name</strong></h2>
+<h2>@Model.Wash.Region.Name/@Model.Wash.Name/<strong>Пост @Model.Name</strong></h2>
+<hr />
+<div class="row">
+    <div class="col-lg-4">
+        <h4>Критерий-1</h4>
+        <h5>@Model.Code</h5>
     </div>
-    <div class="ibox-content">
-        @Model.Code
+    <div class="col-lg-4">
+        <h4>Критерий-2</h4>
+    </div>
+    <div class="col-lg-4">
+        <h4>Критерий-3</h4>
     </div>
 </div>
 
 <script>
-    setTimeout(show, 100);
 </script>

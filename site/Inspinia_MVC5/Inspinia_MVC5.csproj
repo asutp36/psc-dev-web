@@ -169,6 +169,7 @@
     </Compile>
     <Compile Include="Helpers\ChangePricesData.cs" />
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />
+    <Compile Include="Helpers\IncreaseBalanceOnPostClass.cs" />
     <Compile Include="Models\Card.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
