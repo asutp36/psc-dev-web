@@ -1,0 +1,972 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="WashCompany.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Cards">
+          <Key>
+            <PropertyRef Name="IDCard" />
+          </Key>
+          <Property Name="IDCard" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDOwner" Type="int" Nullable="false" />
+          <Property Name="CardNum" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="IDCardStatus" Type="int" Nullable="false" />
+          <Property Name="IDCardType" Type="int" Nullable="false" />
+          <Property Name="LocalizedBy" Type="int" Nullable="false" />
+          <Property Name="LocalizedID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CardStatuses">
+          <Key>
+            <PropertyRef Name="IDCardStatus" />
+          </Key>
+          <Property Name="IDCardStatus" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CardTypes">
+          <Key>
+            <PropertyRef Name="IDCardType" />
+          </Key>
+          <Property Name="IDCardType" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Device">
+          <Key>
+            <PropertyRef Name="IDDevice" />
+          </Key>
+          <Property Name="IDDevice" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="IDWash" Type="int" Nullable="false" />
+          <Property Name="ServerID" Type="int" />
+        </EntityType>
+        <EntityType Name="Finance">
+          <Key>
+            <PropertyRef Name="IDFinance" />
+          </Key>
+          <Property Name="IDFinance" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDDevice" Type="int" Nullable="false" />
+          <Property Name="IDFinanceType" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime" Nullable="false" />
+          <Property Name="Amount" Type="int" Nullable="false" />
+          <Property Name="ServerID" Type="int" />
+          <Property Name="ServerMessage" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="FinanceType">
+          <Key>
+            <PropertyRef Name="IDFinanceType" />
+          </Key>
+          <Property Name="IDFinanceType" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ServerID" Type="int" />
+          <Property Name="ServerMessage" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Operations">
+          <Key>
+            <PropertyRef Name="IDOperation" />
+          </Key>
+          <Property Name="IDOperation" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDPsc" Type="int" Nullable="false" />
+          <Property Name="IDOperationType" Type="int" Nullable="false" />
+          <Property Name="IDCard" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime" Nullable="false" />
+          <Property Name="Amount" Type="int" Nullable="false" />
+          <Property Name="Balance" Type="int" Nullable="false" />
+          <Property Name="LocalizedBy" Type="int" Nullable="false" />
+          <Property Name="LocalizedID" Type="int" Nullable="false" />
+          <Property Name="Functions" Type="nvarchar" MaxLength="500" />
+          <Property Name="Details" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="OperationTypes">
+          <Key>
+            <PropertyRef Name="IDOperationType" />
+          </Key>
+          <Property Name="IDOperationType" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Owners">
+          <Key>
+            <PropertyRef Name="IDOwner" />
+          </Key>
+          <Property Name="IDOwner" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Phone" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="LocalizedBy" Type="int" Nullable="false" />
+          <Property Name="LocalizedID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Posts">
+          <Key>
+            <PropertyRef Name="IDPost" />
+          </Key>
+          <Property Name="IDPost" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="IDWash" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Prices">
+          <Key>
+            <PropertyRef Name="IDFunction" />
+            <PropertyRef Name="Price" />
+          </Key>
+          <Property Name="IDFunction" Type="int" Nullable="false" />
+          <Property Name="Price" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Psces">
+          <Key>
+            <PropertyRef Name="IDPsc" />
+          </Key>
+          <Property Name="IDPsc" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IDWash" Type="int" />
+        </EntityType>
+        <EntityType Name="Wash">
+          <Key>
+            <PropertyRef Name="IDWash" />
+          </Key>
+          <Property Name="IDWash" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="5" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="Address" Type="nvarchar" MaxLength="100" />
+          <Property Name="IDRegion" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Cards_CardStatuses">
+          <End Role="CardStatuses" Type="Self.CardStatuses" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Cards" Type="Self.Cards" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CardStatuses">
+              <PropertyRef Name="IDCardStatus" />
+            </Principal>
+            <Dependent Role="Cards">
+              <PropertyRef Name="IDCardStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cards_CardTypes">
+          <End Role="CardTypes" Type="Self.CardTypes" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Cards" Type="Self.Cards" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CardTypes">
+              <PropertyRef Name="IDCardType" />
+            </Principal>
+            <Dependent Role="Cards">
+              <PropertyRef Name="IDCardType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cards_Owners">
+          <End Role="Owners" Type="Self.Owners" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Cards" Type="Self.Cards" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Owners">
+              <PropertyRef Name="IDOwner" />
+            </Principal>
+            <Dependent Role="Cards">
+              <PropertyRef Name="IDOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Device_Wash">
+          <End Role="Wash" Type="Self.Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Device" Type="Self.Device" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Device">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Finance_Device">
+          <End Role="Device" Type="Self.Device" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Finance" Type="Self.Finance" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Finance">
+              <PropertyRef Name="IDDevice" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Finance_FinanceType">
+          <End Role="FinanceType" Type="Self.FinanceType" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Finance" Type="Self.Finance" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FinanceType">
+              <PropertyRef Name="IDFinanceType" />
+            </Principal>
+            <Dependent Role="Finance">
+              <PropertyRef Name="IDFinanceType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Operations_Cards">
+          <End Role="Cards" Type="Self.Cards" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cards">
+              <PropertyRef Name="IDCard" />
+            </Principal>
+            <Dependent Role="Operations">
+              <PropertyRef Name="IDCard" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Operations_OperationTypes">
+          <End Role="OperationTypes" Type="Self.OperationTypes" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OperationTypes">
+              <PropertyRef Name="IDOperationType" />
+            </Principal>
+            <Dependent Role="Operations">
+              <PropertyRef Name="IDOperationType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Operations_Pcses">
+          <End Role="Psces" Type="Self.Psces" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Psces">
+              <PropertyRef Name="IDPsc" />
+            </Principal>
+            <Dependent Role="Operations">
+              <PropertyRef Name="IDPsc" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Pcses_Wash">
+          <End Role="Wash" Type="Self.Wash" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Psces" Type="Self.Psces" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Psces">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Posts_Wash">
+          <End Role="Wash" Type="Self.Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Posts" Type="Self.Posts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Posts">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="GetCardBalance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Card" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="GetCardList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_Phone" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_Cardnum" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_CardTypeCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_CardStatusName" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_BalanceMin" Type="int" Mode="In" />
+          <Parameter Name="p_BalanceMax" Type="int" Mode="In" />
+          <Parameter Name="p_ActivationDateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_ActivationDateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_ActivationBy" Type="int" Mode="In" />
+          <Parameter Name="p_LastOperationDateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_LastOperationDateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_LastOperationBy" Type="int" Mode="In" />
+          <Parameter Name="p_IncreaseSumMin" Type="int" Mode="In" />
+          <Parameter Name="p_IncreaseSumMax" Type="int" Mode="In" />
+          <Parameter Name="p_DecreaseSumMin" Type="int" Mode="In" />
+          <Parameter Name="p_DEcreaseSumMax" Type="int" Mode="In" />
+          <Parameter Name="p_CountOperationMin" Type="int" Mode="In" />
+          <Parameter Name="p_CountOperationMax" Type="int" Mode="In" />
+        </Function>
+        <EntityContainer Name="WashCompanyStoreContainer">
+          <EntitySet Name="Cards" EntityType="Self.Cards" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CardStatuses" EntityType="Self.CardStatuses" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CardTypes" EntityType="Self.CardTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Device" EntityType="Self.Device" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Finance" EntityType="Self.Finance" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FinanceType" EntityType="Self.FinanceType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Operations" EntityType="Self.Operations" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OperationTypes" EntityType="Self.OperationTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Owners" EntityType="Self.Owners" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Posts" EntityType="Self.Posts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Psces" EntityType="Self.Psces" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Wash" EntityType="Self.Wash" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Prices" EntityType="Self.Prices" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Prices].[IDFunction] AS [IDFunction], 
+    [Prices].[Price] AS [Price]
+    FROM [dbo].[Prices] AS [Prices]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Cards_CardStatuses" Association="Self.FK_Cards_CardStatuses">
+            <End Role="CardStatuses" EntitySet="CardStatuses" />
+            <End Role="Cards" EntitySet="Cards" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cards_CardTypes" Association="Self.FK_Cards_CardTypes">
+            <End Role="CardTypes" EntitySet="CardTypes" />
+            <End Role="Cards" EntitySet="Cards" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cards_Owners" Association="Self.FK_Cards_Owners">
+            <End Role="Owners" EntitySet="Owners" />
+            <End Role="Cards" EntitySet="Cards" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Device_Wash" Association="Self.FK_Device_Wash">
+            <End Role="Wash" EntitySet="Wash" />
+            <End Role="Device" EntitySet="Device" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Finance_Device" Association="Self.FK_Finance_Device">
+            <End Role="Device" EntitySet="Device" />
+            <End Role="Finance" EntitySet="Finance" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Finance_FinanceType" Association="Self.FK_Finance_FinanceType">
+            <End Role="FinanceType" EntitySet="FinanceType" />
+            <End Role="Finance" EntitySet="Finance" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Operations_Cards" Association="Self.FK_Operations_Cards">
+            <End Role="Cards" EntitySet="Cards" />
+            <End Role="Operations" EntitySet="Operations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Operations_OperationTypes" Association="Self.FK_Operations_OperationTypes">
+            <End Role="OperationTypes" EntitySet="OperationTypes" />
+            <End Role="Operations" EntitySet="Operations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Operations_Pcses" Association="Self.FK_Operations_Pcses">
+            <End Role="Psces" EntitySet="Psces" />
+            <End Role="Operations" EntitySet="Operations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Pcses_Wash" Association="Self.FK_Pcses_Wash">
+            <End Role="Wash" EntitySet="Wash" />
+            <End Role="Psces" EntitySet="Psces" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Posts_Wash" Association="Self.FK_Posts_Wash">
+            <End Role="Wash" EntitySet="Wash" />
+            <End Role="Posts" EntitySet="Posts" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="WashCompany" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Cards">
+          <Key>
+            <PropertyRef Name="IDCard" />
+          </Key>
+          <Property Name="IDCard" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDOwner" Type="Int32" Nullable="false" />
+          <Property Name="CardNum" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IDCardStatus" Type="Int32" Nullable="false" />
+          <Property Name="IDCardType" Type="Int32" Nullable="false" />
+          <Property Name="LocalizedBy" Type="Int32" Nullable="false" />
+          <Property Name="LocalizedID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="CardStatuses" Relationship="Self.FK_Cards_CardStatuses" FromRole="Cards" ToRole="CardStatuses" />
+          <NavigationProperty Name="CardTypes" Relationship="Self.FK_Cards_CardTypes" FromRole="Cards" ToRole="CardTypes" />
+          <NavigationProperty Name="Owners" Relationship="Self.FK_Cards_Owners" FromRole="Cards" ToRole="Owners" />
+          <NavigationProperty Name="Operations" Relationship="Self.FK_Operations_Cards" FromRole="Cards" ToRole="Operations" />
+        </EntityType>
+        <EntityType Name="CardStatuses">
+          <Key>
+            <PropertyRef Name="IDCardStatus" />
+          </Key>
+          <Property Name="IDCardStatus" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Cards" Relationship="Self.FK_Cards_CardStatuses" FromRole="CardStatuses" ToRole="Cards" />
+        </EntityType>
+        <EntityType Name="CardTypes">
+          <Key>
+            <PropertyRef Name="IDCardType" />
+          </Key>
+          <Property Name="IDCardType" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Cards" Relationship="Self.FK_Cards_CardTypes" FromRole="CardTypes" ToRole="Cards" />
+        </EntityType>
+        <EntityType Name="Device">
+          <Key>
+            <PropertyRef Name="IDDevice" />
+          </Key>
+          <Property Name="IDDevice" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IDWash" Type="Int32" Nullable="false" />
+          <Property Name="ServerID" Type="Int32" />
+          <NavigationProperty Name="Wash" Relationship="Self.FK_Device_Wash" FromRole="Device" ToRole="Wash" />
+          <NavigationProperty Name="Finance" Relationship="Self.FK_Finance_Device" FromRole="Device" ToRole="Finance" />
+        </EntityType>
+        <EntityType Name="Finance">
+          <Key>
+            <PropertyRef Name="IDFinance" />
+          </Key>
+          <Property Name="IDFinance" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDDevice" Type="Int32" Nullable="false" />
+          <Property Name="IDFinanceType" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Amount" Type="Int32" Nullable="false" />
+          <Property Name="ServerID" Type="Int32" />
+          <Property Name="ServerMessage" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Device" Relationship="Self.FK_Finance_Device" FromRole="Finance" ToRole="Device" />
+          <NavigationProperty Name="FinanceType" Relationship="Self.FK_Finance_FinanceType" FromRole="Finance" ToRole="FinanceType" />
+        </EntityType>
+        <EntityType Name="FinanceType">
+          <Key>
+            <PropertyRef Name="IDFinanceType" />
+          </Key>
+          <Property Name="IDFinanceType" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ServerID" Type="Int32" />
+          <Property Name="ServerMessage" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Finance" Relationship="Self.FK_Finance_FinanceType" FromRole="FinanceType" ToRole="Finance" />
+        </EntityType>
+        <EntityType Name="Operations">
+          <Key>
+            <PropertyRef Name="IDOperation" />
+          </Key>
+          <Property Name="IDOperation" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDPsc" Type="Int32" Nullable="false" />
+          <Property Name="IDOperationType" Type="Int32" Nullable="false" />
+          <Property Name="IDCard" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Amount" Type="Int32" Nullable="false" />
+          <Property Name="Balance" Type="Int32" Nullable="false" />
+          <Property Name="LocalizedBy" Type="Int32" Nullable="false" />
+          <Property Name="LocalizedID" Type="Int32" Nullable="false" />
+          <Property Name="Functions" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Details" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Cards" Relationship="Self.FK_Operations_Cards" FromRole="Operations" ToRole="Cards" />
+          <NavigationProperty Name="OperationTypes" Relationship="Self.FK_Operations_OperationTypes" FromRole="Operations" ToRole="OperationTypes" />
+          <NavigationProperty Name="Psces" Relationship="Self.FK_Operations_Pcses" FromRole="Operations" ToRole="Psces" />
+        </EntityType>
+        <EntityType Name="OperationTypes">
+          <Key>
+            <PropertyRef Name="IDOperationType" />
+          </Key>
+          <Property Name="IDOperationType" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Operations" Relationship="Self.FK_Operations_OperationTypes" FromRole="OperationTypes" ToRole="Operations" />
+        </EntityType>
+        <EntityType Name="Owners">
+          <Key>
+            <PropertyRef Name="IDOwner" />
+          </Key>
+          <Property Name="IDOwner" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Phone" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="LocalizedBy" Type="Int32" Nullable="false" />
+          <Property Name="LocalizedID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Cards" Relationship="Self.FK_Cards_Owners" FromRole="Owners" ToRole="Cards" />
+        </EntityType>
+        <EntityType Name="Posts">
+          <Key>
+            <PropertyRef Name="IDPost" />
+          </Key>
+          <Property Name="IDPost" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IDWash" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Wash" Relationship="Self.FK_Posts_Wash" FromRole="Posts" ToRole="Wash" />
+        </EntityType>
+        <EntityType Name="Psces">
+          <Key>
+            <PropertyRef Name="IDPsc" />
+          </Key>
+          <Property Name="IDPsc" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IDWash" Type="Int32" />
+          <NavigationProperty Name="Operations" Relationship="Self.FK_Operations_Pcses" FromRole="Psces" ToRole="Operations" />
+          <NavigationProperty Name="Wash" Relationship="Self.FK_Pcses_Wash" FromRole="Psces" ToRole="Wash" />
+        </EntityType>
+        <EntityType Name="Wash">
+          <Key>
+            <PropertyRef Name="IDWash" />
+          </Key>
+          <Property Name="IDWash" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="5" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IDRegion" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Device" Relationship="Self.FK_Device_Wash" FromRole="Wash" ToRole="Device" />
+          <NavigationProperty Name="Posts" Relationship="Self.FK_Posts_Wash" FromRole="Wash" ToRole="Posts" />
+          <NavigationProperty Name="Psces" Relationship="Self.FK_Pcses_Wash" FromRole="Wash" ToRole="Psces" />
+        </EntityType>
+        <EntityType Name="Prices">
+          <Key>
+            <PropertyRef Name="IDFunction" />
+            <PropertyRef Name="Price" />
+          </Key>
+          <Property Name="IDFunction" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Cards_CardStatuses">
+          <End Role="CardStatuses" Type="Self.CardStatuses" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Cards" Type="Self.Cards" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CardStatuses">
+              <PropertyRef Name="IDCardStatus" />
+            </Principal>
+            <Dependent Role="Cards">
+              <PropertyRef Name="IDCardStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cards_CardTypes">
+          <End Role="CardTypes" Type="Self.CardTypes" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Cards" Type="Self.Cards" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CardTypes">
+              <PropertyRef Name="IDCardType" />
+            </Principal>
+            <Dependent Role="Cards">
+              <PropertyRef Name="IDCardType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cards_Owners">
+          <End Role="Owners" Type="Self.Owners" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Cards" Type="Self.Cards" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Owners">
+              <PropertyRef Name="IDOwner" />
+            </Principal>
+            <Dependent Role="Cards">
+              <PropertyRef Name="IDOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Operations_Cards">
+          <End Role="Cards" Type="Self.Cards" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cards">
+              <PropertyRef Name="IDCard" />
+            </Principal>
+            <Dependent Role="Operations">
+              <PropertyRef Name="IDCard" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Device_Wash">
+          <End Role="Wash" Type="Self.Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Device" Type="Self.Device" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Device">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Finance_Device">
+          <End Role="Device" Type="Self.Device" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Finance" Type="Self.Finance" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Finance">
+              <PropertyRef Name="IDDevice" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Finance_FinanceType">
+          <End Role="FinanceType" Type="Self.FinanceType" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Finance" Type="Self.Finance" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FinanceType">
+              <PropertyRef Name="IDFinanceType" />
+            </Principal>
+            <Dependent Role="Finance">
+              <PropertyRef Name="IDFinanceType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Operations_OperationTypes">
+          <End Role="OperationTypes" Type="Self.OperationTypes" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OperationTypes">
+              <PropertyRef Name="IDOperationType" />
+            </Principal>
+            <Dependent Role="Operations">
+              <PropertyRef Name="IDOperationType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Operations_Pcses">
+          <End Role="Psces" Type="Self.Psces" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Psces">
+              <PropertyRef Name="IDPsc" />
+            </Principal>
+            <Dependent Role="Operations">
+              <PropertyRef Name="IDPsc" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Posts_Wash">
+          <End Role="Wash" Type="Self.Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Posts" Type="Self.Posts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Posts">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Pcses_Wash">
+          <End Role="Wash" Type="Self.Wash" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Psces" Type="Self.Psces" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Psces">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ModelDb" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Cards" EntityType="Self.Cards" />
+          <EntitySet Name="CardStatuses" EntityType="Self.CardStatuses" />
+          <EntitySet Name="CardTypes" EntityType="Self.CardTypes" />
+          <EntitySet Name="Device" EntityType="Self.Device" />
+          <EntitySet Name="Finance" EntityType="Self.Finance" />
+          <EntitySet Name="FinanceType" EntityType="Self.FinanceType" />
+          <EntitySet Name="Operations" EntityType="Self.Operations" />
+          <EntitySet Name="OperationTypes" EntityType="Self.OperationTypes" />
+          <EntitySet Name="Owners" EntityType="Self.Owners" />
+          <EntitySet Name="Posts" EntityType="Self.Posts" />
+          <EntitySet Name="Psces" EntityType="Self.Psces" />
+          <EntitySet Name="Wash" EntityType="Self.Wash" />
+          <EntitySet Name="Prices" EntityType="Self.Prices" />
+          <AssociationSet Name="FK_Cards_CardStatuses" Association="Self.FK_Cards_CardStatuses">
+            <End Role="CardStatuses" EntitySet="CardStatuses" />
+            <End Role="Cards" EntitySet="Cards" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cards_CardTypes" Association="Self.FK_Cards_CardTypes">
+            <End Role="CardTypes" EntitySet="CardTypes" />
+            <End Role="Cards" EntitySet="Cards" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cards_Owners" Association="Self.FK_Cards_Owners">
+            <End Role="Owners" EntitySet="Owners" />
+            <End Role="Cards" EntitySet="Cards" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Operations_Cards" Association="Self.FK_Operations_Cards">
+            <End Role="Cards" EntitySet="Cards" />
+            <End Role="Operations" EntitySet="Operations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Device_Wash" Association="Self.FK_Device_Wash">
+            <End Role="Wash" EntitySet="Wash" />
+            <End Role="Device" EntitySet="Device" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Finance_Device" Association="Self.FK_Finance_Device">
+            <End Role="Device" EntitySet="Device" />
+            <End Role="Finance" EntitySet="Finance" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Finance_FinanceType" Association="Self.FK_Finance_FinanceType">
+            <End Role="FinanceType" EntitySet="FinanceType" />
+            <End Role="Finance" EntitySet="Finance" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Operations_OperationTypes" Association="Self.FK_Operations_OperationTypes">
+            <End Role="OperationTypes" EntitySet="OperationTypes" />
+            <End Role="Operations" EntitySet="Operations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Operations_Pcses" Association="Self.FK_Operations_Pcses">
+            <End Role="Psces" EntitySet="Psces" />
+            <End Role="Operations" EntitySet="Operations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Posts_Wash" Association="Self.FK_Posts_Wash">
+            <End Role="Wash" EntitySet="Wash" />
+            <End Role="Posts" EntitySet="Posts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Pcses_Wash" Association="Self.FK_Pcses_Wash">
+            <End Role="Wash" EntitySet="Wash" />
+            <End Role="Psces" EntitySet="Psces" />
+          </AssociationSet>
+          <FunctionImport Name="GetCardBalance" ReturnType="Collection(Int32)">
+            <Parameter Name="Card" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetCardList" ReturnType="Collection(WashCompany.GetCardList_Result)">
+            <Parameter Name="p_Phone" Mode="In" Type="String" />
+            <Parameter Name="p_Cardnum" Mode="In" Type="String" />
+            <Parameter Name="p_CardTypeCode" Mode="In" Type="String" />
+            <Parameter Name="p_CardStatusName" Mode="In" Type="String" />
+            <Parameter Name="p_BalanceMin" Mode="In" Type="Int32" />
+            <Parameter Name="p_BalanceMax" Mode="In" Type="Int32" />
+            <Parameter Name="p_ActivationDateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_ActivationDateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_ActivationBy" Mode="In" Type="Int32" />
+            <Parameter Name="p_LastOperationDateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_LastOperationDateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_LastOperationBy" Mode="In" Type="Int32" />
+            <Parameter Name="p_IncreaseSumMin" Mode="In" Type="Int32" />
+            <Parameter Name="p_IncreaseSumMax" Mode="In" Type="Int32" />
+            <Parameter Name="p_DecreaseSumMin" Mode="In" Type="Int32" />
+            <Parameter Name="p_DEcreaseSumMax" Mode="In" Type="Int32" />
+            <Parameter Name="p_CountOperationMin" Mode="In" Type="Int32" />
+            <Parameter Name="p_CountOperationMax" Mode="In" Type="Int32" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="GetCardList_Result">
+          <Property Type="String" Name="Phone" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="CardNum" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="CardTypeName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="CardStatusName" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="Balance" Nullable="false" />
+          <Property Type="DateTime" Name="ActivationDate" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="ActivationBy" Nullable="false" />
+          <Property Type="DateTime" Name="LastOperationDate" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="LastOperationBy" Nullable="false" />
+          <Property Type="Int32" Name="IncreaseSum" Nullable="true" />
+          <Property Type="Int32" Name="DecreaseSum" Nullable="true" />
+          <Property Type="Int32" Name="CountOperation" Nullable="true" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="WashCompanyStoreContainer" CdmEntityContainer="ModelDb">
+          <EntitySetMapping Name="Cards">
+            <EntityTypeMapping TypeName="WashCompany.Cards">
+              <MappingFragment StoreEntitySet="Cards">
+                <ScalarProperty Name="IDCard" ColumnName="IDCard" />
+                <ScalarProperty Name="IDOwner" ColumnName="IDOwner" />
+                <ScalarProperty Name="CardNum" ColumnName="CardNum" />
+                <ScalarProperty Name="IDCardStatus" ColumnName="IDCardStatus" />
+                <ScalarProperty Name="IDCardType" ColumnName="IDCardType" />
+                <ScalarProperty Name="LocalizedBy" ColumnName="LocalizedBy" />
+                <ScalarProperty Name="LocalizedID" ColumnName="LocalizedID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CardStatuses">
+            <EntityTypeMapping TypeName="WashCompany.CardStatuses">
+              <MappingFragment StoreEntitySet="CardStatuses">
+                <ScalarProperty Name="IDCardStatus" ColumnName="IDCardStatus" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CardTypes">
+            <EntityTypeMapping TypeName="WashCompany.CardTypes">
+              <MappingFragment StoreEntitySet="CardTypes">
+                <ScalarProperty Name="IDCardType" ColumnName="IDCardType" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Device">
+            <EntityTypeMapping TypeName="WashCompany.Device">
+              <MappingFragment StoreEntitySet="Device">
+                <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+                <ScalarProperty Name="ServerID" ColumnName="ServerID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Finance">
+            <EntityTypeMapping TypeName="WashCompany.Finance">
+              <MappingFragment StoreEntitySet="Finance">
+                <ScalarProperty Name="IDFinance" ColumnName="IDFinance" />
+                <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
+                <ScalarProperty Name="IDFinanceType" ColumnName="IDFinanceType" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="ServerID" ColumnName="ServerID" />
+                <ScalarProperty Name="ServerMessage" ColumnName="ServerMessage" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FinanceType">
+            <EntityTypeMapping TypeName="WashCompany.FinanceType">
+              <MappingFragment StoreEntitySet="FinanceType">
+                <ScalarProperty Name="IDFinanceType" ColumnName="IDFinanceType" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ServerID" ColumnName="ServerID" />
+                <ScalarProperty Name="ServerMessage" ColumnName="ServerMessage" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Operations">
+            <EntityTypeMapping TypeName="WashCompany.Operations">
+              <MappingFragment StoreEntitySet="Operations">
+                <ScalarProperty Name="IDOperation" ColumnName="IDOperation" />
+                <ScalarProperty Name="IDPsc" ColumnName="IDPsc" />
+                <ScalarProperty Name="IDOperationType" ColumnName="IDOperationType" />
+                <ScalarProperty Name="IDCard" ColumnName="IDCard" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Balance" ColumnName="Balance" />
+                <ScalarProperty Name="LocalizedBy" ColumnName="LocalizedBy" />
+                <ScalarProperty Name="LocalizedID" ColumnName="LocalizedID" />
+                <ScalarProperty Name="Functions" ColumnName="Functions" />
+                <ScalarProperty Name="Details" ColumnName="Details" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OperationTypes">
+            <EntityTypeMapping TypeName="WashCompany.OperationTypes">
+              <MappingFragment StoreEntitySet="OperationTypes">
+                <ScalarProperty Name="IDOperationType" ColumnName="IDOperationType" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Owners">
+            <EntityTypeMapping TypeName="WashCompany.Owners">
+              <MappingFragment StoreEntitySet="Owners">
+                <ScalarProperty Name="IDOwner" ColumnName="IDOwner" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="LocalizedBy" ColumnName="LocalizedBy" />
+                <ScalarProperty Name="LocalizedID" ColumnName="LocalizedID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Posts">
+            <EntityTypeMapping TypeName="WashCompany.Posts">
+              <MappingFragment StoreEntitySet="Posts">
+                <ScalarProperty Name="IDPost" ColumnName="IDPost" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Psces">
+            <EntityTypeMapping TypeName="WashCompany.Psces">
+              <MappingFragment StoreEntitySet="Psces">
+                <ScalarProperty Name="IDPsc" ColumnName="IDPsc" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Wash">
+            <EntityTypeMapping TypeName="WashCompany.Wash">
+              <MappingFragment StoreEntitySet="Wash">
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="IDRegion" ColumnName="IDRegion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Prices">
+            <EntityTypeMapping TypeName="WashCompany.Prices">
+              <MappingFragment StoreEntitySet="Prices">
+                <ScalarProperty Name="IDFunction" ColumnName="IDFunction" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetCardBalance" FunctionName="WashCompany.Store.GetCardBalance" />
+          <FunctionImportMapping FunctionImportName="GetCardList" FunctionName="WashCompany.Store.GetCardList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WashCompany.GetCardList_Result">
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="CardNum" ColumnName="CardNum" />
+                <ScalarProperty Name="CardTypeName" ColumnName="CardTypeName" />
+                <ScalarProperty Name="CardStatusName" ColumnName="CardStatusName" />
+                <ScalarProperty Name="Balance" ColumnName="Balance" />
+                <ScalarProperty Name="ActivationDate" ColumnName="ActivationDate" />
+                <ScalarProperty Name="ActivationBy" ColumnName="ActivationBy" />
+                <ScalarProperty Name="LastOperationDate" ColumnName="LastOperationDate" />
+                <ScalarProperty Name="LastOperationBy" ColumnName="LastOperationBy" />
+                <ScalarProperty Name="IncreaseSum" ColumnName="IncreaseSum" />
+                <ScalarProperty Name="DecreaseSum" ColumnName="DecreaseSum" />
+                <ScalarProperty Name="CountOperation" ColumnName="CountOperation" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
