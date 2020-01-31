@@ -1,0 +1,168 @@
+﻿@{
+    ViewBag.Title = "История оповещений";
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>История оповещений</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
+            </li>
+            <li class="breadcrumb-item">
+                <strong>Оповещения</strong>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>История оповещений</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="ibox-content m-b-sm border-bottom">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe" for="phone_input_filter">Телефон</label>
+                <input type="text" id="phone_input_filter" name="phone_input_filter" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe" for="text_input_filter">Текст</label>
+                <input type="text" id="text_input_filter" name="text_input_filter" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-labe" for="date_sending_input_filter">Дата отправки</label>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <div id="date_sending_input_filter" class="form-control">
+                            <i class="fa fa-calendar"></i>
+                            <span></span> <b class="caret"></b>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button id="clear_drp_sending" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 table-cards">
+            <div class="ibox">
+                <div class="ibox-content-more">
+                    @Html.Action("_NotificationsHistoryList", "Notifications")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/dateRange")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.table_incashwashes').DataTable({
+                "paging": false,
+                "info": false,
+                "searching": false,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    { extend: 'excel', title: 'Report' },
+                    { extend: 'pdf', title: 'Report' },
+                    {
+                        extend: 'print',
+                        customize: function (win) {
+                            $(win.document.body).addClass('white-bg');
+                            $(win.document.body).css('font-size', '10px');
+
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
+                        }
+                    }
+                ]
+            });
+
+            $(document).on("click", "#clear_drp_sending", function () {
+                $('#date_sending_input_filter span').empty();
+            });
+        });
+
+
+        $('input[name="daterange"]').daterangepicker();
+
+        $('#date_sending_input_filter span').html(moment().subtract(1, 'months').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
+
+        $('#date_sending_input_filter').daterangepicker({
+            "timePicker": true,
+            "timePicker24Hour": true,
+            "timePickerSeconds": true,
+            "ranges": {
+                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                'сегодня': [moment().startOf('day'), moment()],
+                'текущий месяц': [moment().startOf('month'), moment()],
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "locale": {
+                "format": "DD.MM.YYYY",
+                "separator": " ",
+                "applyLabel": "Выбрать",
+                "cancelLabel": "Отмена",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "Вс",
+                    "Пн",
+                    "Вт",
+                    "Ср",
+                    "Чт",
+                    "Пт",
+                    "Сб"
+                ],
+                "monthNames": [
+                    "Январь",
+                    "Февраль",
+                    "Март",
+                    "Апрель",
+                    "Май",
+                    "Июнь",
+                    "Июль",
+                    "Август",
+                    "Сентябрь",
+                    "Октябрь",
+                    "Ноябрь",
+                    "Декабрь"
+                ],
+                "firstDay": 1
+            },
+            "showCustomRangeLabel": false,
+            "alwaysShowCalendars": true,
+            "startDate": moment().subtract(1, 'days').startOf('day'),
+            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "opens": "right",
+            "drops": "down"
+        }, function (start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            $('#date_activation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+
+            $('#filter-activationdatebeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#filter-activationdateend').val(end.format('DD.MM.YYYY HH:mm:ss'));
+        });
+    </script>
+}

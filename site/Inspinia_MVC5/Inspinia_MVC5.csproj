@@ -155,6 +155,7 @@
     <Compile Include="Controllers\MetricsController.cs" />
     <Compile Include="Controllers\MiscellaneousController.cs" />
     <Compile Include="Controllers\MonitoringController.cs" />
+    <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Controllers\OperationsTypedWashController.cs" />
     <Compile Include="Controllers\OperationsController.cs" />
     <Compile Include="Controllers\PagesController.cs" />
@@ -170,6 +171,7 @@
     <Compile Include="Helpers\ChangePricesData.cs" />
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />
     <Compile Include="Helpers\IncreaseBalanceOnPostClass.cs" />
+    <Compile Include="Helpers\NotificationClass.cs" />
     <Compile Include="Models\Card.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -1883,6 +1885,10 @@
     <Content Include="Views\Pricing\NewPricesView.cshtml" />
     <Content Include="Views\Monitoring\MonitoringView.cshtml" />
     <Content Include="Views\Monitoring\PostMonitoringView.cshtml" />
+    <Content Include="Views\Notifications\NotificationsHistoryView.cshtml" />
+    <Content Include="Views\Notifications\_NotificationsHistoryList.cshtml" />
+    <Content Include="Views\Notifications\NotificationsSendingView.cshtml" />
+    <Content Include="Views\Notifications\_NotificationsFormView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
