@@ -45,6 +45,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BCrypt.Net-Next, Version=3.2.1.0, Culture=neutral, PublicKeyToken=1e11be04b6288443, processorArchitecture=MSIL">
+      <HintPath>..\packages\BCrypt.Net-Next.3.2.1\lib\net452\BCrypt.Net-Next.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -140,10 +143,14 @@
     <Compile Include="Controllers\MobileController.cs" />
     <Compile Include="Controllers\Supplies\BalanceChanging.cs" />
     <Compile Include="Controllers\Supplies\ChangeCardState.cs" />
+    <Compile Include="Controllers\Supplies\ChangePhoneFromMobile.cs" />
     <Compile Include="Controllers\Supplies\CryptHash.cs" />
     <Compile Include="Controllers\Supplies\Decrease.cs" />
     <Compile Include="Controllers\Supplies\GetBalance.cs" />
+    <Compile Include="Controllers\Supplies\GetBalanceFromMobile.cs" />
     <Compile Include="Controllers\Supplies\Increase.cs" />
+    <Compile Include="Controllers\Supplies\IncreaseFromMobile.cs" />
+    <Compile Include="Controllers\Supplies\Logger.cs" />
     <Compile Include="Controllers\Supplies\NewCard.cs" />
     <Compile Include="Controllers\Supplies\Sender.cs" />
     <Compile Include="Global.asax.cs">

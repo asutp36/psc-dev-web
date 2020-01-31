@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using MobileIntegration.Models;
 using MobileIntegration.Controllers.Supplies;
-
+using System.Data.Common;
 
 namespace MobileIntegration.Controllers
 {
@@ -73,7 +73,7 @@ namespace MobileIntegration.Controllers
         [HttpPost]
         [ActionName("get_balance")]
         //как высчитывать баланс карты?
-        public HttpResponseMessage GetBalance([FromBody]GetBalanceMobile getBalance)
+        public HttpResponseMessage GetBalance([FromBody]GetBalanceFromMobile getBalance)
         {
             Logger.InitLogger();
 
@@ -149,7 +149,7 @@ namespace MobileIntegration.Controllers
         [HttpPost]
         [ActionName("change_phone")]
         //что делать с localized?
-        public HttpResponseMessage ChangePhone([FromBody]ChPhoneMobile change)
+        public HttpResponseMessage ChangePhone([FromBody]ChangePhoneFromMobile change)
         {
             Logger.InitLogger();
             if (change != null)
