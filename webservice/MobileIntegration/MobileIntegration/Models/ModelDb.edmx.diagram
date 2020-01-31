@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="e404cae5d01341f8b1d2ab0de2a7a217" Name="Diagram1">
+        <EntityTypeShape EntityType="WashCompany.Cards" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.CardStatuses" Width="1.5" PointX="0.75" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.CardTypes" Width="1.5" PointX="0.75" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Device" Width="1.5" PointX="5.75" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Finance" Width="1.5" PointX="8" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.FinanceType" Width="1.5" PointX="5.75" PointY="9.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Operations" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.OperationTypes" Width="1.5" PointX="3" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Owners" Width="1.5" PointX="0.75" PointY="8" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Posts" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Psces" Width="1.5" PointX="3" PointY="8" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Prices" Width="1.5" PointX="7.75" PointY="3.75" IsExpanded="true" />
+        <AssociationConnector Association="WashCompany.FK_Cards_CardStatuses" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Cards_CardTypes" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Cards_Owners" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Operations_Cards" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Finance_Device" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Finance_FinanceType" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Operations_OperationTypes" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Operations_Pcses" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
