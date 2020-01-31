@@ -127,7 +127,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MobileController.cs" />
     <Compile Include="Controllers\Supplies\BalanceChanging.cs" />
     <Compile Include="Controllers\Supplies\ChangeCardState.cs" />
     <Compile Include="Controllers\Supplies\CryptHash.cs" />
@@ -136,7 +136,6 @@
     <Compile Include="Controllers\Supplies\Increase.cs" />
     <Compile Include="Controllers\Supplies\NewCard.cs" />
     <Compile Include="Controllers\Supplies\Sender.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
