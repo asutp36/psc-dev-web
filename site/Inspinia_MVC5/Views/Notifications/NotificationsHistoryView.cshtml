@@ -8,9 +8,6 @@
             <li class="breadcrumb-item">
                 <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
             </li>
-            <li class="breadcrumb-item">
-                <strong>Оповещения</strong>
-            </li>
             <li class="active breadcrumb-item">
                 <strong>История оповещений</strong>
             </li>
@@ -20,31 +17,31 @@
     </div>
 </div>
 <div class="ibox-content m-b-sm border-bottom">
-    <div class="row">
+    <div class="row" id="search-n">
         <div class="col-sm-3">
             <div class="form-group">
-                <label class="col-form-labe" for="phone_input_filter">Телефон</label>
-                <input type="text" id="phone_input_filter" name="phone_input_filter" class="form-control" />
+                <label class="col-form-labe">Телефон</label>
+                <input type="text" id="filter-phone" name="filter-phone" class="form-control" />
             </div>
         </div>
         <div class="col-sm-3">
             <div class="form-group">
-                <label class="col-form-labe" for="text_input_filter">Текст</label>
-                <input type="text" id="text_input_filter" name="text_input_filter" class="form-control" />
+                <label class="col-form-labe">Текст</label>
+                <input type="text" id="filter-text" name="filter-text" class="form-control" />
             </div>
         </div>
         <div class="col-sm-6">
             <div class="form-group">
-                <label class="col-form-labe" for="date_sending_input_filter">Дата отправки</label>
+                <label class="col-form-labe">Дата отправки</label>
                 <div class="row">
                     <div class="col-sm-10">
-                        <div id="date_sending_input_filter" class="form-control">
+                        <div id="filter-date" class="form-control">
                             <i class="fa fa-calendar"></i>
                             <span></span> <b class="caret"></b>
                         </div>
                     </div>
                     <div class="col-sm-2">
-                        <button id="clear_drp_sending" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
+                        <button id="clear-date" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
                     </div>
                 </div>
             </div>
@@ -61,6 +58,9 @@
     </div>
 </div>
 
+<input hidden id="bdate" />
+<input hidden id="edate" />
+
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
     @Styles.Render("~/plugins/dateRangeStyles")
@@ -73,9 +73,76 @@
     @Scripts.Render("~/plugins/dateRange")
 
     <script type="text/javascript">
+
+        function filter() {
+
+            var phone = $('#filter-phone').val();
+            var text  = $('#filter-text').val();
+            var bdate = $('#bdate').val();
+            var edate = $('#edate').val();
+
+            $.ajax({
+                type: "POST",
+                cache: true,
+                data: {
+                    phone: phone,
+                    text: text,
+                    bdate: bdate,
+                    edate: edate
+                },
+                success: function () {
+                    alert('Обработка запросaaaа!');
+                },
+                error: function () {
+                    alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
+                },
+                url: "@Url.Action("NotificationsFilter", "Notifications")"
+            }).done(function (result) {
+                $('.ibox-content-more').html(result);
+                $('#table-notifications').DataTable({
+                    "columns": [
+                        { "width": "30%" },
+                        { "width": "15%" },
+                        { "width": "40%" },
+                        { "width": "15%" }],
+                    "paging": false,
+                    "info": false,
+                    "searching": false,
+                    dom: '<"html5buttons"B>lTfgitp',
+                    buttons: [
+                        { extend: 'excel', title: 'Report' },
+                        { extend: 'pdf', title: 'Report' },
+
+                        {
+                            extend: 'print',
+                            customize: function (win) {
+                                $(win.document.body).addClass('white-bg');
+                                $(win.document.body).css('font-size', '10px');
+
+                                $(win.document.body).find('table')
+                                    .addClass('compact')
+                                    .css('font-size', 'inherit');
+                            }
+                        }
+                    ],
+                    "language": {
+                        "zeroRecords": "Данные по заданному фильтру не найдены",
+                        "emptyTable": "Данные по заданному фильтру не найдены"
+                    }
+                });
+            });
+        }
+
         $(document).ready(function () {
 
-            $('.table_incashwashes').DataTable({
+            $("#search-n").on("input", filter);
+
+            $('#table-notifications').DataTable({
+                "columns": [
+                    { "width": "30%" },
+                    { "width": "15%" },
+                    { "width": "40%" },
+                    { "width": "15%" }],
                 "paging": false,
                 "info": false,
                 "searching": false,
@@ -97,17 +164,22 @@
                 ]
             });
 
-            $(document).on("click", "#clear_drp_sending", function () {
-                $('#date_sending_input_filter span').empty();
+            $(document).on("click", "#clear-date", function () {
+                $('#filter-date span').empty();
+                $('#bdate').val("");
+                $('#edate').val("");
+                filter();
             });
         });
 
-
         $('input[name="daterange"]').daterangepicker();
 
-        $('#date_sending_input_filter span').html(moment().subtract(1, 'months').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
+        $('#bdate').val(moment().subtract(1, 'months').startOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        $('#edate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
 
-        $('#date_sending_input_filter').daterangepicker({
+        $('#filter-date span').html(moment().subtract(1, 'months').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
+
+        $('#filter-date').daterangepicker({
             "timePicker": true,
             "timePicker24Hour": true,
             "timePickerSeconds": true,
@@ -159,10 +231,11 @@
             "drops": "down"
         }, function (start, end, label) {
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
-            $('#date_activation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+            $('#filter-date span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
 
-            $('#filter-activationdatebeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
-            $('#filter-activationdateend').val(end.format('DD.MM.YYYY HH:mm:ss'));
+            $('#bdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
+            filter();
         });
     </script>
 }

@@ -83,6 +83,18 @@ namespace Inspinia_MVC5.Controllers
                 return result + "\nStatusCode: " + webResponse.StatusCode;
             }
         }
+
+        public void GetNotificationsHIstoryFromDB(string phone, string text, string bdate, string edate)
+        {
+
+        }
+
+        public ActionResult NotificationsFilter(string phone, string text, string bdate, string edate)
+        {
+            //вызов хранимой процедуры для фильтрации оповещений
+
+            return PartialView("_NotificationsHistoryList");
+        }
         
         public ActionResult _NotificationsFormView()
         {

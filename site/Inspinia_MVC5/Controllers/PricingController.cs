@@ -35,7 +35,7 @@ namespace Inspinia_MVC5.Controllers
 
         public string SendPrices(string json)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/97i13-1578754305/post");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/price");
 
             //request.Host = "api.myeco24.ru";
             request.KeepAlive = false;
