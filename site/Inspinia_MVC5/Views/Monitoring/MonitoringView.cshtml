@@ -193,8 +193,9 @@
                         type: "POST",
                         cache: false,
                         data: {
-                            IDPost: $('#cur_idpost').val(),
-                            sum: $('#increase-balance').val()
+                            Post: $('#cur_idpost').val(),
+                            sum: $('#increase-balance').val(),
+                            login: "@User.Identity.Name.ToString()"
                         },
                         error: function () {
                             alert('Возникла ошибка!\nПроверьте правильность введенных данных!');

@@ -42,6 +42,18 @@ namespace Inspinia_MVC5.Controllers
             return View(_companies);
         }
 
+        public void GetIncreasesHistoryFromDB(string login, string sum, string region, string wash, string post, string bdate, string edate)
+        {
+
+        }
+
+        public ActionResult IncreasesPostsFilter(string login, string sum, string region, string wash, string post, string bdate, string edate)
+        {
+            //вызов хранимой процедуры для фильтрации пополнений
+
+            return PartialView("_MonitoringHistoryList");
+        }
+
         public int GetSec()
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/eco-api/api/dynamic/time");
@@ -69,14 +81,14 @@ namespace Inspinia_MVC5.Controllers
             return PartialView("PostMonitoringView", post);
         }
 
-        public ActionResult IncreaseBalance(string IDPost, string sum)
+        public ActionResult IncreaseBalance(string Post, string sum, string login)
         {
-            if (IDPost != null && sum != null)
+            if (Post != null && sum != null)
             {
-                string data = JsonConvert.SerializeObject(new IncreaseBalanceOnPostClass(Convert.ToInt32(IDPost), Convert.ToInt32(sum)));
+                string data = JsonConvert.SerializeObject(new IncreaseBalanceOnPostClass(_posts.Find(x => x.IDPost == Convert.ToInt32(Post)).Code, Convert.ToInt32(sum), DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), login));
                 string testlog = IncreaseBalanceOnPost(data);
 
-                post = _posts.Find(x => x.IDPost == Convert.ToInt32(IDPost));
+                post = _posts.Find(x => x.IDPost == Convert.ToInt32(Post));
                 post.Code = GetSec().ToString();
             }
             return View("PostMonitoringView", post);
@@ -84,7 +96,7 @@ namespace Inspinia_MVC5.Controllers
 
         public string IncreaseBalanceOnPost(string json)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/97i13-1578754305/post");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/incrbalance");
 
             //request.Host = "api.myeco24.ru";
             request.KeepAlive = false;

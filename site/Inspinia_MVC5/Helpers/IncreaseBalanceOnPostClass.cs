@@ -7,13 +7,19 @@ namespace Inspinia_MVC5.Helpers
 {
     public class IncreaseBalanceOnPostClass
     {
-        public int IdPost {get; set;}
-        public int Sum { get; set; }
+        public string Post {get; set;}
+        public int Amount { get; set; }
 
-        public IncreaseBalanceOnPostClass (int IdPost, int Sum)
+        public string DTime { get; set; }
+
+        public string Login { get; set; }
+
+        public IncreaseBalanceOnPostClass (string Post, int Amount, string DTime, string Login)
         {
-            this.IdPost = IdPost;
-            this.Sum = Sum;
+            this.Post = Post;
+            this.Amount = Amount;
+            this.DTime = DTime;
+            this.Login = Login;
         }
     }
 }

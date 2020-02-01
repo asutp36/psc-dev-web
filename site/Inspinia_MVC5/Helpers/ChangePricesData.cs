@@ -7,11 +7,11 @@ namespace Inspinia_MVC5.Helpers
 {
     public class ChangePricesData
     {
-        public List<int> posts { get; set; }
+        public List<string> posts { get; set; }
 
         public List<Price> prices { get; set; }
 
-        public ChangePricesData(List<int> posts, List<List<string>> prices)
+        public ChangePricesData(List<string> posts, List<List<string>> prices)
         {
             this.posts = posts;
 

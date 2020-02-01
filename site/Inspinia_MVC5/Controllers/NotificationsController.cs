@@ -84,7 +84,7 @@ namespace Inspinia_MVC5.Controllers
             }
         }
 
-        public void GetNotificationsHIstoryFromDB(string phone, string text, string bdate, string edate)
+        public void GetNotificationsHistoryFromDB(string phone, string text, string bdate, string edate)
         {
 
         }

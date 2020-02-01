@@ -55,7 +55,7 @@
                                                             <ul>
                                                                 @foreach (var k in n.Posts)
                                                                 {
-                                                                    <li id="@k.IDPost">@k.Name</li>
+                                                                    <li id="@k.Code">@k.Name</li>
                                                                 }
                                                             </ul>
                                                         </li>
@@ -86,41 +86,41 @@
                     <div class="row">
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">1-й режим</span>
-                            <input name="price11" id="price-1" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="func1" id="price-1" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">2-й режим</span>
-                            <input name="price22" id="price-2" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="func2" id="price-2" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">3-й режим</span>
-                            <input name="price33" id="price-3" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="func3" id="price-3" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">4-й режим</span>
-                            <input name="price44" id="price-4" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="func4" id="price-4" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">5-й режим</span>
-                            <input name="price55" id="price-5" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="func5" id="price-5" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">6-й режим</span>
-                            <input name="price66" id="price-6" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="func6" id="price-6" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">7-й режим</span>
-                            <input name="price77" id="price-7" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="func7" id="price-7" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                         <div class="col-lg-6 my-2">
                             <span class="label label-info">8-й режим</span>
-                            <input name="price88" id="price-8" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                            <input name="func8" id="price-8" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                         </div>
                     </div>
                     <div class="form-group align-items-center">
@@ -188,18 +188,18 @@
                         }
                         else {
                             $.ajax({
-                            type: "POST",
-                            cache: false,
-                            data: {
-                                prices: prices,
-                                posts: posts
-                            },
-                            error: function () {
-                                alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
-                            },
-                            url: "@Url.Action("SaveNewPrices", "Pricing")",
+                                type: "POST",
+                                cache: false,
+                                data: {
+                                    prices: prices,
+                                    posts: posts
+                                },
+                                error: function () {
+                                    alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
+                                },
+                                url: "@Url.Action("SaveNewPrices", "Pricing")",
                             }).done(function (result) {
-                                    $('#wrapper').html(result);
+                                $('#wrapper').html(result);
                             });
                         }
                     }

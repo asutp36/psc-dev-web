@@ -23,7 +23,7 @@ namespace Inspinia_MVC5.Controllers
             _companies = db.Companies.ToList();
         }
 
-        public ActionResult SaveNewPrices(List<List<string>> prices, List<int> posts)
+        public ActionResult SaveNewPrices(List<List<string>> prices, List<string> posts)
         {
             if (prices != null && posts != null)
             {
