@@ -61,7 +61,7 @@ namespace PostControllingService.Controllers
             {
                 if (balance != null)
                 {
-                    Logger.Log.Debug("Пополнение баланса. Отправка на пост: " + balance);
+                    Logger.Log.Debug("Пополнение баланса. Отправка на пост: " + balance.ToString());
                     SendPriceResponse response = HttpSender.SendPost("http://109.196.164.28:5000/api/post/balance/increase", JsonConvert.SerializeObject(balance));
 
                     if (response.StatusCode != HttpStatusCode.OK)
