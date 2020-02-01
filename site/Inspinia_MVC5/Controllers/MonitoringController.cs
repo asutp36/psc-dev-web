@@ -27,6 +27,16 @@ namespace Inspinia_MVC5.Controllers
             _companies = db.Companies.ToList();
         }
 
+        public ActionResult MonitoringHistoryView()
+        {
+            return View();
+        }
+
+        public ActionResult _MonitoringHistoryList()
+        {
+            return PartialView("_MonitoringHistoryList");
+        }
+
         public ActionResult MonitoringView()
         {
             return View(_companies);
