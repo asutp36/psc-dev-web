@@ -13,7 +13,7 @@ namespace PostControllingService.Controllers
     {
         [HttpPost]
         [ActionName("price")]
-        public HttpResponseMessage SendPrice([FromBody]PricesChange change)
+        public HttpResponseMessage SendPrice([FromBody]ChangePricesData change)
         {
             Logger.InitLogger();
 
@@ -21,39 +21,59 @@ namespace PostControllingService.Controllers
             {
                 if (change != null)
                 {
-                    //string toLog = "Посты: ";
-                    //foreach(int wash in change.posts)
-                    //{
-                    //    toLog += wash + ", ";
-                    //}
 
-                    //toLog += "\nЦены: ";
-                    //foreach(int p in change.prices)
-                    //{
-                    //    toLog += p.Function + ": " + p.Value + "\n";
-                    //}
+                    foreach (Price p in change.prices)
+                    {
+                        Logger.Log.Debug("Изменение тарифа. Отправка на пост: " + p);
+                        SendPriceResponse response = HttpSender.SendPost("http://109.196.164.28:5000/api/post/rate" , JsonConvert.SerializeObject(p));
 
-                    //Logger.Log.Debug(String.Format("Получен запрос на изменение. \n{0}", toLog));
+                        if (response.StatusCode != HttpStatusCode.OK)
+                        {
+                            Logger.Log.Error(String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Result));
 
+                            return Request.CreateResponse(HttpStatusCode.Conflict);
+                        }
+                    }
 
+                    Logger.Log.Debug(String.Format("{0} : {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), "Отправлено успешно") + Environment.NewLine);
 
-                    HttpWebResponse response = HttpSender.SendPrice(JsonConvert.SerializeObject(change)); ;
+                    return Request.CreateResponse(HttpStatusCode.OK);
+                }
 
-                    //ResponseSendMessage response = JsonConvert.DeserializeObject<ResponseSendMessage>(result);
+                var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
+                return responseBad;
+            }
+            catch (Exception e)
+            {
+                Logger.Log.Error(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpPost]
+        [ActionName("incrbalance")]
+        public HttpResponseMessage IncreaseBalance([FromBody]IncreaseBalance balance)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if (balance != null)
+                {
+                    Logger.Log.Debug("Пополнение баланса. Отправка на пост: " + balance);
+                    SendPriceResponse response = HttpSender.SendPost("http://109.196.164.28:5000/api/post/balance/increase", JsonConvert.SerializeObject(balance));
 
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
-                        Logger.Log.Error("Пришёл плохой ответ");
-                        //Logger.Log.Error(response.message + Environment.NewLine);
+                        Logger.Log.Error(String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Result));
 
-                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                        return Request.CreateResponse(HttpStatusCode.Conflict);
                     }
-                    else
-                    {
-                        Logger.Log.Debug(String.Format("{0} : {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), "Отправлено успешно") + Environment.NewLine);
 
-                        return Request.CreateResponse(HttpStatusCode.OK);
-                    }
+                    Logger.Log.Debug(String.Format("{0} : {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), "Отправлено успешно") + Environment.NewLine);
+
+                    return Request.CreateResponse(HttpStatusCode.OK);
                 }
 
                 var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);

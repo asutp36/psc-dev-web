@@ -10,9 +10,9 @@ namespace PostControllingService.Controllers.Supplies
 {
     public class HttpSender
     {
-        public static HttpWebResponse SendPrice(string json)
+        public static SendPriceResponse SendPost(string url, string json)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/rq63q-1572107969/post");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.KeepAlive = false;
             request.ProtocolVersion = HttpVersion.Version10;
             request.Method = "POST";
@@ -28,7 +28,35 @@ namespace PostControllingService.Controllers.Supplies
             requestStream.Write(postBytes, 0, postBytes.Length);
             requestStream.Close();
 
-            return (HttpWebResponse)request.GetResponse();
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    return new SendPriceResponse(response.StatusCode, response.ToString());
+                }
+                else
+                {
+                    string result;
+                    using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+                    {
+                        result = rdr.ReadToEnd();
+                    }
+
+                    return new SendPriceResponse(response.StatusCode, result);
+                }
+            }
+            catch (WebException ex)
+            {
+                HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
+
+                string result;
+                using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))
+                {
+                    result = rdr.ReadToEnd();
+                }
+                return new SendPriceResponse(webResponse.StatusCode, result);
+            }
         }
     }
 }
