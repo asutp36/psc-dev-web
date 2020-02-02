@@ -6,15 +6,15 @@ using System.Web;
 
 namespace PostControllingService.Controllers.Supplies
 {
-    public class SendPriceResponse
+    public class SendPostResponse
     { 
         public HttpStatusCode StatusCode { get; set; }
-        public string Result { get; set; }
+        public string Message { get; set; }
 
-        public SendPriceResponse(HttpStatusCode code, string res)
+        public SendPostResponse(HttpStatusCode code, string res)
         {
             this.StatusCode = code;
-            this.Result = res;
+            this.Message = res;
         }
     }
 }

@@ -25,11 +25,11 @@ namespace PostControllingService.Controllers
                     foreach (Price p in change.prices)
                     {
                         Logger.Log.Debug("Изменение тарифа. Отправка на пост: " + p);
-                        SendPriceResponse response = HttpSender.SendPost("http://109.196.164.28:5000/api/post/rate" , JsonConvert.SerializeObject(p));
+                        SendPostResponse response = HttpSender.SendPost("http://109.196.164.28:5000/api/post/rate" , JsonConvert.SerializeObject(p));
 
                         if (response.StatusCode != HttpStatusCode.OK)
                         {
-                            Logger.Log.Error(String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Result));
+                            Logger.Log.Error(String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message));
 
                             return Request.CreateResponse(HttpStatusCode.Conflict);
                         }
@@ -63,11 +63,11 @@ namespace PostControllingService.Controllers
                 {
                     Logger.Log.Debug("Пополнение баланса. Отправка на пост: " + balance.ToString());
 
-                    SendPriceResponse response = HttpSender.SendPost("http://109.196.164.28:5000/api/post/balance/increase", JsonConvert.SerializeObject(balance));
+                    SendPostResponse response = HttpSender.SendPost("http://109.196.164.28:5000/api/post/balance/increase", JsonConvert.SerializeObject(balance));
 
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
-                        Logger.Log.Error(String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Result));
+                        Logger.Log.Error(String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message));
 
                         return Request.CreateResponse(HttpStatusCode.Conflict);
                     }
@@ -100,7 +100,7 @@ namespace PostControllingService.Controllers
                 {
                     Logger.Log.Debug(String.Format("GetBalace: Запуск с параметрами:\nPost: {0}", post.Post));
 
-                    int balance = HttpSender.GetBalance("http://109.196.164.28:5000/api/post/balance/get");
+                    int balance = HttpSender.GetInt("http://109.196.164.28:5000/api/post/balance/get");
                     if(balance == -1)
                     {
                         Logger.Log.Error("Произошла ошибка при отправке запроса. Ответ -1");
@@ -138,7 +138,7 @@ namespace PostControllingService.Controllers
                 {
                     Logger.Log.Debug(String.Format("GetCurrentFunction: Запуск с параметрами:\nPost: {0}", post.Post));
 
-                    string func = HttpSender.GetFunction("http://109.196.164.28:5000/api/post/func/get");
+                    string func = HttpSender.GetString("http://109.196.164.28:5000/api/post/func/get");
                     if (func == null)
                     {
                         Logger.Log.Error("Произошла ошибка при отправке запроса. Ответ null");
@@ -164,5 +164,43 @@ namespace PostControllingService.Controllers
             }
         }
 
+
+        [HttpPost]
+        [ActionName("getfunc")]
+        public HttpResponseMessage SetFunction([FromBody]SetFunction func)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if(func != null)
+                {
+                    Logger.Log.Debug(String.Format("SetFunction: Запуск с параметрами:\nPost: {0}, Function: {1}, Login: {2}", func.Post, func.Function, func.Login));
+
+                    SendPostResponse response = HttpSender.SendPost("http://109.196.164.28:5000/api/post/func/set", JsonConvert.SerializeObject(func));
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        Logger.Log.Error(String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message));
+
+                        return Request.CreateResponse(HttpStatusCode.Conflict);
+                    }
+
+                    Logger.Log.Debug(String.Format("{0} : {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), "Отправлено успешно") + Environment.NewLine);
+
+                    return Request.CreateResponse(HttpStatusCode.OK);
+                }
+                else
+                {
+                    Logger.Log.Error("Function == null. Ошибка в данных запроса");
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                }
+            }
+            catch(Exception ex)
+            {
+                Logger.Log.Error(ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
     }
 }

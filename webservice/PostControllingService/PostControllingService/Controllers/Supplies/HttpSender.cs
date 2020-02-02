@@ -10,7 +10,7 @@ namespace PostControllingService.Controllers.Supplies
 {
     public class HttpSender
     {
-        public static SendPriceResponse SendPost(string url, string json)
+        public static SendPostResponse SendPost(string url, string json)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.KeepAlive = false;
@@ -33,7 +33,7 @@ namespace PostControllingService.Controllers.Supplies
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    return new SendPriceResponse(response.StatusCode, response.ToString());
+                    return new SendPostResponse(response.StatusCode, response.ToString());
                 }
                 else
                 {
@@ -43,7 +43,7 @@ namespace PostControllingService.Controllers.Supplies
                         result = rdr.ReadToEnd();
                     }
 
-                    return new SendPriceResponse(response.StatusCode, result);
+                    return new SendPostResponse(response.StatusCode, result);
                 }
             }
             catch (WebException ex)
@@ -55,11 +55,11 @@ namespace PostControllingService.Controllers.Supplies
                 {
                     result = rdr.ReadToEnd();
                 }
-                return new SendPriceResponse(webResponse.StatusCode, result);
+                return new SendPostResponse(webResponse.StatusCode, result);
             }
         }
 
-        public static int GetBalance(string url)
+        public static int GetInt(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.KeepAlive = false;
@@ -85,7 +85,7 @@ namespace PostControllingService.Controllers.Supplies
             }
         }
 
-        public static string GetFunction(string url)
+        public static string GetString(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.KeepAlive = false;

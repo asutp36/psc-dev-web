@@ -136,7 +136,8 @@
     <Compile Include="Controllers\Supplies\Logger.cs" />
     <Compile Include="Controllers\Supplies\Price.cs" />
     <Compile Include="Controllers\Supplies\PriceChange.cs" />
-    <Compile Include="Controllers\Supplies\SendPriceResponse.cs" />
+    <Compile Include="Controllers\Supplies\SendPostResponse.cs" />
+    <Compile Include="Controllers\Supplies\SetFunction.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
