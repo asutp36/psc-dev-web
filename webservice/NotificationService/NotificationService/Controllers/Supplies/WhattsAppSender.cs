@@ -10,9 +10,10 @@ namespace NotificationService.Controllers.Supplies
 {
     public class WhattsAppSender
     {
-        public static string SendMessage(string json)
+        public static string SendMessage(string json, string url)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://eu33.chat-api.com/instance27633/sendMessage?token=0qgid5wjmhb8vw7d");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://eu33.chat-api.com/instance27633/sendMessage?token=0qgid5wjmhb8vw7d");
             //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/rq63q-1572107969/post");
             request.KeepAlive = false;
             request.ProtocolVersion = HttpVersion.Version10;

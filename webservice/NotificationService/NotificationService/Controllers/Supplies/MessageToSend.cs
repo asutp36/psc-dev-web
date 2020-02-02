@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace NotificationService.Controllers.Supplies
+{
+    public class MessageToSend
+    {
+        public string sender { get; set; }
+        public bool isPhone { get; set; }
+        public string reciever { get; set; }
+        public string body { get; set; }
+    }
+}
