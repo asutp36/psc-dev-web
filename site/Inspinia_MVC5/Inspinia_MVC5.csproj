@@ -168,9 +168,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ChangeFunctionOnPost.cs" />
     <Compile Include="Helpers\ChangePricesData.cs" />
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />
     <Compile Include="Helpers\IncreaseBalanceOnPostClass.cs" />
+    <Compile Include="Helpers\InfoPost.cs" />
     <Compile Include="Helpers\NotificationClass.cs" />
     <Compile Include="Models\Card.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>

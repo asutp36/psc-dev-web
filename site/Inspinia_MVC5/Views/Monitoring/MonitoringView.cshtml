@@ -81,13 +81,28 @@
                             <button type="submit" id="btn-increase" class="btn btn-outline btn-primary font-bold"><i class="fa fa-credit-card"></i> Внести</button>
                         </div>
                     </div>
+                    <div class="row" style="margin-left:2px; margin-top:4px;">
+                        <div class="col-lg-4">
+                            <input id="input-function" class="form-control" type="text" placeholder="Смена функции" />
+                        </div>
+                        <div class="col-lg-4"></div>
+                        <div class="col-lg-4">
+                            <button type="submit" id="btn-change" class="btn btn-outline btn-danger font-bold"><i class="fa fa-exchange-alt"></i> Поменять</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="alert-sum" class="alert alert-warning">
                 Введите сумму!
             </div>
-            <div id="alert-success" class="alert alert-success">
+            <div id="alert-success-sum" class="alert alert-success">
                 Запрос на внесение суммы отправлен!
+            </div>
+            <div id="alert-success-fun" class="alert alert-success">
+                Запрос на изменение функции отправлен!
+            </div>
+            <div id="alert-function" class="alert alert-warning">
+                Введите функцию!
             </div>
         </div>
     </div>
@@ -104,8 +119,17 @@
 
     <script type="text/javascript">
 
-        $('#alert-sum').hide()
-        $('#alert-success').hide()
+        function hideall() {
+            $('#alert-sum').hide()
+            $('#alert-success-sum').hide()
+            $('#alert-function').hide()
+            $('#alert-success-fun').hide()
+        }
+
+        function clearall() {
+            $('#increase-balance').val("");
+            $('#input-function').val("");
+        }
 
         var timeid = -1;
         $('#post').hide()
@@ -139,9 +163,7 @@
         }
 
         function select_post(IDPost) {
-
-            $('#alert-sum').hide()
-            $('#alert-success').hide()
+            hideall();
 
             if (timeid != -1) {
                 clearInterval(timeid);
@@ -172,6 +194,8 @@
         }
 
         $(document).ready(function () {
+            hideall();
+            
             $('#jstree1').jstree({
                 'core': {
                     'themes': {
@@ -188,6 +212,7 @@
             });
 
             $(document).on("click", "#btn-increase", function () {
+                hideall();
                 if ($('#increase-balance').val() != "") {
                     $.ajax({
                         type: "POST",
@@ -202,9 +227,8 @@
                         },
                         success: function ()
                         {
-                            $('#alert-sum').hide()
-                            $('#increase-balance').val("")
-                            $('#alert-success').show('fade')
+                            clearall();
+                            $('#alert-success-sum').show('fade')
                         },
                         url: "@Url.Action("IncreaseBalance", "Monitoring")",
                     }).done(function (result) {
@@ -212,8 +236,36 @@
                     });
                 }
                 else {
-                    $('#alert-success').hide()
                     $('#alert-sum').show('fade')
+                }
+            });
+
+            $(document).on("click", "#btn-change", function () {
+                hideall();
+                if ($('#input-rate').val() != "") {
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        data: {
+                            Post: $('#cur_idpost').val(),
+                            Function: $('#input-function').val(),
+                            login: "@User.Identity.Name.ToString()"
+                        },
+                        error: function () {
+                            alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
+                        },
+                        success: function ()
+                        {
+                            clearall();
+                            $('#alert-success-fun').show('fade')
+                        },
+                        url: "@Url.Action("ChangeFunction", "Monitoring")",
+                    }).done(function (result) {
+                        $('#cur_post').html(result);
+                    });
+                }
+                else {
+                    $('#alert-function').show('fade')
                 }
             });
         });

@@ -1,17 +1,19 @@
-﻿@model Inspinia_MVC5.Models.Post
+﻿@model Inspinia_MVC5.Helpers.InfoPost
 
-<h2>@Model.Wash.Region.Name/@Model.Wash.Name/<strong>Пост @Model.Name</strong></h2>
+<h2>@Model.Post.Wash.Region.Name/@Model.Post.Wash.Name/<strong>Пост @Model.Post.Name</strong></h2>
 <hr />
 <div class="row">
     <div class="col-lg-4">
-        <h4>Критерий-1</h4>
-        <h5>@Model.Code</h5>
+        <h2 style="display:inline" class="label label-primary">Баланс</h2>
+        <h2>@Model.Balance</h2>
     </div>
     <div class="col-lg-4">
-        <h4>Критерий-2</h4>
+        <h4  style="display:inline" class="label label-primary">Функция</h4>
+        <h2>@Model.Function</h2>
     </div>
     <div class="col-lg-4">
-        <h4>Критерий-3</h4>
+        <h4  style="display:inline" class="label label-primary">Состояние</h4>
+        <h2>@Model.State</h2>
     </div>
 </div>
 

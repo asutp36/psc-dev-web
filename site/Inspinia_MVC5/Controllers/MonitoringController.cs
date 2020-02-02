@@ -20,6 +20,7 @@ namespace Inspinia_MVC5.Controllers
         List<Post> _posts = null;
 
         Post post = null;
+        InfoPost infopost = null;
 
         public MonitoringController()
         {
@@ -54,7 +55,7 @@ namespace Inspinia_MVC5.Controllers
             return PartialView("_MonitoringHistoryList");
         }
 
-        public int GetSec()
+        public int GetState()
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/eco-api/api/dynamic/time");
             request.KeepAlive = false;
@@ -73,12 +74,153 @@ namespace Inspinia_MVC5.Controllers
             return int.Parse(result);
         }
 
+        public int GetBalance(string json)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/getbalance");
+
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Method = "POST";
+
+            byte[] postBytes = Encoding.UTF8.GetBytes(json);
+
+            request.ContentType = "application/json";
+            request.Accept = "application/json";
+            request.ContentLength = postBytes.Length;
+
+            Stream requestStream = request.GetRequestStream();
+
+            requestStream.Write(postBytes, 0, postBytes.Length);
+            requestStream.Close();
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    return int.Parse(response.GetResponseHeader("Balance"));
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            catch (WebException ex)
+            {
+                return -1;
+            }
+        }
+
+        public string GetFunction(string json)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/getfunc");
+
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Method = "POST";
+
+            byte[] postBytes = Encoding.UTF8.GetBytes(json);
+
+            request.ContentType = "application/json";
+            request.Accept = "application/json";
+            request.ContentLength = postBytes.Length;
+
+            Stream requestStream = request.GetRequestStream();
+
+            requestStream.Write(postBytes, 0, postBytes.Length);
+            requestStream.Close();
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    return response.GetResponseHeader("Function");
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (WebException ex)
+            {
+                return null;
+            }
+        }
+
         public ActionResult PostMonitoringView(int IDPost)
         {
             post = _posts.Find(x => x.IDPost == IDPost);
-            post.Code = GetSec().ToString();
+            
+            string data = $"{{\"Post\":\"{post.Code.ToString()}\"}}";
 
-            return PartialView("PostMonitoringView", post);
+            InfoPost infopost = new InfoPost(GetBalance(data), GetFunction(data), GetState(), post);
+
+            return PartialView("PostMonitoringView", infopost);
+        }
+
+        public ActionResult ChangeFunction(string Post, string Function, string login)
+        {
+            string data = JsonConvert.SerializeObject(new ChangeFunctionOnPost(Post, Function, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), login));
+            string testlog = ChangeFunctionOnPost(data);
+
+            post = _posts.Find(x => x.IDPost == Convert.ToInt32(Post));
+
+            string req = $"{{\"Post\":\"{post.Code.ToString()}\"}}";
+
+            InfoPost infopost = new InfoPost(GetBalance(req), GetFunction(req), GetState(), post);
+
+            return View("PostMonitoringView", infopost);
+        }
+
+        public string ChangeFunctionOnPost(string json)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/setfunc");
+
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Method = "POST";
+
+            byte[] postBytes = Encoding.UTF8.GetBytes(json);
+
+            request.ContentType = "application/json";
+            request.Accept = "application/json";
+            request.ContentLength = postBytes.Length;
+
+            Stream requestStream = request.GetRequestStream();
+
+            requestStream.Write(postBytes, 0, postBytes.Length);
+            requestStream.Close();
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    return response.ToString();
+                }
+                else
+                {
+                    string result;
+                    using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+                    {
+                        result = rdr.ReadToEnd();
+                    }
+
+                    return String.Format("httpStatusCode: {0}; {1}", response.StatusCode, result);
+                }
+            }
+            catch (WebException ex)
+            {
+                HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
+
+                string result;
+                using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))
+                {
+                    result = rdr.ReadToEnd();
+                }
+                return result + "\nStatusCode: " + webResponse.StatusCode;
+            }
         }
 
         public ActionResult IncreaseBalance(string Post, string sum, string login)
@@ -89,16 +231,18 @@ namespace Inspinia_MVC5.Controllers
                 string testlog = IncreaseBalanceOnPost(data);
 
                 post = _posts.Find(x => x.IDPost == Convert.ToInt32(Post));
-                post.Code = GetSec().ToString();
+
+                string req = $"{{\"Post\":\"{post.Code.ToString()}\"}}";
+
+                InfoPost infopost = new InfoPost(GetBalance(req), GetFunction(req), GetState(), post);
             }
-            return View("PostMonitoringView", post);
+            return View("PostMonitoringView", infopost);
         }
 
         public string IncreaseBalanceOnPost(string json)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/incrbalance");
 
-            //request.Host = "api.myeco24.ru";
             request.KeepAlive = false;
             request.ProtocolVersion = HttpVersion.Version10;
             request.Method = "POST";

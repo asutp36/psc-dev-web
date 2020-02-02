@@ -47,8 +47,8 @@ namespace Inspinia_MVC5.Controllers
 
         public string SendRequest(string json)
         {
-            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/notify/api/notify/message");
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/jsleg-1580653259/post");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/notify/api/notify/message");
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/jsleg-1580653259/post");
 
             //request.Host = "api.myeco24.ru";
             request.KeepAlive = false;
