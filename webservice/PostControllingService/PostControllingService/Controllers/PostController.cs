@@ -166,7 +166,7 @@ namespace PostControllingService.Controllers
 
 
         [HttpPost]
-        [ActionName("getfunc")]
+        [ActionName("setfunc")]
         public HttpResponseMessage SetFunction([FromBody]SetFunction func)
         {
             Logger.InitLogger();
