@@ -9,7 +9,7 @@ namespace NotificationService.Controllers.Supplies
     {
         public string sender { get; set; }
         public bool isPhone { get; set; }
-        public string reciever { get; set; }
+        public string receiver { get; set; }
         public string body { get; set; }
     }
 }

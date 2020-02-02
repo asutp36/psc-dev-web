@@ -20,18 +20,18 @@ namespace NotificationService.Controllers
             {
                 if (msgToSend != null)
                 {
-                    Logger.Log.Debug(String.Format("SendMessage: запуск с парметрами:\nsender: {0},\n reciever: {1}, isPhone: {2},\nbody: {3}", msgToSend.sender, msgToSend.reciever, msgToSend.isPhone, msgToSend.body));
+                    Logger.Log.Debug(String.Format("SendMessage: запуск с парметрами:\nsender: {0},\n receiver: {1}, isPhone: {2},\nbody: {3}", msgToSend.sender, msgToSend.receiver, msgToSend.isPhone, msgToSend.body));
 
                     string result = "";
                     if (msgToSend.isPhone)
                     {
-                        MessagePhone message = new MessagePhone(msgToSend.reciever, msgToSend.body);
+                        MessagePhone message = new MessagePhone(msgToSend.receiver, msgToSend.body);
                         Logger.Log.Debug(String.Format("Отправка сообщения по номеру телефона: phone: {0}, body: {1}", message.phone, message.body));
                         result = WhattsAppSender.SendMessage(JsonConvert.SerializeObject(message), "https://ptsv2.com/t/rq63q-1572107969/post");
                     }
                     else
                     {
-                        MessageChatID message = new MessageChatID(msgToSend.reciever, msgToSend.body);
+                        MessageChatID message = new MessageChatID(msgToSend.receiver, msgToSend.body);
                         Logger.Log.Debug(String.Format("Отправка сообщения по chatId: chatId: {0}, body: {1}", message.chatId, message.body));
                         result = WhattsAppSender.SendMessage(JsonConvert.SerializeObject(message), "https://ptsv2.com/t/rq63q-1572107969/post");
                     }
