@@ -5,7 +5,7 @@ using System.Web;
 
 namespace PostControllingService.Controllers.Supplies
 {
-    public class BalaceRequest
+    public class RequestWPostCode
     {
         public string Post { get; set; }
     }

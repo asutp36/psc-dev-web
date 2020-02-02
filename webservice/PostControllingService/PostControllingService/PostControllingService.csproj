@@ -130,7 +130,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\PostController.cs" />
-    <Compile Include="Controllers\Supplies\BalaceRequest.cs" />
+    <Compile Include="Controllers\Supplies\RequestWPostCode.cs" />
     <Compile Include="Controllers\Supplies\HttpSender.cs" />
     <Compile Include="Controllers\Supplies\IncreaseBalance.cs" />
     <Compile Include="Controllers\Supplies\Logger.cs" />

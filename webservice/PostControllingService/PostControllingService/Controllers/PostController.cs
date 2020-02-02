@@ -90,7 +90,7 @@ namespace PostControllingService.Controllers
 
         [HttpPost]
         [ActionName("getbalance")]
-        public HttpResponseMessage GetBalance([FromBody]BalaceRequest post)
+        public HttpResponseMessage GetCurrentBalance([FromBody]RequestWPostCode post)
         {
             Logger.InitLogger();
 
@@ -125,5 +125,44 @@ namespace PostControllingService.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
+
+        [HttpPost]
+        [ActionName("getfunc")]
+        public HttpResponseMessage GetCurrentFunction([FromBody]RequestWPostCode post)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if (post != null)
+                {
+                    Logger.Log.Debug(String.Format("GetCurrentFunction: Запуск с параметрами:\nPost: {0}", post.Post));
+
+                    string func = HttpSender.GetFunction("http://109.196.164.28:5000/api/post/func/get");
+                    if (func == null)
+                    {
+                        Logger.Log.Error("Произошла ошибка при отправке запроса. Ответ null");
+                        return Request.CreateResponse(HttpStatusCode.Conflict);
+                    }
+                    else
+                    {
+                        var response = Request.CreateResponse();
+                        response.Headers.Add("Function", func);
+                        return response;
+                    }
+                }
+                else
+                {
+                    Logger.Log.Error("Post == null. Ошибка в данных запроса");
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error(ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
+
     }
 }
