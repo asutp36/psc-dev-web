@@ -62,6 +62,7 @@ namespace PostControllingService.Controllers
                 if (balance != null)
                 {
                     Logger.Log.Debug("Пополнение баланса. Отправка на пост: " + balance.ToString());
+
                     SendPriceResponse response = HttpSender.SendPost("http://109.196.164.28:5000/api/post/balance/increase", JsonConvert.SerializeObject(balance));
 
                     if (response.StatusCode != HttpStatusCode.OK)
@@ -83,6 +84,44 @@ namespace PostControllingService.Controllers
             {
                 Logger.Log.Error(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
 
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpPost]
+        [ActionName("getbalance")]
+        public HttpResponseMessage GetBalance([FromBody]BalaceRequest post)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if(post != null)
+                {
+                    Logger.Log.Debug(String.Format("GetBalace: Запуск с параметрами:\nPost: {0}", post.Post));
+
+                    int balance = HttpSender.GetBalance("http://109.196.164.28:5000/api/post/balance/get");
+                    if(balance == -1)
+                    {
+                        Logger.Log.Error("Произошла ошибка при отправке запроса. Ответ -1");
+                        return Request.CreateResponse(HttpStatusCode.Conflict);
+                    }
+                    else
+                    {
+                        var response = Request.CreateResponse();
+                        response.Headers.Add("Balance", balance.ToString());
+                        return response;
+                    }
+                }
+                else
+                {
+                    Logger.Log.Error("Post == null. Ошибка в данных запроса");
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                }
+            }
+            catch(Exception ex)
+            {
+                Logger.Log.Error(ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }

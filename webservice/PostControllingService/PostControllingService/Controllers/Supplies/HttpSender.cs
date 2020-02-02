@@ -58,5 +58,31 @@ namespace PostControllingService.Controllers.Supplies
                 return new SendPriceResponse(webResponse.StatusCode, result);
             }
         }
+
+        public static int GetBalance(string url)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Method = "GET";
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                string result;
+                using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+                {
+                    result = rdr.ReadToEnd();
+                }
+
+                return int.Parse(result);
+            }
+            catch(WebException ex)
+            {
+                HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
+                
+                return -1;
+            }
+        }
     }
 }
