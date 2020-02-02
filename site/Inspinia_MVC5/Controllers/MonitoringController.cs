@@ -55,28 +55,11 @@ namespace Inspinia_MVC5.Controllers
             return PartialView("_MonitoringHistoryList");
         }
 
-        public int GetState()
+        public int GetState(string json)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/eco-api/api/dynamic/time");
-            request.KeepAlive = false;
-            request.ProtocolVersion = HttpVersion.Version10;
-            request.Method = "GET";
-            request.Accept = "application/json";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/heartbeat");
 
-            var response = (HttpWebResponse)request.GetResponse();
-
-            string result;
-            using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
-            {
-                result = rdr.ReadToEnd();
-            }
-
-            return int.Parse(result);
-        }
-
-        public int GetBalance(string json)
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/getbalance");
+            request.Timeout = 5000;
 
             request.KeepAlive = false;
             request.ProtocolVersion = HttpVersion.Version10;
@@ -96,7 +79,46 @@ namespace Inspinia_MVC5.Controllers
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                if (response.StatusCode != HttpStatusCode.OK)
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return int.Parse(response.GetResponseHeader("HeartBeat"));
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            catch (WebException ex)
+            {
+                return -1;
+            }
+        }
+
+        public int GetBalance(string json)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/getbalance");
+
+            request.Timeout = 5000;
+
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Method = "POST";
+
+            byte[] postBytes = Encoding.UTF8.GetBytes(json);
+
+            request.ContentType = "application/json";
+            request.Accept = "application/json";
+            request.ContentLength = postBytes.Length;
+
+            Stream requestStream = request.GetRequestStream();
+
+            requestStream.Write(postBytes, 0, postBytes.Length);
+            requestStream.Close();
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
                     return int.Parse(response.GetResponseHeader("Balance"));
                 }
@@ -115,6 +137,8 @@ namespace Inspinia_MVC5.Controllers
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/getfunc");
 
+            request.Timeout = 5000;
+
             request.KeepAlive = false;
             request.ProtocolVersion = HttpVersion.Version10;
             request.Method = "POST";
@@ -133,18 +157,18 @@ namespace Inspinia_MVC5.Controllers
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                if (response.StatusCode != HttpStatusCode.OK)
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
                     return response.GetResponseHeader("Function");
                 }
                 else
                 {
-                    return null;
+                    return "-1";
                 }
             }
             catch (WebException ex)
             {
-                return null;
+                return "-1";
             }
         }
 
@@ -154,7 +178,7 @@ namespace Inspinia_MVC5.Controllers
             
             string data = $"{{\"Post\":\"{post.Code.ToString()}\"}}";
 
-            InfoPost infopost = new InfoPost(GetBalance(data), GetFunction(data), GetState(), post);
+            infopost = new InfoPost(GetBalance(data), GetFunction(data), GetState(data), post);
 
             return PartialView("PostMonitoringView", infopost);
         }
@@ -168,9 +192,9 @@ namespace Inspinia_MVC5.Controllers
 
             string req = $"{{\"Post\":\"{post.Code.ToString()}\"}}";
 
-            InfoPost infopost = new InfoPost(GetBalance(req), GetFunction(req), GetState(), post);
+            infopost = new InfoPost(GetBalance(req), GetFunction(req), GetState(req), post);
 
-            return View("PostMonitoringView", infopost);
+            return PartialView("PostMonitoringView", infopost);
         }
 
         public string ChangeFunctionOnPost(string json)
@@ -234,9 +258,9 @@ namespace Inspinia_MVC5.Controllers
 
                 string req = $"{{\"Post\":\"{post.Code.ToString()}\"}}";
 
-                InfoPost infopost = new InfoPost(GetBalance(req), GetFunction(req), GetState(), post);
+                infopost = new InfoPost(GetBalance(req), GetFunction(req), GetState(req), post);
             }
-            return View("PostMonitoringView", infopost);
+            return PartialView("PostMonitoringView", infopost);
         }
 
         public string IncreaseBalanceOnPost(string json)
