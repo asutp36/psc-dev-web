@@ -5,12 +5,12 @@ using System.Web;
 
 namespace NotificationService.Controllers
 {
-    public class Message
+    public class MessageChatID
     {
         public string chatId { get; set; }
         public string body { get; set; }
 
-        public Message(string chat, string text)
+        public MessageChatID(string chat, string text)
         {
             this.chatId = chat;
             this.body = text;

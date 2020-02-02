@@ -133,6 +133,7 @@
     <Compile Include="Controllers\Supplies\Logger.cs" />
     <Compile Include="Controllers\Supplies\Message.cs" />
     <Compile Include="Controllers\NotifyController.cs" />
+    <Compile Include="Controllers\Supplies\MessagePhone.cs" />
     <Compile Include="Controllers\Supplies\ResponseSendMessage.cs" />
     <Compile Include="Controllers\Supplies\WhattsAppSender.cs" />
     <Compile Include="Global.asax.cs">

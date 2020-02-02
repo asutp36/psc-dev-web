@@ -12,7 +12,9 @@ namespace NotificationService.Controllers
     public class NotifyController : ApiController
     {
         [HttpPost]
-        public HttpResponseMessage SendMessage([FromBody]Message message)
+        [ActionName("message")]
+        public HttpResponseMessage SendMessage([FromBody]MessageChatID message)
+
         {
             Logger.InitLogger();
 
@@ -50,6 +52,13 @@ namespace NotificationService.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
+        }
+
+        [HttpPost]
+        [ActionName("message")]
+        public HttpResponseMessage SendMessage([FromBody]MessagePhone message)
+        {
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
     }
 }
