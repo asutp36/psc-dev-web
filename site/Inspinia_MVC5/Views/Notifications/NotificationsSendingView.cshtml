@@ -49,10 +49,13 @@
 
 @section Styles {
     @Styles.Render("~/plugins/summernoteStyles")
+    @Styles.Render("~/plugins/tagInputsStyles")
 }
 
 @section Scripts {
     @Scripts.Render("~/plugins/summernote")
+    @Scripts.Render("~/plugins/tagInputs")
+
 
     <script type="text/javascript">
 
@@ -72,6 +75,11 @@
 
         $(document).ready(function () {
 
+            $('#input-who').tagsinput({
+                tagClass: 'label label-primary',
+                trimValue: true,
+            });
+
             $(document).on("click", "#btn-clear", function () {
                 clear_inputs();
             });
@@ -83,6 +91,8 @@
                         type: "POST",
                         cache: false,
                         data: {
+                            sender: "@User.Identity.Name.ToString()",
+                            isPhone: true,
                             theme: $('#input-theme').val(),
                             text: $('#input-text').val()
                         },
@@ -110,6 +120,8 @@
                         type: "POST",
                         cache: false,
                         data: {
+                            sender: "@User.Identity.Name.ToString()",
+                            isPhone: true,
                             receiver: $('#input-who').val(),
                             theme: $('#input-theme').val(),
                             text: $('#input-text').val()
@@ -132,7 +144,7 @@
                     else {
                         $('#alert-who').show('fade');
                     }
-                                        
+
                 }
             });
 

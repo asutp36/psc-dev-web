@@ -6,10 +6,11 @@
   padding: 4px 6px;
   color: #555;
   vertical-align: middle;
-  border-radius: 4px;
+  border-radius: 1px;
   max-width: 100%;
-  line-height: 22px;
+  line-height: 25px;
   cursor: text;
+  width: 100%;
 }
 .bootstrap-tagsinput input {
   border: none;
@@ -31,6 +32,11 @@
 .bootstrap-tagsinput.form-control input::-webkit-input-placeholder {
   color: #777;
 }
+.bootstrap-tagsinput:focus {
+    border: 20px;
+    border-color: #1ab394;
+}
+
 .bootstrap-tagsinput input:focus {
   border: none;
   box-shadow: none;

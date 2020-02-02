@@ -8,26 +8,38 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using Inspinia_MVC5.Models;
 
 namespace Inspinia_MVC5.Controllers
 {
     public class NotificationsController : Controller
     {
-        public ActionResult NotificationsToReceiversSend(string receiver, string theme, string text)
+        private ModelDb db = new ModelDb();
+
+        List<Owner> _owners = null;
+
+        public NotificationsController()
+        {
+            _owners = db.Owners.ToList();
+
+            ViewBag.Owners = _owners;
+        }
+
+        public ActionResult NotificationsToReceiversSend(string sender, bool isPhone, string receiver, string theme, string text)
         {
             if (receiver != null && text != null)
             {
-                string data = JsonConvert.SerializeObject(new NotificationClass(receiver, theme, text));
+                string data = JsonConvert.SerializeObject(new NotificationClass(sender, isPhone, receiver, theme, text));
                 string testlog = SendRequest(data);
             }
             return PartialView("_NotificationsFormView");
         }
 
-        public ActionResult NotificationsToAllSend(string theme, string text)
+        public ActionResult NotificationsToAllSend(string sender, bool isPhone, string theme, string text)
         {
             if (text != null)
             {
-                string data = JsonConvert.SerializeObject(new NotificationClass("FORALL", theme, text));
+                string data = JsonConvert.SerializeObject(new NotificationClass(sender, isPhone, "FORALL", theme, text));
                 string testlog = SendRequest(data);
             }
             return PartialView("_NotificationsFormView");
@@ -35,7 +47,8 @@ namespace Inspinia_MVC5.Controllers
 
         public string SendRequest(string json)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/97i13-1578754305/post");
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/notify/api/notify/message");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/jsleg-1580653259/post");
 
             //request.Host = "api.myeco24.ru";
             request.KeepAlive = false;

@@ -7,25 +7,24 @@ namespace Inspinia_MVC5.Helpers
 {
     public class NotificationClass
     {
-        public string Receiver { get; set;}
+        public string sender { get; set; }
+        public bool isPhone { get; set; }
+        public string receiver { get; set; }
+        public string body { get; set; }
 
-        public string Message { get; set; }
-
-        public NotificationClass(string Receiver, string Theme, string Text)
+        public NotificationClass(string sender, bool isPhone, string receiver, string theme, string text)
         {
-            if (Theme == null)
+            if (theme != "")
             {
-                Theme = "";
-            }
-            else
-            {
-                Theme = Theme + "\n";
+                theme = theme + "\n";
             }
 
-            string Message = Theme.ToUpper() + Text;
+            string body = theme.ToUpper() + text;
 
-            this.Receiver = Receiver;
-            this.Message = Message;
+            this.sender = sender;
+            this.isPhone = isPhone;
+            this.receiver = receiver;
+            this.body = body;
         }
     }
 }
