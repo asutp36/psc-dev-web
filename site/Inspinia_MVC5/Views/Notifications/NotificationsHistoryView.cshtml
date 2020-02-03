@@ -76,13 +76,25 @@
             <div class="col-sm-4">
                 <div class="form-group">
                     <label class="col-form-labe">Код оповещения</label>
-                    <input type="text" id="filter-notice-code" class="form-control" />
+                    <select id="filter-notice-code" class="form-control">
+                        <option value="" selected=""></option>
+                        @foreach (var item in ViewBag.Notices)
+                        {
+                            <option value="@item.Code">@item.Code</option>
+                        }
+                    </select>                
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
                     <label class="col-form-labe">Статус оповещения</label>
-                    <input type="text" id="filter-notice-name" class="form-control" />
+                    <select id="filter-notice-name" class="form-control">
+                        <option value="" selected=""></option>
+                        @foreach (var item in ViewBag.Notices)
+                        {
+                            <option value="@item.Name">@item.Name</option>
+                        }
+                    </select>
                 </div>
             </div>
             <div class="col-sm-4">
@@ -139,8 +151,8 @@
             var sender = $('#filter-sender').val();
             var reccode = $('#filter-rec-code').val();
             var recname = $('#filter-rec-name').val();
-            var noticestatuscode = $('#filter-notice-code').val();
-            var noticestatusname = $('#filter-notice-name').val();
+            var noticestatuscode = $('#filter-notice-code').find(":selected").val();
+            var noticestatusname = $('#filter-notice-name').find(":selected").val();
             var message = $('#filter-text').val();
             var rbdate = $('#rbdate').val();
             var redate = $('#redate').val();
@@ -163,7 +175,6 @@
                     message: message
                 },
                 success: function () {
-                    alert('Обработка запросaaaа!');
                 },
                 error: function () {
                     alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');

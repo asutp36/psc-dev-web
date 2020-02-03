@@ -17,11 +17,14 @@ namespace Inspinia_MVC5.Controllers
         private ModelDb db = new ModelDb();
 
         List<Owner> _owners = null;
+        List<NoticeStatu> _noticeStatus = null;
 
         public NotificationsController()
         {
+            _noticeStatus = db.NoticeStatus.ToList();
             _owners = db.Owners.ToList();
 
+            ViewBag.Notices = _noticeStatus;
             ViewBag.Owners = _owners;
         }
 
