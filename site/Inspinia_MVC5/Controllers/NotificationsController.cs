@@ -50,7 +50,6 @@ namespace Inspinia_MVC5.Controllers
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/notify/api/notify/message");
             //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/jsleg-1580653259/post");
 
-            //request.Host = "api.myeco24.ru";
             request.KeepAlive = false;
             request.ProtocolVersion = HttpVersion.Version10;
             request.Method = "POST";
@@ -97,16 +96,81 @@ namespace Inspinia_MVC5.Controllers
             }
         }
 
-        public void GetNotificationsHistoryFromDB(string phone, string text, string bdate, string edate)
+        public List<GetNoticeHistoryList_Result> GetNotificationsHistoryFromDB(
+            string sender, string recbegdate, string recenddate, string reccode, string recname, string sbegdate, 
+            string senddate, string noticestatuscode, string noticestatusname, string message)
         {
+            List<GetNoticeHistoryList_Result> resultlist = null;
+
+            DateTime receiverbegdate;
+            if (!DateTime.TryParse(recbegdate, out receiverbegdate))
+                receiverbegdate = DateTime.Today.AddDays(-100);
+
+            DateTime receiverenddate;
+            if (!DateTime.TryParse(recenddate, out receiverenddate))
+                receiverenddate = DateTime.Today.AddSeconds(-1);
+
+            DateTime sentbegdate;
+            if (!DateTime.TryParse(sbegdate, out sentbegdate))
+                sentbegdate = DateTime.Today.AddDays(-100);
+
+            DateTime sentenddate;
+            if (!DateTime.TryParse(senddate, out sentenddate))
+                sentenddate = DateTime.Today.AddSeconds(-1);
+
+            var prmSender = new System.Data.SqlClient.SqlParameter("@p_Sender", System.Data.SqlDbType.NVarChar);
+            prmSender.Value = sender;
+
+            var prmRecBegDate = new System.Data.SqlClient.SqlParameter("@p_DateReceiveBeg", System.Data.SqlDbType.DateTime);
+            prmRecBegDate.Value = receiverbegdate;
+
+            var prmRecEndDate = new System.Data.SqlClient.SqlParameter("@p_DateReceiveEnd", System.Data.SqlDbType.DateTime);
+            prmRecEndDate.Value = receiverenddate;
+
+            var prmRecCode = new System.Data.SqlClient.SqlParameter("@p_RecipientsCode", System.Data.SqlDbType.NVarChar);
+            prmRecCode.Value = reccode;
+
+            var prmRecName = new System.Data.SqlClient.SqlParameter("@p_RecipientsName", System.Data.SqlDbType.NVarChar);
+            prmRecName.Value = recname;
+
+            var prmSentBegDate = new System.Data.SqlClient.SqlParameter("@p_DateSentBeg", System.Data.SqlDbType.DateTime);
+            prmSentBegDate.Value = sentbegdate;
+
+            var prmSentEndDate = new System.Data.SqlClient.SqlParameter("@p_DateSentEnd", System.Data.SqlDbType.DateTime);
+            prmSentEndDate.Value = sentenddate;
+
+            var prmNoticeStatusCode = new System.Data.SqlClient.SqlParameter("@p_NoticeStatusCode", System.Data.SqlDbType.NVarChar);
+            prmNoticeStatusCode.Value = noticestatuscode;
+
+            var prmNoticeStatusName = new System.Data.SqlClient.SqlParameter("@p_NoticeStatusName", System.Data.SqlDbType.NVarChar);
+            prmNoticeStatusName.Value = noticestatusname;
+
+            var prmMessage = new System.Data.SqlClient.SqlParameter("@p_Message", System.Data.SqlDbType.NVarChar);
+            prmMessage.Value = message;
+
+            var result = db.Database.SqlQuery<GetNoticeHistoryList_Result>
+                ("GetNoticeHistoryList @p_Sender, @p_DateReceiveBeg, @p_DateReceiveEnd, @p_RecipientsCode, " +
+                "@p_RecipientsName, @p_DateSentBeg, @p_DateSentEnd, @p_NoticeStatusCode, @p_NoticeStatusName, @p_Message",
+                prmSender, prmRecBegDate, prmRecEndDate, prmRecCode, prmRecName, prmSentBegDate, prmSentEndDate,
+                prmNoticeStatusCode, prmNoticeStatusName, prmMessage)
+                .ToList();
+
+            resultlist = result;
+
+            return resultlist;
 
         }
 
-        public ActionResult NotificationsFilter(string phone, string text, string bdate, string edate)
+        public ActionResult NotificationsFilter(
+            string sender, string recbegdate, string recenddate, string reccode, string recname, string sbegdate,
+            string senddate, string noticestatuscode, string noticestatusname, string message)
         {
-            //вызов хранимой процедуры для фильтрации оповещений
+            List<GetNoticeHistoryList_Result> view = GetNotificationsHistoryFromDB(
+                sender, recbegdate, recenddate, reccode, recname, sbegdate,
+                senddate, noticestatuscode, noticestatusname, message);
+            
 
-            return PartialView("_NotificationsHistoryList");
+            return PartialView("_NotificationsHistoryList", view);
         }
         
         public ActionResult _NotificationsFormView()
@@ -119,9 +183,15 @@ namespace Inspinia_MVC5.Controllers
             return View();
         }
 
-        public ActionResult _NotificationsHistoryList()
+        public ActionResult _NotificationsHistoryList(
+            string sender, string recbegdate, string recenddate, string reccode, string recname, string sbegdate,
+            string senddate, string noticestatuscode, string noticestatusname, string message)
         {
-            return PartialView("_NotificationsHistoryList");
+            List<GetNoticeHistoryList_Result> view = GetNotificationsHistoryFromDB(
+                sender, recbegdate, recenddate, reccode, recname, sbegdate,
+                senddate, noticestatuscode, noticestatusname, message);
+
+            return PartialView("_NotificationsHistoryList", view);
         }
 
         public ActionResult NotificationsHistoryView()
