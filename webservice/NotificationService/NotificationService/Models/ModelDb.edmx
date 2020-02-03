@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="WashCompany.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="NoticeHistory">
+          <Key>
+            <PropertyRef Name="IDNoticeHistory" />
+          </Key>
+          <Property Name="IDNoticeHistory" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Sender" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DTimeReceive" Type="datetime" Nullable="false" />
+          <Property Name="IDNoticeRecipientsGroup" Type="int" Nullable="false" />
+          <Property Name="Message" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DTimeSent" Type="datetime" />
+          <Property Name="IDNoticeStatus" Type="int" />
+        </EntityType>
+        <EntityType Name="NoticeRecipientsGroup">
+          <Key>
+            <PropertyRef Name="IDNoticeRecipientsGroup" />
+          </Key>
+          <Property Name="IDNoticeRecipientsGroup" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Recipient" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="NoticeStatus">
+          <Key>
+            <PropertyRef Name="IDNoticeStatus" />
+          </Key>
+          <Property Name="IDNoticeStatus" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_NoticeHistory_NoticeRecipientsGroup">
+          <End Role="NoticeRecipientsGroup" Type="Self.NoticeRecipientsGroup" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="NoticeHistory" Type="Self.NoticeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NoticeRecipientsGroup">
+              <PropertyRef Name="IDNoticeRecipientsGroup" />
+            </Principal>
+            <Dependent Role="NoticeHistory">
+              <PropertyRef Name="IDNoticeRecipientsGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NoticeHistory_NoticeStatus">
+          <End Role="NoticeStatus" Type="Self.NoticeStatus" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="NoticeHistory" Type="Self.NoticeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NoticeStatus">
+              <PropertyRef Name="IDNoticeStatus" />
+            </Principal>
+            <Dependent Role="NoticeHistory">
+              <PropertyRef Name="IDNoticeStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="WashCompanyStoreContainer">
+          <EntitySet Name="NoticeHistory" EntityType="Self.NoticeHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NoticeRecipientsGroup" EntityType="Self.NoticeRecipientsGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NoticeStatus" EntityType="Self.NoticeStatus" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_NoticeHistory_NoticeRecipientsGroup" Association="Self.FK_NoticeHistory_NoticeRecipientsGroup">
+            <End Role="NoticeRecipientsGroup" EntitySet="NoticeRecipientsGroup" />
+            <End Role="NoticeHistory" EntitySet="NoticeHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NoticeHistory_NoticeStatus" Association="Self.FK_NoticeHistory_NoticeStatus">
+            <End Role="NoticeStatus" EntitySet="NoticeStatus" />
+            <End Role="NoticeHistory" EntitySet="NoticeHistory" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="WashCompany" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="NoticeHistory">
+          <Key>
+            <PropertyRef Name="IDNoticeHistory" />
+          </Key>
+          <Property Name="IDNoticeHistory" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Sender" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DTimeReceive" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IDNoticeRecipientsGroup" Type="Int32" Nullable="false" />
+          <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DTimeSent" Type="DateTime" Precision="3" />
+          <Property Name="IDNoticeStatus" Type="Int32" />
+          <NavigationProperty Name="NoticeRecipientsGroup" Relationship="Self.FK_NoticeHistory_NoticeRecipientsGroup" FromRole="NoticeHistory" ToRole="NoticeRecipientsGroup" />
+          <NavigationProperty Name="NoticeStatus" Relationship="Self.FK_NoticeHistory_NoticeStatus" FromRole="NoticeHistory" ToRole="NoticeStatus" />
+        </EntityType>
+        <EntityType Name="NoticeRecipientsGroup">
+          <Key>
+            <PropertyRef Name="IDNoticeRecipientsGroup" />
+          </Key>
+          <Property Name="IDNoticeRecipientsGroup" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Recipient" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="NoticeHistory" Relationship="Self.FK_NoticeHistory_NoticeRecipientsGroup" FromRole="NoticeRecipientsGroup" ToRole="NoticeHistory" />
+        </EntityType>
+        <EntityType Name="NoticeStatus">
+          <Key>
+            <PropertyRef Name="IDNoticeStatus" />
+          </Key>
+          <Property Name="IDNoticeStatus" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="NoticeHistory" Relationship="Self.FK_NoticeHistory_NoticeStatus" FromRole="NoticeStatus" ToRole="NoticeHistory" />
+        </EntityType>
+        <Association Name="FK_NoticeHistory_NoticeRecipientsGroup">
+          <End Role="NoticeRecipientsGroup" Type="Self.NoticeRecipientsGroup" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="NoticeHistory" Type="Self.NoticeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NoticeRecipientsGroup">
+              <PropertyRef Name="IDNoticeRecipientsGroup" />
+            </Principal>
+            <Dependent Role="NoticeHistory">
+              <PropertyRef Name="IDNoticeRecipientsGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NoticeHistory_NoticeStatus">
+          <End Role="NoticeStatus" Type="Self.NoticeStatus" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="NoticeHistory" Type="Self.NoticeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NoticeStatus">
+              <PropertyRef Name="IDNoticeStatus" />
+            </Principal>
+            <Dependent Role="NoticeHistory">
+              <PropertyRef Name="IDNoticeStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ModelDb" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="NoticeHistory" EntityType="Self.NoticeHistory" />
+          <EntitySet Name="NoticeRecipientsGroup" EntityType="Self.NoticeRecipientsGroup" />
+          <EntitySet Name="NoticeStatus" EntityType="Self.NoticeStatus" />
+          <AssociationSet Name="FK_NoticeHistory_NoticeRecipientsGroup" Association="Self.FK_NoticeHistory_NoticeRecipientsGroup">
+            <End Role="NoticeRecipientsGroup" EntitySet="NoticeRecipientsGroup" />
+            <End Role="NoticeHistory" EntitySet="NoticeHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NoticeHistory_NoticeStatus" Association="Self.FK_NoticeHistory_NoticeStatus">
+            <End Role="NoticeStatus" EntitySet="NoticeStatus" />
+            <End Role="NoticeHistory" EntitySet="NoticeHistory" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="WashCompanyStoreContainer" CdmEntityContainer="ModelDb">
+          <EntitySetMapping Name="NoticeHistory">
+            <EntityTypeMapping TypeName="WashCompany.NoticeHistory">
+              <MappingFragment StoreEntitySet="NoticeHistory">
+                <ScalarProperty Name="IDNoticeHistory" ColumnName="IDNoticeHistory" />
+                <ScalarProperty Name="Sender" ColumnName="Sender" />
+                <ScalarProperty Name="DTimeReceive" ColumnName="DTimeReceive" />
+                <ScalarProperty Name="IDNoticeRecipientsGroup" ColumnName="IDNoticeRecipientsGroup" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="DTimeSent" ColumnName="DTimeSent" />
+                <ScalarProperty Name="IDNoticeStatus" ColumnName="IDNoticeStatus" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NoticeRecipientsGroup">
+            <EntityTypeMapping TypeName="WashCompany.NoticeRecipientsGroup">
+              <MappingFragment StoreEntitySet="NoticeRecipientsGroup">
+                <ScalarProperty Name="IDNoticeRecipientsGroup" ColumnName="IDNoticeRecipientsGroup" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Recipient" ColumnName="Recipient" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NoticeStatus">
+            <EntityTypeMapping TypeName="WashCompany.NoticeStatus">
+              <MappingFragment StoreEntitySet="NoticeStatus">
+                <ScalarProperty Name="IDNoticeStatus" ColumnName="IDNoticeStatus" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
