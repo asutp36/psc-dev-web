@@ -11,16 +11,15 @@ namespace Inspinia_MVC5.Models
 {
     using System;
     
-    public partial class GetCardsOperations_Result
+    public partial class GetNoticeHistoryList_Result
     {
-        public string Phone { get; set; }
-        public string CardNum { get; set; }
-        public string CardTypeName { get; set; }
-        public string CardStatusName { get; set; }
-        public string OperationTypeName { get; set; }
-        public System.DateTime DTime { get; set; }
-        public int Amount { get; set; }
-        public int Balance { get; set; }
-        public int ServerID { get; set; }
+        public string Sender { get; set; }
+        public System.DateTime DTimeReceive { get; set; }
+        public string RecipientsCode { get; set; }
+        public string RecipientsName { get; set; }
+        public Nullable<System.DateTime> DTimeSent { get; set; }
+        public string NoticeStatusCode { get; set; }
+        public string NoticeStatusName { get; set; }
+        public string Message { get; set; }
     }
 }

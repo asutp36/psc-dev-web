@@ -12,17 +12,25 @@ namespace Inspinia_MVC5.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Finance
+    public partial class CountersTotalPre
     {
-        public int IDFinance { get; set; }
-        public int IDDevice { get; set; }
-        public int IDFinanceType { get; set; }
+        public int IDCountersTotalPre { get; set; }
+        public int IDPost { get; set; }
         public System.DateTime DTime { get; set; }
-        public int Amount { get; set; }
-        public Nullable<int> ServerID { get; set; }
-        public string ServerMessage { get; set; }
+        public int b10 { get; set; }
+        public int b50 { get; set; }
+        public int b100 { get; set; }
+        public int b500 { get; set; }
+        public int b1k { get; set; }
+        public int m10 { get; set; }
+        public Nullable<int> amount { get; set; }
+        public Nullable<int> a_b10 { get; set; }
+        public Nullable<int> a_b50 { get; set; }
+        public Nullable<int> a_b100 { get; set; }
+        public Nullable<int> a_b500 { get; set; }
+        public Nullable<int> a_b1k { get; set; }
+        public Nullable<int> a_m10 { get; set; }
     
-        public virtual Device Device { get; set; }
-        public virtual FinanceType FinanceType { get; set; }
+        public virtual Post Post { get; set; }
     }
 }

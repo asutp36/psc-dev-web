@@ -49,6 +49,21 @@
         <AssociationConnector Association="CardsDbModel.FK_Device_Wash" />
         <AssociationConnector Association="CardsDbModel.FK_Finance_Device" />
         <AssociationConnector Association="CardsDbModel.FK_Finance_FinanceType" />
+        <EntityTypeShape EntityType="CardsDbModel.Collection" Width="1.5" PointX="10.125" PointY="1.625" />
+        <EntityTypeShape EntityType="CardsDbModel.CollectionsFact" Width="1.5" PointX="10.125" PointY="29.25" />
+        <EntityTypeShape EntityType="CardsDbModel.CollectionsPre" Width="1.5" PointX="10.125" PointY="38" />
+        <EntityTypeShape EntityType="CardsDbModel.CountersTotalPre" Width="1.5" PointX="10.125" PointY="33" />
+        <EntityTypeShape EntityType="CardsDbModel.NoticeHistory" Width="1.5" PointX="3" PointY="4" />
+        <EntityTypeShape EntityType="CardsDbModel.NoticeRecipientsGroup" Width="1.5" PointX="0.75" PointY="4.375" />
+        <EntityTypeShape EntityType="CardsDbModel.NoticeStatu" Width="1.5" PointX="0.75" PointY="1.5" />
+        <EntityTypeShape EntityType="CardsDbModel.sysdiagram" Width="1.5" PointX="0.75" PointY="7.75" />
+        <EntityTypeShape EntityType="CardsDbModel.vPostsAmount" Width="1.5" PointX="2.75" PointY="7.75" />
+        <AssociationConnector Association="CardsDbModel.FK_Collections_Posts" />
+        <AssociationConnector Association="CardsDbModel.FK_CollectionsFact_Posts" />
+        <AssociationConnector Association="CardsDbModel.FK_CollectionsPre_Posts" />
+        <AssociationConnector Association="CardsDbModel.FK_CountersTotalPre_Posts" />
+        <AssociationConnector Association="CardsDbModel.FK_NoticeHistory_NoticeRecipientsGroup" />
+        <AssociationConnector Association="CardsDbModel.FK_NoticeHistory_NoticeStatus" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

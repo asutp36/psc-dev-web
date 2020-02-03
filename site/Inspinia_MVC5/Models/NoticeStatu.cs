@@ -10,17 +10,21 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class GetCardsOperations_Result
+    public partial class NoticeStatu
     {
-        public string Phone { get; set; }
-        public string CardNum { get; set; }
-        public string CardTypeName { get; set; }
-        public string CardStatusName { get; set; }
-        public string OperationTypeName { get; set; }
-        public System.DateTime DTime { get; set; }
-        public int Amount { get; set; }
-        public int Balance { get; set; }
-        public int ServerID { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public NoticeStatu()
+        {
+            this.NoticeHistories = new HashSet<NoticeHistory>();
+        }
+    
+        public int IDNoticeStatus { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<NoticeHistory> NoticeHistories { get; set; }
     }
 }

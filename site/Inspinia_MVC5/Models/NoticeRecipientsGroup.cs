@@ -12,11 +12,20 @@ namespace Inspinia_MVC5.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class EventSimple
+    public partial class NoticeRecipientsGroup
     {
-        public int IDEvent { get; set; }
-        public Nullable<int> Counter { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public NoticeRecipientsGroup()
+        {
+            this.NoticeHistories = new HashSet<NoticeHistory>();
+        }
     
-        public virtual Event Event { get; set; }
+        public int IDNoticeRecipientsGroup { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public string Recipient { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<NoticeHistory> NoticeHistories { get; set; }
     }
 }

@@ -183,6 +183,15 @@
     <Compile Include="Models\CardType.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Collection.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CollectionsFact.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CollectionsPre.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Company.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -190,6 +199,9 @@
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\CountersTotal.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CountersTotalPre.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Device.cs">
@@ -237,6 +249,9 @@
     <Compile Include="Models\GetFinanceSummary_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetNoticeHistoryList_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetPostAmounts_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -261,6 +276,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelDb.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\NoticeHistory.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\NoticeRecipientsGroup.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\NoticeStatu.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Operation.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -281,7 +305,13 @@
     </Compile>
     <Compile Include="Models\ScaffoldingContext.cs" />
     <Compile Include="Models\ScaffoldingController.cs" />
+    <Compile Include="Models\sysdiagram.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\User.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vPostsAmount.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Wash.cs">

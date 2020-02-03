@@ -10,17 +10,12 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class GetCardsOperations_Result
+    public partial class vPostsAmount
     {
-        public string Phone { get; set; }
-        public string CardNum { get; set; }
-        public string CardTypeName { get; set; }
-        public string CardStatusName { get; set; }
-        public string OperationTypeName { get; set; }
+        public int IDPost { get; set; }
         public System.DateTime DTime { get; set; }
-        public int Amount { get; set; }
-        public int Balance { get; set; }
-        public int ServerID { get; set; }
+        public Nullable<int> amount { get; set; }
     }
 }

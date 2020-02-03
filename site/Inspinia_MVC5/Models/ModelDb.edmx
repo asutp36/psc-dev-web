@@ -33,6 +33,48 @@
           <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="Collections">
+          <Key>
+            <PropertyRef Name="IDCollections" />
+          </Key>
+          <Property Name="IDCollections" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDPost" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="b10" Type="int" />
+          <Property Name="b50" Type="int" />
+          <Property Name="b100" Type="int" />
+          <Property Name="b500" Type="int" />
+          <Property Name="b1k" Type="int" />
+          <Property Name="m10" Type="int" />
+        </EntityType>
+        <EntityType Name="CollectionsFact">
+          <Key>
+            <PropertyRef Name="IDCollectionsFact" />
+          </Key>
+          <Property Name="IDCollectionsFact" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDPost" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="b10" Type="int" />
+          <Property Name="b50" Type="int" />
+          <Property Name="b100" Type="int" />
+          <Property Name="b500" Type="int" />
+          <Property Name="b1k" Type="int" />
+          <Property Name="m10" Type="int" />
+        </EntityType>
+        <EntityType Name="CollectionsPre">
+          <Key>
+            <PropertyRef Name="IDCollectionsPre" />
+          </Key>
+          <Property Name="IDCollectionsPre" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDPost" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="b10" Type="int" />
+          <Property Name="b50" Type="int" />
+          <Property Name="b100" Type="int" />
+          <Property Name="b500" Type="int" />
+          <Property Name="b1k" Type="int" />
+          <Property Name="m10" Type="int" />
+        </EntityType>
         <EntityType Name="Companies">
           <Key>
             <PropertyRef Name="IDCompany" />
@@ -74,6 +116,27 @@
           <Property Name="a_b500" Type="int" Nullable="false" />
           <Property Name="a_b1k" Type="int" Nullable="false" />
           <Property Name="a_m10" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CountersTotalPre">
+          <Key>
+            <PropertyRef Name="IDCountersTotalPre" />
+          </Key>
+          <Property Name="IDCountersTotalPre" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDPost" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="b10" Type="int" Nullable="false" />
+          <Property Name="b50" Type="int" Nullable="false" />
+          <Property Name="b100" Type="int" Nullable="false" />
+          <Property Name="b500" Type="int" Nullable="false" />
+          <Property Name="b1k" Type="int" Nullable="false" />
+          <Property Name="m10" Type="int" Nullable="false" />
+          <Property Name="amount" Type="int" />
+          <Property Name="a_b10" Type="int" />
+          <Property Name="a_b50" Type="int" />
+          <Property Name="a_b100" Type="int" />
+          <Property Name="a_b500" Type="int" />
+          <Property Name="a_b1k" Type="int" />
+          <Property Name="a_m10" Type="int" />
         </EntityType>
         <EntityType Name="Device">
           <Key>
@@ -169,6 +232,35 @@
           <Property Name="Code" Type="smallint" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
         </EntityType>
+        <EntityType Name="NoticeHistory">
+          <Key>
+            <PropertyRef Name="IDNoticeHistory" />
+          </Key>
+          <Property Name="IDNoticeHistory" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Sender" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DTimeReceive" Type="datetime" Nullable="false" />
+          <Property Name="IDNoticeRecipientsGroup" Type="int" Nullable="false" />
+          <Property Name="Message" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DTimeSent" Type="datetime" />
+          <Property Name="IDNoticeStatus" Type="int" />
+        </EntityType>
+        <EntityType Name="NoticeRecipientsGroup">
+          <Key>
+            <PropertyRef Name="IDNoticeRecipientsGroup" />
+          </Key>
+          <Property Name="IDNoticeRecipientsGroup" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Recipient" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="NoticeStatus">
+          <Key>
+            <PropertyRef Name="IDNoticeStatus" />
+          </Key>
+          <Property Name="IDNoticeStatus" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
         <EntityType Name="Operations">
           <Key>
             <PropertyRef Name="IDOperation" />
@@ -228,6 +320,16 @@
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="IDCompany" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
         <EntityType Name="Users">
           <Key>
             <PropertyRef Name="IDUser" />
@@ -247,6 +349,17 @@
           <Property Name="Name" Type="nvarchar" MaxLength="100" />
           <Property Name="Address" Type="nvarchar" MaxLength="100" />
           <Property Name="IDRegion" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Ошибки, обнаруженные при создании:
+предупреждение 6002: В таблице или представлении "WashCompany.dbo.vPostsAmount" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.-->
+        <EntityType Name="vPostsAmount">
+          <Key>
+            <PropertyRef Name="IDPost" />
+            <PropertyRef Name="DTime" />
+          </Key>
+          <Property Name="IDPost" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="amount" Type="int" />
         </EntityType>
         <Association Name="FK_Cards_CardStatuses">
           <End Role="CardStatuses" Type="Self.CardStatuses" Multiplicity="1">
@@ -290,6 +403,48 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Collections_Posts">
+          <End Role="Posts" Type="Self.Posts" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Collections" Type="Self.Collections" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Posts">
+              <PropertyRef Name="IDPost" />
+            </Principal>
+            <Dependent Role="Collections">
+              <PropertyRef Name="IDPost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CollectionsFact_Posts">
+          <End Role="Posts" Type="Self.Posts" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="CollectionsFact" Type="Self.CollectionsFact" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Posts">
+              <PropertyRef Name="IDPost" />
+            </Principal>
+            <Dependent Role="CollectionsFact">
+              <PropertyRef Name="IDPost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CollectionsPre_Posts">
+          <End Role="Posts" Type="Self.Posts" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="CollectionsPre" Type="Self.CollectionsPre" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Posts">
+              <PropertyRef Name="IDPost" />
+            </Principal>
+            <Dependent Role="CollectionsPre">
+              <PropertyRef Name="IDPost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CountersOperating_Posts">
           <End Role="Posts" Type="Self.Posts" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -314,6 +469,20 @@
               <PropertyRef Name="IDPost" />
             </Principal>
             <Dependent Role="CountersTotal">
+              <PropertyRef Name="IDPost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CountersTotalPre_Posts">
+          <End Role="Posts" Type="Self.Posts" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="CountersTotalPre" Type="Self.CountersTotalPre" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Posts">
+              <PropertyRef Name="IDPost" />
+            </Principal>
+            <Dependent Role="CountersTotalPre">
               <PropertyRef Name="IDPost" />
             </Dependent>
           </ReferentialConstraint>
@@ -441,6 +610,34 @@
             </Principal>
             <Dependent Role="Finance">
               <PropertyRef Name="IDFinanceType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NoticeHistory_NoticeRecipientsGroup">
+          <End Role="NoticeRecipientsGroup" Type="Self.NoticeRecipientsGroup" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="NoticeHistory" Type="Self.NoticeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NoticeRecipientsGroup">
+              <PropertyRef Name="IDNoticeRecipientsGroup" />
+            </Principal>
+            <Dependent Role="NoticeHistory">
+              <PropertyRef Name="IDNoticeRecipientsGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NoticeHistory_NoticeStatus">
+          <End Role="NoticeStatus" Type="Self.NoticeStatus" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="NoticeHistory" Type="Self.NoticeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NoticeStatus">
+              <PropertyRef Name="IDNoticeStatus" />
+            </Principal>
+            <Dependent Role="NoticeHistory">
+              <PropertyRef Name="IDNoticeStatus" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -618,6 +815,18 @@
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="GetNoticeHistoryList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_Sender" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_DateReceiveBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateReceiveEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_RecipientsCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_RecipientsName" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_DateSentBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateSentEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_NoticeStatusCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_NoticeStatusName" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_Message" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="GetPostAmounts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_RegionCode" Type="int" Mode="In" />
           <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
@@ -636,9 +845,13 @@
           <EntitySet Name="Cards" EntityType="Self.Cards" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CardStatuses" EntityType="Self.CardStatuses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CardTypes" EntityType="Self.CardTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Collections" EntityType="Self.Collections" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CollectionsFact" EntityType="Self.CollectionsFact" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CollectionsPre" EntityType="Self.CollectionsPre" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Companies" EntityType="Self.Companies" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CountersOperating" EntityType="Self.CountersOperating" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CountersTotal" EntityType="Self.CountersTotal" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CountersTotalPre" EntityType="Self.CountersTotalPre" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Device" EntityType="Self.Device" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Event" EntityType="Self.Event" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventCash" EntityType="Self.EventCash" Schema="dbo" store:Type="Tables" />
@@ -648,14 +861,25 @@
           <EntitySet Name="Finance" EntityType="Self.Finance" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FinanceType" EntityType="Self.FinanceType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Mode" EntityType="Self.Mode" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NoticeHistory" EntityType="Self.NoticeHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NoticeRecipientsGroup" EntityType="Self.NoticeRecipientsGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NoticeStatus" EntityType="Self.NoticeStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Operations" EntityType="Self.Operations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperationTypes" EntityType="Self.OperationTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Owners" EntityType="Self.Owners" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Posts" EntityType="Self.Posts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Psces" EntityType="Self.Psces" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Regions" EntityType="Self.Regions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Wash" EntityType="Self.Wash" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="vPostsAmount" EntityType="Self.vPostsAmount" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vPostsAmount].[IDPost] AS [IDPost], 
+    [vPostsAmount].[DTime] AS [DTime], 
+    [vPostsAmount].[amount] AS [amount]
+    FROM [dbo].[vPostsAmount] AS [vPostsAmount]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK_Cards_CardStatuses" Association="Self.FK_Cards_CardStatuses">
             <End Role="CardStatuses" EntitySet="CardStatuses" />
             <End Role="Cards" EntitySet="Cards" />
@@ -668,6 +892,18 @@
             <End Role="Owners" EntitySet="Owners" />
             <End Role="Cards" EntitySet="Cards" />
           </AssociationSet>
+          <AssociationSet Name="FK_Collections_Posts" Association="Self.FK_Collections_Posts">
+            <End Role="Posts" EntitySet="Posts" />
+            <End Role="Collections" EntitySet="Collections" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CollectionsFact_Posts" Association="Self.FK_CollectionsFact_Posts">
+            <End Role="Posts" EntitySet="Posts" />
+            <End Role="CollectionsFact" EntitySet="CollectionsFact" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CollectionsPre_Posts" Association="Self.FK_CollectionsPre_Posts">
+            <End Role="Posts" EntitySet="Posts" />
+            <End Role="CollectionsPre" EntitySet="CollectionsPre" />
+          </AssociationSet>
           <AssociationSet Name="FK_CountersOperating_Posts" Association="Self.FK_CountersOperating_Posts">
             <End Role="Posts" EntitySet="Posts" />
             <End Role="CountersOperating" EntitySet="CountersOperating" />
@@ -675,6 +911,10 @@
           <AssociationSet Name="FK_CountersTotal_Posts" Association="Self.FK_CountersTotal_Posts">
             <End Role="Posts" EntitySet="Posts" />
             <End Role="CountersTotal" EntitySet="CountersTotal" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CountersTotalPre_Posts" Association="Self.FK_CountersTotalPre_Posts">
+            <End Role="Posts" EntitySet="Posts" />
+            <End Role="CountersTotalPre" EntitySet="CountersTotalPre" />
           </AssociationSet>
           <AssociationSet Name="FK_Device_Wash" Association="Self.FK_Device_Wash">
             <End Role="Wash" EntitySet="Wash" />
@@ -711,6 +951,14 @@
           <AssociationSet Name="FK_Finance_FinanceType" Association="Self.FK_Finance_FinanceType">
             <End Role="FinanceType" EntitySet="FinanceType" />
             <End Role="Finance" EntitySet="Finance" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NoticeHistory_NoticeRecipientsGroup" Association="Self.FK_NoticeHistory_NoticeRecipientsGroup">
+            <End Role="NoticeRecipientsGroup" EntitySet="NoticeRecipientsGroup" />
+            <End Role="NoticeHistory" EntitySet="NoticeHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NoticeHistory_NoticeStatus" Association="Self.FK_NoticeHistory_NoticeStatus">
+            <End Role="NoticeStatus" EntitySet="NoticeStatus" />
+            <End Role="NoticeHistory" EntitySet="NoticeHistory" />
           </AssociationSet>
           <AssociationSet Name="FK_Operations_Cards" Association="Self.FK_Operations_Cards">
             <End Role="Cards" EntitySet="Cards" />
@@ -936,6 +1184,51 @@
             <Parameter Name="p_PostCode" Mode="In" Type="String" />
             <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
             <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <EntitySet Name="Collections" EntityType="CardsDbModel.Collection" />
+          <EntitySet Name="CollectionsFacts" EntityType="CardsDbModel.CollectionsFact" />
+          <EntitySet Name="CollectionsPres" EntityType="CardsDbModel.CollectionsPre" />
+          <EntitySet Name="CountersTotalPres" EntityType="CardsDbModel.CountersTotalPre" />
+          <EntitySet Name="NoticeHistories" EntityType="CardsDbModel.NoticeHistory" />
+          <EntitySet Name="NoticeRecipientsGroups" EntityType="CardsDbModel.NoticeRecipientsGroup" />
+          <EntitySet Name="NoticeStatus" EntityType="CardsDbModel.NoticeStatu" />
+          <EntitySet Name="sysdiagrams" EntityType="CardsDbModel.sysdiagram" />
+          <EntitySet Name="vPostsAmounts" EntityType="CardsDbModel.vPostsAmount" />
+          <AssociationSet Name="FK_Collections_Posts" Association="CardsDbModel.FK_Collections_Posts">
+            <End Role="Post" EntitySet="Posts" />
+            <End Role="Collection" EntitySet="Collections" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CollectionsFact_Posts" Association="CardsDbModel.FK_CollectionsFact_Posts">
+            <End Role="Post" EntitySet="Posts" />
+            <End Role="CollectionsFact" EntitySet="CollectionsFacts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CollectionsPre_Posts" Association="CardsDbModel.FK_CollectionsPre_Posts">
+            <End Role="Post" EntitySet="Posts" />
+            <End Role="CollectionsPre" EntitySet="CollectionsPres" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CountersTotalPre_Posts" Association="CardsDbModel.FK_CountersTotalPre_Posts">
+            <End Role="Post" EntitySet="Posts" />
+            <End Role="CountersTotalPre" EntitySet="CountersTotalPres" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NoticeHistory_NoticeRecipientsGroup" Association="CardsDbModel.FK_NoticeHistory_NoticeRecipientsGroup">
+            <End Role="NoticeRecipientsGroup" EntitySet="NoticeRecipientsGroups" />
+            <End Role="NoticeHistory" EntitySet="NoticeHistories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NoticeHistory_NoticeStatus" Association="CardsDbModel.FK_NoticeHistory_NoticeStatus">
+            <End Role="NoticeStatu" EntitySet="NoticeStatus" />
+            <End Role="NoticeHistory" EntitySet="NoticeHistories" />
+          </AssociationSet>
+          <FunctionImport Name="GetNoticeHistoryList" ReturnType="Collection(CardsDbModel.GetNoticeHistoryList_Result)">
+            <Parameter Name="p_Sender" Mode="In" Type="String" />
+            <Parameter Name="p_DateReceiveBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateReceiveEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_RecipientsCode" Mode="In" Type="String" />
+            <Parameter Name="p_RecipientsName" Mode="In" Type="String" />
+            <Parameter Name="p_DateSentBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateSentEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_NoticeStatusCode" Mode="In" Type="String" />
+            <Parameter Name="p_NoticeStatusName" Mode="In" Type="String" />
+            <Parameter Name="p_Message" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetCardsOperations_Result">
@@ -1185,6 +1478,10 @@
           <NavigationProperty Name="CountersTotals" Relationship="CardsDbModel.FK_CountersTotal_Posts" FromRole="Post" ToRole="CountersTotal" />
           <NavigationProperty Name="Events" Relationship="CardsDbModel.FK_Event_Point" FromRole="Post" ToRole="Event" />
           <NavigationProperty Name="Wash" Relationship="CardsDbModel.FK_Posts_Wash" FromRole="Post" ToRole="Wash" />
+          <NavigationProperty Name="Collections" Relationship="CardsDbModel.FK_Collections_Posts" FromRole="Post" ToRole="Collection" />
+          <NavigationProperty Name="CollectionsFacts" Relationship="CardsDbModel.FK_CollectionsFact_Posts" FromRole="Post" ToRole="CollectionsFact" />
+          <NavigationProperty Name="CollectionsPres" Relationship="CardsDbModel.FK_CollectionsPre_Posts" FromRole="Post" ToRole="CollectionsPre" />
+          <NavigationProperty Name="CountersTotalPres" Relationship="CardsDbModel.FK_CountersTotalPre_Posts" FromRole="Post" ToRole="CountersTotalPre" />
         </EntityType>
         <EntityType Name="Psce">
           <Key>
@@ -1597,6 +1894,219 @@
           <Property Type="Int32" Name="b100" Nullable="true" />
           <Property Type="Int32" Name="m10" Nullable="true" />
         </ComplexType>
+        <EntityType Name="Collection">
+          <Key>
+            <PropertyRef Name="IDCollections" />
+          </Key>
+          <Property Name="IDCollections" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDPost" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="b10" Type="Int32" />
+          <Property Name="b50" Type="Int32" />
+          <Property Name="b100" Type="Int32" />
+          <Property Name="b500" Type="Int32" />
+          <Property Name="b1k" Type="Int32" />
+          <Property Name="m10" Type="Int32" />
+          <NavigationProperty Name="Post" Relationship="CardsDbModel.FK_Collections_Posts" FromRole="Collection" ToRole="Post" />
+        </EntityType>
+        <EntityType Name="CollectionsFact">
+          <Key>
+            <PropertyRef Name="IDCollectionsFact" />
+          </Key>
+          <Property Name="IDCollectionsFact" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDPost" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="b10" Type="Int32" />
+          <Property Name="b50" Type="Int32" />
+          <Property Name="b100" Type="Int32" />
+          <Property Name="b500" Type="Int32" />
+          <Property Name="b1k" Type="Int32" />
+          <Property Name="m10" Type="Int32" />
+          <NavigationProperty Name="Post" Relationship="CardsDbModel.FK_CollectionsFact_Posts" FromRole="CollectionsFact" ToRole="Post" />
+        </EntityType>
+        <EntityType Name="CollectionsPre">
+          <Key>
+            <PropertyRef Name="IDCollectionsPre" />
+          </Key>
+          <Property Name="IDCollectionsPre" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDPost" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="b10" Type="Int32" />
+          <Property Name="b50" Type="Int32" />
+          <Property Name="b100" Type="Int32" />
+          <Property Name="b500" Type="Int32" />
+          <Property Name="b1k" Type="Int32" />
+          <Property Name="m10" Type="Int32" />
+          <NavigationProperty Name="Post" Relationship="CardsDbModel.FK_CollectionsPre_Posts" FromRole="CollectionsPre" ToRole="Post" />
+        </EntityType>
+        <EntityType Name="CountersTotalPre">
+          <Key>
+            <PropertyRef Name="IDCountersTotalPre" />
+          </Key>
+          <Property Name="IDCountersTotalPre" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDPost" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="b10" Type="Int32" Nullable="false" />
+          <Property Name="b50" Type="Int32" Nullable="false" />
+          <Property Name="b100" Type="Int32" Nullable="false" />
+          <Property Name="b500" Type="Int32" Nullable="false" />
+          <Property Name="b1k" Type="Int32" Nullable="false" />
+          <Property Name="m10" Type="Int32" Nullable="false" />
+          <Property Name="amount" Type="Int32" />
+          <Property Name="a_b10" Type="Int32" />
+          <Property Name="a_b50" Type="Int32" />
+          <Property Name="a_b100" Type="Int32" />
+          <Property Name="a_b500" Type="Int32" />
+          <Property Name="a_b1k" Type="Int32" />
+          <Property Name="a_m10" Type="Int32" />
+          <NavigationProperty Name="Post" Relationship="CardsDbModel.FK_CountersTotalPre_Posts" FromRole="CountersTotalPre" ToRole="Post" />
+        </EntityType>
+        <EntityType Name="NoticeHistory">
+          <Key>
+            <PropertyRef Name="IDNoticeHistory" />
+          </Key>
+          <Property Name="IDNoticeHistory" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Sender" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DTimeReceive" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IDNoticeRecipientsGroup" Type="Int32" Nullable="false" />
+          <Property Name="Message" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DTimeSent" Type="DateTime" Precision="3" />
+          <Property Name="IDNoticeStatus" Type="Int32" />
+          <NavigationProperty Name="NoticeRecipientsGroup" Relationship="CardsDbModel.FK_NoticeHistory_NoticeRecipientsGroup" FromRole="NoticeHistory" ToRole="NoticeRecipientsGroup" />
+          <NavigationProperty Name="NoticeStatu" Relationship="CardsDbModel.FK_NoticeHistory_NoticeStatus" FromRole="NoticeHistory" ToRole="NoticeStatu" />
+        </EntityType>
+        <EntityType Name="NoticeRecipientsGroup">
+          <Key>
+            <PropertyRef Name="IDNoticeRecipientsGroup" />
+          </Key>
+          <Property Name="IDNoticeRecipientsGroup" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Recipient" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="NoticeHistories" Relationship="CardsDbModel.FK_NoticeHistory_NoticeRecipientsGroup" FromRole="NoticeRecipientsGroup" ToRole="NoticeHistory" />
+        </EntityType>
+        <EntityType Name="NoticeStatu">
+          <Key>
+            <PropertyRef Name="IDNoticeStatus" />
+          </Key>
+          <Property Name="IDNoticeStatus" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="NoticeHistories" Relationship="CardsDbModel.FK_NoticeHistory_NoticeStatus" FromRole="NoticeStatu" ToRole="NoticeHistory" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="vPostsAmount">
+          <Key>
+            <PropertyRef Name="IDPost" />
+            <PropertyRef Name="DTime" />
+          </Key>
+          <Property Name="IDPost" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="amount" Type="Int32" />
+        </EntityType>
+        <Association Name="FK_Collections_Posts">
+          <End Type="CardsDbModel.Post" Role="Post" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="CardsDbModel.Collection" Role="Collection" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Post">
+              <PropertyRef Name="IDPost" />
+            </Principal>
+            <Dependent Role="Collection">
+              <PropertyRef Name="IDPost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CollectionsFact_Posts">
+          <End Type="CardsDbModel.Post" Role="Post" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="CardsDbModel.CollectionsFact" Role="CollectionsFact" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Post">
+              <PropertyRef Name="IDPost" />
+            </Principal>
+            <Dependent Role="CollectionsFact">
+              <PropertyRef Name="IDPost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CollectionsPre_Posts">
+          <End Type="CardsDbModel.Post" Role="Post" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="CardsDbModel.CollectionsPre" Role="CollectionsPre" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Post">
+              <PropertyRef Name="IDPost" />
+            </Principal>
+            <Dependent Role="CollectionsPre">
+              <PropertyRef Name="IDPost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CountersTotalPre_Posts">
+          <End Type="CardsDbModel.Post" Role="Post" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="CardsDbModel.CountersTotalPre" Role="CountersTotalPre" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Post">
+              <PropertyRef Name="IDPost" />
+            </Principal>
+            <Dependent Role="CountersTotalPre">
+              <PropertyRef Name="IDPost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NoticeHistory_NoticeRecipientsGroup">
+          <End Type="CardsDbModel.NoticeRecipientsGroup" Role="NoticeRecipientsGroup" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="CardsDbModel.NoticeHistory" Role="NoticeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NoticeRecipientsGroup">
+              <PropertyRef Name="IDNoticeRecipientsGroup" />
+            </Principal>
+            <Dependent Role="NoticeHistory">
+              <PropertyRef Name="IDNoticeRecipientsGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NoticeHistory_NoticeStatus">
+          <End Type="CardsDbModel.NoticeStatu" Role="NoticeStatu" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="CardsDbModel.NoticeHistory" Role="NoticeHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NoticeStatu">
+              <PropertyRef Name="IDNoticeStatus" />
+            </Principal>
+            <Dependent Role="NoticeHistory">
+              <PropertyRef Name="IDNoticeStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="GetNoticeHistoryList_Result">
+          <Property Type="String" Name="Sender" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="DTimeReceive" Nullable="false" Precision="23" />
+          <Property Type="String" Name="RecipientsCode" Nullable="false" MaxLength="10" />
+          <Property Type="String" Name="RecipientsName" Nullable="false" MaxLength="100" />
+          <Property Type="DateTime" Name="DTimeSent" Nullable="true" Precision="23" />
+          <Property Type="String" Name="NoticeStatusCode" Nullable="false" MaxLength="10" />
+          <Property Type="String" Name="NoticeStatusName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Message" Nullable="false" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1982,6 +2492,139 @@
                 <ScalarProperty Name="b50" ColumnName="b50" />
                 <ScalarProperty Name="b100" ColumnName="b100" />
                 <ScalarProperty Name="m10" ColumnName="m10" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="Collections">
+            <EntityTypeMapping TypeName="CardsDbModel.Collection">
+              <MappingFragment StoreEntitySet="Collections">
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b1k" ColumnName="b1k" />
+                <ScalarProperty Name="b500" ColumnName="b500" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="IDPost" ColumnName="IDPost" />
+                <ScalarProperty Name="IDCollections" ColumnName="IDCollections" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CollectionsFacts">
+            <EntityTypeMapping TypeName="CardsDbModel.CollectionsFact">
+              <MappingFragment StoreEntitySet="CollectionsFact">
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b1k" ColumnName="b1k" />
+                <ScalarProperty Name="b500" ColumnName="b500" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="IDPost" ColumnName="IDPost" />
+                <ScalarProperty Name="IDCollectionsFact" ColumnName="IDCollectionsFact" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CollectionsPres">
+            <EntityTypeMapping TypeName="CardsDbModel.CollectionsPre">
+              <MappingFragment StoreEntitySet="CollectionsPre">
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b1k" ColumnName="b1k" />
+                <ScalarProperty Name="b500" ColumnName="b500" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="IDPost" ColumnName="IDPost" />
+                <ScalarProperty Name="IDCollectionsPre" ColumnName="IDCollectionsPre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CountersTotalPres">
+            <EntityTypeMapping TypeName="CardsDbModel.CountersTotalPre">
+              <MappingFragment StoreEntitySet="CountersTotalPre">
+                <ScalarProperty Name="a_m10" ColumnName="a_m10" />
+                <ScalarProperty Name="a_b1k" ColumnName="a_b1k" />
+                <ScalarProperty Name="a_b500" ColumnName="a_b500" />
+                <ScalarProperty Name="a_b100" ColumnName="a_b100" />
+                <ScalarProperty Name="a_b50" ColumnName="a_b50" />
+                <ScalarProperty Name="a_b10" ColumnName="a_b10" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b1k" ColumnName="b1k" />
+                <ScalarProperty Name="b500" ColumnName="b500" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="IDPost" ColumnName="IDPost" />
+                <ScalarProperty Name="IDCountersTotalPre" ColumnName="IDCountersTotalPre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NoticeHistories">
+            <EntityTypeMapping TypeName="CardsDbModel.NoticeHistory">
+              <MappingFragment StoreEntitySet="NoticeHistory">
+                <ScalarProperty Name="IDNoticeStatus" ColumnName="IDNoticeStatus" />
+                <ScalarProperty Name="DTimeSent" ColumnName="DTimeSent" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="IDNoticeRecipientsGroup" ColumnName="IDNoticeRecipientsGroup" />
+                <ScalarProperty Name="DTimeReceive" ColumnName="DTimeReceive" />
+                <ScalarProperty Name="Sender" ColumnName="Sender" />
+                <ScalarProperty Name="IDNoticeHistory" ColumnName="IDNoticeHistory" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NoticeRecipientsGroups">
+            <EntityTypeMapping TypeName="CardsDbModel.NoticeRecipientsGroup">
+              <MappingFragment StoreEntitySet="NoticeRecipientsGroup">
+                <ScalarProperty Name="Recipient" ColumnName="Recipient" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="IDNoticeRecipientsGroup" ColumnName="IDNoticeRecipientsGroup" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NoticeStatus">
+            <EntityTypeMapping TypeName="CardsDbModel.NoticeStatu">
+              <MappingFragment StoreEntitySet="NoticeStatus">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="IDNoticeStatus" ColumnName="IDNoticeStatus" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="CardsDbModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vPostsAmounts">
+            <EntityTypeMapping TypeName="CardsDbModel.vPostsAmount">
+              <MappingFragment StoreEntitySet="vPostsAmount">
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="IDPost" ColumnName="IDPost" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetNoticeHistoryList" FunctionName="Хранилище CardsDbModel.GetNoticeHistoryList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CardsDbModel.GetNoticeHistoryList_Result">
+                <ScalarProperty Name="Sender" ColumnName="Sender" />
+                <ScalarProperty Name="DTimeReceive" ColumnName="DTimeReceive" />
+                <ScalarProperty Name="RecipientsCode" ColumnName="RecipientsCode" />
+                <ScalarProperty Name="RecipientsName" ColumnName="RecipientsName" />
+                <ScalarProperty Name="DTimeSent" ColumnName="DTimeSent" />
+                <ScalarProperty Name="NoticeStatusCode" ColumnName="NoticeStatusCode" />
+                <ScalarProperty Name="NoticeStatusName" ColumnName="NoticeStatusName" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

@@ -10,17 +10,19 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class GetCardsOperations_Result
+    public partial class NoticeHistory
     {
-        public string Phone { get; set; }
-        public string CardNum { get; set; }
-        public string CardTypeName { get; set; }
-        public string CardStatusName { get; set; }
-        public string OperationTypeName { get; set; }
-        public System.DateTime DTime { get; set; }
-        public int Amount { get; set; }
-        public int Balance { get; set; }
-        public int ServerID { get; set; }
+        public int IDNoticeHistory { get; set; }
+        public string Sender { get; set; }
+        public System.DateTime DTimeReceive { get; set; }
+        public int IDNoticeRecipientsGroup { get; set; }
+        public string Message { get; set; }
+        public Nullable<System.DateTime> DTimeSent { get; set; }
+        public Nullable<int> IDNoticeStatus { get; set; }
+    
+        public virtual NoticeRecipientsGroup NoticeRecipientsGroup { get; set; }
+        public virtual NoticeStatu NoticeStatu { get; set; }
     }
 }
