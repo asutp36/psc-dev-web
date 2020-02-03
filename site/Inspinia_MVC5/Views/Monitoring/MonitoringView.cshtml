@@ -132,7 +132,7 @@
         }
 
         var timeid = -1;
-        $('#post').hide()
+        $('#post').hide();
 
         function validate(evt) {
             var theEvent = evt || window.event;
@@ -146,6 +146,18 @@
         }
 
         function show() {
+
+            if ($('#state').text() == "Нет доступа") {
+                $('#label-balance').attr("class", "label label-secondary");
+                $('#label-function').attr("class", "label label-secondary");
+                $('#label-state').attr("class", "label label-secondary");
+            }
+            else {
+                $('#label-balance').attr("class", "label label-primary");
+                $('#label-function').attr("class", "label label-primary");
+                $('#label-state').attr("class", "label label-primary");
+            }
+
             let id = $('#cur_idpost').val()
         $.ajax({
             type: "GET",

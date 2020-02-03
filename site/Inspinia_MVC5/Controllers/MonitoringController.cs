@@ -55,7 +55,7 @@ namespace Inspinia_MVC5.Controllers
             return PartialView("_MonitoringHistoryList");
         }
 
-        public int GetState(string json)
+        public string GetState(string json)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/heartbeat");
 
@@ -81,20 +81,20 @@ namespace Inspinia_MVC5.Controllers
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return int.Parse(response.GetResponseHeader("HeartBeat"));
+                    return response.GetResponseHeader("HeartBeat");
                 }
                 else
                 {
-                    return -1;
+                    return "Нет доступа";
                 }
             }
             catch (WebException ex)
             {
-                return -1;
+                return "Нет доступа";
             }
         }
 
-        public int GetBalance(string json)
+        public string GetBalance(string json)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/getbalance");
 
@@ -120,16 +120,16 @@ namespace Inspinia_MVC5.Controllers
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return int.Parse(response.GetResponseHeader("Balance"));
+                    return response.GetResponseHeader("Balance");
                 }
                 else
                 {
-                    return -1;
+                    return "Не определено";
                 }
             }
             catch (WebException ex)
             {
-                return -1;
+                return "Не определено";
             }
         }
 
@@ -163,12 +163,12 @@ namespace Inspinia_MVC5.Controllers
                 }
                 else
                 {
-                    return "-1";
+                    return "Не определено";
                 }
             }
             catch (WebException ex)
             {
-                return "-1";
+                return "Не определено";
             }
         }
 
