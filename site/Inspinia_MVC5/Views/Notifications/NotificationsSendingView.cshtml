@@ -55,7 +55,7 @@
 @section Scripts {
     @Scripts.Render("~/plugins/summernote")
     @Scripts.Render("~/plugins/tagInputs")
-
+    @Scripts.Render("~/plugins/typehead")
 
     <script type="text/javascript">
 
@@ -75,8 +75,21 @@
 
         $(document).ready(function () {
 
+            var arr = [];
+
+            @foreach (var item in ViewBag.Recepients) {
+                <text>
+                    arr.push({ "value":@item.Code, "text":"@item.Name"});
+                </text>
+            }
+
             $('#input-who').tagsinput({
-                tagClass: 'label label-primary',
+                itemValue: 'value',
+                itemText: 'text',
+                typeahead: {
+                    afterSelect: function (val) { this.$element.val(""); },
+                    source: arr,
+                },
                 trimValue: true,
             });
 

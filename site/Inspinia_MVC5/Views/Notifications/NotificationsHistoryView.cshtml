@@ -272,10 +272,10 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#rbdate').val(moment().subtract(1, 'months').startOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        $('#rbdate').val(moment().subtract(1, 'days').startOf('day').format('DD.MM.YYYY HH:mm:ss'));
         $('#redate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
 
-        $('#filter-date-rec span').html(moment().subtract(1, 'months').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
+        $('#filter-date-rec span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
 
         $('#filter-date-rec').daterangepicker({
             "timePicker": true,
@@ -338,10 +338,10 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#sbdate').val(moment().subtract(1, 'months').startOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        $('#sbdate').val(moment().subtract(1, 'days').startOf('day').format('DD.MM.YYYY HH:mm:ss'));
         $('#sedate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
 
-        $('#filter-date-sent span').html(moment().subtract(1, 'months').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
+        $('#filter-date-sent span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
 
         $('#filter-date-sent').daterangepicker({
             "timePicker": true,

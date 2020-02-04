@@ -18,12 +18,15 @@ namespace Inspinia_MVC5.Controllers
 
         List<Owner> _owners = null;
         List<NoticeStatu> _noticeStatus = null;
+        List<NoticeRecipientsGroup> _noticeRecipients = null;
 
         public NotificationsController()
         {
             _noticeStatus = db.NoticeStatus.ToList();
             _owners = db.Owners.ToList();
+            _noticeRecipients = db.NoticeRecipientsGroups.ToList();
 
+            ViewBag.Recepients = _noticeRecipients;
             ViewBag.Notices = _noticeStatus;
             ViewBag.Owners = _owners;
         }
