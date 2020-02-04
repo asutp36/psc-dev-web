@@ -115,45 +115,119 @@
 
 <script type="text/javascript">
 
-    @*function newWash () {
+    var regions = [];
 
-        var x = $('#filter-region').find(":selected").val();
-
-        var regions = [];
-
-         @foreach (var item in ViewBag.Regions) {
-                <text>
-                    regions.push({ value:"@item.Code", text:"@item.Name", washes:[
-                        @foreach(var w in item.Washes)
+    @foreach (var item in ViewBag.Regions) {
+        <text>
+            regions.push({ value:"@item.Code", text:"@item.Name", washes:[
+                @foreach(var w in item.Washes)
+                {
+                    <text>
+                {
+                    value: "@w.Code", text: "@w.Name", posts: [
+                        @foreach(var p in w.Posts)
                         {
                             <text>
-                        { "value": "@w.Code", "text": "@w.Name" },
+                        {
+                            value: "@p.Code", text: "@p.Code"
+                        },
                             </text>
                         }
-                        ]});
-                </text>
-            }
+                    ]
+                },
+                    </text>
+                }
+                ]});
+        </text>
+    }
 
-        alert(regions);
+    var washes = [];
 
-        var newwashes = [];
+    @foreach (var item in ViewBag.Washes) {
+        <text>
+            washes.push({ value:"@item.Code", text:"@item.Name", posts:[
+                @foreach(var w in item.Posts)
+                {
+                    <text>
+                {
+                    value: "@w.Code", text: "@w.Code"
+                },
+                    </text>
+                }
+                ]});
+        </text>
+    }
 
-        alert(x);
+    var posts = [];
 
-        var q = regions.find(reg => reg.value == x).text;
+    @foreach (var item in ViewBag.Posts) {
+        <text>
+            posts.push({ value: "@item.Code", text: "@item.Code" }, );
+        </text>
+    }
 
-        alert(q);
 
-        alert(newwashes)
+    function eventChangeRegion () {
 
-        var $selwash = $('#filter-wash');
+        var curreg = $('#filter-region').find(":selected").val();
 
-        $selwash.empty();
-        $.each(newwashes, function (key, value) {
-            $selwash.append($("<option></option>")
-                .attr("value", value).text(key));
-        });
-    }*@
+        var curwashval = $('#filter-wash').find(":selected").val();
+
+        if (curreg == "") {
+            var $selwash = $('#filter-wash');
+
+            $selwash.empty();
+            $selwash.append($("<option></option>", { value: "", text: "" }));
+            washes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
+
+            $selwash.val(curwashval);
+
+            eventChangeWash();
+        }
+        else {
+            var newwashes = [];
+            newwashes = regions.find(reg => reg.value == curreg).washes;
+
+            var $selwash = $('#filter-wash');
+
+            $selwash.empty();
+            $selwash.append($("<option></option>", { value: "", text: "" }));
+            newwashes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
+
+            $selwash.val(curwashval);
+
+            eventChangeWash();
+        }        
+    }
+
+    function eventChangeWash() {
+
+        var curpostval = $('#filter-post').find(":selected").val();
+
+        var curwash = $('#filter-wash').find(":selected").val();
+
+        if (curwash == "") {
+            var $selpost = $('#filter-post');
+
+            $selpost.empty();
+            $selpost.append($("<option></option>", { value: "", text: "" }));
+            posts.forEach(element => $selpost.append($("<option></option>", { value: element.value, text: element.text })));
+
+            $selpost.val(curpostval);
+        }
+        else {
+            var newposts = [];
+            newposts = washes.find(wash => wash.value == curwash).posts;
+
+            var $selpost = $('#filter-post');
+
+            $selpost.empty();
+            $selpost.append($("<option></option>", { value: "", text: "" }));
+            newposts.forEach(element => $selpost.append($("<option></option>", { value: element.value, text: element.text })));
+
+            $selpost.val(curpostval);
+        }
+    }
 
         function filter() {
 
@@ -178,7 +252,6 @@
                     edate: edate
                 },
                 success: function () {
-                    alert('Обработка запросaaaа!');
                 },
                 error: function () {
                     alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
@@ -224,7 +297,9 @@
 
         $(document).ready(function () {
 
-            //$('#filter-region').change(newWash);
+            $('#filter-region').change(eventChangeRegion);
+
+            $('#filter-wash').change(eventChangeWash);
 
             $("#search-i").on("input", filter);
 

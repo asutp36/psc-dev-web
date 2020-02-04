@@ -114,7 +114,7 @@ namespace Inspinia_MVC5.Controllers
 
             DateTime receiverenddate;
             if (!DateTime.TryParse(recenddate, out receiverenddate))
-                receiverenddate = DateTime.Today.AddSeconds(-1);
+                receiverenddate = DateTime.Now;
 
             DateTime sentbegdate;
             if (!DateTime.TryParse(sbegdate, out sentbegdate))
@@ -122,7 +122,7 @@ namespace Inspinia_MVC5.Controllers
 
             DateTime sentenddate;
             if (!DateTime.TryParse(senddate, out sentenddate))
-                sentenddate = DateTime.Today.AddSeconds(-1);
+                sentenddate = DateTime.Now;
 
             var prmSender = new System.Data.SqlClient.SqlParameter("@p_Sender", System.Data.SqlDbType.NVarChar);
             prmSender.Value = sender;
