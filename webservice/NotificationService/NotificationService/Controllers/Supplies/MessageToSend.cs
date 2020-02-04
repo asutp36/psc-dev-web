@@ -8,7 +8,6 @@ namespace NotificationService.Controllers.Supplies
     public class MessageToSend
     {
         public string sender { get; set; }
-        public bool isPhone { get; set; }
         public string receiver { get; set; }
         public string body { get; set; }
     }

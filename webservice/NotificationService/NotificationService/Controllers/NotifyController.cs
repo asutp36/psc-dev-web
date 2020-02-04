@@ -24,7 +24,7 @@ namespace NotificationService.Controllers
             {
                 if (msgToSend != null)
                 {
-                    Logger.Log.Debug(String.Format("SendMessage: запуск с парметрами:\nsender: {0},\n receiver: {1}, isPhone: {2},\nbody: {3}", msgToSend.sender, msgToSend.receiver, msgToSend.isPhone, msgToSend.body));
+                    Logger.Log.Debug(String.Format("SendMessage: запуск с парметрами:\nsender: {0}, receiver: {1}, body: {2}", msgToSend.sender, msgToSend.receiver, msgToSend.body));
 
                     string result = "";
 
@@ -66,21 +66,23 @@ namespace NotificationService.Controllers
                         {
                             Logger.Log.Debug(String.Format("{0} : {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), response.message));
 
-                            command.CommandText = "UPDATE NoticeHistory" +
-                                $"SET DTimeSent = {DateTime.Now.ToString("yyyyMMdd HH:mm:ss")}, IDNoticeStatus = (select IDNoticeStatus from NoticeStatus where Code = \'sent\')" +
+                            command.CommandText = "UPDATE NoticeHistory " +
+                                $"SET DTimeSent = \'{DateTime.Now.ToString("yyyyMMdd HH:mm:ss")}\', IDNoticeStatus = (select IDNoticeStatus from NoticeStatus where Code = \'sent\') " +
                                 $"WHERE IDNoticeHistory = {id};";
-
-                            Logger.Log.Debug("SendMessage: обновил запись (отправлено). id = " + id);
+                            Logger.Log.Debug("SendMessage: command is " + command.CommandText);
+                            command.ExecuteNonQuery();
+                            
+                            Logger.Log.Debug("SendMessage: обновил запись (отправлено). id = " + id + Environment.NewLine);
                             return Request.CreateResponse(HttpStatusCode.OK);
                         }
                     }
 
-                    Logger.Log.Error("База данных не найдена!");
+                    Logger.Log.Error("База данных не найдена!" + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.InternalServerError);
                 }
                 else
                 {
-                    Logger.Log.Error("message == null. Ошибка в данных запроса");
+                    Logger.Log.Error("message == null. Ошибка в данных запроса" + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.NoContent);
                 }
             }
