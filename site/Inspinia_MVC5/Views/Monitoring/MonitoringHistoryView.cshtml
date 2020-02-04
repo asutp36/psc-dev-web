@@ -196,22 +196,37 @@
 
             $selwash.val(curwashval);
 
-            eventChangeWash();
+            var newposts = [];
+            newwashes.forEach(element => element.posts.forEach(el => newposts.push(el)));
+
+            var $selpost = $('#filter-post');
+
+            $selpost.empty();
+            $selpost.append($("<option></option>", { value: "", text: "" }));
+            newposts.forEach(element => $selpost.append($("<option></option>", { value: element.value, text: element.text })));
+
+            $selpost.val(curpostval);
         }        
     }
 
     function eventChangeWash() {
 
         var curpostval = $('#filter-post').find(":selected").val();
-
+        var curreg = $('#filter-region').find(":selected").val();
         var curwash = $('#filter-wash').find(":selected").val();
 
         if (curwash == "") {
+            var newwashes = [];
+            newwashes = regions.find(reg => reg.value == curreg).washes;
+
+            var newposts = [];
+            newwashes.forEach(element => element.posts.forEach(el => newposts.push(el)));
+
             var $selpost = $('#filter-post');
 
             $selpost.empty();
             $selpost.append($("<option></option>", { value: "", text: "" }));
-            posts.forEach(element => $selpost.append($("<option></option>", { value: element.value, text: element.text })));
+            newposts.forEach(element => $selpost.append($("<option></option>", { value: element.value, text: element.text })));
 
             $selpost.val(curpostval);
         }
