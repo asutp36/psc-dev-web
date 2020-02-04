@@ -37,15 +37,6 @@ namespace NotificationService.Controllers.Supplies
                 result = rdr.ReadToEnd();
             }
 
-            if(result == "Thank you for this dump. I hope you have a lovely day!")
-            {
-                result = "{\"sent\": true, \"message\": \"Сообщение отправлено\"}";
-            }
-            else
-            {
-                result = "{\"sent\": false, \"message\": \"Что-то пошло не так\"}";
-            }
-
             return result;
         }
     }

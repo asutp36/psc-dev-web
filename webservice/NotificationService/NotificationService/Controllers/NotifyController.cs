@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Web.Http;
 using NotificationService.Controllers.Supplies;
 using NotificationService.Models;
+using System.Data.Common;
 
 namespace NotificationService.Controllers
 {
@@ -39,12 +40,21 @@ namespace NotificationService.Controllers
                             .SqlQuery<GetNoticeRecipient_Result>("GetNoticeRecipient @p_RecipientCode", prmRecipientCode)
                             .ToList().First().Recipient;
 
+                        DbCommand command = _model.Database.Connection.CreateCommand();
 
-                        //MessagePhone message = new MessagePhone(recipient, msgToSend.body);
-                        //Logger.Log.Debug(String.Format("Отправка сообщения по номеру телефона: phone: {0}, body: {1}", message.phone, message.body));
-                        //result = WhattsAppSender.SendMessage(JsonConvert.SerializeObject(message), "https://eu33.chat-api.com/instance27633/sendMessage?token=0qgid5wjmhb8vw7d");
+                        command.CommandText = "INSERT INTO NoticeHistory (Sender, DTimeReceive, IDNoticeRecipientsGroup, Message, IDNoticeStatus)" +
+                                                $" VALUES(\'{msgToSend.sender}\', \'{DateTime.Now.ToString("yyyyMMdd HH:mm:ss")}\', " +
+                                                $"(select IDNoticeRecipientsGroup from NoticeRecipientsGroup where Code = \'{msgToSend.receiver}\'), \'{msgToSend.body}\', " +
+                                                $"(select IDNoticeStatus from NoticeStatus where Code = \'received\'));" +
+                                                " SELECT SCOPE_IDENTITY()";
 
-                
+                        var id = command.ExecuteScalar();
+                        Logger.Log.Debug("SendMesssage: запись в историю добавлена. IDNoticeHistory = " + id);
+
+                        MessageChatID message = new MessageChatID(recipient, msgToSend.body);
+                        Logger.Log.Debug(String.Format("SendMessage: Отправка сообщения: chatId: {0}, body: {1}", message.chatId, message.body));
+                        result = WhattsAppSender.SendMessage(JsonConvert.SerializeObject(message), "https://eu33.chat-api.com/instance27633/sendMessage?token=0qgid5wjmhb8vw7d");
+
                         ResponseSendMessage response = JsonConvert.DeserializeObject<ResponseSendMessage>(result);
 
                         if (!response.sent)
@@ -54,7 +64,13 @@ namespace NotificationService.Controllers
                         }
                         else
                         {
-                            Logger.Log.Debug(String.Format("{0} : {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), response.message) + Environment.NewLine);
+                            Logger.Log.Debug(String.Format("{0} : {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), response.message));
+
+                            command.CommandText = "UPDATE NoticeHistory" +
+                                $"SET DTimeSent = {DateTime.Now.ToString("yyyyMMdd HH:mm:ss")}, IDNoticeStatus = (select IDNoticeStatus from NoticeStatus where Code = \'sent\')" +
+                                $"WHERE IDNoticeHistory = {id};";
+
+                            Logger.Log.Debug("SendMessage: обновил запись (отправлено). id = " + id);
                             return Request.CreateResponse(HttpStatusCode.OK);
                         }
                     }
