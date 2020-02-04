@@ -62,6 +62,9 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="GetNoticeRecipient" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RecipientCode" Type="nvarchar" Mode="In" />
+        </Function>
         <EntityContainer Name="WashCompanyStoreContainer">
           <EntitySet Name="NoticeHistory" EntityType="Self.NoticeHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NoticeRecipientsGroup" EntityType="Self.NoticeRecipientsGroup" Schema="dbo" store:Type="Tables" />
@@ -153,7 +156,14 @@
             <End Role="NoticeStatus" EntitySet="NoticeStatus" />
             <End Role="NoticeHistory" EntitySet="NoticeHistory" />
           </AssociationSet>
+          <FunctionImport Name="GetNoticeRecipient" ReturnType="Collection(WashCompany.GetNoticeRecipient_Result)">
+            <Parameter Name="RecipientCode" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
+        <ComplexType Name="GetNoticeRecipient_Result">
+          <Property Type="String" Name="Recipient" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="d" Nullable="false" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -192,6 +202,14 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetNoticeRecipient" FunctionName="WashCompany.Store.GetNoticeRecipient">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WashCompany.GetNoticeRecipient_Result">
+                <ScalarProperty Name="Recipient" ColumnName="Recipient" />
+                <ScalarProperty Name="d" ColumnName="d" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

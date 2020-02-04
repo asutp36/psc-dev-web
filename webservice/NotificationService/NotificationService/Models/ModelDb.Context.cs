@@ -12,6 +12,8 @@ namespace NotificationService.Models
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class ModelDb : DbContext
     {
@@ -28,5 +30,14 @@ namespace NotificationService.Models
         public virtual DbSet<NoticeHistory> NoticeHistory { get; set; }
         public virtual DbSet<NoticeRecipientsGroup> NoticeRecipientsGroup { get; set; }
         public virtual DbSet<NoticeStatus> NoticeStatus { get; set; }
+    
+        public virtual ObjectResult<GetNoticeRecipient_Result> GetNoticeRecipient(string recipientCode)
+        {
+            var recipientCodeParameter = recipientCode != null ?
+                new ObjectParameter("RecipientCode", recipientCode) :
+                new ObjectParameter("RecipientCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetNoticeRecipient_Result>("GetNoticeRecipient", recipientCodeParameter);
+        }
     }
 }
