@@ -22,7 +22,7 @@ namespace PostControllingService.Controllers
                 if (change != null)
                 {
 
-                    foreach (Price p in change.prices)
+                    foreach (Price p in change.Prices)
                     {
                         Logger.Log.Debug("Изменение тарифа. Отправка на пост: " + p);
                         SendPostResponse response = HttpSender.SendPost("http://109.196.164.28:5000/api/post/rate" , JsonConvert.SerializeObject(p));
@@ -138,7 +138,8 @@ namespace PostControllingService.Controllers
                 {
                     Logger.Log.Debug(String.Format("GetCurrentFunction: Запуск с параметрами:\nPost: {0}", post.Post));
 
-                    string func = HttpSender.GetString("http://109.196.164.28:5000/api/post/func/get");
+                    string result = HttpSender.GetString("http://109.196.164.28:5000/api/post/func/get");
+                    PostFunction func = JsonConvert.DeserializeObject<PostFunction>(result);
                     if (func == null)
                     {
                         Logger.Log.Error("Произошла ошибка при отправке запроса. Ответ null");
@@ -147,7 +148,7 @@ namespace PostControllingService.Controllers
                     else
                     {
                         var response = Request.CreateResponse(HttpStatusCode.OK);
-                        response.Headers.Add("Function", func);
+                        response.Headers.Add("Function", func.Name);
                         return response;
                     }
                 }

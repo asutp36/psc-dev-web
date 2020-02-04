@@ -43,7 +43,7 @@ namespace NotificationService.Controllers
                         DbCommand command = _model.Database.Connection.CreateCommand();
 
                         command.CommandText = "INSERT INTO NoticeHistory (Sender, DTimeReceive, IDNoticeRecipientsGroup, Message, IDNoticeStatus)" +
-                                                $" VALUES(\'{msgToSend.sender}\', \'{DateTime.Now.ToString("yyyyMMdd HH:mm:ss")}\', " +
+                                                $" VALUES(\'{msgToSend.sender}\', \'{DateTime.Now.ToString("yyyyMMdd HH:mm:ss.fff")}\', " +
                                                 $"(select IDNoticeRecipientsGroup from NoticeRecipientsGroup where Code = \'{msgToSend.receiver}\'), \'{msgToSend.body}\', " +
                                                 $"(select IDNoticeStatus from NoticeStatus where Code = \'received\'));" +
                                                 " SELECT SCOPE_IDENTITY()";
@@ -67,9 +67,9 @@ namespace NotificationService.Controllers
                             Logger.Log.Debug(String.Format("{0} : {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), response.message));
 
                             command.CommandText = "UPDATE NoticeHistory " +
-                                $"SET DTimeSent = \'{DateTime.Now.ToString("yyyyMMdd HH:mm:ss")}\', IDNoticeStatus = (select IDNoticeStatus from NoticeStatus where Code = \'sent\') " +
+                                $"SET DTimeSent = \'{DateTime.Now.ToString("yyyyMMdd HH:mm:ss.fff")}\', IDNoticeStatus = (select IDNoticeStatus from NoticeStatus where Code = \'sent\') " +
                                 $"WHERE IDNoticeHistory = {id};";
-                            Logger.Log.Debug("SendMessage: command is " + command.CommandText);
+
                             command.ExecuteNonQuery();
                             
                             Logger.Log.Debug("SendMessage: обновил запись (отправлено). id = " + id + Environment.NewLine);

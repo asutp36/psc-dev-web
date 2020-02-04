@@ -7,7 +7,7 @@ namespace PostControllingService.Controllers.Supplies
 {
     public class Price
     {
-        public string function { get; set; }
-        public int price { get; set; }
+        public string Function { get; set; }
+        public int Rate { get; set; }
     }
 }
