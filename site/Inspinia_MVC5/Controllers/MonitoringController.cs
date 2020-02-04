@@ -17,15 +17,27 @@ namespace Inspinia_MVC5.Controllers
         private ModelDb db = new ModelDb();
 
         List<Company> _companies = null;
+        List<Region> _regions = null;
+        List<Wash> _washes = null;
         List<Post> _posts = null;
 
         Post post = null;
+        Region region = new Region();
+        short sss = new short();
         InfoPost infopost = null;
 
         public MonitoringController()
         {
-            _posts = db.Posts.ToList();
             _companies = db.Companies.ToList();
+            _posts = db.Posts.ToList();
+            _regions = db.Regions.ToList();
+            _washes = db.Washes.ToList();
+
+            ViewBag.Regions = _regions;
+            ViewBag.Washes = _washes;
+            ViewBag.Posts = _posts;
+            ViewBag.Temp = region;
+            ViewBag.X = sss;
         }
 
         public ActionResult MonitoringHistoryView()

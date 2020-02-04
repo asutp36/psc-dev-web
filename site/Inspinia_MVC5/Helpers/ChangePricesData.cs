@@ -7,33 +7,33 @@ namespace Inspinia_MVC5.Helpers
 {
     public class ChangePricesData
     {
-        public List<string> posts { get; set; }
+        public List<string> Posts { get; set; }
 
-        public List<Price> prices { get; set; }
+        public List<Price> Prices { get; set; }
 
-        public ChangePricesData(List<string> posts, List<List<string>> prices)
+        public ChangePricesData(List<string> Posts, List<List<string>> Prices)
         {
-            this.posts = posts;
+            this.Posts = Posts;
 
-            this.prices = new List<Price>();
+            this.Prices = new List<Price>();
 
-            foreach (List<string> i in prices)
+            foreach (List<string> i in Prices)
             {
-                this.prices.Add(new Price(i[0], int.Parse(i[1])));                
+                this.Prices.Add(new Price(i[0], int.Parse(i[1])));                
             }
         }
     }
 
     public class Price
     {
-        public string function { get; set; }
+        public string Function { get; set; }
 
-        public int price { get; set; }
+        public int Rate { get; set; }
 
-        public Price(string function, int price)
+        public Price(string Function, int Rate)
         {
-            this.function = function;
-            this.price = price;
+            this.Function = Function;
+            this.Rate = Rate;
         }
     }
 }

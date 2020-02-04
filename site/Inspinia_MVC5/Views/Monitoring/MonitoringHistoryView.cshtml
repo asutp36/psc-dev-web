@@ -56,6 +56,10 @@
                 <label class="col-form-labe">Регион</label>
                 <select id="filter-region" class="form-control">
                     <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.Regions)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
                 </select>            
             </div>
         </div>
@@ -64,6 +68,10 @@
                 <label class="col-form-labe">Мойка</label>
                 <select id="filter-wash" class="form-control">
                     <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.Washes)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
                 </select>
             </div>
         </div>
@@ -72,6 +80,10 @@
                 <label class="col-form-labe">Пост</label>
                 <select id="filter-post" class="form-control">
                     <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.Posts)
+                    {
+                        <option value="@item.Code">@item.Code</option>
+                    }
                 </select>
             </div>
         </div>
@@ -101,21 +113,67 @@
     @Scripts.Render("~/plugins/dataPicker")
     @Scripts.Render("~/plugins/dateRange")
 
-    <script type="text/javascript">
+<script type="text/javascript">
+
+    @*function newWash () {
+
+        var x = $('#filter-region').find(":selected").val();
+
+        var regions = [];
+
+         @foreach (var item in ViewBag.Regions) {
+                <text>
+                    regions.push({ value:"@item.Code", text:"@item.Name", washes:[
+                        @foreach(var w in item.Washes)
+                        {
+                            <text>
+                        { "value": "@w.Code", "text": "@w.Name" },
+                            </text>
+                        }
+                        ]});
+                </text>
+            }
+
+        alert(regions);
+
+        var newwashes = [];
+
+        alert(x);
+
+        var q = regions.find(reg => reg.value == x).text;
+
+        alert(q);
+
+        alert(newwashes)
+
+        var $selwash = $('#filter-wash');
+
+        $selwash.empty();
+        $.each(newwashes, function (key, value) {
+            $selwash.append($("<option></option>")
+                .attr("value", value).text(key));
+        });
+    }*@
 
         function filter() {
 
-            var phone = $('#filter-phone').val();
-            var text  = $('#filter-text').val();
+            var sum = $('#filter-sum').val();
+            var login  = $('#filter-login').val();
             var bdate = $('#bdate').val();
             var edate = $('#edate').val();
+            var region = $('#filter-region').find(":selected").val();
+            var wash = $('#filter-wash').find(":selected").val();
+            var post = $('#filter-post').find(":selected").val();
 
             $.ajax({
                 type: "POST",
                 cache: true,
                 data: {
-                    phone: phone,
-                    text: text,
+                    login: login,
+                    sum: sum,
+                    region: region,
+                    wash: wash,
+                    post: post,
                     bdate: bdate,
                     edate: edate
                 },
@@ -165,6 +223,8 @@
         }
 
         $(document).ready(function () {
+
+            //$('#filter-region').change(newWash);
 
             $("#search-i").on("input", filter);
 
@@ -270,5 +330,5 @@
             $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
             filter();
         });
-    </script>
+</script>
 }
