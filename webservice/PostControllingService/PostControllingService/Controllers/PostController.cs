@@ -29,7 +29,7 @@ namespace PostControllingService.Controllers
 
                         if (response.StatusCode != HttpStatusCode.OK)
                         {
-                            Logger.Log.Error(String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message));
+                            Logger.Log.Error(String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message) + Environment.NewLine);
 
                             return Request.CreateResponse(HttpStatusCode.Conflict);
                         }
@@ -39,7 +39,7 @@ namespace PostControllingService.Controllers
 
                     return Request.CreateResponse(HttpStatusCode.OK);
                 }
-
+                Logger.Log.Error("SendPrice: change == null. Ошибка в данных запроса." + Environment.NewLine);
                 var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
                 return responseBad;
             }
@@ -67,7 +67,7 @@ namespace PostControllingService.Controllers
 
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
-                        Logger.Log.Error(String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message));
+                        Logger.Log.Error(String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message) + Environment.NewLine);
 
                         return Request.CreateResponse(HttpStatusCode.Conflict);
                     }
@@ -76,7 +76,7 @@ namespace PostControllingService.Controllers
 
                     return Request.CreateResponse(HttpStatusCode.OK);
                 }
-
+                Logger.Log.Error("IncreaseBalace: balance == null. Ошибка в данных запроса" + Environment.NewLine);
                 var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
                 return responseBad;
             }
@@ -103,7 +103,7 @@ namespace PostControllingService.Controllers
                     int balance = HttpSender.GetInt("http://109.196.164.28:5000/api/post/balance/get");
                     if(balance == -1)
                     {
-                        Logger.Log.Error("Произошла ошибка при отправке запроса. Ответ -1");
+                        Logger.Log.Error("Произошла ошибка при отправке запроса. Ответ -1" + Environment.NewLine);
                         return Request.CreateResponse(HttpStatusCode.Conflict);
                     }
                     else
@@ -115,7 +115,7 @@ namespace PostControllingService.Controllers
                 }
                 else
                 {
-                    Logger.Log.Error("Post == null. Ошибка в данных запроса");
+                    Logger.Log.Error("Post == null. Ошибка в данных запроса" + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.NoContent);
                 }
             }
@@ -142,7 +142,7 @@ namespace PostControllingService.Controllers
                     PostFunction func = JsonConvert.DeserializeObject<PostFunction>(result);
                     if (func == null)
                     {
-                        Logger.Log.Error("Произошла ошибка при отправке запроса. Ответ null");
+                        Logger.Log.Error("Произошла ошибка при отправке запроса. Ответ null" + Environment.NewLine);
                         return Request.CreateResponse(HttpStatusCode.Conflict);
                     }
                     else
@@ -154,7 +154,7 @@ namespace PostControllingService.Controllers
                 }
                 else
                 {
-                    Logger.Log.Error("Post == null. Ошибка в данных запроса");
+                    Logger.Log.Error("Post == null. Ошибка в данных запроса" + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.NoContent);
                 }
             }
@@ -182,7 +182,7 @@ namespace PostControllingService.Controllers
 
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
-                        Logger.Log.Error(String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message));
+                        Logger.Log.Error(String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message) + Environment.NewLine);
 
                         return Request.CreateResponse(HttpStatusCode.Conflict);
                     }
@@ -193,7 +193,7 @@ namespace PostControllingService.Controllers
                 }
                 else
                 {
-                    Logger.Log.Error("Function == null. Ошибка в данных запроса");
+                    Logger.Log.Error("Function == null. Ошибка в данных запроса" + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.NoContent);
                 }
             }
@@ -220,7 +220,7 @@ namespace PostControllingService.Controllers
 
                     if (heartbeat == -1)
                     {
-                        Logger.Log.Error("HeartBeat: Произошла ошибка при отправке запроса. Ответ -1");
+                        Logger.Log.Error("HeartBeat: Произошла ошибка при отправке запроса. Ответ -1" + Environment.NewLine);
                         return Request.CreateResponse(HttpStatusCode.Conflict);
                     }
                     else
@@ -232,7 +232,7 @@ namespace PostControllingService.Controllers
                 }
                 else
                 {
-                    Logger.Log.Error("Post == null. Ошибка в данных запроса");
+                    Logger.Log.Error("Post == null. Ошибка в данных запроса" + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.NoContent);
                 }
             }
