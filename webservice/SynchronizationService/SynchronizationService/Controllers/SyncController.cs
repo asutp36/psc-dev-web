@@ -7,6 +7,7 @@ using System.Web.Http;
 using SynchronizationService.Models;
 using SynchronizationService.Controllers.Supplies;
 using System.Data.Common;
+using Newtonsoft.Json;
 
 namespace SynchronizationService.Controllers
 {
@@ -209,6 +210,71 @@ namespace SynchronizationService.Controllers
             var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
 
             return responseBad;
+        }
+
+        [HttpPost]
+        [ActionName("eincrease")]
+        public HttpResponseMessage PostEventIncrease([FromBody]EIncreaseFromRequest increase)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if(increase != null)
+                {
+                    Logger.Log.Debug("PostEventIncrease: Запуск с параметрами:\n" + JsonConvert.SerializeObject(increase));
+
+                    if (_model.Database.Exists())
+                    {
+                        _model.Database.Connection.Open();
+                        Logger.Log.Debug("PostEventIncrease: Соединение с БД: " + _model.Database.Connection.State);
+
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+                        command.CommandText = "BEGIN TRANSACTION; " +
+                            "INSERT INTO Event (IDPost, IDEventKind, DTime) " +
+                            $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{increase.Device}\')), " +
+                            $"(select ek.IDEventKind from EventKind ek where ek.Code = \'{increase.Kind}\'), \'{increase.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\'); " +
+                            "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, balance) " +
+                            $"VALUES ((SELECT SCOPE_IDENTITY()), {increase.Amount}, {increase.m10}, {increase.b10}, {increase.b50}, {increase.b100},{increase.b200}, " +
+                            $"{increase.Balance}); " +
+                            "SELECT IDENT_CURRENT(\'Event\')" +
+                            "COMMIT;";
+
+                        //Logger.Log.Debug("Command is: " + command.CommandText);
+
+                        var id = command.ExecuteScalar();
+                        _model.Database.Connection.Close();
+
+                        Int32 serverID = Convert.ToInt32(id.ToString());
+
+                        Logger.Log.Debug("PostEventIncrease: Event добавлен. IDEvent: " + serverID.ToString() + Environment.NewLine);
+
+                        var response = Request.CreateResponse(HttpStatusCode.OK);
+                        response.Headers.Add("ServerID", serverID.ToString());
+                        return response;
+                    }
+                    else
+                    {
+                        Logger.Log.Error("PostEventIncrease: База данных не найдена!" + Environment.NewLine);
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    }
+                }
+                else
+                {
+                    Logger.Log.Error("PostEventIncrease: increase == null. Ошибка в данных запроса." + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("PostEventIncrease: " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            finally
+            {
+                if (_model.Database.Connection.State != System.Data.ConnectionState.Closed)
+                    _model.Database.Connection.Close();
+            }
         }
     }
 }

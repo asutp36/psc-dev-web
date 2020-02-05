@@ -40,8 +40,73 @@
           <Property Name="IDDevice" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
-          <Property Name="IDWash" Type="int" Nullable="false" />
           <Property Name="ServerID" Type="int" />
+          <Property Name="IDDeviceType" Type="int" />
+          <Property Name="IpAddress" Type="nvarchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDPost" Type="int" Nullable="false" />
+          <Property Name="IDEventKind" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventCollect">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="int" Nullable="false" />
+          <Property Name="amount" Type="int" />
+          <Property Name="m10" Type="int" />
+          <Property Name="b10" Type="int" />
+          <Property Name="b50" Type="int" />
+          <Property Name="b100" Type="int" />
+          <Property Name="b200" Type="int" />
+        </EntityType>
+        <EntityType Name="EventIncrease">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="int" Nullable="false" />
+          <Property Name="amount" Type="int" />
+          <Property Name="m10" Type="int" />
+          <Property Name="b10" Type="int" />
+          <Property Name="b50" Type="int" />
+          <Property Name="b100" Type="int" />
+          <Property Name="b200" Type="int" />
+          <Property Name="balance" Type="int" />
+        </EntityType>
+        <EntityType Name="EventKind">
+          <Key>
+            <PropertyRef Name="IDEventKind" />
+          </Key>
+          <Property Name="IDEventKind" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventMode">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="int" Nullable="false" />
+          <Property Name="IDMode" Type="int" />
+          <Property Name="DTimeStart" Type="datetime" />
+          <Property Name="DTimeFinish" Type="datetime" />
+          <Property Name="Duration" Type="int" />
+          <Property Name="PaymentSign" Type="int" />
+          <Property Name="Cost" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="CardTypeCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="CardNum" Type="nvarchar" MaxLength="20" />
+          <Property Name="Discount" Type="int" />
+        </EntityType>
+        <EntityType Name="EventSimple">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="int" Nullable="false" />
+          <Property Name="Counter" Type="int" />
         </EntityType>
         <EntityType Name="Finance">
           <Key>
@@ -64,6 +129,14 @@
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="ServerID" Type="int" />
           <Property Name="ServerMessage" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Mode">
+          <Key>
+            <PropertyRef Name="IDMode" />
+          </Key>
+          <Property Name="IDMode" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="smallint" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <EntityType Name="Operations">
           <Key>
@@ -106,16 +179,7 @@
           <Property Name="Code" Type="nvarchar" MaxLength="10" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" />
           <Property Name="IDWash" Type="int" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="Prices">
-          <Key>
-            <PropertyRef Name="IDFunction" />
-            <PropertyRef Name="Price" />
-          </Key>
-          <Property Name="IDFunction" Type="int" Nullable="false" />
-          <Property Name="Price" Type="int" Nullable="false" />
+          <Property Name="IDDevice" Type="int" />
         </EntityType>
         <EntityType Name="Psces">
           <Key>
@@ -177,17 +241,101 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Device_Wash">
-          <End Role="Wash" Type="Self.Wash" Multiplicity="1">
+        <Association Name="FK_Event_EventKind">
+          <End Role="EventKind" Type="Self.EventKind" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Device" Type="Self.Device" Multiplicity="*" />
+          <End Role="Event" Type="Self.Event" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Wash">
-              <PropertyRef Name="IDWash" />
+            <Principal Role="EventKind">
+              <PropertyRef Name="IDEventKind" />
             </Principal>
-            <Dependent Role="Device">
-              <PropertyRef Name="IDWash" />
+            <Dependent Role="Event">
+              <PropertyRef Name="IDEventKind" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Event_Point">
+          <End Role="Posts" Type="Self.Posts" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Event" Type="Self.Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Posts">
+              <PropertyRef Name="IDPost" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="IDPost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventCash_Event">
+          <End Role="Event" Type="Self.Event" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventIncrease" Type="Self.EventIncrease" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="IDEvent" />
+            </Principal>
+            <Dependent Role="EventIncrease">
+              <PropertyRef Name="IDEvent" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventCollect_Event">
+          <End Role="Event" Type="Self.Event" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventCollect" Type="Self.EventCollect" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="IDEvent" />
+            </Principal>
+            <Dependent Role="EventCollect">
+              <PropertyRef Name="IDEvent" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventMode_Event">
+          <End Role="Event" Type="Self.Event" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventMode" Type="Self.EventMode" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="IDEvent" />
+            </Principal>
+            <Dependent Role="EventMode">
+              <PropertyRef Name="IDEvent" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventMode_Mode">
+          <End Role="Mode" Type="Self.Mode" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventMode" Type="Self.EventMode" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Mode">
+              <PropertyRef Name="IDMode" />
+            </Principal>
+            <Dependent Role="EventMode">
+              <PropertyRef Name="IDMode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventSimple_Event">
+          <End Role="Event" Type="Self.Event" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventSimple" Type="Self.EventSimple" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="IDEvent" />
+            </Principal>
+            <Dependent Role="EventSimple">
+              <PropertyRef Name="IDEvent" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -275,6 +423,20 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Posts_Device">
+          <End Role="Device" Type="Self.Device" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Posts" Type="Self.Posts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Posts">
+              <PropertyRef Name="IDDevice" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Posts_Wash">
           <End Role="Wash" Type="Self.Wash" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -289,48 +451,26 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Function Name="GetCardBalance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="Card" Type="nvarchar" Mode="In" />
-        </Function>
-        <Function Name="GetCardList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="p_Phone" Type="nvarchar" Mode="In" />
-          <Parameter Name="p_Cardnum" Type="nvarchar" Mode="In" />
-          <Parameter Name="p_CardTypeCode" Type="nvarchar" Mode="In" />
-          <Parameter Name="p_CardStatusName" Type="nvarchar" Mode="In" />
-          <Parameter Name="p_BalanceMin" Type="int" Mode="In" />
-          <Parameter Name="p_BalanceMax" Type="int" Mode="In" />
-          <Parameter Name="p_ActivationDateBeg" Type="datetime" Mode="In" />
-          <Parameter Name="p_ActivationDateEnd" Type="datetime" Mode="In" />
-          <Parameter Name="p_ActivationBy" Type="int" Mode="In" />
-          <Parameter Name="p_LastOperationDateBeg" Type="datetime" Mode="In" />
-          <Parameter Name="p_LastOperationDateEnd" Type="datetime" Mode="In" />
-          <Parameter Name="p_LastOperationBy" Type="int" Mode="In" />
-          <Parameter Name="p_IncreaseSumMin" Type="int" Mode="In" />
-          <Parameter Name="p_IncreaseSumMax" Type="int" Mode="In" />
-          <Parameter Name="p_DecreaseSumMin" Type="int" Mode="In" />
-          <Parameter Name="p_DEcreaseSumMax" Type="int" Mode="In" />
-          <Parameter Name="p_CountOperationMin" Type="int" Mode="In" />
-          <Parameter Name="p_CountOperationMax" Type="int" Mode="In" />
-        </Function>
         <EntityContainer Name="WashCompanyStoreContainer">
           <EntitySet Name="Cards" EntityType="Self.Cards" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CardStatuses" EntityType="Self.CardStatuses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CardTypes" EntityType="Self.CardTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Device" EntityType="Self.Device" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Event" EntityType="Self.Event" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventCollect" EntityType="Self.EventCollect" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventIncrease" EntityType="Self.EventIncrease" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventKind" EntityType="Self.EventKind" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventMode" EntityType="Self.EventMode" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventSimple" EntityType="Self.EventSimple" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Finance" EntityType="Self.Finance" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FinanceType" EntityType="Self.FinanceType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Mode" EntityType="Self.Mode" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Operations" EntityType="Self.Operations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OperationTypes" EntityType="Self.OperationTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Owners" EntityType="Self.Owners" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Posts" EntityType="Self.Posts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Psces" EntityType="Self.Psces" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Wash" EntityType="Self.Wash" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Prices" EntityType="Self.Prices" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [Prices].[IDFunction] AS [IDFunction], 
-    [Prices].[Price] AS [Price]
-    FROM [dbo].[Prices] AS [Prices]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="FK_Cards_CardStatuses" Association="Self.FK_Cards_CardStatuses">
             <End Role="CardStatuses" EntitySet="CardStatuses" />
             <End Role="Cards" EntitySet="Cards" />
@@ -343,9 +483,33 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
             <End Role="Owners" EntitySet="Owners" />
             <End Role="Cards" EntitySet="Cards" />
           </AssociationSet>
-          <AssociationSet Name="FK_Device_Wash" Association="Self.FK_Device_Wash">
-            <End Role="Wash" EntitySet="Wash" />
-            <End Role="Device" EntitySet="Device" />
+          <AssociationSet Name="FK_Event_EventKind" Association="Self.FK_Event_EventKind">
+            <End Role="EventKind" EntitySet="EventKind" />
+            <End Role="Event" EntitySet="Event" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_Point" Association="Self.FK_Event_Point">
+            <End Role="Posts" EntitySet="Posts" />
+            <End Role="Event" EntitySet="Event" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventCash_Event" Association="Self.FK_EventCash_Event">
+            <End Role="Event" EntitySet="Event" />
+            <End Role="EventIncrease" EntitySet="EventIncrease" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventCollect_Event" Association="Self.FK_EventCollect_Event">
+            <End Role="Event" EntitySet="Event" />
+            <End Role="EventCollect" EntitySet="EventCollect" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventMode_Event" Association="Self.FK_EventMode_Event">
+            <End Role="Event" EntitySet="Event" />
+            <End Role="EventMode" EntitySet="EventMode" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventMode_Mode" Association="Self.FK_EventMode_Mode">
+            <End Role="Mode" EntitySet="Mode" />
+            <End Role="EventMode" EntitySet="EventMode" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventSimple_Event" Association="Self.FK_EventSimple_Event">
+            <End Role="Event" EntitySet="Event" />
+            <End Role="EventSimple" EntitySet="EventSimple" />
           </AssociationSet>
           <AssociationSet Name="FK_Finance_Device" Association="Self.FK_Finance_Device">
             <End Role="Device" EntitySet="Device" />
@@ -370,6 +534,10 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
           <AssociationSet Name="FK_Pcses_Wash" Association="Self.FK_Pcses_Wash">
             <End Role="Wash" EntitySet="Wash" />
             <End Role="Psces" EntitySet="Psces" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Posts_Device" Association="Self.FK_Posts_Device">
+            <End Role="Device" EntitySet="Device" />
+            <End Role="Posts" EntitySet="Posts" />
           </AssociationSet>
           <AssociationSet Name="FK_Posts_Wash" Association="Self.FK_Posts_Wash">
             <End Role="Wash" EntitySet="Wash" />
@@ -422,10 +590,87 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
           <Property Name="IDDevice" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="IDWash" Type="Int32" Nullable="false" />
           <Property Name="ServerID" Type="Int32" />
-          <NavigationProperty Name="Wash" Relationship="Self.FK_Device_Wash" FromRole="Device" ToRole="Wash" />
+          <Property Name="IDDeviceType" Type="Int32" />
+          <Property Name="IpAddress" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Finance" Relationship="Self.FK_Finance_Device" FromRole="Device" ToRole="Finance" />
+          <NavigationProperty Name="Posts" Relationship="Self.FK_Posts_Device" FromRole="Device" ToRole="Posts" />
+        </EntityType>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDPost" Type="Int32" Nullable="false" />
+          <Property Name="IDEventKind" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="EventKind" Relationship="Self.FK_Event_EventKind" FromRole="Event" ToRole="EventKind" />
+          <NavigationProperty Name="Posts" Relationship="Self.FK_Event_Point" FromRole="Event" ToRole="Posts" />
+          <NavigationProperty Name="EventIncrease" Relationship="Self.FK_EventCash_Event" FromRole="Event" ToRole="EventIncrease" />
+          <NavigationProperty Name="EventCollect" Relationship="Self.FK_EventCollect_Event" FromRole="Event" ToRole="EventCollect" />
+          <NavigationProperty Name="EventMode" Relationship="Self.FK_EventMode_Event" FromRole="Event" ToRole="EventMode" />
+          <NavigationProperty Name="EventSimple" Relationship="Self.FK_EventSimple_Event" FromRole="Event" ToRole="EventSimple" />
+        </EntityType>
+        <EntityType Name="EventCollect">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="Int32" Nullable="false" />
+          <Property Name="amount" Type="Int32" />
+          <Property Name="m10" Type="Int32" />
+          <Property Name="b10" Type="Int32" />
+          <Property Name="b50" Type="Int32" />
+          <Property Name="b100" Type="Int32" />
+          <Property Name="b200" Type="Int32" />
+          <NavigationProperty Name="Event" Relationship="Self.FK_EventCollect_Event" FromRole="EventCollect" ToRole="Event" />
+        </EntityType>
+        <EntityType Name="EventIncrease">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="Int32" Nullable="false" />
+          <Property Name="amount" Type="Int32" />
+          <Property Name="m10" Type="Int32" />
+          <Property Name="b10" Type="Int32" />
+          <Property Name="b50" Type="Int32" />
+          <Property Name="b100" Type="Int32" />
+          <Property Name="b200" Type="Int32" />
+          <Property Name="balance" Type="Int32" />
+          <NavigationProperty Name="Event" Relationship="Self.FK_EventCash_Event" FromRole="EventIncrease" ToRole="Event" />
+        </EntityType>
+        <EntityType Name="EventKind">
+          <Key>
+            <PropertyRef Name="IDEventKind" />
+          </Key>
+          <Property Name="IDEventKind" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Event" Relationship="Self.FK_Event_EventKind" FromRole="EventKind" ToRole="Event" />
+        </EntityType>
+        <EntityType Name="EventMode">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="Int32" Nullable="false" />
+          <Property Name="IDMode" Type="Int32" />
+          <Property Name="DTimeStart" Type="DateTime" Precision="3" />
+          <Property Name="DTimeFinish" Type="DateTime" Precision="3" />
+          <Property Name="Duration" Type="Int32" />
+          <Property Name="PaymentSign" Type="Int32" />
+          <Property Name="Cost" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="CardTypeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="CardNum" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Discount" Type="Int32" />
+          <NavigationProperty Name="Event" Relationship="Self.FK_EventMode_Event" FromRole="EventMode" ToRole="Event" />
+          <NavigationProperty Name="Mode" Relationship="Self.FK_EventMode_Mode" FromRole="EventMode" ToRole="Mode" />
+        </EntityType>
+        <EntityType Name="EventSimple">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="Int32" Nullable="false" />
+          <Property Name="Counter" Type="Int32" />
+          <NavigationProperty Name="Event" Relationship="Self.FK_EventSimple_Event" FromRole="EventSimple" ToRole="Event" />
         </EntityType>
         <EntityType Name="Finance">
           <Key>
@@ -451,6 +696,15 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
           <Property Name="ServerID" Type="Int32" />
           <Property Name="ServerMessage" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Finance" Relationship="Self.FK_Finance_FinanceType" FromRole="FinanceType" ToRole="Finance" />
+        </EntityType>
+        <EntityType Name="Mode">
+          <Key>
+            <PropertyRef Name="IDMode" />
+          </Key>
+          <Property Name="IDMode" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="Int16" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="EventMode" Relationship="Self.FK_EventMode_Mode" FromRole="Mode" ToRole="EventMode" />
         </EntityType>
         <EntityType Name="Operations">
           <Key>
@@ -498,6 +752,9 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
           <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="IDWash" Type="Int32" Nullable="false" />
+          <Property Name="IDDevice" Type="Int32" />
+          <NavigationProperty Name="Device" Relationship="Self.FK_Posts_Device" FromRole="Posts" ToRole="Device" />
+          <NavigationProperty Name="Event" Relationship="Self.FK_Event_Point" FromRole="Posts" ToRole="Event" />
           <NavigationProperty Name="Wash" Relationship="Self.FK_Posts_Wash" FromRole="Posts" ToRole="Wash" />
         </EntityType>
         <EntityType Name="Psces">
@@ -519,17 +776,8 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="IDRegion" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Device" Relationship="Self.FK_Device_Wash" FromRole="Wash" ToRole="Device" />
           <NavigationProperty Name="Posts" Relationship="Self.FK_Posts_Wash" FromRole="Wash" ToRole="Posts" />
           <NavigationProperty Name="Psces" Relationship="Self.FK_Pcses_Wash" FromRole="Wash" ToRole="Psces" />
-        </EntityType>
-        <EntityType Name="Prices">
-          <Key>
-            <PropertyRef Name="IDFunction" />
-            <PropertyRef Name="Price" />
-          </Key>
-          <Property Name="IDFunction" Type="Int32" Nullable="false" />
-          <Property Name="Price" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="FK_Cards_CardStatuses">
           <End Role="CardStatuses" Type="Self.CardStatuses" Multiplicity="1">
@@ -587,20 +835,6 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Device_Wash">
-          <End Role="Wash" Type="Self.Wash" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Device" Type="Self.Device" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Wash">
-              <PropertyRef Name="IDWash" />
-            </Principal>
-            <Dependent Role="Device">
-              <PropertyRef Name="IDWash" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Finance_Device">
           <End Role="Device" Type="Self.Device" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -612,6 +846,118 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
             </Principal>
             <Dependent Role="Finance">
               <PropertyRef Name="IDDevice" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Posts_Device">
+          <End Role="Device" Type="Self.Device" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Posts" Type="Self.Posts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Posts">
+              <PropertyRef Name="IDDevice" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Event_EventKind">
+          <End Role="EventKind" Type="Self.EventKind" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Event" Type="Self.Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventKind">
+              <PropertyRef Name="IDEventKind" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="IDEventKind" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Event_Point">
+          <End Role="Posts" Type="Self.Posts" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Event" Type="Self.Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Posts">
+              <PropertyRef Name="IDPost" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="IDPost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventCash_Event">
+          <End Role="Event" Type="Self.Event" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventIncrease" Type="Self.EventIncrease" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="IDEvent" />
+            </Principal>
+            <Dependent Role="EventIncrease">
+              <PropertyRef Name="IDEvent" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventCollect_Event">
+          <End Role="Event" Type="Self.Event" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventCollect" Type="Self.EventCollect" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="IDEvent" />
+            </Principal>
+            <Dependent Role="EventCollect">
+              <PropertyRef Name="IDEvent" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventMode_Event">
+          <End Role="Event" Type="Self.Event" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventMode" Type="Self.EventMode" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="IDEvent" />
+            </Principal>
+            <Dependent Role="EventMode">
+              <PropertyRef Name="IDEvent" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventSimple_Event">
+          <End Role="Event" Type="Self.Event" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventSimple" Type="Self.EventSimple" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="IDEvent" />
+            </Principal>
+            <Dependent Role="EventSimple">
+              <PropertyRef Name="IDEvent" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventMode_Mode">
+          <End Role="Mode" Type="Self.Mode" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventMode" Type="Self.EventMode" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Mode">
+              <PropertyRef Name="IDMode" />
+            </Principal>
+            <Dependent Role="EventMode">
+              <PropertyRef Name="IDMode" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -690,15 +1036,21 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
           <EntitySet Name="CardStatuses" EntityType="Self.CardStatuses" />
           <EntitySet Name="CardTypes" EntityType="Self.CardTypes" />
           <EntitySet Name="Device" EntityType="Self.Device" />
+          <EntitySet Name="Event" EntityType="Self.Event" />
+          <EntitySet Name="EventCollect" EntityType="Self.EventCollect" />
+          <EntitySet Name="EventIncrease" EntityType="Self.EventIncrease" />
+          <EntitySet Name="EventKind" EntityType="Self.EventKind" />
+          <EntitySet Name="EventMode" EntityType="Self.EventMode" />
+          <EntitySet Name="EventSimple" EntityType="Self.EventSimple" />
           <EntitySet Name="Finance" EntityType="Self.Finance" />
           <EntitySet Name="FinanceType" EntityType="Self.FinanceType" />
+          <EntitySet Name="Mode" EntityType="Self.Mode" />
           <EntitySet Name="Operations" EntityType="Self.Operations" />
           <EntitySet Name="OperationTypes" EntityType="Self.OperationTypes" />
           <EntitySet Name="Owners" EntityType="Self.Owners" />
           <EntitySet Name="Posts" EntityType="Self.Posts" />
           <EntitySet Name="Psces" EntityType="Self.Psces" />
           <EntitySet Name="Wash" EntityType="Self.Wash" />
-          <EntitySet Name="Prices" EntityType="Self.Prices" />
           <AssociationSet Name="FK_Cards_CardStatuses" Association="Self.FK_Cards_CardStatuses">
             <End Role="CardStatuses" EntitySet="CardStatuses" />
             <End Role="Cards" EntitySet="Cards" />
@@ -715,13 +1067,41 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
             <End Role="Cards" EntitySet="Cards" />
             <End Role="Operations" EntitySet="Operations" />
           </AssociationSet>
-          <AssociationSet Name="FK_Device_Wash" Association="Self.FK_Device_Wash">
-            <End Role="Wash" EntitySet="Wash" />
-            <End Role="Device" EntitySet="Device" />
-          </AssociationSet>
           <AssociationSet Name="FK_Finance_Device" Association="Self.FK_Finance_Device">
             <End Role="Device" EntitySet="Device" />
             <End Role="Finance" EntitySet="Finance" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Posts_Device" Association="Self.FK_Posts_Device">
+            <End Role="Device" EntitySet="Device" />
+            <End Role="Posts" EntitySet="Posts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_EventKind" Association="Self.FK_Event_EventKind">
+            <End Role="EventKind" EntitySet="EventKind" />
+            <End Role="Event" EntitySet="Event" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Event_Point" Association="Self.FK_Event_Point">
+            <End Role="Posts" EntitySet="Posts" />
+            <End Role="Event" EntitySet="Event" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventCash_Event" Association="Self.FK_EventCash_Event">
+            <End Role="Event" EntitySet="Event" />
+            <End Role="EventIncrease" EntitySet="EventIncrease" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventCollect_Event" Association="Self.FK_EventCollect_Event">
+            <End Role="Event" EntitySet="Event" />
+            <End Role="EventCollect" EntitySet="EventCollect" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventMode_Event" Association="Self.FK_EventMode_Event">
+            <End Role="Event" EntitySet="Event" />
+            <End Role="EventMode" EntitySet="EventMode" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventSimple_Event" Association="Self.FK_EventSimple_Event">
+            <End Role="Event" EntitySet="Event" />
+            <End Role="EventSimple" EntitySet="EventSimple" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventMode_Mode" Association="Self.FK_EventMode_Mode">
+            <End Role="Mode" EntitySet="Mode" />
+            <End Role="EventMode" EntitySet="EventMode" />
           </AssociationSet>
           <AssociationSet Name="FK_Finance_FinanceType" Association="Self.FK_Finance_FinanceType">
             <End Role="FinanceType" EntitySet="FinanceType" />
@@ -743,44 +1123,7 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
             <End Role="Wash" EntitySet="Wash" />
             <End Role="Psces" EntitySet="Psces" />
           </AssociationSet>
-          <FunctionImport Name="GetCardBalance" ReturnType="Collection(Int32)">
-            <Parameter Name="Card" Mode="In" Type="String" />
-          </FunctionImport>
-          <FunctionImport Name="GetCardList" ReturnType="Collection(WashCompany.GetCardList_Result)">
-            <Parameter Name="p_Phone" Mode="In" Type="String" />
-            <Parameter Name="p_Cardnum" Mode="In" Type="String" />
-            <Parameter Name="p_CardTypeCode" Mode="In" Type="String" />
-            <Parameter Name="p_CardStatusName" Mode="In" Type="String" />
-            <Parameter Name="p_BalanceMin" Mode="In" Type="Int32" />
-            <Parameter Name="p_BalanceMax" Mode="In" Type="Int32" />
-            <Parameter Name="p_ActivationDateBeg" Mode="In" Type="DateTime" />
-            <Parameter Name="p_ActivationDateEnd" Mode="In" Type="DateTime" />
-            <Parameter Name="p_ActivationBy" Mode="In" Type="Int32" />
-            <Parameter Name="p_LastOperationDateBeg" Mode="In" Type="DateTime" />
-            <Parameter Name="p_LastOperationDateEnd" Mode="In" Type="DateTime" />
-            <Parameter Name="p_LastOperationBy" Mode="In" Type="Int32" />
-            <Parameter Name="p_IncreaseSumMin" Mode="In" Type="Int32" />
-            <Parameter Name="p_IncreaseSumMax" Mode="In" Type="Int32" />
-            <Parameter Name="p_DecreaseSumMin" Mode="In" Type="Int32" />
-            <Parameter Name="p_DEcreaseSumMax" Mode="In" Type="Int32" />
-            <Parameter Name="p_CountOperationMin" Mode="In" Type="Int32" />
-            <Parameter Name="p_CountOperationMax" Mode="In" Type="Int32" />
-          </FunctionImport>
         </EntityContainer>
-        <ComplexType Name="GetCardList_Result">
-          <Property Type="String" Name="Phone" Nullable="false" MaxLength="20" />
-          <Property Type="String" Name="CardNum" Nullable="false" MaxLength="20" />
-          <Property Type="String" Name="CardTypeName" Nullable="false" MaxLength="50" />
-          <Property Type="String" Name="CardStatusName" Nullable="false" MaxLength="50" />
-          <Property Type="Int32" Name="Balance" Nullable="false" />
-          <Property Type="DateTime" Name="ActivationDate" Nullable="false" Precision="23" />
-          <Property Type="Int32" Name="ActivationBy" Nullable="false" />
-          <Property Type="DateTime" Name="LastOperationDate" Nullable="false" Precision="23" />
-          <Property Type="Int32" Name="LastOperationBy" Nullable="false" />
-          <Property Type="Int32" Name="IncreaseSum" Nullable="true" />
-          <Property Type="Int32" Name="DecreaseSum" Nullable="true" />
-          <Property Type="Int32" Name="CountOperation" Nullable="true" />
-        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -824,8 +1167,79 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
                 <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
                 <ScalarProperty Name="ServerID" ColumnName="ServerID" />
+                <ScalarProperty Name="IDDeviceType" ColumnName="IDDeviceType" />
+                <ScalarProperty Name="IpAddress" ColumnName="IpAddress" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Event">
+            <EntityTypeMapping TypeName="WashCompany.Event">
+              <MappingFragment StoreEntitySet="Event">
+                <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
+                <ScalarProperty Name="IDPost" ColumnName="IDPost" />
+                <ScalarProperty Name="IDEventKind" ColumnName="IDEventKind" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventCollect">
+            <EntityTypeMapping TypeName="WashCompany.EventCollect">
+              <MappingFragment StoreEntitySet="EventCollect">
+                <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b200" ColumnName="b200" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventIncrease">
+            <EntityTypeMapping TypeName="WashCompany.EventIncrease">
+              <MappingFragment StoreEntitySet="EventIncrease">
+                <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b200" ColumnName="b200" />
+                <ScalarProperty Name="balance" ColumnName="balance" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventKind">
+            <EntityTypeMapping TypeName="WashCompany.EventKind">
+              <MappingFragment StoreEntitySet="EventKind">
+                <ScalarProperty Name="IDEventKind" ColumnName="IDEventKind" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventMode">
+            <EntityTypeMapping TypeName="WashCompany.EventMode">
+              <MappingFragment StoreEntitySet="EventMode">
+                <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
+                <ScalarProperty Name="IDMode" ColumnName="IDMode" />
+                <ScalarProperty Name="DTimeStart" ColumnName="DTimeStart" />
+                <ScalarProperty Name="DTimeFinish" ColumnName="DTimeFinish" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="PaymentSign" ColumnName="PaymentSign" />
+                <ScalarProperty Name="Cost" ColumnName="Cost" />
+                <ScalarProperty Name="CardTypeCode" ColumnName="CardTypeCode" />
+                <ScalarProperty Name="CardNum" ColumnName="CardNum" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventSimple">
+            <EntityTypeMapping TypeName="WashCompany.EventSimple">
+              <MappingFragment StoreEntitySet="EventSimple">
+                <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
+                <ScalarProperty Name="Counter" ColumnName="Counter" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -850,6 +1264,15 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ServerID" ColumnName="ServerID" />
                 <ScalarProperty Name="ServerMessage" ColumnName="ServerMessage" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Mode">
+            <EntityTypeMapping TypeName="WashCompany.Mode">
+              <MappingFragment StoreEntitySet="Mode">
+                <ScalarProperty Name="IDMode" ColumnName="IDMode" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -896,6 +1319,7 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+                <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -919,33 +1343,6 @@ warning 6002: The table/view 'WashCompany.dbo.Prices' does not have a primary ke
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Prices">
-            <EntityTypeMapping TypeName="WashCompany.Prices">
-              <MappingFragment StoreEntitySet="Prices">
-                <ScalarProperty Name="IDFunction" ColumnName="IDFunction" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="GetCardBalance" FunctionName="WashCompany.Store.GetCardBalance" />
-          <FunctionImportMapping FunctionImportName="GetCardList" FunctionName="WashCompany.Store.GetCardList">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="WashCompany.GetCardList_Result">
-                <ScalarProperty Name="Phone" ColumnName="Phone" />
-                <ScalarProperty Name="CardNum" ColumnName="CardNum" />
-                <ScalarProperty Name="CardTypeName" ColumnName="CardTypeName" />
-                <ScalarProperty Name="CardStatusName" ColumnName="CardStatusName" />
-                <ScalarProperty Name="Balance" ColumnName="Balance" />
-                <ScalarProperty Name="ActivationDate" ColumnName="ActivationDate" />
-                <ScalarProperty Name="ActivationBy" ColumnName="ActivationBy" />
-                <ScalarProperty Name="LastOperationDate" ColumnName="LastOperationDate" />
-                <ScalarProperty Name="LastOperationBy" ColumnName="LastOperationBy" />
-                <ScalarProperty Name="IncreaseSum" ColumnName="IncreaseSum" />
-                <ScalarProperty Name="DecreaseSum" ColumnName="DecreaseSum" />
-                <ScalarProperty Name="CountOperation" ColumnName="CountOperation" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

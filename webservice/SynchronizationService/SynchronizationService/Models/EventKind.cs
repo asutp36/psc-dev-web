@@ -12,23 +12,19 @@ namespace SynchronizationService.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Posts
+    public partial class EventKind
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Posts()
+        public EventKind()
         {
             this.Event = new HashSet<Event>();
         }
     
-        public int IDPost { get; set; }
+        public int IDEventKind { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        public int IDWash { get; set; }
-        public Nullable<int> IDDevice { get; set; }
     
-        public virtual Device Device { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Event> Event { get; set; }
-        public virtual Wash Wash { get; set; }
     }
 }
