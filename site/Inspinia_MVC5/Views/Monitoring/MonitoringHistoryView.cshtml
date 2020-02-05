@@ -170,8 +170,8 @@
     function eventChangeRegion () {
 
         var curreg = $('#filter-region').find(":selected").val();
-
         var curwashval = $('#filter-wash').find(":selected").val();
+        var curpostval = $('#filter-post').find(":selected").val();
 
         if (curreg == "") {
             var $selwash = $('#filter-wash');
@@ -216,19 +216,30 @@
         var curwash = $('#filter-wash').find(":selected").val();
 
         if (curwash == "") {
-            var newwashes = [];
-            newwashes = regions.find(reg => reg.value == curreg).washes;
+            if (curreg == "") {
+                var $selpost = $('#filter-post');
 
-            var newposts = [];
-            newwashes.forEach(element => element.posts.forEach(el => newposts.push(el)));
+                $selpost.empty();
+                $selpost.append($("<option></option>", { value: "", text: "" }));
+                posts.forEach(element => $selpost.append($("<option></option>", { value: element.value, text: element.text })));
 
-            var $selpost = $('#filter-post');
+                $selpost.val(curpostval);
+            }
+            else {
+                var newwashes = [];
+                newwashes = regions.find(reg => reg.value == curreg).washes;
 
-            $selpost.empty();
-            $selpost.append($("<option></option>", { value: "", text: "" }));
-            newposts.forEach(element => $selpost.append($("<option></option>", { value: element.value, text: element.text })));
+                var newposts = [];
+                newwashes.forEach(element => element.posts.forEach(el => newposts.push(el)));
 
-            $selpost.val(curpostval);
+                var $selpost = $('#filter-post');
+
+                $selpost.empty();
+                $selpost.append($("<option></option>", { value: "", text: "" }));
+                newposts.forEach(element => $selpost.append($("<option></option>", { value: element.value, text: element.text })));
+
+                $selpost.val(curpostval);
+            }
         }
         else {
             var newposts = [];
@@ -275,13 +286,7 @@
             }).done(function (result) {
                 $('.ibox-content-more').html(result);
                 $('#table-increases').DataTable({
-                    "columns": [
-                        { "width": "20%" },
-                        { "width": "15%" },
-                        { "width": "20%" },
-                        { "width": "20%" },
-                        { "width": "15%" },
-                        { "width": "10%" }],
+                    "responsive": true,
                     "paging": false,
                     "info": false,
                     "searching": false,
@@ -319,13 +324,7 @@
             $("#search-i").on("input", filter);
 
             $('#table-increases').DataTable({
-                "columns": [
-                    { "width": "20%" },
-                    { "width": "15%" },
-                    { "width": "20%" },
-                    { "width": "20%" },
-                    { "width": "15%" },
-                    { "width": "10%" }],
+                "responsive": true,
                 "paging": false,
                 "info": false,
                 "searching": false,

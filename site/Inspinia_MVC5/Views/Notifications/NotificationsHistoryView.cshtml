@@ -183,15 +183,7 @@
             }).done(function (result) {
                 $('.ibox-content-more').html(result);
                 $('#table-notifications').DataTable({
-                    "columns": [
-                        { "width": "12%" },
-                        { "width": "14%" },
-                        { "width": "10%" },
-                        { "width": "13%" },
-                        { "width": "14%" },
-                        { "width": "6%" },
-                        { "width": "11%" },
-                        { "width": "20%" }],
+                    "responsive": true,
                     "paging": false,
                     "info": false,
                     "searching": false,
@@ -199,7 +191,6 @@
                     buttons: [
                         { extend: 'excel', title: 'Report' },
                         { extend: 'pdf', title: 'Report' },
-
                         {
                             extend: 'print',
                             customize: function (win) {
@@ -225,15 +216,7 @@
             $("#search-n").on("input", filter);
 
             $('#table-notifications').DataTable({
-                "columns": [
-                    { "width": "12%" },
-                    { "width": "14%" },
-                    { "width": "10%" },
-                    { "width": "13%" },
-                    { "width": "14%" },
-                    { "width": "6%" },
-                    { "width": "11%" },
-                    { "width": "20%" }],
+                "responsive": true,
                 "paging": false,
                 "info": false,
                 "searching": false,

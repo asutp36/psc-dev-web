@@ -50,18 +50,19 @@
 @section Styles {
     @Styles.Render("~/plugins/summernoteStyles")
     @Styles.Render("~/plugins/tagInputsStyles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
 }
 
 @section Scripts {
     @Scripts.Render("~/plugins/summernote")
     @Scripts.Render("~/plugins/tagInputs")
     @Scripts.Render("~/plugins/typehead")
+    @Scripts.Render("~/plugins/chosen")
 
     <script type="text/javascript">
 
         function clear_inputs() {
-            $('#input-who').tagsinput('removeAll');
-            $('#input-theme').val('');
+            $('#input-who').val('').trigger('chosen:updated');
             $('#input-text').val('');
         }
 
@@ -75,54 +76,10 @@
 
         $(document).ready(function () {
 
-            var arr = [];
-
-            @foreach (var item in ViewBag.Recepients) {
-                <text>
-                    arr.push({ "value":"@item.Code", "text":"@item.Name"});
-                </text>
-            }
-
-            $('#input-who').tagsinput({
-                itemValue: 'value',
-                itemText: 'text',
-                typeahead: {
-                    afterSelect: function (val) { this.$element.val(""); },
-                    source: arr,
-                },
-                trimValue: true,
-            });
+            $('#input-who').chosen({ width: "100%" });
 
             $(document).on("click", "#btn-clear", function () {
                 clear_inputs();
-            });
-
-            $(document).on("click", "#btn-send-all", function () {
-                hide_alerts();
-                if ($('#input-text').val()) {
-                    $.ajax({
-                        type: "POST",
-                        cache: false,
-                        data: {
-                            sender: "@User.Identity.Name.ToString()",
-                            isPhone: true,
-                            theme: $('#input-theme').val(),
-                            text: $('#input-text').val()
-                        },
-                        error: function () {
-                            alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
-                        },
-                        success: function () {
-                            $('#alert-sent').show('fade');
-                        },
-                        url: "@Url.Action("NotificationsToAllSend", "Notifications")",
-                    }).done(function (result) {
-                        $('.mail-box').html(result);
-                    });
-                }
-                else {
-                    $('#alert-text').show('fade');
-                }
             });
 
             $(document).on("click", "#btn-send", function () {
@@ -134,9 +91,7 @@
                         cache: false,
                         data: {
                             sender: "@User.Identity.Name.ToString()",
-                            isPhone: true,
                             receiver: $('#input-who').val(),
-                            theme: $('#input-theme').val(),
                             text: $('#input-text').val()
                         },
                         error: function () {
@@ -148,10 +103,11 @@
                         url: "@Url.Action("NotificationsToReceiversSend", "Notifications")",
                     }).done(function (result) {
                         $('.mail-box').html(result);
+                        $('#input-who').chosen({ width: "100%" });
                     });
                 }
                 else {
-                    if ($('#input-who').val()) {
+                    if ($('#input-who').val().length != 0) {
                         $('#alert-text').show('fade');
                     }
                     else {

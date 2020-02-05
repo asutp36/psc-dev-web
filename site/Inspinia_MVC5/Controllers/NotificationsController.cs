@@ -31,21 +31,11 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.Owners = _owners;
         }
 
-        public ActionResult NotificationsToReceiversSend(string sender, bool isPhone, string receiver, string theme, string text)
+        public ActionResult NotificationsToReceiversSend(string sender, string receiver, string text)
         {
             if (receiver != null && text != null)
             {
-                string data = JsonConvert.SerializeObject(new NotificationClass(sender, isPhone, receiver, theme, text));
-                string testlog = SendRequest(data);
-            }
-            return PartialView("_NotificationsFormView");
-        }
-
-        public ActionResult NotificationsToAllSend(string sender, bool isPhone, string theme, string text)
-        {
-            if (text != null)
-            {
-                string data = JsonConvert.SerializeObject(new NotificationClass(sender, isPhone, "FORALL", theme, text));
+                string data = JsonConvert.SerializeObject(new NotificationClass(sender, receiver, text));
                 string testlog = SendRequest(data);
             }
             return PartialView("_NotificationsFormView");
@@ -53,8 +43,8 @@ namespace Inspinia_MVC5.Controllers
 
         public string SendRequest(string json)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/notify/api/notify/message");
-            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/jsleg-1580653259/post");
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/notify/api/notify/message");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/jsleg-1580653259/post");
 
             request.KeepAlive = false;
             request.ProtocolVersion = HttpVersion.Version10;
@@ -164,7 +154,6 @@ namespace Inspinia_MVC5.Controllers
             resultlist = result;
 
             return resultlist;
-
         }
 
         public ActionResult NotificationsFilter(
