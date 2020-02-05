@@ -1923,6 +1923,7 @@
     <Content Include="Views\Notifications\_NotificationsFormView.cshtml" />
     <Content Include="Views\Monitoring\MonitoringHistoryView.cshtml" />
     <Content Include="Views\Monitoring\_MonitoringHistoryList.cshtml" />
+    <Content Include="Views\Pricing\NewPricesWrapper.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

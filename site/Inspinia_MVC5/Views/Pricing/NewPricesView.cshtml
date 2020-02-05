@@ -1,257 +1,116 @@
 ﻿@model IEnumerable<Inspinia_MVC5.Models.Company>
 
-@{
-    ViewBag.Title = "Ценообразование";
-}
-
-<div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-lg-10">
-        <h2>Ценообразование</h2>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
-            </li>
-            <li class="active breadcrumb-item">
-                <strong>Ценообразование</strong>
-            </li>
-        </ol>
-    </div>
-    <div class="col-lg-2">
-
-    </div>
+<div class="sk-spinner sk-spinner-three-bounce">
+    <div class="sk-bounce1"></div>
+    <div class="sk-bounce2"></div>
+    <div class="sk-bounce3"></div>
 </div>
 
-<div class="wrapper wrapper-content animated fadeInRight ecommerce">
-    <div id="alert-common" class="alert alert-danger">
-        Посты не выбраны, цены не заполнены!
-    </div>
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="ibox ">
-                <div id="alert-posts" class="alert alert-warning">
-                    Выберите посты!
-                </div>
-                <div class="ibox-title">
-                    <h2>Отметьте посты  <small>где нужно изменить цену</small></h2>
-                </div>
-                <div class="ibox-content">
+<div id="alert-common" class="alert alert-danger">
+    Посты не выбраны, цены не заполнены!
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="ibox ">
+            <div id="alert-posts" class="alert alert-warning">
+                Выберите посты!
+            </div>
+            <div class="ibox-title">
+                <h2>Отметьте посты  <small>где нужно изменить цену</small></h2>
+            </div>
+            <div class="ibox-content">
 
-                    <div id="jstree1">
-                        <ul>
-                            @foreach (var c in Model)
-                            {
-                                <li class="jstree">
-                                    @c.Name
-                                    <ul>
-                                        @foreach (var m in c.Regions)
-                                        {
-                                            <li>
-                                                @m.Name
-                                                <ul>
-                                                    @foreach (var n in m.Washes)
-                                                    {
-                                                        <li>
-                                                            @n.Name
-                                                            <ul>
-                                                                @foreach (var k in n.Posts)
-                                                                {
-                                                                    <li id="@k.Code">@k.Name</li>
-                                                                }
-                                                            </ul>
-                                                        </li>
-                                                    }
-                                                </ul>
-                                            </li>
-                                        }
-                                    </ul>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                    <hr />
-                    <h4>Выбранные посты:</h4>
-                    <p id="output"></p>
+                <div id="jstree1">
+                    <ul>
+                        @foreach (var c in Model)
+                        {
+                            <li class="jstree">
+                                @c.Name
+                                <ul>
+                                    @foreach (var m in c.Regions)
+                                    {
+                                        <li>
+                                            @m.Name
+                                            <ul>
+                                                @foreach (var n in m.Washes)
+                                                {
+                                                    <li>
+                                                        @n.Name
+                                                        <ul>
+                                                            @foreach (var k in n.Posts)
+                                                            {
+                                                                <li id="@k.Code">@k.Name</li>
+                                                            }
+                                                        </ul>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    </ul>
                 </div>
+                <hr />
+                <h4>Выбранные посты:</h4>
+                <p id="output"></p>
             </div>
         </div>
-        <div class="col-lg-6">
-            <div class="ibox ">
-                <div id="alert-prices" class="alert alert-warning">
-                    Введите цену!
+    </div>
+    <div class="col-lg-6">
+        <div class="ibox ">
+            <div id="alert-prices" class="alert alert-warning">
+                Введите цену!
+            </div>
+            <div class="ibox-title">
+                <h2>Введите цену <small>на каждый режим</small></h2>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-lg-6 my-2">
+                        <span class="label label-info">1-й режим</span>
+                        <input name="func1" id="price-1" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                    </div>
+                    <div class="col-lg-6 my-2">
+                        <span class="label label-info">2-й режим</span>
+                        <input name="func2" id="price-2" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                    </div>
                 </div>
-                <div class="ibox-title">
-                    <h2>Введите цену <small>на каждый режим</small></h2>
+                <div class="row">
+                    <div class="col-lg-6 my-2">
+                        <span class="label label-info">3-й режим</span>
+                        <input name="func3" id="price-3" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                    </div>
+                    <div class="col-lg-6 my-2">
+                        <span class="label label-info">4-й режим</span>
+                        <input name="func4" id="price-4" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
+                    </div>
                 </div>
-                <div class="ibox-content">
-                    <div class="row">
-                        <div class="col-lg-6 my-2">
-                            <span class="label label-info">1-й режим</span>
-                            <input name="func1" id="price-1" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
-                        </div>
-                        <div class="col-lg-6 my-2">
-                            <span class="label label-info">2-й режим</span>
-                            <input name="func2" id="price-2" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
-                        </div>
+                <div class="row">
+                    <div class="col-lg-6 my-2">
+                        <span class="label label-info">5-й режим</span>
+                        <input name="func5" id="price-5" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                     </div>
-                    <div class="row">
-                        <div class="col-lg-6 my-2">
-                            <span class="label label-info">3-й режим</span>
-                            <input name="func3" id="price-3" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
-                        </div>
-                        <div class="col-lg-6 my-2">
-                            <span class="label label-info">4-й режим</span>
-                            <input name="func4" id="price-4" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
-                        </div>
+                    <div class="col-lg-6 my-2">
+                        <span class="label label-info">6-й режим</span>
+                        <input name="func6" id="price-6" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                     </div>
-                    <div class="row">
-                        <div class="col-lg-6 my-2">
-                            <span class="label label-info">5-й режим</span>
-                            <input name="func5" id="price-5" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
-                        </div>
-                        <div class="col-lg-6 my-2">
-                            <span class="label label-info">6-й режим</span>
-                            <input name="func6" id="price-6" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
-                        </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 my-2">
+                        <span class="label label-info">7-й режим</span>
+                        <input name="func7" id="price-7" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                     </div>
-                    <div class="row">
-                        <div class="col-lg-6 my-2">
-                            <span class="label label-info">7-й режим</span>
-                            <input name="func7" id="price-7" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
-                        </div>
-                        <div class="col-lg-6 my-2">
-                            <span class="label label-info">8-й режим</span>
-                            <input name="func8" id="price-8" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
-                        </div>
+                    <div class="col-lg-6 my-2">
+                        <span class="label label-info">8-й режим</span>
+                        <input name="func8" id="price-8" required type="text" onkeypress="validate(event)" class="form-control my-1" placeholder="руб./мин." />
                     </div>
-                    <div class="form-group align-items-center">
-                        <button type="submit" id="btn-save" class="btn btn-outline btn-success font-bold">Сохранить</button>
-                    </div>
+                </div>
+                <div class="form-group align-items-center">
+                    <button type="submit" id="btn-save" class="btn btn-outline btn-success font-bold">Сохранить</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
-@section Styles {
-    @Styles.Render("~/Content/plugins/jsTree")
-}
-
-@section Scripts {
-    @Scripts.Render("~/plugins/jsTree")
-
-    <script type="text/javascript">
-        var outputList = [];
-        $('#alert-common').hide()
-        $('#alert-prices').hide()
-        $('#alert-posts') .hide()
-
-        $(document).ready(function () {
-
-            $(document).on("click", "#btn-save", function () {
-                var prices = [];
-
-                for (let i = 1; i < 9; i++) {
-                    var curid = '#price-' + i;
-                    if ($(curid).val() != "") {
-                        var price = [];
-                        price.push($(curid).attr('name'));
-                        price.push($(curid).val());
-
-                        prices.push(price);
-                    }
-                }
-
-                var posts = outputList;
-
-                if (prices == "" && posts == "") {
-                    $('#alert-prices').hide('fade')
-                    $('#alert-posts').hide('fade')
-                    $('#alert-common').show('fade') // в этом варианте алёрты не скрываются со временем; скрываются при каких-либо действиях;
-
-                    // в этом варианте алёрты скрываются со временем; скрывается через 10 секунд после появления;
-                    //$('#alert-common').fadeTo(10000, 500).slideUp(500, function () {
-                    //    $('#alert-common').slideUp(500)
-                    //})
-                }
-                else {
-                    if (prices == "") {
-                        $('#alert-common').hide('fade')
-                        $('#alert-posts') .hide('fade')
-                        $('#alert-prices').show('fade')
-                    }
-                    else {
-                        if (posts == "") {
-                            $('#alert-prices').hide('fade')
-                            $('#alert-common').hide('fade')
-                            $('#alert-posts') .show('fade')
-                        }
-                        else {
-                            $.ajax({
-                                type: "POST",
-                                cache: false,
-                                data: {
-                                    prices: prices,
-                                    posts: posts
-                                },
-                                error: function () {
-                                    alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
-                                },
-                                url: "@Url.Action("SaveNewPrices", "Pricing")",
-                            }).done(function (result) {
-                                $('#wrapper').html(result);
-                            });
-                        }
-                    }
-                }
-            });
-
-            $('#jstree1').jstree({
-                'core': {
-                    'themes': {
-                        'variant' : 'large'
-                    },
-                    'check_callback': true,
-                    'mulptiple': false,
-                    'animation': 0
-                },
-                'checkbox': {
-                    'keep_selected_style':true
-                },
-                'plugins': ['wholerow', 'types', 'checkbox'],
-                'types': {
-                    'default': {
-                        //'icon': 'fa fa-circle'
-                        'icon': false
-                    }
-
-                }
-            });
-            $('#jstree1').on('changed.jstree', function (e, data) {
-                var objects = data.instance.get_selected(true)
-                var leaves = $.grep(objects, function (o) { return data.instance.is_leaf(o) })
-                outputList = [];
-                $.each(leaves, function (i, o) {
-                    outputList.push($(o).attr('id'))
-                })
-                var list = $('#output')
-                list.empty()
-                $.each(leaves, function (i, o) {
-                    $('<span/>').text($(o).attr('id')+" ").appendTo(list)
-                })
-            })
-        });
-
-        function validate(evt) {
-            var theEvent = evt || window.event;
-            var key = theEvent.keyCode || theEvent.which;
-            key = String.fromCharCode(key);
-            var regex = /[0-9]/;
-            if (!regex.test(key)) {
-                theEvent.returnValue = false;
-                if (theEvent.preventDefault) theEvent.preventDefault();
-            }
-        }
-
-    </script>
-}

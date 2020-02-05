@@ -30,7 +30,7 @@ namespace Inspinia_MVC5.Controllers
                 string data = JsonConvert.SerializeObject(new ChangePricesData(posts, prices));
                 string testlog = SendPrices(data);
             }
-            return View("NewPricesView", _companies);
+            return PartialView("NewPricesView", _companies);
         }
 
         public string SendPrices(string json)
@@ -84,9 +84,14 @@ namespace Inspinia_MVC5.Controllers
             }
         }
 
+        public ActionResult NewPricesWrapper()
+        {
+            return View();
+        }
+
         public ActionResult NewPricesView()
         {
-            return View(_companies);
+            return PartialView(_companies);
         }
     }
 }
