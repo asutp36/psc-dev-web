@@ -142,6 +142,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\Supplies\EIncreaseFromRequest.cs" />
+    <Compile Include="Controllers\Supplies\EModeFromRequest.cs" />
     <Compile Include="Controllers\Supplies\FinanceFromRequest.cs" />
     <Compile Include="Controllers\Supplies\Logger.cs" />
     <Compile Include="Controllers\SyncController.cs" />

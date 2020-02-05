@@ -8,6 +8,7 @@ using SynchronizationService.Models;
 using SynchronizationService.Controllers.Supplies;
 using System.Data.Common;
 using Newtonsoft.Json;
+using System.Globalization;
 
 namespace SynchronizationService.Controllers
 {
@@ -268,6 +269,72 @@ namespace SynchronizationService.Controllers
             catch (Exception ex)
             {
                 Logger.Log.Error("PostEventIncrease: " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            finally
+            {
+                if (_model.Database.Connection.State != System.Data.ConnectionState.Closed)
+                    _model.Database.Connection.Close();
+            }
+        }
+
+        [HttpPost]
+        [ActionName("emode")]
+        public HttpResponseMessage PostEventMode([FromBody]EModeFromRequest mode)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if(mode != null)
+                {
+                    Logger.Log.Debug("PostEventMode: Запуск с параметрами:\n" + JsonConvert.SerializeObject(mode));
+
+                    if (_model.Database.Exists())
+                    {
+                        _model.Database.Connection.Open();
+                        Logger.Log.Debug("PostEventMode: Соединение с БД: " + _model.Database.Connection.State);
+
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+                        command.CommandText = "BEGIN TRANSACTION; " +
+                            "INSERT INTO Event (IDPost, IDEventKind, DTime) " +
+                            $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{mode.Device}\')), " +
+                            $"(select ek.IDEventKind from EventKind ek where ek.Code = \'mode\'), \'{mode.DTimeStart.ToString("yyyyMMdd HH:mm:ss.fff")}\'); " +
+                            "INSERT INTO EventMode (IDEvent, IDMode, DTimeStart, DTimeFinish, Duration, PaymentSign, Cost, CardTypeCode, CardNum, Discount) " +
+                            $"VALUES ((SELECT SCOPE_IDENTITY()), (select m.IDMode from Mode m where m.Code = \'{mode.Mode}\'), \'{mode.DTimeStart}\', \'{mode.DTimeFinish}\', " +
+                            $"{mode.Duration}, {mode.PaymentSign}, {mode.Cost.ToString().Replace(",", CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator)}, \'{mode.CardTypeCode}\', \'{mode.CardNum}\', {mode.Discount}); " +
+                            "SELECT IDENT_CURRENT(\'Event\')" +
+                            "COMMIT;";
+
+                        Logger.Log.Debug("Command is: " + command.CommandText);
+
+                        var id = command.ExecuteScalar();
+                        _model.Database.Connection.Close();
+
+                        Int32 serverID = Convert.ToInt32(id.ToString());
+
+                        Logger.Log.Debug("PostEventMode: Event добавлен. IDEvent: " + serverID.ToString() + Environment.NewLine);
+
+                        var response = Request.CreateResponse(HttpStatusCode.OK);
+                        response.Headers.Add("ServerID", serverID.ToString());
+                        return response;
+                    }
+                    else
+                    {
+                        Logger.Log.Error("PostEventMode: База данных не найдена!" + Environment.NewLine);
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    }
+
+                }
+                else
+                {
+                    Logger.Log.Error("PostEventMode: mode == null. Ошибка в данных запроса." + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                }
+            }
+            catch(Exception ex)
+            {
+                Logger.Log.Error("PostEventMode: " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
             finally
