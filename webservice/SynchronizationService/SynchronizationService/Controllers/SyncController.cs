@@ -291,22 +291,26 @@ namespace SynchronizationService.Controllers
                     Logger.Log.Debug("PostEventMode: Запуск с параметрами:\n" + JsonConvert.SerializeObject(mode));
 
                     if (_model.Database.Exists())
-                    {
+                    {   
+                        string finish = DateTime.Compare(mode.DTimeFinish, DateTime.Parse("2000-01-01 00:00:00")) <= 0 ? 
+                            "null" :
+                            mode.DTimeFinish.ToString("\'yyyyMMdd HH:mm:ss.fff\'"); 
+
                         _model.Database.Connection.Open();
                         Logger.Log.Debug("PostEventMode: Соединение с БД: " + _model.Database.Connection.State);
-
+                        
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "BEGIN TRANSACTION; " +
                             "INSERT INTO Event (IDPost, IDEventKind, DTime) " +
                             $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{mode.Device}\')), " +
                             $"(select ek.IDEventKind from EventKind ek where ek.Code = \'mode\'), \'{mode.DTimeStart.ToString("yyyyMMdd HH:mm:ss.fff")}\'); " +
                             "INSERT INTO EventMode (IDEvent, IDMode, DTimeStart, DTimeFinish, Duration, PaymentSign, Cost, CardTypeCode, CardNum, Discount) " +
-                            $"VALUES ((SELECT SCOPE_IDENTITY()), (select m.IDMode from Mode m where m.Code = \'{mode.Mode}\'), \'{mode.DTimeStart}\', \'{mode.DTimeFinish}\', " +
+                            $"VALUES ((SELECT SCOPE_IDENTITY()), (select m.IDMode from Mode m where m.Code = \'{mode.Mode}\'), \'{mode.DTimeStart}\', {finish}, " +
                             $"{mode.Duration}, {mode.PaymentSign}, {mode.Cost.ToString().Replace(",", CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator)}, \'{mode.CardTypeCode}\', \'{mode.CardNum}\', {mode.Discount}); " +
                             "SELECT IDENT_CURRENT(\'Event\')" +
                             "COMMIT;";
 
-                        Logger.Log.Debug("Command is: " + command.CommandText);
+                        //Logger.Log.Debug("Command is: " + command.CommandText);
 
                         var id = command.ExecuteScalar();
                         _model.Database.Connection.Close();
@@ -335,6 +339,70 @@ namespace SynchronizationService.Controllers
             catch(Exception ex)
             {
                 Logger.Log.Error("PostEventMode: " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            finally
+            {
+                if (_model.Database.Connection.State != System.Data.ConnectionState.Closed)
+                    _model.Database.Connection.Close();
+            }
+        }
+
+        [HttpPost]
+        [ActionName("ecollect")]
+        public HttpResponseMessage PostEventCollect([FromBody]ECollectFromRequest collect)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if (collect != null)
+                {
+                    Logger.Log.Debug("PostEventCollect: Запуск с параметрами:\n" + JsonConvert.SerializeObject(collect));
+
+                    if (_model.Database.Exists())
+                    {
+                        _model.Database.Connection.Open();
+                        Logger.Log.Debug("PostEventCollect: Соединение с БД: " + _model.Database.Connection.State);
+
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+                        command.CommandText = "BEGIN TRANSACTION; " +
+                            "INSERT INTO Event (IDPost, IDEventKind, DTime) " +
+                            $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{collect.Device}\')), " +
+                            $"(select ek.IDEventKind from EventKind ek where ek.Code = \'collect\'), \'{collect.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\'); " +
+                            "INSERT INTO EventCollect (IDEvent, amount, m10, b10, b50, b100, b200) " +
+                            $"VALUES ((SELECT SCOPE_IDENTITY()), {collect.Amount}, {collect.m10}, {collect.b10}, {collect.b50}, {collect.b100},{collect.b200}); " +
+                            "SELECT IDENT_CURRENT(\'Event\')" +
+                            "COMMIT;";
+
+                        //Logger.Log.Debug("Command is: " + command.CommandText);
+
+                        var id = command.ExecuteScalar();
+                        _model.Database.Connection.Close();
+
+                        Int32 serverID = Convert.ToInt32(id.ToString());
+
+                        Logger.Log.Debug("PostEventCollect: Event добавлен. IDEvent: " + serverID.ToString() + Environment.NewLine);
+
+                        var response = Request.CreateResponse(HttpStatusCode.OK);
+                        response.Headers.Add("ServerID", serverID.ToString());
+                        return response;
+                    }
+                    else
+                    {
+                        Logger.Log.Error("PostEventCollect: База данных не найдена!" + Environment.NewLine);
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    }
+                }
+                else
+                {
+                    Logger.Log.Error("PostEventCollect: increase == null. Ошибка в данных запроса." + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("PostEventCollect: " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
             finally
