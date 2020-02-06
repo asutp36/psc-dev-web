@@ -294,7 +294,7 @@ namespace SynchronizationService.Controllers
                     {   
                         string finish = DateTime.Compare(mode.DTimeFinish, DateTime.Parse("2000-01-01 00:00:00")) <= 0 ? 
                             "null" :
-                            mode.DTimeFinish.ToString("\'yyyyMMdd HH:mm:ss.fff\'"); 
+                            '\'' + mode.DTimeFinish.ToString("yyyyMMdd HH:mm:ss.fff") + '\''; 
 
                         _model.Database.Connection.Open();
                         Logger.Log.Debug("PostEventMode: Соединение с БД: " + _model.Database.Connection.State);
