@@ -85,7 +85,7 @@
                         </div>
                         <div class="col-lg-4"></div>
                         <div class="col-lg-4">
-                            <button type="submit" id="btn-increase" class="btn btn-outline btn-primary font-bold"><i class="fa fa-credit-card"></i> Внести</button>
+                            <button type="submit" id="btn-increase" class="ladda-button btn btn-outline btn-primary font-bold" data-style="expand-right"><i class="fa fa-credit-card"></i> Внести</button>
                         </div>
                     </div>
                     <div class="row" style="margin-left:2px; margin-top:4px;">
@@ -94,7 +94,7 @@
                         </div>
                         <div class="col-lg-4"></div>
                         <div class="col-lg-4">
-                            <button type="submit" id="btn-change" class="btn btn-outline btn-danger font-bold"><i class="fa fa-exchange-alt"></i> Поменять</button>
+                            <button type="submit" id="btn-change" class="ladda-button btn btn-outline btn-danger font-bold" data-style="expand-right"><i class="fa fa-exchange-alt"></i> Поменять</button>
                         </div>
                     </div>
                 </div>
@@ -119,10 +119,12 @@
 
 @section Styles {
     @Styles.Render("~/Content/plugins/jsTree")
+    @Styles.Render("~/plugins/laddaStyles")
 }
 
 @section Scripts {
     @Scripts.Render("~/plugins/jsTree")
+    @Scripts.Render("~/plugins/ladda")
 
     <script type="text/javascript">
 
@@ -203,7 +205,7 @@
                 },
                 beforeSend: function () {
                     $('#ibox1').children('.ibox-content').toggleClass('sk-loading');
-                },  
+                },
                 complete: function () {
                     $('#ibox1').children('.ibox-content').toggleClass('sk-loading');
                 },
@@ -224,8 +226,12 @@
         }
 
         $(document).ready(function () {
+
+            $('#btn-increase').ladda();
+            $('#btn-change').ladda();
+
             hideall();
-           
+
             $('#jstree1').jstree({
                 'core': {
                     'themes': {
@@ -252,6 +258,12 @@
                             sum: $('#increase-balance').val(),
                             login: "@User.Identity.Name.ToString()"
                         },
+                        beforeSend: function () {
+                            $('#btn-increase').ladda('start');
+                        },
+                        complete: function () {
+                            $('#btn-increase').ladda('stop');
+                        },
                         error: function () {
                             alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
                         },
@@ -272,7 +284,7 @@
 
             $(document).on("click", "#btn-change", function () {
                 hideall();
-                if ($('#input-rate').val() != "") {
+                if ($('#input-function').val() != "") {
                     $.ajax({
                         type: "POST",
                         cache: false,
@@ -280,6 +292,12 @@
                             Post: $('#cur_idpost').val(),
                             Function: $('#input-function').val(),
                             login: "@User.Identity.Name.ToString()"
+                        },
+                        beforeSend: function () {
+                            $('#btn-change').ladda('start');
+                        },
+                        complete: function () {
+                            $('#btn-change').ladda('stop');
                         },
                         error: function () {
                             alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
