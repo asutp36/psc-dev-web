@@ -133,6 +133,7 @@
             $('#alert-success-sum').hide()
             $('#alert-function').hide()
             $('#alert-success-fun').hide()
+            $('#alert-intsererr').hide();
         }
 
         function clearall() {
@@ -180,7 +181,7 @@
                 check_state()
             },
             error: function () {
-                console.log('Возникла ошибка!');
+                
             },
             url: "@Url.Action("PostMonitoringView", "Monitoring")",
         }).done(function (result) {
@@ -222,16 +223,11 @@
             }).done(function (result) {
                 $('#cur_post').html(result);
                 });
-
         }
 
-        $(document).ready(function () {
+        hideall();
 
-            $('#btn-increase').ladda();
-            $('#btn-change').ladda();
-
-            hideall();
-
+        function initjstree () {
             $('#jstree1').jstree({
                 'core': {
                     'themes': {
@@ -246,6 +242,14 @@
                     }
                 }
             });
+        }
+
+        initjstree();
+
+        $(document).ready(function () {
+
+            $('#btn-increase').ladda();
+            $('#btn-change').ladda();
 
             $(document).on("click", "#btn-increase", function () {
                 hideall();
@@ -266,8 +270,9 @@
                             $('#btn-increase').ladda('stop');
                             $('#input-balance').attr('readonly', false);
                         },
-                        error: function () {
-                            alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
+                        error: function (xhr, ajaxOPtions, thrownError) {
+                            alert(xhr.responseText);
+                            alert(thrownError);
                         },
                         success: function ()
                         {
@@ -308,12 +313,12 @@
                         },
                         success: function ()
                         {
-                            $('#input-change').val('');
-                            $('#alert-success-fun').show('fade')
+                            $('#input-function').val('');
                         },
                         url: "@Url.Action("ChangeFunction", "Monitoring")",
                     }).done(function (result) {
                         $('#cur_post').html(result);
+                        $('#alert-success-fun').show('fade')
                     });
                 }
                 else {
