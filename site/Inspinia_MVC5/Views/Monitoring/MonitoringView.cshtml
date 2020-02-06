@@ -81,7 +81,7 @@
                 <div class="ibox-content-more">
                     <div class="row" style="margin-left:2px">
                         <div class="col-lg-4">
-                            <input id="increase-balance" required type="text" onkeypress="validate(event)" class="form-control" placeholder="Введите сумму" />
+                            <input id="input-balance" required type="text" onkeypress="validate(event)" class="form-control" placeholder="Введите сумму" />
                         </div>
                         <div class="col-lg-4"></div>
                         <div class="col-lg-4">
@@ -136,7 +136,7 @@
         }
 
         function clearall() {
-            $('#increase-balance').val("");
+            $('#input-balance').val("");
             $('#input-function').val("");
         }
 
@@ -249,27 +249,29 @@
 
             $(document).on("click", "#btn-increase", function () {
                 hideall();
-                if ($('#increase-balance').val() != "") {
+                if ($('#input-balance').val() != "") {
                     $.ajax({
                         type: "POST",
                         cache: false,
                         data: {
                             Post: $('#cur_idpost').val(),
-                            sum: $('#increase-balance').val(),
+                            sum: $('#input-balance').val(),
                             login: "@User.Identity.Name.ToString()"
                         },
                         beforeSend: function () {
                             $('#btn-increase').ladda('start');
+                            $('#input-balance').attr('readonly', true);
                         },
                         complete: function () {
                             $('#btn-increase').ladda('stop');
+                            $('#input-balance').attr('readonly', false);
                         },
                         error: function () {
                             alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
                         },
                         success: function ()
                         {
-                            clearall();
+                            $('#input-balance').val('');
                             $('#alert-success-sum').show('fade')
                         },
                         url: "@Url.Action("IncreaseBalance", "Monitoring")",
@@ -295,16 +297,18 @@
                         },
                         beforeSend: function () {
                             $('#btn-change').ladda('start');
+                            $('#input-function').attr('readonly', true);
                         },
                         complete: function () {
                             $('#btn-change').ladda('stop');
+                            $('#input-function').attr('readonly', false);
                         },
                         error: function () {
                             alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
                         },
                         success: function ()
                         {
-                            clearall();
+                            $('#input-change').val('');
                             $('#alert-success-fun').show('fade')
                         },
                         url: "@Url.Action("ChangeFunction", "Monitoring")",
