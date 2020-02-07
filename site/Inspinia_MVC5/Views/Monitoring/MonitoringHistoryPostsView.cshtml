@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "История пополнения";
+    ViewBag.Title = "История пополнения на постах";
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -12,7 +12,7 @@
                 <a href="@Url.Action("MonitoringView","Monitoring")">Мониторинг</a>
             </li>
             <li class="active breadcrumb-item">
-                <strong>История пополнения</strong>
+                <strong>История пополнения на постах</strong>
             </li>
         </ol>
     </div>
@@ -80,7 +80,7 @@
         <div class="col-lg-12 table-cards">
             <div class="ibox">
                 <div class="ibox-content-more">
-                    @Html.Action("_MonitoringHistoryList", "Monitoring")
+                    @Html.Action("_MonitoringHistoryPostsList", "Monitoring")
                 </div>
             </div>
         </div>
@@ -101,7 +101,37 @@
     @Scripts.Render("~/plugins/dataPicker")
     @Scripts.Render("~/plugins/dateRange")
 
-<script type="text/javascript">
+    <script type="text/javascript">
+
+    function initDataTable() {
+        $('#table-increases').DataTable({
+            "responsive": true,
+            "paging": false,
+            "info": false,
+            "searching": false,
+            dom: '<"html5buttons"B>lTfgitp',
+            buttons: [
+                { extend: 'excel', title: 'Report' },
+                { extend: 'pdf', title: 'Report' },
+
+                {
+                    extend: 'print',
+                    customize: function (win) {
+                        $(win.document.body).addClass('white-bg');
+                        $(win.document.body).css('font-size', '10px');
+
+                        $(win.document.body).find('table')
+                            .addClass('compact')
+                            .css('font-size', 'inherit');
+                    }
+                }
+            ],
+            "language": {
+                "zeroRecords": "Данные по заданному фильтру не найдены",
+                "emptyTable": "Данные по заданному фильтру не найдены"
+            }
+        });
+    }
 
     var regions = [];
     var washes = [];
@@ -191,7 +221,7 @@
             newposts.forEach(element => $selpost.append($("<option></option>", { value: element.value, text: element.text })));
 
             $selpost.val(curpostval);
-        }        
+        }
     }
 
     function eventChangeWash() {
@@ -268,66 +298,18 @@
                 url: "@Url.Action("IncreasesWashesFilter", "Monitoring")"
             }).done(function (result) {
                 $('.ibox-content-more').html(result);
-                $('#table-increases').DataTable({
-                    "responsive": true,
-                    "paging": false,
-                    "info": false,
-                    "searching": false,
-                    dom: '<"html5buttons"B>lTfgitp',
-                    buttons: [
-                        { extend: 'excel', title: 'Report' },
-                        { extend: 'pdf', title: 'Report' },
 
-                        {
-                            extend: 'print',
-                            customize: function (win) {
-                                $(win.document.body).addClass('white-bg');
-                                $(win.document.body).css('font-size', '10px');
-
-                                $(win.document.body).find('table')
-                                    .addClass('compact')
-                                    .css('font-size', 'inherit');
-                            }
-                        }
-                    ],
-                    "language": {
-                        "zeroRecords": "Данные по заданному фильтру не найдены",
-                        "emptyTable": "Данные по заданному фильтру не найдены"
-                    }
-                });
+                initDataTable();
             });
         }
 
         $(document).ready(function () {
 
             $('#filter-region').change(eventChangeRegion);
-
             $('#filter-wash').change(eventChangeWash);
 
             $("#search-i").on("input", filter);
-
-            $('#table-increases').DataTable({
-                "responsive": true,
-                "paging": false,
-                "info": false,
-                "searching": false,
-                dom: '<"html5buttons"B>lTfgitp',
-                buttons: [
-                    { extend: 'excel', title: 'Report' },
-                    { extend: 'pdf', title: 'Report' },
-                    {
-                        extend: 'print',
-                        customize: function (win) {
-                            $(win.document.body).addClass('white-bg');
-                            $(win.document.body).css('font-size', '10px');
-
-                            $(win.document.body).find('table')
-                                .addClass('compact')
-                                .css('font-size', 'inherit');
-                        }
-                    }
-                ]
-            });
+            initDataTable();
 
             $(document).on("click", "#clear-date", function () {
                 $('#filter-date span').empty();
@@ -402,5 +384,5 @@
             $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
             filter();
         });
-</script>
+    </script>
 }

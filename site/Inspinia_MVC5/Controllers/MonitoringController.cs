@@ -40,14 +40,14 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.X = sss;
         }
 
-        public ActionResult MonitoringHistoryView()
+        public ActionResult MonitoringHistoryWashesView()
         {
             return View();
         }
 
         public ActionResult _MonitoringHistoryList()
         {
-            return PartialView("_MonitoringHistoryList");
+            return PartialView("_MonitoringHistoryWashesList");
         }
 
         public ActionResult MonitoringView()
@@ -93,7 +93,7 @@ namespace Inspinia_MVC5.Controllers
         {
             //List<GetIncreaseOnWashes_Result> view = GetIncreasesWashesFromDB(region, wash, post, bdate, edate);
 
-            return PartialView("_MonitoringHistoryList");
+            return PartialView("_MonitoringHistoryWashesList");
         }
 
         public string GetState(string json)

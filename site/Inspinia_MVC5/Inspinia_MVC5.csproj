@@ -1921,9 +1921,10 @@
     <Content Include="Views\Notifications\_NotificationsHistoryList.cshtml" />
     <Content Include="Views\Notifications\NotificationsSendingView.cshtml" />
     <Content Include="Views\Notifications\_NotificationsFormView.cshtml" />
-    <Content Include="Views\Monitoring\MonitoringHistoryView.cshtml" />
-    <Content Include="Views\Monitoring\_MonitoringHistoryList.cshtml" />
+    <Content Include="Views\Monitoring\MonitoringHistoryWashesView.cshtml" />
+    <Content Include="Views\Monitoring\_MonitoringHistoryWashesList.cshtml" />
     <Content Include="Views\Pricing\NewPricesWrapper.cshtml" />
+    <Content Include="Views\Monitoring\MonitoringHistoryPostsView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
