@@ -14,13 +14,10 @@
         <h2>Зачисления по мойкам</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
-            </li>
-            <li class="breadcrumb-item">
-                <a>Зачисления</a>
-            </li>
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Главная</a>
+            </li>   
             <li class="active breadcrumb-item">
-                <strong>По мойкам</strong>
+                <strong>Зачисления по мойкам</strong>
             </li>
         </ol>
     </div>
@@ -30,17 +27,8 @@
 </div>
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
     <div class="ibox-content m-b-sm border-bottom">
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label class="col-form-labe" for="reportrange">Период</label>
-                    <div id="reportrange" class="form-control">
-                        <i class="fa fa-calendar"></i>
-                        <span></span> <b class="caret"></b>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-4">
+        <div class="row" id="input-form">
+            <div class="col-sm-3">
                 <div class="form-group">
                     <label class="col-form-labe" for="region_code">Регион</label>
                     <select name="region_code" id="region_code" class="form-control">
@@ -52,7 +40,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <div class="form-group">
                     <label class="col-form-labe" for="wash_code">Мойка</label>
                     <select name="wash_code" id="wash_code" class="form-control">
@@ -64,22 +52,28 @@
                     </select>
                 </div>
             </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-form-labe" for="reportrange">Период</label>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <div id="reportrange" class="form-control">
+                                <i class="fa fa-calendar"></i>
+                                <span></span> <b class="caret"></b>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <button id="clear-date" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="row">
-            <div class="col-sm-4">
-            </div>
-            <div class="col-sm-4">
-            </div>
-            <div class="col-sm-4">
-                <button type="button" id="btn-aply-filter" class="btn  btn-block btn-outline btn-success font-bold">Показать</button>
-            </div>
-        </div>
-
     </div>
 
     <div class="row">
         <div class="col-lg-12 table_incashes">
-            <div class="ibox">
+            <div class="ibox" id="ibox-load">
                 <div class="ibox-content">
                     @Html.Action("FilterIncashes", "Incash", new { begTime = @ViewBag.startDTime, endTime = ViewBag.stopDTime, region = ViewBag.region, wash = ViewBag.wash })
                 </div>
@@ -90,8 +84,6 @@
 
 <input hidden id="filter-startdate" value="@ViewBag.startDTime"/>
 <input hidden id="filter-stopdate" value="@ViewBag.stopDTime"/>
-<input hidden id="filter-region" value="0"/>
-<input hidden id="filter-wash" value="0"/>
 
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
@@ -106,9 +98,12 @@
     @Scripts.Render("~/plugins/select2")
 
     <script type="text/javascript">
-        $(document).ready(function () {
 
+        $('.alert').hide();
+
+        function initDataTable() {
             $('.table_incashwashes').DataTable({
+                "responsive": true,
                 "paging": false,
                 "info": false,
                 "searching": false,
@@ -128,79 +123,54 @@
                         }
                     }
                 ]
+            });
+        }
 
+        function filter() {
+            var startDate = $('#filter-startdate').val();
+            var stopDate = $('#filter-stopdate').val();
+            var regionCode = $('#region_code').find(":selected").val();
+            var washCode = $('#wash_code').find(":selected").val();
+
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("FilterIncashes", "Incash")",
+                data: {
+                    begTime: startDate,
+                    endTime: stopDate,
+                    region: regionCode,
+                    wash: washCode
+                },
+                beforeSend: function () {
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                },
+                complete: function () {
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                },
+                success: function () {
+                    $('.alert-success').fadeIn('slow');
+                    $('.alert-success').delay(3000).fadeOut('slow');
+                }
+            }).done(function (result) {
+                $('.table_incashes').find('.ibox-content').html(result);
+                //alert("FilterIncashes done");
+
+                initDataTable();
+            });
+        }
+
+        $(document).ready(function () {
+
+            initDataTable();
+            
+            $(document).on("click", "#clear-date", function () {
+                $('#reportrange span').html(" За всё время");
+                $('#filter-startdate').val("");
+                $('#filter-stopdate').val("");
+                filter();
             });
 
-            $(document).on("change", '#region_code', function () {
-                $('#filter-region').val($(this).find(":selected").val());
-            });
-
-            $(document).on("change", '#wash_code', function () {
-                $('#filter-wash').val($(this).find(":selected").val());
-            });
-
-            $(document).on("click", "#btn-aply-filter", function () {
-                var startDate = $('#filter-startdate').val();
-                var stopDate = $('#filter-stopdate').val();
-                var regionCode = $('#filter-region').val();
-                var washCode = $('#filter-wash').val();
-
-                $.ajax({
-                    type: "GET",
-                    url: "@Url.Action("FilterIncashes", "Incash")",
-                    data: {
-                        begTime: startDate,
-                        endTime: stopDate,
-                        region: regionCode,
-                        wash: washCode
-                    },
-                    success: function () {
-                        $('.alert-success').fadeIn('slow');
-                        $('.alert-success').delay(3000).fadeOut('slow');
-                    }
-                }).done(function (result) {
-                    $('.table_incashes').find('.ibox-content').html(result);
-                    //alert("FilterIncashes done");
-
-                    $('.table_incashwashes').DataTable({
-                        "paging": false,
-                        "info": false,
-                        "searching": false,
-                        dom: '<"html5buttons"B>lTfgitp',
-                        buttons: [
-                            { extend: 'excel', title: 'Report' },
-                            { extend: 'pdf', title: 'Report' },
-                            {
-                                extend: 'print',
-                                customize: function (win) {
-                                    $(win.document.body).addClass('white-bg');
-                                    $(win.document.body).css('font-size', '10px');
-
-                                    $(win.document.body).find('table')
-                                        .addClass('compact')
-                                        .css('font-size', 'inherit');
-                                }
-                            }
-                        ],
-                        "language": {
-                            "zeroRecords": "Данные по заданному фильтру не найдены",
-                            "emptyTable": "Данные по заданному фильтру не найдены"
-                        }
-                    });
-                });
-
-                    //setTimeout(function () {
-                    //    $('#lbl-success').css("display", "inline-block");
-                    //    $('#btn-create-order').css("display", "inline-block");
-
-                    //    $('#btn-save-order').css("display", "none");
-                    //    $('.product-del').hide();
-                    //    $('.btn-minus-product').hide();
-                    //    $('.btn-plus-product').hide();
-                    //    $('.btn-group-group').hide();
-                    //    $('.btn-group-product').hide();
-                    //}, 1000);
-            });
+            $('#input-form').on("input", filter);
 
             //$(document).on("click", "#btn-go-to-wash", function () {
             //    alert("onWashSelected3");
@@ -215,7 +185,7 @@
         function onWashSelected2(selectedWashCode) {
             var startDate = $('#filter-startdate').val();
             var stopDate = $('#filter-stopdate').val();
-            var regionCode = $('#filter-region').val();
+            var regionCode = $('#region_code').find(":selected").val();
             var washCode = selectedWashCode;
 
             //var data = {
@@ -312,6 +282,8 @@
             //$('#filter-stopdate').val(end);
             $('#filter-startdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
             $('#filter-stopdate').val(end.format('DD.MM.YYYY HH:mm:ss'));
+
+            filter();
         });
         //"startDate": moment().subtract(1, 'days').startOf('day'),
         //"endDate": moment().subtract(1, 'days').endOf('day'),

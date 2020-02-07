@@ -23,7 +23,7 @@
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
     <div class="row">
         <div class="col-lg-5">
-            <div class="ibox" id="ibox1">
+            <div class="ibox" id="ibox-load">
                 <div class="ibox-title">
                     <h2>Выберите пост  <small>за которым хотите наблюдать</small></h2>
                 </div>
@@ -205,10 +205,10 @@
                     IDPost: IDPost
                 },
                 beforeSend: function () {
-                    $('#ibox1').children('.ibox-content').toggleClass('sk-loading');
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
                 },
                 complete: function () {
-                    $('#ibox1').children('.ibox-content').toggleClass('sk-loading');
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
                 },
                 error: function () {
                     alert('Возникла ошибка!');

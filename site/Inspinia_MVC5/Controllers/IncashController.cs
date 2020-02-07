@@ -59,7 +59,7 @@ namespace Inspinia_MVC5.Controllers
 
             DateTime startDTime;
             if (!DateTime.TryParse(begTime, out startDTime))
-                startDTime = DateTime.Today.AddDays(-1);
+                startDTime = DateTime.Today.AddYears(-10);
 
             DateTime stopDTime;
             if (!DateTime.TryParse(endTime, out stopDTime))

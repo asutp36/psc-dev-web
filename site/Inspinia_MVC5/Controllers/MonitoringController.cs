@@ -55,14 +55,43 @@ namespace Inspinia_MVC5.Controllers
             return View(_companies);
         }
 
-        public void GetIncreasesHistoryFromDB(string login, string sum, string region, string wash, string post, string bdate, string edate)
-        {
+        //public List<GetIncreaseOnWashes_Result> GetIncreasesWashesFromDB(string region, string wash, string post, string bdate, string edate)
+        //{
+        //    List<GetIncreaseOnWashes_Result> resultlist = null;
 
-        }
+        //    DateTime begdate;
+        //    if (!DateTime.TryParse(bdate, out begdate))
+        //        begdate = DateTime.Today.AddDays(-100);
 
-        public ActionResult IncreasesPostsFilter(string login, string sum, string region, string wash, string post, string bdate, string edate)
+        //    DateTime enddate;
+        //    if (!DateTime.TryParse(edate, out enddate))
+        //        enddate = DateTime.Now;
+
+        //    var prmRegion = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
+        //    prmRegion.Value = Convert.ToInt32(region);
+
+        //    var prmWash = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+        //    prmWash.Value = wash;
+
+        //    var prmPost = new System.Data.SqlClient.SqlParameter("@p_PostCode", System.Data.SqlDbType.NVarChar);
+        //    prmPost.Value = post;
+
+        //    var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+        //    prmBegDate.Value = bdate;
+
+        //    var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+        //    prmEndDate.Value = edate;
+
+        //    var result = db.Database.SqlQuery<GetIncreaseOnWashes_Result>
+        //        ("GetIncreaseOnWashes @p_RegionCode, @p_WashCode, @p_PostCode, @p_DateBeg, @p_DateEnd",
+        //        prmRegion, prmWash, prmPost, prmBegDate, prmEndDate).ToList();
+
+        //    return result;
+        //}
+
+        public ActionResult IncreasesWashesFilter(string region, string wash, string post, string bdate, string edate)
         {
-            //вызов хранимой процедуры для фильтрации пополнений
+            //List<GetIncreaseOnWashes_Result> view = GetIncreasesWashesFromDB(region, wash, post, bdate, edate);
 
             return PartialView("_MonitoringHistoryList");
         }

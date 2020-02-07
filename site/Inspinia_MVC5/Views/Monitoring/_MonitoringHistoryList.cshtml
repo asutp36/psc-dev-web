@@ -1,13 +1,25 @@
-﻿<table id="table-increases" class="display table table-striped table-bordered table-hover responsive">
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetIncreaseOnWashes_Result>
+
+<table id="table-increases" class="display table table-striped table-bordered table-hover responsive">
     <thead>
         <tr>
-            <th>Дата отправки</th>
-            <th>Логин администратора</th>
-            <th>Сумма</th>
             <th>Регион</th>
-            <th>Мойка</th>
-            <th>Пост</th>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Адрес</th>
+            <th>Сумма</th>
         </tr>
     </thead>
-    <tbody id="table-c"></tbody>
+    <tbody>
+        @foreach (var n in Model)
+        {
+            <tr>
+                <td>@n.region</td>
+                <td>@n.IDWash</td>
+                <td>@n.washName</td>
+                <td>@n.washAddress</td>
+                <td>@n.amount</td>
+            </tr>
+        }
+    </tbody>
 </table>

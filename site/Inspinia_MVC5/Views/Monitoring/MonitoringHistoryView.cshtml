@@ -1,18 +1,18 @@
 ﻿@{
-    ViewBag.Title = "История пополнений постов с сайта";
+    ViewBag.Title = "История пополнения";
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>История пополнений постов с сайта</h2>
+        <h2>История пополнения</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Главная</a>
             </li>
             <li class="breadcrumb-item">
                 <a href="@Url.Action("MonitoringView","Monitoring")">Мониторинг</a>
             </li>
             <li class="active breadcrumb-item">
-                <strong>История пополнений постов с сайта</strong>
+                <strong>История пополнения</strong>
             </li>
         </ol>
     </div>
@@ -20,36 +20,6 @@
     </div>
 </div>
 <div class="ibox-content m-b-sm border-bottom" id="search-i">
-    <div class="row">
-        <div class="col-sm-3">
-            <div class="form-group">
-                <label class="col-form-labe">Сумма пополнения</label>
-                <input type="text" id="filter-sum" class="form-control" />
-            </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="form-group">
-                <label class="col-form-labe">Логин администратора</label>
-                <input type="text" id="filter-login" class="form-control" />
-            </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="form-group">
-                <label class="col-form-labe">Дата пополнения</label>
-                <div class="row">
-                    <div class="col-sm-10">
-                        <div id="filter-date" class="form-control">
-                            <i class="fa fa-calendar"></i>
-                            <span></span> <b class="caret"></b>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <button id="clear-date" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="row">
         <div class="col-sm-4">
             <div class="form-group">
@@ -60,7 +30,7 @@
                     {
                         <option value="@item.Code">@item.Name</option>
                     }
-                </select>            
+                </select>
             </div>
         </div>
         <div class="col-sm-4">
@@ -85,6 +55,24 @@
                         <option value="@item.Code">@item.Code</option>
                     }
                 </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-labe">Дата пополнения</label>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <div id="filter-date" class="form-control">
+                            <i class="fa fa-calendar"></i>
+                            <span></span> <b class="caret"></b>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button id="clear-date" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -116,6 +104,8 @@
 <script type="text/javascript">
 
     var regions = [];
+    var washes = [];
+    var posts = [];
 
     @foreach (var item in ViewBag.Regions) {
         <text>
@@ -141,8 +131,6 @@
         </text>
     }
 
-    var washes = [];
-
     @foreach (var item in ViewBag.Washes) {
         <text>
             washes.push({ value:"@item.Code", text:"@item.Name", posts:[
@@ -158,14 +146,11 @@
         </text>
     }
 
-    var posts = [];
-
     @foreach (var item in ViewBag.Posts) {
         <text>
             posts.push({ value: "@item.Code", text: "@item.Code" }, );
         </text>
     }
-
 
     function eventChangeRegion () {
 
@@ -257,8 +242,6 @@
 
         function filter() {
 
-            var sum = $('#filter-sum').val();
-            var login  = $('#filter-login').val();
             var bdate = $('#bdate').val();
             var edate = $('#edate').val();
             var region = $('#filter-region').find(":selected").val();
@@ -282,7 +265,7 @@
                 error: function () {
                     alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
                 },
-                url: "@Url.Action("IncreasesPostsFilter", "Monitoring")"
+                url: "@Url.Action("IncreasesWashesFilter", "Monitoring")"
             }).done(function (result) {
                 $('.ibox-content-more').html(result);
                 $('#table-increases').DataTable({
@@ -356,10 +339,10 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#bdate').val(moment().subtract(1, 'months').startOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        $('#bdate').val(moment().startOf('day').format('DD.MM.YYYY HH:mm:ss'));
         $('#edate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
 
-        $('#filter-date span').html(moment().subtract(1, 'months').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
+        $('#filter-date span').html(moment().startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
 
         $('#filter-date').daterangepicker({
             "timePicker": true,
