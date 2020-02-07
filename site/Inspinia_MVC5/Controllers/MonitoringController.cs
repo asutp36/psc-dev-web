@@ -213,8 +213,6 @@ namespace Inspinia_MVC5.Controllers
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/setfunc");
 
-            request.Timeout = 5000;
-
             request.KeepAlive = false;
             request.ProtocolVersion = HttpVersion.Version10;
             request.Method = "POST";

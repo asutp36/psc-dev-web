@@ -51,6 +51,7 @@
     @Styles.Render("~/plugins/summernoteStyles")
     @Styles.Render("~/plugins/tagInputsStyles")
     @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/plugins/laddaStyles")
 }
 
 @section Scripts {
@@ -58,6 +59,7 @@
     @Scripts.Render("~/plugins/tagInputs")
     @Scripts.Render("~/plugins/typehead")
     @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/ladda")
 
     <script type="text/javascript">
 
@@ -76,6 +78,7 @@
 
         $(document).ready(function () {
 
+            $('#btn-send').ladda();
             $('#input-who').chosen({ width: "100%" });
 
             $(document).on("click", "#btn-clear", function () {
@@ -96,6 +99,16 @@
                         },
                         error: function () {
                             alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
+                        },
+                        beforeSend: function () {
+                            $('#btn-send').ladda('start');
+                            $('#input-who').attr('readonly', true);
+                            $('#input-text').attr('readonly', true);
+                        },
+                        complete: function () {
+                            $('#btn-send').ladda('stop');
+                            $('#input-who').attr('readonly', false);
+                            $('#input-text').attr('readonly', false);
                         },
                         success: function () {
                             $('#alert-sent').show('fade');

@@ -157,7 +157,7 @@
 
         function check_state() {
 
-            if ($('#state').text() != "Нет доступа") {
+            if ($('#state').text() == "Нет доступа") {
                 $('#label-balance').attr("class", "label label-secondary");
                 $('#label-function').attr("class", "label label-secondary");
                 $('#label-state').attr("class", "label label-secondary");
@@ -177,11 +177,11 @@
             data: {
                 IDPost: id
             },
-            success: function() {
+            success: function () {
                 check_state()
             },
             error: function () {
-                
+                alert("error-show");
             },
             url: "@Url.Action("PostMonitoringView", "Monitoring")",
         }).done(function (result) {
@@ -215,7 +215,7 @@
                 },
                 success: function () {
                     if (timeid == -1) {
-                        timeid = setInterval(show, 500);
+                        timeid = setInterval(show, 1500);
                     }
                     $('#post').show('fade')
                 },

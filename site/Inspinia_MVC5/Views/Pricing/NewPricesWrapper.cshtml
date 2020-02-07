@@ -64,6 +64,22 @@
             });
         }
 
+        function initchangevent () {
+            $('#jstree1').on('changed.jstree', function (e, data) {
+                var objects = data.instance.get_selected(true)
+                var leaves = $.grep(objects, function (o) { return data.instance.is_leaf(o) })
+                outputList = [];
+                $.each(leaves, function (i, o) {
+                    outputList.push($(o).attr('id'))
+                })
+                var list = $('#output')
+                list.empty()
+                $.each(leaves, function (i, o) {
+                    $('<span/>').text($(o).attr('id') + " ").appendTo(list)
+                })
+            })
+        }
+
         hidealerts();
 
         $(document).ready(function () {
@@ -120,14 +136,16 @@
                                 complete: function () {
                                     $('#price-wrapper').toggleClass('sk-loading');
                                 },
-                                error: function () {
-                                    alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
+                                error: function (xhr, ajaxOptions, response) {
+                                    alert(xhr.responseText);
+                                    alert(response);
                                 },
                                 url: "@Url.Action("SaveNewPrices", "Pricing")",
                             }).done(function (result) {
                                 $('#price-wrapper').html(result);
                                 hidealerts();
                                 initjstree();
+                                initchangevent();
                             });
                         }
                     }
@@ -136,19 +154,7 @@
 
             initjstree();
             
-            $('#jstree1').on('changed.jstree', function (e, data) {
-                var objects = data.instance.get_selected(true)
-                var leaves = $.grep(objects, function (o) { return data.instance.is_leaf(o) })
-                outputList = [];
-                $.each(leaves, function (i, o) {
-                    outputList.push($(o).attr('id'))
-                })
-                var list = $('#output')
-                list.empty()
-                $.each(leaves, function (i, o) {
-                    $('<span/>').text($(o).attr('id')+" ").appendTo(list)
-                })
-            })
+            initchangevent();
         });
 
         function validate(evt) {
