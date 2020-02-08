@@ -18,12 +18,14 @@ namespace Inspinia_MVC5.Models
         public int IDPost { get; set; }
         public int IDPostEvent { get; set; }
         public int IDEventKind { get; set; }
-        public Nullable<System.DateTime> DTime { get; set; }
+        public System.DateTime DTime { get; set; }
     
         public virtual EventKind EventKind { get; set; }
         public virtual Post Post { get; set; }
         public virtual EventCash EventCash { get; set; }
         public virtual EventMode EventMode { get; set; }
         public virtual EventSimple EventSimple { get; set; }
+        public virtual EventIncrease EventIncrease { get; set; }
+        public virtual EventCollect EventCollect { get; set; }
     }
 }

@@ -10,21 +10,13 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class EventKind
+    public partial class GetIncreaseOnWashes_Result
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public EventKind()
-        {
-            this.Events = new HashSet<Event>();
-        }
-    
-        public int IDEventKind { get; set; }
-        public string Name { get; set; }
-        public string Code { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Event> Events { get; set; }
+        public string region { get; set; }
+        public int IDWash { get; set; }
+        public string washName { get; set; }
+        public string washAddress { get; set; }
+        public Nullable<int> amount { get; set; }
     }
 }

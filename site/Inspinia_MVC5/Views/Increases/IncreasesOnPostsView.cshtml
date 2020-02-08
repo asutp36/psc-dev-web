@@ -79,8 +79,8 @@
                 <div class="ibox-content-more">
                     @Html.Action("_IncreasesOnPostsList", "Increases", new
                {
-                   region = "",
-                   wash = "",
+                   region = ViewBag.Region,
+                   wash = ViewBag.Wash,
                    post = "",
                    begdate = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                    enddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")

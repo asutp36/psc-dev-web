@@ -10,21 +10,13 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class EventKind
+    public partial class sp_helpdiagrams_Result
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public EventKind()
-        {
-            this.Events = new HashSet<Event>();
-        }
-    
-        public int IDEventKind { get; set; }
+        public string Database { get; set; }
         public string Name { get; set; }
-        public string Code { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Event> Events { get; set; }
+        public int ID { get; set; }
+        public string Owner { get; set; }
+        public int OwnerID { get; set; }
     }
 }

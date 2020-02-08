@@ -59,6 +59,9 @@ namespace Inspinia_MVC5.Models
         public virtual DbSet<NoticeStatu> NoticeStatus { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<vPostsAmount> vPostsAmounts { get; set; }
+        public virtual DbSet<EventIncrease> EventIncreases { get; set; }
+        public virtual DbSet<DeviceType> DeviceTypes { get; set; }
+        public virtual DbSet<EventCollect> EventCollects { get; set; }
     
         public virtual ObjectResult<GetCardsOperations_Result> GetCardsOperations(string p_Phone, string p_Cardnum, string p_CardTypeCode, string p_CardStatusName, string p_OperationTypeName, Nullable<System.DateTime> p_OperationDateBeg, Nullable<System.DateTime> p_OperationDateEnd, Nullable<int> p_LocalizedBy, Nullable<int> p_LocalizedID)
         {
@@ -412,6 +415,177 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_Message", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetNoticeHistoryList_Result>("GetNoticeHistoryList", p_SenderParameter, p_DateReceiveBegParameter, p_DateReceiveEndParameter, p_RecipientsCodeParameter, p_RecipientsNameParameter, p_DateSentBegParameter, p_DateSentEndParameter, p_NoticeStatusCodeParameter, p_NoticeStatusNameParameter, p_MessageParameter);
+        }
+    
+        public virtual ObjectResult<GetIncreaseOnPosts_Result> GetIncreaseOnPosts(Nullable<int> p_RegionCode, string p_WashCode, string p_PostCode, Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        {
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(int));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetIncreaseOnPosts_Result>("GetIncreaseOnPosts", p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter, p_DateBegParameter, p_DateEndParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<int>> GetCardBalance(string card)
+        {
+            var cardParameter = card != null ?
+                new ObjectParameter("Card", card) :
+                new ObjectParameter("Card", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetCardBalance", cardParameter);
+        }
+    
+        public virtual ObjectResult<GetIncreaseOnWashes_Result> GetIncreaseOnWashes(Nullable<int> p_RegionCode, string p_WashCode, string p_PostCode, Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        {
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(int));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetIncreaseOnWashes_Result>("GetIncreaseOnWashes", p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter, p_DateBegParameter, p_DateEndParameter);
+        }
+    
+        public virtual ObjectResult<GetNoticeRecipient_Result> GetNoticeRecipient(string recipientCode)
+        {
+            var recipientCodeParameter = recipientCode != null ?
+                new ObjectParameter("RecipientCode", recipientCode) :
+                new ObjectParameter("RecipientCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetNoticeRecipient_Result>("GetNoticeRecipient", recipientCodeParameter);
+        }
+    
+        public virtual int sp_alterdiagram(string diagramname, Nullable<int> owner_id, Nullable<int> version, byte[] definition)
+        {
+            var diagramnameParameter = diagramname != null ?
+                new ObjectParameter("diagramname", diagramname) :
+                new ObjectParameter("diagramname", typeof(string));
+    
+            var owner_idParameter = owner_id.HasValue ?
+                new ObjectParameter("owner_id", owner_id) :
+                new ObjectParameter("owner_id", typeof(int));
+    
+            var versionParameter = version.HasValue ?
+                new ObjectParameter("version", version) :
+                new ObjectParameter("version", typeof(int));
+    
+            var definitionParameter = definition != null ?
+                new ObjectParameter("definition", definition) :
+                new ObjectParameter("definition", typeof(byte[]));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_alterdiagram", diagramnameParameter, owner_idParameter, versionParameter, definitionParameter);
+        }
+    
+        public virtual int sp_creatediagram(string diagramname, Nullable<int> owner_id, Nullable<int> version, byte[] definition)
+        {
+            var diagramnameParameter = diagramname != null ?
+                new ObjectParameter("diagramname", diagramname) :
+                new ObjectParameter("diagramname", typeof(string));
+    
+            var owner_idParameter = owner_id.HasValue ?
+                new ObjectParameter("owner_id", owner_id) :
+                new ObjectParameter("owner_id", typeof(int));
+    
+            var versionParameter = version.HasValue ?
+                new ObjectParameter("version", version) :
+                new ObjectParameter("version", typeof(int));
+    
+            var definitionParameter = definition != null ?
+                new ObjectParameter("definition", definition) :
+                new ObjectParameter("definition", typeof(byte[]));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_creatediagram", diagramnameParameter, owner_idParameter, versionParameter, definitionParameter);
+        }
+    
+        public virtual int sp_dropdiagram(string diagramname, Nullable<int> owner_id)
+        {
+            var diagramnameParameter = diagramname != null ?
+                new ObjectParameter("diagramname", diagramname) :
+                new ObjectParameter("diagramname", typeof(string));
+    
+            var owner_idParameter = owner_id.HasValue ?
+                new ObjectParameter("owner_id", owner_id) :
+                new ObjectParameter("owner_id", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_dropdiagram", diagramnameParameter, owner_idParameter);
+        }
+    
+        public virtual ObjectResult<sp_helpdiagramdefinition_Result> sp_helpdiagramdefinition(string diagramname, Nullable<int> owner_id)
+        {
+            var diagramnameParameter = diagramname != null ?
+                new ObjectParameter("diagramname", diagramname) :
+                new ObjectParameter("diagramname", typeof(string));
+    
+            var owner_idParameter = owner_id.HasValue ?
+                new ObjectParameter("owner_id", owner_id) :
+                new ObjectParameter("owner_id", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_helpdiagramdefinition_Result>("sp_helpdiagramdefinition", diagramnameParameter, owner_idParameter);
+        }
+    
+        public virtual ObjectResult<sp_helpdiagrams_Result> sp_helpdiagrams(string diagramname, Nullable<int> owner_id)
+        {
+            var diagramnameParameter = diagramname != null ?
+                new ObjectParameter("diagramname", diagramname) :
+                new ObjectParameter("diagramname", typeof(string));
+    
+            var owner_idParameter = owner_id.HasValue ?
+                new ObjectParameter("owner_id", owner_id) :
+                new ObjectParameter("owner_id", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_helpdiagrams_Result>("sp_helpdiagrams", diagramnameParameter, owner_idParameter);
+        }
+    
+        public virtual int sp_renamediagram(string diagramname, Nullable<int> owner_id, string new_diagramname)
+        {
+            var diagramnameParameter = diagramname != null ?
+                new ObjectParameter("diagramname", diagramname) :
+                new ObjectParameter("diagramname", typeof(string));
+    
+            var owner_idParameter = owner_id.HasValue ?
+                new ObjectParameter("owner_id", owner_id) :
+                new ObjectParameter("owner_id", typeof(int));
+    
+            var new_diagramnameParameter = new_diagramname != null ?
+                new ObjectParameter("new_diagramname", new_diagramname) :
+                new ObjectParameter("new_diagramname", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_renamediagram", diagramnameParameter, owner_idParameter, new_diagramnameParameter);
+        }
+    
+        public virtual int sp_upgraddiagrams()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_upgraddiagrams");
         }
     }
 }

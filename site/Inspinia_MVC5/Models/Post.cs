@@ -30,6 +30,7 @@ namespace Inspinia_MVC5.Models
         public string Code { get; set; }
         public string Name { get; set; }
         public int IDWash { get; set; }
+        public Nullable<int> IDDevice { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CountersOperating> CountersOperatings { get; set; }
@@ -46,5 +47,6 @@ namespace Inspinia_MVC5.Models
         public virtual ICollection<CollectionsPre> CollectionsPres { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CountersTotalPre> CountersTotalPres { get; set; }
+        public virtual Device Device { get; set; }
     }
 }

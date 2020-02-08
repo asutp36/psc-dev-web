@@ -64,6 +64,13 @@
         <AssociationConnector Association="CardsDbModel.FK_CountersTotalPre_Posts" />
         <AssociationConnector Association="CardsDbModel.FK_NoticeHistory_NoticeRecipientsGroup" />
         <AssociationConnector Association="CardsDbModel.FK_NoticeHistory_NoticeStatus" />
+        <EntityTypeShape EntityType="CardsDbModel.EventIncrease" Width="1.5" PointX="12" PointY="23.625" />
+        <AssociationConnector Association="CardsDbModel.FK_Posts_Device" />
+        <AssociationConnector Association="CardsDbModel.FK_EventCash_Event1" />
+        <EntityTypeShape EntityType="CardsDbModel.DeviceType" Width="1.5" PointX="5.25" PointY="25.125" />
+        <EntityTypeShape EntityType="CardsDbModel.EventCollect" Width="1.5" PointX="12" PointY="5.75" />
+        <AssociationConnector Association="CardsDbModel.FK_Device_DeviceTypes" />
+        <AssociationConnector Association="CardsDbModel.FK_EventCollect_Event" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

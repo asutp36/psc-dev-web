@@ -145,8 +145,17 @@
           <Property Name="IDDevice" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
-          <Property Name="IDWash" Type="int" Nullable="false" />
           <Property Name="ServerID" Type="int" />
+          <Property Name="IDDeviceType" Type="int" />
+          <Property Name="IpAddress" Type="nvarchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="DeviceTypes">
+          <Key>
+            <PropertyRef Name="IDDeviceType" />
+          </Key>
+          <Property Name="IDDeviceType" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Event">
           <Key>
@@ -154,36 +163,41 @@
           </Key>
           <Property Name="IDEvent" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IDPost" Type="int" Nullable="false" />
-          <Property Name="IDPostEvent" Type="int" Nullable="false" />
           <Property Name="IDEventKind" Type="int" Nullable="false" />
-          <Property Name="DTime" Type="datetime" />
+          <Property Name="DTime" Type="datetime" Nullable="false" />
         </EntityType>
-        <EntityType Name="EventCash">
+        <EntityType Name="EventCollect">
           <Key>
             <PropertyRef Name="IDEvent" />
           </Key>
           <Property Name="IDEvent" Type="int" Nullable="false" />
-          <Property Name="tb10" Type="int" />
-          <Property Name="tb50" Type="int" />
-          <Property Name="tb100" Type="int" />
-          <Property Name="tb200" Type="int" />
-          <Property Name="tb500" Type="int" />
-          <Property Name="tb1k" Type="int" />
-          <Property Name="tm10" Type="int" />
-          <Property Name="cb10" Type="int" />
-          <Property Name="cb50" Type="int" />
-          <Property Name="cb100" Type="int" />
-          <Property Name="cb200" Type="int" />
-          <Property Name="cb500" Type="int" />
-          <Property Name="cb1k" Type="int" />
-          <Property Name="cm10" Type="int" />
+          <Property Name="amount" Type="int" />
+          <Property Name="m10" Type="int" />
+          <Property Name="b10" Type="int" />
+          <Property Name="b50" Type="int" />
+          <Property Name="b100" Type="int" />
+          <Property Name="b200" Type="int" />
+        </EntityType>
+        <EntityType Name="EventIncrease">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="int" Nullable="false" />
+          <Property Name="amount" Type="int" />
+          <Property Name="m10" Type="int" />
+          <Property Name="b10" Type="int" />
+          <Property Name="b50" Type="int" />
+          <Property Name="b100" Type="int" />
+          <Property Name="b200" Type="int" />
+          <Property Name="balance" Type="int" />
         </EntityType>
         <EntityType Name="EventKind">
           <Key>
             <PropertyRef Name="IDEventKind" />
           </Key>
           <Property Name="IDEventKind" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="EventMode">
           <Key>
@@ -191,9 +205,14 @@
           </Key>
           <Property Name="IDEvent" Type="int" Nullable="false" />
           <Property Name="IDMode" Type="int" />
-          <Property Name="RemainLimit" Type="int" />
-          <Property Name="Paid" Type="int" />
+          <Property Name="DTimeStart" Type="datetime" />
           <Property Name="DTimeFinish" Type="datetime" />
+          <Property Name="Duration" Type="int" />
+          <Property Name="PaymentSign" Type="int" />
+          <Property Name="Cost" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="CardTypeCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="CardNum" Type="nvarchar" MaxLength="20" />
+          <Property Name="Discount" Type="int" />
         </EntityType>
         <EntityType Name="EventSimple">
           <Key>
@@ -302,6 +321,7 @@
           <Property Name="Code" Type="nvarchar" MaxLength="10" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" />
           <Property Name="IDWash" Type="int" Nullable="false" />
+          <Property Name="IDDevice" Type="int" />
         </EntityType>
         <EntityType Name="Psces">
           <Key>
@@ -487,17 +507,17 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Device_Wash">
-          <End Role="Wash" Type="Self.Wash" Multiplicity="1">
+        <Association Name="FK_Device_DeviceTypes">
+          <End Role="DeviceTypes" Type="Self.DeviceTypes" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
           </End>
           <End Role="Device" Type="Self.Device" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Wash">
-              <PropertyRef Name="IDWash" />
+            <Principal Role="DeviceTypes">
+              <PropertyRef Name="IDDeviceType" />
             </Principal>
             <Dependent Role="Device">
-              <PropertyRef Name="IDWash" />
+              <PropertyRef Name="IDDeviceType" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -533,12 +553,26 @@
           <End Role="Event" Type="Self.Event" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="EventCash" Type="Self.EventCash" Multiplicity="0..1" />
+          <End Role="EventIncrease" Type="Self.EventIncrease" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Event">
               <PropertyRef Name="IDEvent" />
             </Principal>
-            <Dependent Role="EventCash">
+            <Dependent Role="EventIncrease">
+              <PropertyRef Name="IDEvent" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventCollect_Event">
+          <End Role="Event" Type="Self.Event" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventCollect" Type="Self.EventCollect" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="IDEvent" />
+            </Principal>
+            <Dependent Role="EventCollect">
               <PropertyRef Name="IDEvent" />
             </Dependent>
           </ReferentialConstraint>
@@ -697,6 +731,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Posts_Device">
+          <End Role="Device" Type="Self.Device" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Posts" Type="Self.Posts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Posts">
+              <PropertyRef Name="IDDevice" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Posts_Wash">
           <End Role="Wash" Type="Self.Wash" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -739,11 +787,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
         <Function Name="FuncMaxVal" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
           <Parameter Name="val" Type="int" Mode="In" />
         </Function>
         <Function Name="FuncMinVal" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
           <Parameter Name="val" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetCardBalance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Card" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="GetCardList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_Phone" Type="nvarchar" Mode="In" />
@@ -815,6 +867,20 @@
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="GetIncreaseOnPosts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_RegionCode" Type="int" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_PostCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="GetIncreaseOnWashes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_RegionCode" Type="int" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_PostCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+        </Function>
         <Function Name="GetNoticeHistoryList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_Sender" Type="nvarchar" Mode="In" />
           <Parameter Name="p_DateReceiveBeg" Type="datetime" Mode="In" />
@@ -826,6 +892,9 @@
           <Parameter Name="p_NoticeStatusCode" Type="nvarchar" Mode="In" />
           <Parameter Name="p_NoticeStatusName" Type="nvarchar" Mode="In" />
           <Parameter Name="p_Message" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="GetNoticeRecipient" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RecipientCode" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="GetPostAmounts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_RegionCode" Type="int" Mode="In" />
@@ -841,6 +910,36 @@
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="version" Type="int" Mode="In" />
+          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
+        </Function>
+        <Function Name="sp_creatediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="version" Type="int" Mode="In" />
+          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
+        </Function>
+        <Function Name="sp_dropdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_helpdiagramdefinition" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_helpdiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_renamediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="Хранилище CardsDbModelContainer">
           <EntitySet Name="Cards" EntityType="Self.Cards" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CardStatuses" EntityType="Self.CardStatuses" Schema="dbo" store:Type="Tables" />
@@ -853,8 +952,10 @@
           <EntitySet Name="CountersTotal" EntityType="Self.CountersTotal" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CountersTotalPre" EntityType="Self.CountersTotalPre" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Device" EntityType="Self.Device" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DeviceTypes" EntityType="Self.DeviceTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Event" EntityType="Self.Event" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="EventCash" EntityType="Self.EventCash" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventCollect" EntityType="Self.EventCollect" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventIncrease" EntityType="Self.EventIncrease" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventKind" EntityType="Self.EventKind" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventMode" EntityType="Self.EventMode" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventSimple" EntityType="Self.EventSimple" Schema="dbo" store:Type="Tables" />
@@ -916,8 +1017,8 @@
             <End Role="Posts" EntitySet="Posts" />
             <End Role="CountersTotalPre" EntitySet="CountersTotalPre" />
           </AssociationSet>
-          <AssociationSet Name="FK_Device_Wash" Association="Self.FK_Device_Wash">
-            <End Role="Wash" EntitySet="Wash" />
+          <AssociationSet Name="FK_Device_DeviceTypes" Association="Self.FK_Device_DeviceTypes">
+            <End Role="DeviceTypes" EntitySet="DeviceTypes" />
             <End Role="Device" EntitySet="Device" />
           </AssociationSet>
           <AssociationSet Name="FK_Event_EventKind" Association="Self.FK_Event_EventKind">
@@ -930,7 +1031,11 @@
           </AssociationSet>
           <AssociationSet Name="FK_EventCash_Event" Association="Self.FK_EventCash_Event">
             <End Role="Event" EntitySet="Event" />
-            <End Role="EventCash" EntitySet="EventCash" />
+            <End Role="EventIncrease" EntitySet="EventIncrease" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventCollect_Event" Association="Self.FK_EventCollect_Event">
+            <End Role="Event" EntitySet="Event" />
+            <End Role="EventCollect" EntitySet="EventCollect" />
           </AssociationSet>
           <AssociationSet Name="FK_EventMode_Event" Association="Self.FK_EventMode_Event">
             <End Role="Event" EntitySet="Event" />
@@ -975,6 +1080,10 @@
           <AssociationSet Name="FK_Pcses_Wash" Association="Self.FK_Pcses_Wash">
             <End Role="Wash" EntitySet="Wash" />
             <End Role="Psces" EntitySet="Psces" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Posts_Device" Association="Self.FK_Posts_Device">
+            <End Role="Device" EntitySet="Device" />
+            <End Role="Posts" EntitySet="Posts" />
           </AssociationSet>
           <AssociationSet Name="FK_Posts_Wash" Association="Self.FK_Posts_Wash">
             <End Role="Wash" EntitySet="Wash" />
@@ -1230,6 +1339,75 @@
             <Parameter Name="p_NoticeStatusName" Mode="In" Type="String" />
             <Parameter Name="p_Message" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="EventIncreases" EntityType="CardsDbModel.EventIncrease" />
+          <AssociationSet Name="FK_Posts_Device" Association="CardsDbModel.FK_Posts_Device">
+            <End Role="Device" EntitySet="Devices" />
+            <End Role="Post" EntitySet="Posts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventCash_Event1" Association="CardsDbModel.FK_EventCash_Event1">
+            <End Role="Event" EntitySet="Events" />
+            <End Role="EventIncrease" EntitySet="EventIncreases" />
+          </AssociationSet>
+          <FunctionImport Name="GetIncreaseOnPosts" ReturnType="Collection(CardsDbModel.GetIncreaseOnPosts_Result)">
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int32" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+            <Parameter Name="p_PostCode" Mode="In" Type="String" />
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <EntitySet Name="DeviceTypes" EntityType="CardsDbModel.DeviceType" />
+          <EntitySet Name="EventCollects" EntityType="CardsDbModel.EventCollect" />
+          <AssociationSet Name="FK_Device_DeviceTypes" Association="CardsDbModel.FK_Device_DeviceTypes">
+            <End Role="DeviceType" EntitySet="DeviceTypes" />
+            <End Role="Device" EntitySet="Devices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventCollect_Event" Association="CardsDbModel.FK_EventCollect_Event">
+            <End Role="Event" EntitySet="Events" />
+            <End Role="EventCollect" EntitySet="EventCollects" />
+          </AssociationSet>
+          <FunctionImport Name="GetCardBalance" ReturnType="Collection(Int32)">
+            <Parameter Name="Card" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetIncreaseOnWashes" ReturnType="Collection(CardsDbModel.GetIncreaseOnWashes_Result)">
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int32" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+            <Parameter Name="p_PostCode" Mode="In" Type="String" />
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="GetNoticeRecipient" ReturnType="Collection(CardsDbModel.GetNoticeRecipient_Result)">
+            <Parameter Name="RecipientCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_alterdiagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="version" Mode="In" Type="Int32" />
+            <Parameter Name="definition" Mode="In" Type="Binary" />
+          </FunctionImport>
+          <FunctionImport Name="sp_creatediagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="version" Mode="In" Type="Int32" />
+            <Parameter Name="definition" Mode="In" Type="Binary" />
+          </FunctionImport>
+          <FunctionImport Name="sp_dropdiagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(CardsDbModel.sp_helpdiagramdefinition_Result)">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(CardsDbModel.sp_helpdiagrams_Result)">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_renamediagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="new_diagramname" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_upgraddiagrams" />
         </EntityContainer>
         <ComplexType Name="GetCardsOperations_Result">
           <Property Type="String" Name="Phone" Nullable="false" MaxLength="Max" />
@@ -1363,12 +1541,14 @@
           <Property Name="IDPost" Type="Int32" Nullable="false" />
           <Property Name="IDPostEvent" Type="Int32" Nullable="false" />
           <Property Name="IDEventKind" Type="Int32" Nullable="false" />
-          <Property Name="DTime" Type="DateTime" Precision="3" />
+          <Property Name="DTime" Type="DateTime" Precision="3" Nullable="false" />
           <NavigationProperty Name="EventKind" Relationship="CardsDbModel.FK_Event_EventKind" FromRole="Event" ToRole="EventKind" />
           <NavigationProperty Name="Post" Relationship="CardsDbModel.FK_Event_Point" FromRole="Event" ToRole="Post" />
           <NavigationProperty Name="EventCash" Relationship="CardsDbModel.FK_EventCash_Event" FromRole="Event" ToRole="EventCash" />
           <NavigationProperty Name="EventMode" Relationship="CardsDbModel.FK_EventMode_Event" FromRole="Event" ToRole="EventMode" />
           <NavigationProperty Name="EventSimple" Relationship="CardsDbModel.FK_EventSimple_Event" FromRole="Event" ToRole="EventSimple" />
+          <NavigationProperty Name="EventIncrease" Relationship="CardsDbModel.FK_EventCash_Event1" FromRole="Event" ToRole="EventIncrease" />
+          <NavigationProperty Name="EventCollect" Relationship="CardsDbModel.FK_EventCollect_Event" FromRole="Event" ToRole="EventCollect" />
         </EntityType>
         <EntityType Name="EventCash">
           <Key>
@@ -1396,8 +1576,9 @@
             <PropertyRef Name="IDEventKind" />
           </Key>
           <Property Name="IDEventKind" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Events" Relationship="CardsDbModel.FK_Event_EventKind" FromRole="EventKind" ToRole="Event" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="EventMode">
           <Key>
@@ -1410,6 +1591,13 @@
           <Property Name="DTimeFinish" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Event" Relationship="CardsDbModel.FK_EventMode_Event" FromRole="EventMode" ToRole="Event" />
           <NavigationProperty Name="Mode" Relationship="CardsDbModel.FK_EventMode_Mode" FromRole="EventMode" ToRole="Mode" />
+          <Property Name="DTimeStart" Type="DateTime" Precision="3" />
+          <Property Name="Duration" Type="Int32" />
+          <Property Name="PaymentSign" Type="Int32" />
+          <Property Name="Cost" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="CardTypeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="CardNum" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Discount" Type="Int32" />
         </EntityType>
         <EntityType Name="EventSimple">
           <Key>
@@ -1482,6 +1670,8 @@
           <NavigationProperty Name="CollectionsFacts" Relationship="CardsDbModel.FK_CollectionsFact_Posts" FromRole="Post" ToRole="CollectionsFact" />
           <NavigationProperty Name="CollectionsPres" Relationship="CardsDbModel.FK_CollectionsPre_Posts" FromRole="Post" ToRole="CollectionsPre" />
           <NavigationProperty Name="CountersTotalPres" Relationship="CardsDbModel.FK_CountersTotalPre_Posts" FromRole="Post" ToRole="CountersTotalPre" />
+          <Property Name="IDDevice" Type="Int32" />
+          <NavigationProperty Name="Device" Relationship="CardsDbModel.FK_Posts_Device" FromRole="Post" ToRole="Device" />
         </EntityType>
         <EntityType Name="Psce">
           <Key>
@@ -1801,6 +1991,10 @@
           <NavigationProperty Name="Wash" Relationship="CardsDbModel.FK_Device_Wash" FromRole="Device" ToRole="Wash" />
           <NavigationProperty Name="Finances" Relationship="CardsDbModel.FK_Finance_Device" FromRole="Device" ToRole="Finance" />
           <Property Name="ServerID" Type="Int32" />
+          <Property Name="IDDeviceType" Type="Int32" />
+          <Property Name="IpAddress" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Posts" Relationship="CardsDbModel.FK_Posts_Device" FromRole="Device" ToRole="Post" />
+          <NavigationProperty Name="DeviceType" Relationship="CardsDbModel.FK_Device_DeviceTypes" FromRole="Device" ToRole="DeviceType" />
         </EntityType>
         <EntityType Name="Finance">
           <Key>
@@ -2107,6 +2301,133 @@
           <Property Type="String" Name="NoticeStatusName" Nullable="false" MaxLength="100" />
           <Property Type="String" Name="Message" Nullable="false" />
         </ComplexType>
+        <EntityType Name="EventIncrease">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="Int32" Nullable="false" />
+          <Property Name="amount" Type="Int32" />
+          <Property Name="m10" Type="Int32" />
+          <Property Name="b10" Type="Int32" />
+          <Property Name="b50" Type="Int32" />
+          <Property Name="b100" Type="Int32" />
+          <Property Name="b200" Type="Int32" />
+          <Property Name="balance" Type="Int32" />
+          <NavigationProperty Name="Event" Relationship="CardsDbModel.FK_EventCash_Event1" FromRole="EventIncrease" ToRole="Event" />
+        </EntityType>
+        <Association Name="FK_Posts_Device">
+          <End Type="CardsDbModel.Device" Role="Device" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="CardsDbModel.Post" Role="Post" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Post">
+              <PropertyRef Name="IDDevice" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventCash_Event1">
+          <End Type="CardsDbModel.Event" Role="Event" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="CardsDbModel.EventIncrease" Role="EventIncrease" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="IDEvent" />
+            </Principal>
+            <Dependent Role="EventIncrease">
+              <PropertyRef Name="IDEvent" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="GetIncreaseOnPosts_Result">
+          <Property Type="String" Name="region" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="IDWash" Nullable="false" />
+          <Property Type="String" Name="washName" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="washAddress" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="amount" Nullable="true" />
+          <Property Type="Int32" Name="m10" Nullable="true" />
+          <Property Type="Int32" Name="b10" Nullable="true" />
+          <Property Type="Int32" Name="b50" Nullable="true" />
+          <Property Type="Int32" Name="b100" Nullable="true" />
+          <Property Type="Int32" Name="b200" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="DeviceType">
+          <Key>
+            <PropertyRef Name="IDDeviceType" />
+          </Key>
+          <Property Name="IDDeviceType" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Devices" Relationship="CardsDbModel.FK_Device_DeviceTypes" FromRole="DeviceType" ToRole="Device" />
+        </EntityType>
+        <EntityType Name="EventCollect">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="Int32" Nullable="false" />
+          <Property Name="amount" Type="Int32" />
+          <Property Name="m10" Type="Int32" />
+          <Property Name="b10" Type="Int32" />
+          <Property Name="b50" Type="Int32" />
+          <Property Name="b100" Type="Int32" />
+          <Property Name="b200" Type="Int32" />
+          <NavigationProperty Name="Event" Relationship="CardsDbModel.FK_EventCollect_Event" FromRole="EventCollect" ToRole="Event" />
+        </EntityType>
+        <Association Name="FK_Device_DeviceTypes">
+          <End Type="CardsDbModel.DeviceType" Role="DeviceType" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="CardsDbModel.Device" Role="Device" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DeviceType">
+              <PropertyRef Name="IDDeviceType" />
+            </Principal>
+            <Dependent Role="Device">
+              <PropertyRef Name="IDDeviceType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventCollect_Event">
+          <End Type="CardsDbModel.Event" Role="Event" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="CardsDbModel.EventCollect" Role="EventCollect" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="IDEvent" />
+            </Principal>
+            <Dependent Role="EventCollect">
+              <PropertyRef Name="IDEvent" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="GetIncreaseOnWashes_Result">
+          <Property Type="String" Name="region" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="IDWash" Nullable="false" />
+          <Property Type="String" Name="washName" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="washAddress" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="amount" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetNoticeRecipient_Result">
+          <Property Type="String" Name="Recipient" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="d" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="sp_helpdiagramdefinition_Result">
+          <Property Type="Int32" Name="version" Nullable="true" />
+          <Property Type="Binary" Name="definition" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_helpdiagrams_Result">
+          <Property Type="String" Name="Database" Nullable="true" MaxLength="128" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="128" />
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
+          <Property Type="Int32" Name="OwnerID" Nullable="false" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2255,29 +2576,7 @@
               <MappingFragment StoreEntitySet="Event">
                 <ScalarProperty Name="DTime" ColumnName="DTime" />
                 <ScalarProperty Name="IDEventKind" ColumnName="IDEventKind" />
-                <ScalarProperty Name="IDPostEvent" ColumnName="IDPostEvent" />
                 <ScalarProperty Name="IDPost" ColumnName="IDPost" />
-                <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="EventCashes">
-            <EntityTypeMapping TypeName="CardsDbModel.EventCash">
-              <MappingFragment StoreEntitySet="EventCash">
-                <ScalarProperty Name="cm10" ColumnName="cm10" />
-                <ScalarProperty Name="cb1k" ColumnName="cb1k" />
-                <ScalarProperty Name="cb500" ColumnName="cb500" />
-                <ScalarProperty Name="cb200" ColumnName="cb200" />
-                <ScalarProperty Name="cb100" ColumnName="cb100" />
-                <ScalarProperty Name="cb50" ColumnName="cb50" />
-                <ScalarProperty Name="cb10" ColumnName="cb10" />
-                <ScalarProperty Name="tm10" ColumnName="tm10" />
-                <ScalarProperty Name="tb1k" ColumnName="tb1k" />
-                <ScalarProperty Name="tb500" ColumnName="tb500" />
-                <ScalarProperty Name="tb200" ColumnName="tb200" />
-                <ScalarProperty Name="tb100" ColumnName="tb100" />
-                <ScalarProperty Name="tb50" ColumnName="tb50" />
-                <ScalarProperty Name="tb10" ColumnName="tb10" />
                 <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2285,6 +2584,7 @@
           <EntitySetMapping Name="EventKinds">
             <EntityTypeMapping TypeName="CardsDbModel.EventKind">
               <MappingFragment StoreEntitySet="EventKind">
+                <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="IDEventKind" ColumnName="IDEventKind" />
               </MappingFragment>
@@ -2293,9 +2593,14 @@
           <EntitySetMapping Name="EventModes">
             <EntityTypeMapping TypeName="CardsDbModel.EventMode">
               <MappingFragment StoreEntitySet="EventMode">
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="CardNum" ColumnName="CardNum" />
+                <ScalarProperty Name="CardTypeCode" ColumnName="CardTypeCode" />
+                <ScalarProperty Name="Cost" ColumnName="Cost" />
+                <ScalarProperty Name="PaymentSign" ColumnName="PaymentSign" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="DTimeStart" ColumnName="DTimeStart" />
                 <ScalarProperty Name="DTimeFinish" ColumnName="DTimeFinish" />
-                <ScalarProperty Name="Paid" ColumnName="Paid" />
-                <ScalarProperty Name="RemainLimit" ColumnName="RemainLimit" />
                 <ScalarProperty Name="IDMode" ColumnName="IDMode" />
                 <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
               </MappingFragment>
@@ -2357,6 +2662,7 @@
           <EntitySetMapping Name="Posts">
             <EntityTypeMapping TypeName="CardsDbModel.Post">
               <MappingFragment StoreEntitySet="Posts">
+                <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
@@ -2422,8 +2728,9 @@
           <EntitySetMapping Name="Devices">
             <EntityTypeMapping TypeName="CardsDbModel.Device">
               <MappingFragment StoreEntitySet="Device">
+                <ScalarProperty Name="IpAddress" ColumnName="IpAddress" />
+                <ScalarProperty Name="IDDeviceType" ColumnName="IDDeviceType" />
                 <ScalarProperty Name="ServerID" ColumnName="ServerID" />
-                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
@@ -2628,6 +2935,103 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="EventIncreases">
+            <EntityTypeMapping TypeName="CardsDbModel.EventIncrease">
+              <MappingFragment StoreEntitySet="EventIncrease">
+                <ScalarProperty Name="balance" ColumnName="balance" />
+                <ScalarProperty Name="b200" ColumnName="b200" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetIncreaseOnPosts" FunctionName="Хранилище CardsDbModel.GetIncreaseOnPosts">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CardsDbModel.GetIncreaseOnPosts_Result">
+                <ScalarProperty Name="region" ColumnName="region" />
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+                <ScalarProperty Name="washName" ColumnName="washName" />
+                <ScalarProperty Name="washAddress" ColumnName="washAddress" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b200" ColumnName="b200" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="DeviceTypes">
+            <EntityTypeMapping TypeName="CardsDbModel.DeviceType">
+              <MappingFragment StoreEntitySet="DeviceTypes">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="IDDeviceType" ColumnName="IDDeviceType" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventCollects">
+            <EntityTypeMapping TypeName="CardsDbModel.EventCollect">
+              <MappingFragment StoreEntitySet="EventCollect">
+                <ScalarProperty Name="b200" ColumnName="b200" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetCardBalance" FunctionName="Хранилище CardsDbModel.GetCardBalance" />
+          <FunctionImportMapping FunctionImportName="GetIncreaseOnWashes" FunctionName="Хранилище CardsDbModel.GetIncreaseOnWashes">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CardsDbModel.GetIncreaseOnWashes_Result">
+                <ScalarProperty Name="region" ColumnName="region" />
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+                <ScalarProperty Name="washName" ColumnName="washName" />
+                <ScalarProperty Name="washAddress" ColumnName="washAddress" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetNoticeRecipient" FunctionName="Хранилище CardsDbModel.GetNoticeRecipient">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CardsDbModel.GetNoticeRecipient_Result">
+                <ScalarProperty Name="Recipient" ColumnName="Recipient" />
+                <ScalarProperty Name="d" ColumnName="d" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_alterdiagram" FunctionName="Хранилище CardsDbModel.sp_alterdiagram" />
+          <FunctionImportMapping FunctionImportName="sp_creatediagram" FunctionName="Хранилище CardsDbModel.sp_creatediagram" />
+          <FunctionImportMapping FunctionImportName="sp_dropdiagram" FunctionName="Хранилище CardsDbModel.sp_dropdiagram" />
+          <FunctionImportMapping FunctionImportName="sp_helpdiagramdefinition" FunctionName="Хранилище CardsDbModel.sp_helpdiagramdefinition">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CardsDbModel.sp_helpdiagramdefinition_Result">
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_helpdiagrams" FunctionName="Хранилище CardsDbModel.sp_helpdiagrams">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CardsDbModel.sp_helpdiagrams_Result">
+                <ScalarProperty Name="Database" ColumnName="Database" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Owner" ColumnName="Owner" />
+                <ScalarProperty Name="OwnerID" ColumnName="OwnerID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="Хранилище CardsDbModel.sp_renamediagram" />
+          <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="Хранилище CardsDbModel.sp_upgraddiagrams" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -148,6 +148,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IncashController.cs" />
     <Compile Include="Controllers\IncashWashController.cs" />
+    <Compile Include="Controllers\IncreasesController.cs" />
     <Compile Include="Controllers\JsonController.cs" />
     <Compile Include="Controllers\LandingController.cs" />
     <Compile Include="Controllers\LayoutsController.cs" />
@@ -207,10 +208,19 @@
     <Compile Include="Models\Device.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\DeviceType.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Event.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EventCash.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventCollect.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventIncrease.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EventKind.cs">
@@ -249,7 +259,16 @@
     <Compile Include="Models\GetFinanceSummary_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetIncreaseOnPosts_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetIncreaseOnWashes_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetNoticeHistoryList_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetNoticeRecipient_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetPostAmounts_Result.cs">
@@ -305,6 +324,12 @@
     </Compile>
     <Compile Include="Models\ScaffoldingContext.cs" />
     <Compile Include="Models\ScaffoldingController.cs" />
+    <Compile Include="Models\sp_helpdiagramdefinition_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sp_helpdiagrams_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\sysdiagram.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -1925,6 +1950,10 @@
     <Content Include="Views\Monitoring\_MonitoringHistoryWashesList.cshtml" />
     <Content Include="Views\Pricing\NewPricesWrapper.cshtml" />
     <Content Include="Views\Monitoring\MonitoringHistoryPostsView.cshtml" />
+    <Content Include="Views\Increases\IncreasesOnPostsView.cshtml" />
+    <Content Include="Views\Increases\IncreasesOnWashesView.cshtml" />
+    <Content Include="Views\Increases\_IncreasesOnPostsList.cshtml" />
+    <Content Include="Views\Increases\_IncreasesOnWashesList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

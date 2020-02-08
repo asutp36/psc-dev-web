@@ -12,19 +12,19 @@ namespace Inspinia_MVC5.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class EventKind
+    public partial class DeviceType
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public EventKind()
+        public DeviceType()
         {
-            this.Events = new HashSet<Event>();
+            this.Devices = new HashSet<Device>();
         }
     
-        public int IDEventKind { get; set; }
-        public string Name { get; set; }
+        public int IDDeviceType { get; set; }
         public string Code { get; set; }
+        public string Name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Event> Events { get; set; }
+        public virtual ICollection<Device> Devices { get; set; }
     }
 }

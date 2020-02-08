@@ -12,19 +12,17 @@ namespace Inspinia_MVC5.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class EventKind
+    public partial class EventIncrease
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public EventKind()
-        {
-            this.Events = new HashSet<Event>();
-        }
+        public int IDEvent { get; set; }
+        public Nullable<int> amount { get; set; }
+        public Nullable<int> m10 { get; set; }
+        public Nullable<int> b10 { get; set; }
+        public Nullable<int> b50 { get; set; }
+        public Nullable<int> b100 { get; set; }
+        public Nullable<int> b200 { get; set; }
+        public Nullable<int> balance { get; set; }
     
-        public int IDEventKind { get; set; }
-        public string Name { get; set; }
-        public string Code { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Event> Events { get; set; }
+        public virtual Event Event { get; set; }
     }
 }
