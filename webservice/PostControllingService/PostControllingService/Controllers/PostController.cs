@@ -6,11 +6,14 @@ using System.Net.Http;
 using System.Web.Http;
 using Newtonsoft.Json;
 using PostControllingService.Controllers.Supplies;
+using PostControllingService.Models;
 
 namespace PostControllingService.Controllers
 {
     public class PostController : ApiController
     {
+        ModelDb _model = new ModelDb();
+
         [HttpPost]
         [ActionName("price")]
         public HttpResponseMessage SendPrice([FromBody]ChangePricesData change)
@@ -215,7 +218,7 @@ namespace PostControllingService.Controllers
                 if (post != null)
                 {
                     Logger.Log.Debug("HeartBeat");
-
+                    string str = GetPostIp(post.Post);
                     int heartbeat = HttpSender.GetInt("http://109.196.164.28:5000/api/post/heartbeat");
 
                     if (heartbeat == -1)
@@ -241,6 +244,11 @@ namespace PostControllingService.Controllers
                 Logger.Log.Error(ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
+        }
+
+        private string GetPostIp(string code)
+        {
+            return _model.Device.ToList().Find(x => x.Code == code).IpAddress;
         }
     }
 }
