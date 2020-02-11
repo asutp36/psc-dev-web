@@ -89,9 +89,17 @@ namespace Inspinia_MVC5.Controllers
                 edate = DateTime.Now;
 
             var prmRegion = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
+            if (region == "")
+            {
+                region = "0";
+            }
             prmRegion.Value = Convert.ToInt32(region);
 
             var prmWash = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            if (wash == null)
+            {
+                wash = "";
+            }
             prmWash.Value = wash;
 
             var prmPost = new System.Data.SqlClient.SqlParameter("@p_PostCode", System.Data.SqlDbType.NVarChar);
@@ -116,13 +124,13 @@ namespace Inspinia_MVC5.Controllers
         {
             Wash wash = _washes.Find(w => w.IDWash == Convert.ToInt32(IDWash));
 
-            ViewBag.Region = wash.IDRegion;
-            ViewBag.Wash = wash.IDWash;
+            ViewBag.Region = wash.Region.Code;
+            ViewBag.Wash = wash.Code;
 
             return View("IncreasesOnPostsView");
         }
 
-        public ActionResult _IncereasesOnPostsList(string region, string wash, string post, string begdate, string enddate)
+        public ActionResult _IncreasesOnPostsList(string region, string wash, string post, string begdate, string enddate)
         {
             List<GetIncreaseOnPosts_Result> view = GetIncreasesOnPosts(region, wash, post, begdate, enddate);
 

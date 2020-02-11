@@ -184,25 +184,7 @@
     <Compile Include="Models\CardType.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Collection.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\CollectionsFact.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\CollectionsPre.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Company.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\CountersOperating.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\CountersTotal.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\CountersTotalPre.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Device.cs">
@@ -212,9 +194,6 @@
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Event.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\EventCash.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EventCollect.cs">
@@ -324,19 +303,7 @@
     </Compile>
     <Compile Include="Models\ScaffoldingContext.cs" />
     <Compile Include="Models\ScaffoldingController.cs" />
-    <Compile Include="Models\sp_helpdiagramdefinition_Result.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\sp_helpdiagrams_Result.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\sysdiagram.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\User.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\vPostsAmount.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Wash.cs">
@@ -1946,10 +1913,7 @@
     <Content Include="Views\Notifications\_NotificationsHistoryList.cshtml" />
     <Content Include="Views\Notifications\NotificationsSendingView.cshtml" />
     <Content Include="Views\Notifications\_NotificationsFormView.cshtml" />
-    <Content Include="Views\Monitoring\MonitoringHistoryWashesView.cshtml" />
-    <Content Include="Views\Monitoring\_MonitoringHistoryWashesList.cshtml" />
     <Content Include="Views\Pricing\NewPricesWrapper.cshtml" />
-    <Content Include="Views\Monitoring\MonitoringHistoryPostsView.cshtml" />
     <Content Include="Views\Increases\IncreasesOnPostsView.cshtml" />
     <Content Include="Views\Increases\IncreasesOnWashesView.cshtml" />
     <Content Include="Views\Increases\_IncreasesOnPostsList.cshtml" />

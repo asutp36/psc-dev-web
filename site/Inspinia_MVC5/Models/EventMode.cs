@@ -16,10 +16,8 @@ namespace Inspinia_MVC5.Models
     {
         public int IDEvent { get; set; }
         public Nullable<int> IDMode { get; set; }
-        public Nullable<int> RemainLimit { get; set; }
-        public Nullable<int> Paid { get; set; }
-        public Nullable<System.DateTime> DTimeFinish { get; set; }
         public Nullable<System.DateTime> DTimeStart { get; set; }
+        public Nullable<System.DateTime> DTimeFinish { get; set; }
         public Nullable<int> Duration { get; set; }
         public Nullable<int> PaymentSign { get; set; }
         public Nullable<decimal> Cost { get; set; }

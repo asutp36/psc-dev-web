@@ -19,7 +19,6 @@ namespace Inspinia_MVC5.Models
         {
             this.Posts = new HashSet<Post>();
             this.Psces = new HashSet<Psce>();
-            this.Devices = new HashSet<Device>();
         }
     
         public int IDWash { get; set; }
@@ -33,7 +32,5 @@ namespace Inspinia_MVC5.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Psce> Psces { get; set; }
         public virtual Region Region { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Device> Devices { get; set; }
     }
 }

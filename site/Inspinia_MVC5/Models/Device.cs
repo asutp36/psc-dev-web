@@ -24,16 +24,14 @@ namespace Inspinia_MVC5.Models
         public int IDDevice { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
-        public int IDWash { get; set; }
         public Nullable<int> ServerID { get; set; }
         public Nullable<int> IDDeviceType { get; set; }
         public string IpAddress { get; set; }
     
-        public virtual Wash Wash { get; set; }
+        public virtual DeviceType DeviceType { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Finance> Finances { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Post> Posts { get; set; }
-        public virtual DeviceType DeviceType { get; set; }
     }
 }

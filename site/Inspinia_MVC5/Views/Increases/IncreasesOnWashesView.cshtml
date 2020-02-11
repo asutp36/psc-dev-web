@@ -76,8 +76,8 @@
     </div>
 </div>
 
-<input hidden id="bdate" />
-<input hidden id="edate" />
+<input id="bdate" />
+<input id="edate" />
 
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
@@ -211,8 +211,8 @@
                 data: {
                     region: region,
                     wash: wash,
-                    bdate: bdate,
-                    edate: edate
+                    begdate: bdate,
+                    enddate: edate
                 },
                 success: function () {
                 },

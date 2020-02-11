@@ -21,6 +21,7 @@ namespace Inspinia_MVC5.Models
         public System.DateTime DTime { get; set; }
         public int Amount { get; set; }
         public int Balance { get; set; }
-        public int ServerID { get; set; }
+        public int LocalizedBy { get; set; }
+        public int LocalizedID { get; set; }
     }
 }

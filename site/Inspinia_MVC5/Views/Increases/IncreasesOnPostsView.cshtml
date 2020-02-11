@@ -289,8 +289,8 @@
                     region: region,
                     wash: wash,
                     post: post,
-                    bdate: bdate,
-                    edate: edate
+                    begdate: bdate,
+                    enddate: edate
                 },
                 success: function () {
                 },
@@ -304,6 +304,12 @@
                 initDataTable();
             });
         }
+
+        $('#filter-region').val('@ViewBag.Region');
+        eventChangeRegion();
+
+        $('#filter-wash').val('@ViewBag.Wash');
+        eventChangeWash();
 
         $(document).ready(function () {
 

@@ -22,8 +22,8 @@ namespace Inspinia_MVC5.Models
         public int ActivationBy { get; set; }
         public System.DateTime LastOperationDate { get; set; }
         public int LastOperationBy { get; set; }
-        public int IncreaseSum { get; set; }
-        public int DecreaseSum { get; set; }
+        public Nullable<int> IncreaseSum { get; set; }
+        public Nullable<int> DecreaseSum { get; set; }
         public Nullable<int> CountOperation { get; set; }
     }
 }

@@ -4,73 +4,56 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="d269ab8cf877492a8b12b67b9f0d0600" Name="Diagram1" ZoomLevel="40">
-        <EntityTypeShape EntityType="CardsDbModel.Card" Width="1.5" PointX="7.5" PointY="18.375" />
-        <EntityTypeShape EntityType="CardsDbModel.CardStatus" Width="1.5" PointX="5.25" PointY="21.75" />
-        <EntityTypeShape EntityType="CardsDbModel.CardType" Width="1.5" PointX="5.25" PointY="19.125" />
-        <EntityTypeShape EntityType="CardsDbModel.Company" Width="1.5" PointX="0.75" PointY="11.75" />
-        <EntityTypeShape EntityType="CardsDbModel.CountersOperating" Width="1.5" PointX="9.75" PointY="21.5" />
-        <EntityTypeShape EntityType="CardsDbModel.CountersTotal" Width="1.5" PointX="9.75" PointY="10.5" />
-        <EntityTypeShape EntityType="CardsDbModel.Event" Width="1.5" PointX="9.75" PointY="14.375" />
-        <EntityTypeShape EntityType="CardsDbModel.EventCash" Width="1.5" PointX="12" PointY="18.125" />
-        <EntityTypeShape EntityType="CardsDbModel.EventKind" Width="1.5" PointX="7.5" PointY="16" />
-        <EntityTypeShape EntityType="CardsDbModel.EventMode" Width="1.5" PointX="15" PointY="14.625" />
-        <EntityTypeShape EntityType="CardsDbModel.EventSimple" Width="1.5" PointX="12" PointY="12.625" />
-        <EntityTypeShape EntityType="CardsDbModel.Mode" Width="1.5" PointX="12.75" PointY="10" />
-        <EntityTypeShape EntityType="CardsDbModel.Operation" Width="1.5" PointX="9.75" PointY="6" />
-        <EntityTypeShape EntityType="CardsDbModel.OperationType" Width="1.5" PointX="7.5" PointY="2.875" />
-        <EntityTypeShape EntityType="CardsDbModel.Owner" Width="1.5" PointX="5.25" PointY="16.5" />
-        <EntityTypeShape EntityType="CardsDbModel.Post" Width="1.5" PointX="7.5" PointY="12.625" />
-        <EntityTypeShape EntityType="CardsDbModel.Psce" Width="1.5" PointX="7.5" PointY="7.75" />
-        <EntityTypeShape EntityType="CardsDbModel.Region" Width="1.5" PointX="3" PointY="11.375" />
-        <EntityTypeShape EntityType="CardsDbModel.User" Width="1.5" PointX="2.75" PointY="0.75" />
-        <EntityTypeShape EntityType="CardsDbModel.Wash" Width="1.5" PointX="5.25" PointY="11.25" />
-        <AssociationConnector Association="CardsDbModel.FK_Cards_CardStatuses" />
-        <AssociationConnector Association="CardsDbModel.FK_Cards_CardTypes" />
-        <AssociationConnector Association="CardsDbModel.FK_Cards_Owners" />
-        <AssociationConnector Association="CardsDbModel.FK_Operations_Cards" />
-        <AssociationConnector Association="CardsDbModel.FK_Regions_Companies" />
-        <AssociationConnector Association="CardsDbModel.FK_CountersOperating_Posts" />
-        <AssociationConnector Association="CardsDbModel.FK_CountersTotal_Posts" />
-        <AssociationConnector Association="CardsDbModel.FK_Event_EventKind" />
-        <AssociationConnector Association="CardsDbModel.FK_Event_Point" />
-        <AssociationConnector Association="CardsDbModel.FK_EventCash_Event" />
-        <AssociationConnector Association="CardsDbModel.FK_EventMode_Event" />
-        <AssociationConnector Association="CardsDbModel.FK_EventSimple_Event" />
-        <AssociationConnector Association="CardsDbModel.FK_EventMode_Mode" />
-        <AssociationConnector Association="CardsDbModel.FK_Operations_OperationTypes" />
-        <AssociationConnector Association="CardsDbModel.FK_Operations_Pcses" />
-        <AssociationConnector Association="CardsDbModel.FK_Posts_Wash" />
-        <AssociationConnector Association="CardsDbModel.FK_Pcses_Wash" />
-        <AssociationConnector Association="CardsDbModel.FK_Wash_Regions" />
-        <EntityTypeShape EntityType="CardsDbModel.Device" Width="1.5" PointX="7.5" PointY="22.5" />
-        <EntityTypeShape EntityType="CardsDbModel.Finance" Width="1.5" PointX="9.75" PointY="25.25" />
-        <EntityTypeShape EntityType="CardsDbModel.FinanceType" Width="1.5" PointX="7.5" PointY="25.5" />
-        <AssociationConnector Association="CardsDbModel.FK_Device_Wash" />
-        <AssociationConnector Association="CardsDbModel.FK_Finance_Device" />
-        <AssociationConnector Association="CardsDbModel.FK_Finance_FinanceType" />
-        <EntityTypeShape EntityType="CardsDbModel.Collection" Width="1.5" PointX="10.125" PointY="1.625" />
-        <EntityTypeShape EntityType="CardsDbModel.CollectionsFact" Width="1.5" PointX="10.125" PointY="29.25" />
-        <EntityTypeShape EntityType="CardsDbModel.CollectionsPre" Width="1.5" PointX="10.125" PointY="38" />
-        <EntityTypeShape EntityType="CardsDbModel.CountersTotalPre" Width="1.5" PointX="10.125" PointY="33" />
-        <EntityTypeShape EntityType="CardsDbModel.NoticeHistory" Width="1.5" PointX="3" PointY="4" />
-        <EntityTypeShape EntityType="CardsDbModel.NoticeRecipientsGroup" Width="1.5" PointX="0.75" PointY="4.375" />
-        <EntityTypeShape EntityType="CardsDbModel.NoticeStatu" Width="1.5" PointX="0.75" PointY="1.5" />
-        <EntityTypeShape EntityType="CardsDbModel.sysdiagram" Width="1.5" PointX="0.75" PointY="7.75" />
-        <EntityTypeShape EntityType="CardsDbModel.vPostsAmount" Width="1.5" PointX="2.75" PointY="7.75" />
-        <AssociationConnector Association="CardsDbModel.FK_Collections_Posts" />
-        <AssociationConnector Association="CardsDbModel.FK_CollectionsFact_Posts" />
-        <AssociationConnector Association="CardsDbModel.FK_CollectionsPre_Posts" />
-        <AssociationConnector Association="CardsDbModel.FK_CountersTotalPre_Posts" />
-        <AssociationConnector Association="CardsDbModel.FK_NoticeHistory_NoticeRecipientsGroup" />
-        <AssociationConnector Association="CardsDbModel.FK_NoticeHistory_NoticeStatus" />
-        <EntityTypeShape EntityType="CardsDbModel.EventIncrease" Width="1.5" PointX="12" PointY="23.625" />
-        <AssociationConnector Association="CardsDbModel.FK_Posts_Device" />
-        <AssociationConnector Association="CardsDbModel.FK_EventCash_Event1" />
-        <EntityTypeShape EntityType="CardsDbModel.DeviceType" Width="1.5" PointX="5.25" PointY="25.125" />
-        <EntityTypeShape EntityType="CardsDbModel.EventCollect" Width="1.5" PointX="12" PointY="5.75" />
-        <AssociationConnector Association="CardsDbModel.FK_Device_DeviceTypes" />
-        <AssociationConnector Association="CardsDbModel.FK_EventCollect_Event" />
+      <Diagram DiagramId="9182f42b25a64aa6ac6bac8531bcde6a" Name="Diagram1">
+        <EntityTypeShape EntityType="WashCompany.Card" Width="1.5" PointX="7.5" PointY="17.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.CardStatus" Width="1.5" PointX="5.25" PointY="15.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.CardType" Width="1.5" PointX="5.25" PointY="18.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Company" Width="1.5" PointX="0.75" PointY="9.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Device" Width="1.5" PointX="5.25" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.DeviceType" Width="1.5" PointX="3" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Event" Width="1.5" PointX="9.75" PointY="7.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.EventCollect" Width="1.5" PointX="12" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.EventIncrease" Width="1.5" PointX="12" PointY="8.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.EventKind" Width="1.5" PointX="7.5" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.EventMode" Width="1.5" PointX="15" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.EventSimple" Width="1.5" PointX="12" PointY="15.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Finance" Width="1.5" PointX="7.5" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.FinanceType" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Mode" Width="1.5" PointX="12.75" PointY="12.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.NoticeHistory" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.NoticeRecipientsGroup" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.NoticeStatu" Width="1.5" PointX="0.75" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Operation" Width="1.5" PointX="9.75" PointY="11.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.OperationType" Width="1.5" PointX="7.5" PointY="22.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Owner" Width="1.5" PointX="5.25" PointY="20.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Post" Width="1.5" PointX="7.5" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Psce" Width="1.5" PointX="7.5" PointY="12.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Region" Width="1.5" PointX="3" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.User" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompany.Wash" Width="1.5" PointX="5.25" PointY="8.875" IsExpanded="true" />
+        <AssociationConnector Association="WashCompany.FK_Cards_CardStatuses" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Cards_CardTypes" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Cards_Owners" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Operations_Cards" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Regions_Companies" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Device_DeviceTypes" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Finance_Device" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Posts_Device" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Event_EventKind" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Event_Point" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_EventCash_Event" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_EventCollect_Event" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_EventMode_Event" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_EventSimple_Event" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_EventMode_Mode" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Finance_FinanceType" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_NoticeHistory_NoticeRecipientsGroup" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_NoticeHistory_NoticeStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Operations_OperationTypes" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Operations_Pcses" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Posts_Wash" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Pcses_Wash" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompany.FK_Wash_Regions" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -14,6 +14,7 @@ namespace Inspinia_MVC5.Models
     public partial class GetWashAmounts_Result
     {
         public string region { get; set; }
+        public int IDWash { get; set; }
         public string washName { get; set; }
         public string washAddress { get; set; }
         public Nullable<int> amount { get; set; }
