@@ -18,7 +18,7 @@
                 <td>@n.IDWash</td>
                 <td>@n.washName</td>
                 <td>
-                    <a class="btn btn-lg btn-outline-info" href="@Url.Action("IncreasesOnPostsView", "Increases", new {IDWash = n.IDWash})">@n.washAddress</a>
+                    <button type="button" class="btn btn-lg btn-outline-info" onclick="selectWash('@n.IDWash')">@n.washAddress</button>
                 </td>
                 <td>@n.amount</td>
             </tr>

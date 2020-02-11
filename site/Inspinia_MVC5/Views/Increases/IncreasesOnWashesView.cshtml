@@ -76,8 +76,8 @@
     </div>
 </div>
 
-<input id="bdate" />
-<input id="edate" />
+<input hidden id="bdate" />
+<input hidden id="edate" />
 
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
@@ -194,8 +194,13 @@
             }
         }
 
-        function selectPost(IDWash) {
+        function selectWash(IDWash) {
 
+            var bdate = $('#bdate').val();
+            var edate = $('#edate').val();
+            var wash = IDWash;
+                
+            window.location.href = "IncreasesOnPostsView?begdate=" + bdate + "&enddate=" + edate + "&wash=" + wash;
         }
 
         function filter() {

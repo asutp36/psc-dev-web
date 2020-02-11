@@ -82,8 +82,8 @@
                    region = ViewBag.Region,
                    wash = ViewBag.Wash,
                    post = "",
-                   begdate = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
-                   enddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")
+                   begdate = ViewBag.BegDate,
+                   enddate = ViewBag.EndDate
                })
                 </div>
             </div>
@@ -311,6 +311,9 @@
         $('#filter-wash').val('@ViewBag.Wash');
         eventChangeWash();
 
+        $('#bdate').val('@ViewBag.BegDate');
+        $('#edate').val('@ViewBag.EndDate');
+
         $(document).ready(function () {
 
             $('#filter-region').change(eventChangeRegion);
@@ -329,10 +332,12 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#bdate').val(moment().startOf('day').format('DD.MM.YYYY HH:mm:ss'));
-        $('#edate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
+        //$('#bdate').val(moment().startOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        //$('#edate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
 
-        $('#filter-date span').html(moment().startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
+        //$('#filter-date span').html(moment().startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
+
+        $('#filter-date span').html($('#bdate').val() + ' ' + $('#edate').val());
 
         $('#filter-date').daterangepicker({
             "timePicker": true,

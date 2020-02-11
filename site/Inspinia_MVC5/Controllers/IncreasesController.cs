@@ -120,12 +120,23 @@ namespace Inspinia_MVC5.Controllers
             return resultlist;
         }
 
-        public ActionResult IncreasesOnPostsView(string IDWash)
+        public ActionResult IncreasesOnPostsView(string begdate, string enddate, string wash)
         {
-            Wash wash = _washes.Find(w => w.IDWash == Convert.ToInt32(IDWash));
+            Wash Wash = _washes.Find(w => w.IDWash == Convert.ToInt32(wash));
 
-            ViewBag.Region = wash.Region.Code;
-            ViewBag.Wash = wash.Code;
+            ViewBag.Region = Wash.Region.Code;
+            ViewBag.Wash = Wash.Code;
+
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = DateTime.Today.AddYears(-10);
+
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
+
+            ViewBag.BegDate = begdate;
+            ViewBag.EndDate = enddate;
 
             return View("IncreasesOnPostsView");
         }
