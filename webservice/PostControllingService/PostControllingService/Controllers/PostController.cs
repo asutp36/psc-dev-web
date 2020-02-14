@@ -25,7 +25,7 @@ namespace PostControllingService.Controllers
                     foreach (Price p in change.Prices)
                     {
                         Logger.Log.Debug("Изменение тарифа. Отправка на пост: " + p);
-                        SendPostResponse response = HttpSender.SendPost("http://109.196.164.28:5000/api/post/rate" , JsonConvert.SerializeObject(p));
+                        SendPostResponse response = HttpSender.SendPost("http://192.168.93.103:5000/api/post/rate", JsonConvert.SerializeObject(p));
 
                         if (response.StatusCode != HttpStatusCode.OK)
                         {
@@ -63,7 +63,7 @@ namespace PostControllingService.Controllers
                 {
                     Logger.Log.Debug("Пополнение баланса. Отправка на пост: " + balance.ToString());
 
-                    SendPostResponse response = HttpSender.SendPost("http://109.196.164.28:5000/api/post/balance/increase", JsonConvert.SerializeObject(balance));
+                    SendPostResponse response = HttpSender.SendPost("http://192.168.93.103:5000/api/post/balance/increase", JsonConvert.SerializeObject(balance));
 
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
@@ -100,7 +100,7 @@ namespace PostControllingService.Controllers
                 {
                     Logger.Log.Debug(String.Format("GetBalace: Запуск с параметрами:\nPost: {0}", post.Post));
 
-                    int balance = HttpSender.GetInt("http://109.196.164.28:5000/api/post/balance/get");
+                    int balance = HttpSender.GetInt("http://192.168.93.103:5000/api/post/balance/get");
                     if(balance == -1)
                     {
                         Logger.Log.Error("Произошла ошибка при отправке запроса. Ответ -1" + Environment.NewLine);
@@ -138,7 +138,7 @@ namespace PostControllingService.Controllers
                 {
                     Logger.Log.Debug(String.Format("GetCurrentFunction: Запуск с параметрами:\nPost: {0}", post.Post));
 
-                    string result = HttpSender.GetString("http://109.196.164.28:5000/api/post/func/get");
+                    string result = HttpSender.GetString("http://192.168.93.103:5000/api/post/func/get");
                     PostFunction func = JsonConvert.DeserializeObject<PostFunction>(result);
                     if (func == null)
                     {
@@ -178,7 +178,7 @@ namespace PostControllingService.Controllers
                 {
                     Logger.Log.Debug(String.Format("SetFunction: Запуск с параметрами:\nPost: {0}, Function: {1}, Login: {2}", func.Post, func.Function, func.Login));
 
-                    SendPostResponse response = HttpSender.SendPost("http://109.196.164.28:5000/api/post/func/set", JsonConvert.SerializeObject(func));
+                    SendPostResponse response = HttpSender.SendPost("http://192.168.93.103:5000/api/post/func/set", JsonConvert.SerializeObject(func));
 
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
@@ -216,7 +216,7 @@ namespace PostControllingService.Controllers
                 {
                     Logger.Log.Debug("HeartBeat");
 
-                    int heartbeat = HttpSender.GetInt("http://109.196.164.28:5000/api/post/heartbeat");
+                    int heartbeat = HttpSender.GetInt("http://192.168.93.103:5000/api/post/heartbeat");
 
                     if (heartbeat == -1)
                     {
