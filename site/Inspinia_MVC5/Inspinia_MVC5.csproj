@@ -321,6 +321,7 @@
       <DependentUpon>Resource.en.resx</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\LoginModel.cs" />
+    <Compile Include="Controllers\SharedController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\animate.css" />
