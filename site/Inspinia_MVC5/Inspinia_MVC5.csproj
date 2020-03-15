@@ -229,6 +229,9 @@
     <Compile Include="Models\GetCollectWashList_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetDayIncrease_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetFinanceByNominals_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -1919,6 +1922,8 @@
     <Content Include="Views\Increases\IncreasesOnWashesView.cshtml" />
     <Content Include="Views\Increases\_IncreasesOnPostsList.cshtml" />
     <Content Include="Views\Increases\_IncreasesOnWashesList.cshtml" />
+    <Content Include="Views\Increases\IncreasesLipetskView.cshtml" />
+    <Content Include="Views\Increases\_IncreasesLipetskList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

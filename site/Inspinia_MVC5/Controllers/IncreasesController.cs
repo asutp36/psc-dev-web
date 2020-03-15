@@ -148,8 +148,48 @@ namespace Inspinia_MVC5.Controllers
             return PartialView("_IncreasesOnPostsList", view);
         }
 
+        public ActionResult _IncreasesLipetskList(string enddate)
+        {
+            List<GetDayIncrease_Result> view = GetIncreasesLipetsk(enddate);
+
+            return PartialView("_IncreasesLipetskList", view);
+        }
+
+        public List<GetDayIncrease_Result> GetIncreasesLipetsk(string enddate)
+        {
+            List<GetDayIncrease_Result> resultlist = null;
+
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
+
+            DateTime bdate = edate.AddDays(-1);
+
+            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            prmBegDate.Value = bdate;
+
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
+
+            var result = db.Database.SqlQuery<GetDayIncrease_Result>
+                ("GetDayIncrease @p_DateBeg, @p_DateEnd",
+                prmBegDate, prmEndDate).ToList();
+
+            resultlist = result;
+
+            return resultlist;
+        }
+
+        public ActionResult IncreasesLipetskView()
+        {
+            return View("IncreasesLipetskView");
+        }
+
         public ActionResult IncreasesOnWashesView()
         {
+            DateTime edate = DateTime.Now;
+            ViewBag.EndDate = edate;
+
             return View("IncreasesOnWashesView");
         }
 
@@ -158,11 +198,6 @@ namespace Inspinia_MVC5.Controllers
             List<GetIncreaseOnWashes_Result> view = GetIncreasesOnWashes(region, wash, begdate, enddate);
 
             return PartialView("_IncreasesOnWashesList", view);
-        }
-        // GET: Increases
-        public ActionResult Index()
-        {
-            return View();
         }
     }
 }

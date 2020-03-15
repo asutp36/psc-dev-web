@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Хранилище WashCompany" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Хранилище WashCompany" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Cards">
           <Key>
             <PropertyRef Name="IDCard" />
@@ -651,6 +651,10 @@
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="GetDayIncrease" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+        </Function>
         <Function Name="GetFinanceByNominals" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
@@ -826,8 +830,7 @@
             <End Role="Wash" EntitySet="Wash" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="WashCompany" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1576,7 +1579,7 @@
             <End Role="Wash" EntitySet="Washes" />
           </AssociationSet>
           <FunctionImport Name="GetCardBalance" ReturnType="Collection(Int32)">
-            <Parameter Name="Card" Mode="In" Type="String" />
+          <Parameter Name="Card" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetCardList" ReturnType="Collection(WashCompany.GetCardList_Result)">
             <Parameter Name="p_Phone" Mode="In" Type="String" />
@@ -1675,7 +1678,7 @@
             <Parameter Name="p_Message" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetNoticeRecipient" ReturnType="Collection(WashCompany.GetNoticeRecipient_Result)">
-            <Parameter Name="RecipientCode" Mode="In" Type="String" />
+          <Parameter Name="RecipientCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetPostAmounts" ReturnType="Collection(WashCompany.GetPostAmounts_Result)">
             <Parameter Name="p_RegionCode" Mode="In" Type="Int32" />
@@ -1688,6 +1691,10 @@
             <Parameter Name="p_RegionCode" Mode="In" Type="Int32" />
             <Parameter Name="p_WashCode" Mode="In" Type="String" />
             <Parameter Name="p_PostCode" Mode="In" Type="String" />
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="GetDayIncrease" ReturnType="Collection(WashCompany.GetDayIncrease_Result)">
             <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
             <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
           </FunctionImport>
@@ -1807,6 +1814,19 @@
           <Property Type="String" Name="washName" Nullable="false" MaxLength="5" />
           <Property Type="String" Name="washAddress" Nullable="true" MaxLength="100" />
           <Property Type="Int32" Name="amount" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetDayIncrease_Result">
+          <Property Type="DateTime" Name="reportdate" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="typedata" Nullable="false" />
+          <Property Type="String" Name="Wash" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="WashAddress" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="data1DataData1datapostname" Nullable="true" MaxLength="105" />
+          <Property Type="Int32" Name="data1DataData1datam10" Nullable="true" />
+          <Property Type="Int32" Name="data1DataData1datab10" Nullable="false" />
+          <Property Type="Int32" Name="data1DataData1datab50" Nullable="true" />
+          <Property Type="Int32" Name="data1DataData1datab100" Nullable="true" />
+          <Property Type="Int32" Name="data1DataData1datab500" Nullable="true" />
+          <Property Type="Int32" Name="data1DataData1datab1k" Nullable="false" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -2263,6 +2283,23 @@
                 <ScalarProperty Name="washName" ColumnName="washName" />
                 <ScalarProperty Name="washAddress" ColumnName="washAddress" />
                 <ScalarProperty Name="amount" ColumnName="amount" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetDayIncrease" FunctionName="Хранилище WashCompany.GetDayIncrease">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WashCompany.GetDayIncrease_Result">
+                <ScalarProperty Name="reportdate" ColumnName="reportdate" />
+                <ScalarProperty Name="typedata" ColumnName="typedata" />
+                <ScalarProperty Name="Wash" ColumnName="Wash" />
+                <ScalarProperty Name="WashAddress" ColumnName="WashAddress" />
+                <ScalarProperty Name="data1DataData1datapostname" ColumnName="data1DataData1datapostname" />
+                <ScalarProperty Name="data1DataData1datam10" ColumnName="data1DataData1datam10" />
+                <ScalarProperty Name="data1DataData1datab10" ColumnName="data1DataData1datab10" />
+                <ScalarProperty Name="data1DataData1datab50" ColumnName="data1DataData1datab50" />
+                <ScalarProperty Name="data1DataData1datab100" ColumnName="data1DataData1datab100" />
+                <ScalarProperty Name="data1DataData1datab500" ColumnName="data1DataData1datab500" />
+                <ScalarProperty Name="data1DataData1datab1k" ColumnName="data1DataData1datab1k" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
