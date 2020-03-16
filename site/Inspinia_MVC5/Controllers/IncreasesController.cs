@@ -155,6 +155,13 @@ namespace Inspinia_MVC5.Controllers
             return PartialView("_IncreasesLipetskList", view);
         }
 
+        public ActionResult IncreasesLipetskFilter(string enddate)
+        {
+            List<GetDayIncrease_Result> view = GetIncreasesLipetsk(enddate);
+
+            return PartialView("_IncreasesLipetskList", view);
+        }
+
         public List<GetDayIncrease_Result> GetIncreasesLipetsk(string enddate)
         {
             List<GetDayIncrease_Result> resultlist = null;

@@ -18,23 +18,7 @@
 </div>
 <div class="ibox-content m-b-sm border-bottom" id="filter-i">
     <div class="row">
-        <div class="col-sm-6">
-            <div class="form-group">
-                <label class="col-form-labe">Период поступлений</label>
-                <div class="row">
-                    <div class="col-sm-10">
-                        <div id="filter-date" class="form-control">
-                            <i class="fa fa-calendar"></i>
-                            <span></span> <b class="caret"></b>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <button id="clear-date" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <div class="form-group">
                 <label class="font-normal">Период поступлений</label>
                 <div class="input-group date" id="date-f" data-date="12/03/2012">
@@ -57,7 +41,7 @@
     </div>
 </div>
 
-<input id="edate" />
+<input hidden id="edate" />
 
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
@@ -140,21 +124,21 @@
         });
 
         $('#date-f').datepicker({
+            format: "dd.mm.yyyy",
             todayBtn: "linked",
             keyboardNavigation: false,
             forceParse: false,
-            calendarWeeks: true,
-            autoclose: true
-        }).on('changeDate', function (ev) {
-            //var ttt = $('#date-f').datepicker('getDate');
-            var ttt = $('#date-f').datepicker('getDate');
+            calendarWeeks: false,
+            autoclose: true,
+            locale: "ru"
+        }).on('changeDate', function () {
+            var ttt = $('#date-f').datepicker('getFormattedDate');
             ttt instanceof Date;
-            var st = "";
-            st += ttt.getDay() + ".";
-            st += ttt.getMonth() + ".";
-            st += ttt.getFullYear();
-            $('#edate').val(st);
+            $('#edate').val(ttt);
+            filter();
             });
+
+        $('#date-f').datepicker('update', moment().format('DD.MM.YYYY'));
 
         //$('input[name="daterange"]').daterangepicker();
 
