@@ -148,29 +148,31 @@ namespace Inspinia_MVC5.Controllers
             return PartialView("_IncreasesOnPostsList", view);
         }
 
-        public ActionResult _IncreasesLipetskList(string enddate)
+        public ActionResult _IncreasesLipetskList(string date)
         {
-            List<GetDayIncrease_Result> view = GetIncreasesLipetsk(enddate);
+            List<GetDayIncrease_Result> view = GetIncreasesLipetsk(date);
 
             return PartialView("_IncreasesLipetskList", view);
         }
 
-        public ActionResult IncreasesLipetskFilter(string enddate)
+        public ActionResult IncreasesLipetskFilter(string date)
         {
-            List<GetDayIncrease_Result> view = GetIncreasesLipetsk(enddate);
+            List<GetDayIncrease_Result> view = GetIncreasesLipetsk(date);
 
             return PartialView("_IncreasesLipetskList", view);
         }
 
-        public List<GetDayIncrease_Result> GetIncreasesLipetsk(string enddate)
+        public List<GetDayIncrease_Result> GetIncreasesLipetsk(string date)
         {
             List<GetDayIncrease_Result> resultlist = null;
 
-            DateTime edate;
-            if (!DateTime.TryParse(enddate, out edate))
-                edate = DateTime.Now;
+            DateTime bdate;
+            if (!DateTime.TryParse(date, out bdate))
+                bdate = DateTime.Now;
 
-            DateTime bdate = edate.AddDays(-1);
+            DateTime edate = bdate.AddDays(1);
+
+            edate = edate.AddSeconds(-1);
 
             var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
             prmBegDate.Value = bdate;
