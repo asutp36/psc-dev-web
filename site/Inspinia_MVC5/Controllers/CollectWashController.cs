@@ -114,7 +114,7 @@ namespace Inspinia_MVC5.Controllers
 
             DateTime bdate;
             if (!DateTime.TryParse(date, out bdate))
-                bdate = DateTime.Now;
+                bdate = DateTime.Today;
 
             DateTime edate = bdate.AddDays(1);
 

@@ -43,26 +43,6 @@
             <li class="@Html.IsSelected(controller: "Monitoring")">
                 <a href="@Url.Action("MonitoringView","Monitoring")"><i class="fa fa-desktop"></i> <span class="nav-label" data-i18n="nav.mailbox">Мониторинг</span></a>
             </li>
-            <li class="@Html.IsSelected(controller: "Monitoring")">
-                <a href="#"><i class="fa fa-desktop"></i> <span class="nav-label" data-i18n="nav.widgets">Мониторинг</span><span class="fa arrow"></span></a>
-                @foreach (var c in Model)
-                {
-                <ul class="nav nav-second-level collapse">
-                    <li class="">
-                        <a href="#"><span class="nav-label" data-i18n="nav.widgets">@c.Name</span><span class="fa arrow"></span></a>
-                    @foreach (var m in c.Washes)
-                        {
-                            <ul class=" nav nav-third-level collapse">
-                                <li class="">
-                                    <a href="#">@m.Name</a>
-                                </li>
-                            </ul>
-                        }
-                    </li>
-                </ul>
-                }
-                    
-            </li>
             <li class="@Html.IsSelected(controller: "Notifications")">
                 <a href="#"><i class="fa fa-bell"></i> <span class="nav-label" data-i18n="nav.widgets">Оповещения</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Notifications", cssClass:"in")">
@@ -83,6 +63,26 @@
                     <li class="@Html.IsSelected(action: "LockScreen")"><a href="@Url.Action("LockScreen", "Dumb")">Инкассация</a></li>
                     <li class="@Html.IsSelected(action: "Invoice")"><a href="@Url.Action("Invoice", "Dumb")">Наличие в боксах</a></li>
                 </ul>
+            </li>
+            <li class="@Html.IsSelected(controller: "Monitoring")">
+                <a href="#"><i class="fa fa-desktop"></i> <span class="nav-label" data-i18n="nav.widgets">Мониторинг</span><span class="fa arrow"></span></a>
+                @foreach (var c in Model)
+                {
+                    <ul class="nav nav-second-level collapse">
+                        <li class="">
+                            <a href="#"><span class="nav-label" data-i18n="nav.widgets">@c.Name</span><span class="fa arrow"></span></a>
+                            @foreach (var m in c.Washes)
+                            {
+                                <ul class=" nav nav-third-level collapse">
+                                    <li class="">
+                                        <a href="#">@m.Name</a>
+                                    </li>
+                                </ul>
+                            }
+                        </li>
+                    </ul>
+                }
+
             </li>
         </ul>
     </div>

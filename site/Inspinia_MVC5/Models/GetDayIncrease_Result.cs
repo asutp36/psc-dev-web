@@ -26,7 +26,7 @@ namespace Inspinia_MVC5.Models
         public int data1DataData1datab1k { get; set; }
         public int sumofm
         {
-            get { return data1DataData1datab10 * 10; }
+            get { return (int)(data1DataData1datam10 * 10); }
         }
         public int sumofb
         {
