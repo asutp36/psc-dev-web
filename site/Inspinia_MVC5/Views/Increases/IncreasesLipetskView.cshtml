@@ -33,7 +33,7 @@
                 <div class="ibox-content-more">
                     @Html.Action("_IncreasesLipetskList", "Increases", new
                {
-                   enddate = ViewBag.EndDate
+                   date = ViewBag.Date
                })
                 </div>
             </div>
@@ -115,12 +115,6 @@
 
             $("#filter-i").on("input", filter);
             initDataTable();
-
-            $(document).on("click", "#clear-date", function () {
-                $('#filter-date span').html(" За всё время");
-                $('#edate').val("");
-                filter();
-            });
         });
 
         $('#date-f').datepicker({

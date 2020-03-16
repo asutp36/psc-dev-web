@@ -488,5 +488,18 @@ namespace Inspinia_MVC5.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetDayIncrease_Result>("GetDayIncrease", p_DateBegParameter, p_DateEndParameter);
         }
+    
+        public virtual ObjectResult<GetBoxAndCollect_Result> GetBoxAndCollect(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetBoxAndCollect_Result>("GetBoxAndCollect", p_DateBegParameter, p_DateEndParameter);
+        }
     }
 }

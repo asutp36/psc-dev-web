@@ -217,6 +217,9 @@
     <Compile Include="Models\FinanceType.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetBoxAndCollect_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetCardListMinMaxDiapasons_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -1924,6 +1927,8 @@
     <Content Include="Views\Increases\_IncreasesOnWashesList.cshtml" />
     <Content Include="Views\Increases\IncreasesLipetskView.cshtml" />
     <Content Include="Views\Increases\_IncreasesLipetskList.cshtml" />
+    <Content Include="Views\CollectWash\CollectLipetskView.cshtml" />
+    <Content Include="Views\CollectWash\_CollectLipetskList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

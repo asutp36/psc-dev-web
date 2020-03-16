@@ -590,6 +590,10 @@
         <Function Name="FuncMinVal" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
           <Parameter Name="val" Type="int" Mode="In" />
         </Function>
+        <Function Name="GetBoxAndCollect" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+        </Function>
         <Function Name="GetCardBalance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Card" Type="nvarchar" Mode="In" />
         </Function>
@@ -1698,6 +1702,10 @@
             <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
             <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
           </FunctionImport>
+          <FunctionImport Name="GetBoxAndCollect" ReturnType="Collection(WashCompany.GetBoxAndCollect_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetCardList_Result">
           <Property Type="String" Name="Phone" Nullable="false" MaxLength="20" />
@@ -1827,6 +1835,25 @@
           <Property Type="Int32" Name="data1DataData1datab100" Nullable="true" />
           <Property Type="Int32" Name="data1DataData1datab500" Nullable="true" />
           <Property Type="Int32" Name="data1DataData1datab1k" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="GetBoxAndCollect_Result">
+          <Property Type="DateTime" Name="reportdate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="Wash" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="WashAddress" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="data1DataPostname" Nullable="true" MaxLength="105" />
+          <Property Type="Int32" Name="data1DataBoxm10" Nullable="true" />
+          <Property Type="Int32" Name="data1DataBoxb10" Nullable="true" />
+          <Property Type="Int32" Name="data1DataBoxb50" Nullable="true" />
+          <Property Type="Int32" Name="data1DataBoxb100" Nullable="true" />
+          <Property Type="Int32" Name="data1DataBoxb500" Nullable="true" />
+          <Property Type="Int32" Name="data1DataBoxb1k" Nullable="false" />
+          <Property Type="Int32" Name="data1DataM10" Nullable="false" />
+          <Property Type="Int32" Name="data1DataB10" Nullable="false" />
+          <Property Type="Int32" Name="data1DataB50" Nullable="false" />
+          <Property Type="Int32" Name="data1DataB100" Nullable="false" />
+          <Property Type="Int32" Name="data1DataB500" Nullable="false" />
+          <Property Type="Int32" Name="data1DataB1k" Nullable="false" />
+          <Property Type="Int32" Name="s" Nullable="true" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -2300,6 +2327,29 @@
                 <ScalarProperty Name="data1DataData1datab100" ColumnName="data1DataData1datab100" />
                 <ScalarProperty Name="data1DataData1datab500" ColumnName="data1DataData1datab500" />
                 <ScalarProperty Name="data1DataData1datab1k" ColumnName="data1DataData1datab1k" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetBoxAndCollect" FunctionName="Хранилище WashCompany.GetBoxAndCollect">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WashCompany.GetBoxAndCollect_Result">
+                <ScalarProperty Name="reportdate" ColumnName="reportdate" />
+                <ScalarProperty Name="Wash" ColumnName="Wash" />
+                <ScalarProperty Name="WashAddress" ColumnName="WashAddress" />
+                <ScalarProperty Name="data1DataPostname" ColumnName="data1DataPostname" />
+                <ScalarProperty Name="data1DataBoxm10" ColumnName="data1DataBoxm10" />
+                <ScalarProperty Name="data1DataBoxb10" ColumnName="data1DataBoxb10" />
+                <ScalarProperty Name="data1DataBoxb50" ColumnName="data1DataBoxb50" />
+                <ScalarProperty Name="data1DataBoxb100" ColumnName="data1DataBoxb100" />
+                <ScalarProperty Name="data1DataBoxb500" ColumnName="data1DataBoxb500" />
+                <ScalarProperty Name="data1DataBoxb1k" ColumnName="data1DataBoxb1k" />
+                <ScalarProperty Name="data1DataM10" ColumnName="data1DataM10" />
+                <ScalarProperty Name="data1DataB10" ColumnName="data1DataB10" />
+                <ScalarProperty Name="data1DataB50" ColumnName="data1DataB50" />
+                <ScalarProperty Name="data1DataB100" ColumnName="data1DataB100" />
+                <ScalarProperty Name="data1DataB500" ColumnName="data1DataB500" />
+                <ScalarProperty Name="data1DataB1k" ColumnName="data1DataB1k" />
+                <ScalarProperty Name="s" ColumnName="s" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

@@ -31,8 +31,6 @@
                     <a href="@Url.Action("IncashWashes", "Incash", new { begTime = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"), endTime =  DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"), region = "0", wash = "0" })">
                         <small>@DateTime.Today.AddDays(-1).ToString("dd MMMM yyyy")</small>
                     </a>
-                    <a style="margin-left:15px" id="btn-history" class="btn btn-secondary btn-sm" href="@Url.Action("IncreasesLipetskView","Increases")">Lipetsk</a>
-
                 </div>
             </div>
         </div>
@@ -65,6 +63,26 @@
                             endTime = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss")})">
                         <small>@DateTime.Today.ToString("dd MMMM yyyy")</small>
                     </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <span class="label label-warning-light float-right">работает</span>
+                    <h5>Липецк</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <a style="margin-left:15px" class="btn btn-info btn-sm" href="@Url.Action("IncreasesLipetskView","Increases")">Внесения</a>
+                        </div>
+                        <div class="col-sm-6">
+                            <a style="margin-left:15px" class="btn btn-success btn-sm" href="@Url.Action("CollectLipetskView","CollectWash")">Инкассации</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

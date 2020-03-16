@@ -11,26 +11,32 @@ namespace Inspinia_MVC5.Models
 {
     using System;
     
-    public partial class GetDayIncrease_Result
+    public partial class GetBoxAndCollect_Result
     {
         public Nullable<System.DateTime> reportdate { get; set; }
-        public int typedata { get; set; }
         public string Wash { get; set; }
         public string WashAddress { get; set; }
-        public string data1DataData1datapostname { get; set; }
-        public Nullable<int> data1DataData1datam10 { get; set; }
-        public int data1DataData1datab10 { get; set; }
-        public Nullable<int> data1DataData1datab50 { get; set; }
-        public Nullable<int> data1DataData1datab100 { get; set; }
-        public Nullable<int> data1DataData1datab500 { get; set; }
-        public int data1DataData1datab1k { get; set; }
+        public string data1DataPostname { get; set; }
+        public Nullable<int> data1DataBoxm10 { get; set; }
+        public Nullable<int> data1DataBoxb10 { get; set; }
+        public Nullable<int> data1DataBoxb50 { get; set; }
+        public Nullable<int> data1DataBoxb100 { get; set; }
+        public Nullable<int> data1DataBoxb500 { get; set; }
+        public int data1DataBoxb1k { get; set; }
+        public int data1DataM10 { get; set; }
+        public int data1DataB10 { get; set; }
+        public int data1DataB50 { get; set; }
+        public int data1DataB100 { get; set; }
+        public int data1DataB500 { get; set; }
+        public int data1DataB1k { get; set; }
+        public Nullable<int> s { get; set; }
         public int sumofm
         {
-            get { return data1DataData1datab10 * 10; }
+            get { return data1DataM10 * 10; }
         }
         public int sumofb
         {
-            get { return (int)(data1DataData1datab10 * 10 + data1DataData1datab50 * 50 + data1DataData1datab100 * 100 + data1DataData1datab500 * 200); }
+            get { return (int)(data1DataB10 * 10 + data1DataB50 * 50 + data1DataB100 * 100 + data1DataB500 * 200); }
         }
         public int sum
         {

@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetBoxAndCollect_Result>
+
+<table id="table-collect-wash" class="table table-striped table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>№ бокса</th>
+            <th>Х10(монеты)</th>
+            <th>Сумма(монеты)</th>
+            <th>Х10</th>
+            <th>Х50</th>
+            <th>Х100</th>
+            <th>Х200</th>
+            <th>Сумма(купюры)</th>
+            <th>Итоговая сумма</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+        <tr>
+            <td>@m.data1DataPostname</td>
+            <td>@m.data1DataM10</td>
+            <td>@m.sumofm</td>
+            <td>@m.data1DataB10</td>
+            <td>@m.data1DataB50</td>
+            <td>@m.data1DataB100</td>
+            <td>@m.data1DataB500</td>
+            <td>@m.sumofb</td>
+            <td>@m.sum</td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+
+
