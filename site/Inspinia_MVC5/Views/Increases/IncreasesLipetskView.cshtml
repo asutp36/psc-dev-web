@@ -64,8 +64,8 @@
             "searching": false,
             dom: '<"html5buttons"B>lTfgitp',
             buttons: [
-                { extend: 'excel', title: 'Липецк Поступления денежных средств через терминалы за период с ' + $('#edate').val() + ' 00:00:00 по ' + $('#edate').val() + ' 23:59:59'},
-                { extend: 'pdf', title: 'Липецк Поступления денежных средств через терминалы за период с ' + $('#edate').val() + ' 00:00:00 по ' + $('#edate').val() + ' 23:59:59' },
+                { extend: 'excel', footer: true, title: 'Липецк Поступления денежных средств через терминалы за период с ' + $('#edate').val() + ' 00:00:00 по ' + $('#edate').val() + ' 23:59:59'},
+                { extend: 'pdf', footer: true, title: 'Липецк Поступления денежных средств через терминалы за период с ' + $('#edate').val() + ' 00:00:00 по ' + $('#edate').val() + ' 23:59:59' },
 
                 {
                     extend: 'print',
@@ -82,6 +82,25 @@
             "language": {
                 "zeroRecords": "Данные по заданному фильтру не найдены",
                 "emptyTable": "Данные по заданному фильтру не найдены"
+            },
+            "footerCallback": function () {
+                var api = this.api();
+
+                var intVal = function (i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+
+
+                for (var i = 1; i < 9; ++i) {
+                    total = api.column(i).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                    $(api.column(i).footer()).html(total);
+                }
             }
         });
     }
