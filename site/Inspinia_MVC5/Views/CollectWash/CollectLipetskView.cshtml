@@ -66,8 +66,8 @@
                 "searching": false,
                 dom: '<"html5buttons"B>lTfgitp',
                 buttons: [
-                    { extend: 'excel', title: 'Report' },
-                    { extend: 'pdf', title: 'Report' },
+                    { extend: 'excel', title: 'Липецк Инкассация боксов за период с ' + $('#edate').val() + ' 00:00:00 по ' + $('#edate').val() + ' 23:59:59'},
+                    { extend: 'pdf', title: 'Липецк Инкассация боксов за период с ' + $('#edate').val() + ' 00:00:00 по ' + $('#edate').val() + ' 23:59:59'},
                     {
                         extend: 'print',
                         customize: function (win) {
@@ -112,12 +112,6 @@
 
         $('#edate').val('@ViewBag.EndDate');
 
-        $(document).ready(function () {
-
-            $("#filter-i").on("input", filter);
-            initDataTable();
-        });
-
         $('#date-f').datepicker({
             format: "dd.mm.yyyy",
             todayBtn: "linked",
@@ -134,7 +128,14 @@
         });
 
         $('#date-f').datepicker('update', moment().format('DD.MM.YYYY'));
+        $('#edate').val($('#date-f').datepicker('getFormattedDate'));
+
+        $(document).ready(function () {
+
+            $("#filter-i").on("input", filter);
+            initDataTable();
+            filter();
+        });
 
     </script>
 }
-

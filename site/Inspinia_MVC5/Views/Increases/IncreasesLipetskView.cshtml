@@ -64,8 +64,8 @@
             "searching": false,
             dom: '<"html5buttons"B>lTfgitp',
             buttons: [
-                { extend: 'excel', title: 'Report' },
-                { extend: 'pdf', title: 'Report' },
+                { extend: 'excel', title: 'Липецк Поступления денежных средств через терминалы за период с ' + $('#edate').val() + ' 00:00:00 по ' + $('#edate').val() + ' 23:59:59'},
+                { extend: 'pdf', title: 'Липецк Поступления денежных средств через терминалы за период с ' + $('#edate').val() + ' 00:00:00 по ' + $('#edate').val() + ' 23:59:59' },
 
                 {
                     extend: 'print',
@@ -111,12 +111,6 @@
 
         $('#edate').val('@ViewBag.EndDate');
 
-        $(document).ready(function () {
-
-            $("#filter-i").on("input", filter);
-            initDataTable();
-        });
-
         $('#date-f').datepicker({
             format: "dd.mm.yyyy",
             todayBtn: "linked",
@@ -133,74 +127,14 @@
             });
 
         $('#date-f').datepicker('update', moment().format('DD.MM.YYYY'));
+        $('#edate').val($('#date-f').datepicker('getFormattedDate'));
 
-        //$('input[name="daterange"]').daterangepicker();
+        $(document).ready(function () {
 
-        ////$('#bdate').val(moment().startOf('day').format('DD.MM.YYYY HH:mm:ss'));
-        ////$('#edate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
+            $("#filter-i").on("input", filter);
+            initDataTable();
+            filter();
+        });
 
-        ////$('#filter-date span').html(moment().startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
-
-        //$('#filter-date span').html($('#bdate').val() + ' ' + $('#edate').val());
-
-        //$('#filter-date').daterangepicker({
-        //    "timePicker": true,
-        //    "timePicker24Hour": true,
-        //    "timePickerSeconds": true,
-        //    "ranges": {
-        //        'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
-        //        'сегодня': [moment().startOf('day'), moment()],
-        //        'текущий месяц': [moment().startOf('month'), moment()],
-        //        'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        //    },
-        //    "locale": {
-        //        "format": "DD.MM.YYYY",
-        //        "separator": " ",
-        //        "applyLabel": "Выбрать",
-        //        "cancelLabel": "Отмена",
-        //        "fromLabel": "From",
-        //        "toLabel": "To",
-        //        "customRangeLabel": "Custom",
-        //        "weekLabel": "W",
-        //        "daysOfWeek": [
-        //            "Вс",
-        //            "Пн",
-        //            "Вт",
-        //            "Ср",
-        //            "Чт",
-        //            "Пт",
-        //            "Сб"
-        //        ],
-        //        "monthNames": [
-        //            "Январь",
-        //            "Февраль",
-        //            "Март",
-        //            "Апрель",
-        //            "Май",
-        //            "Июнь",
-        //            "Июль",
-        //            "Август",
-        //            "Сентябрь",
-        //            "Октябрь",
-        //            "Ноябрь",
-        //            "Декабрь"
-        //        ],
-        //        "firstDay": 1
-        //    },
-        //    "showCustomRangeLabel": false,
-        //    "alwaysShowCalendars": true,
-        //    "startDate": moment().subtract(1, 'days').startOf('day'),
-        //    "endDate": moment().subtract(1, 'days').endOf('day'),
-        //    "opens": "right",
-        //    "drops": "down"
-        //}, function (start, end, label) {
-        //    console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
-        //    $('#filter-date span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
-
-        //    $('#bdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
-        //    $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
-        //    filter();
-        //});
     </script>
 }
-
