@@ -138,6 +138,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\PostController.cs" />
     <Compile Include="Controllers\Supplies\GetRatesResponse.cs" />
+    <Compile Include="Controllers\Supplies\GetScalarResponse.cs" />
     <Compile Include="Controllers\Supplies\PostFunction.cs" />
     <Compile Include="Controllers\Supplies\FunctionRate.cs" />
     <Compile Include="Controllers\Supplies\RatesWPostCodes.cs" />

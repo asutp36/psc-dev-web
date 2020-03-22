@@ -9,6 +9,7 @@ using SynchronizationService.Controllers.Supplies;
 using System.Data.Common;
 using Newtonsoft.Json;
 using System.Globalization;
+using System.Data.SqlClient;
 
 namespace SynchronizationService.Controllers
 {
@@ -266,6 +267,16 @@ namespace SynchronizationService.Controllers
                     return Request.CreateResponse(HttpStatusCode.NoContent);
                 }
             }
+            catch (SqlException e)
+            {
+                if(e.Number == 2627)
+                {
+                    Logger.Log.Error("PostEventIncrease: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.Conflict);
+                }
+                Logger.Log.Error("PostEventIncrease: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
             catch (Exception ex)
             {
                 Logger.Log.Error("PostEventIncrease: " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
@@ -305,12 +316,12 @@ namespace SynchronizationService.Controllers
                             $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{mode.Device}\')), " +
                             $"(select ek.IDEventKind from EventKind ek where ek.Code = \'mode\'), \'{mode.DTimeStart.ToString("yyyyMMdd HH:mm:ss.fff")}\'); " +
                             "INSERT INTO EventMode (IDEvent, IDMode, DTimeStart, DTimeFinish, Duration, PaymentSign, Cost, CardTypeCode, CardNum, Discount) " +
-                            $"VALUES ((SELECT SCOPE_IDENTITY()), (select m.IDMode from Mode m where m.Code = \'{mode.Mode}\'), \'{mode.DTimeStart}\', {finish}, " +
+                            $"VALUES ((SELECT SCOPE_IDENTITY()), (select m.IDMode from Mode m where m.Code = \'{mode.Mode}\'), \'{mode.DTimeStart.ToString("yyyyMMdd HH:mm:ss.fff")}\', {finish}, " +
                             $"{mode.Duration}, {mode.PaymentSign}, {mode.Cost.ToString().Replace(",", CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator)}, \'{mode.CardTypeCode}\', \'{mode.CardNum}\', {mode.Discount}); " +
                             "SELECT IDENT_CURRENT(\'Event\')" +
                             "COMMIT;";
 
-                        //Logger.Log.Debug("Command is: " + command.CommandText);
+                        Logger.Log.Debug("Command is: " + command.CommandText);
 
                         var id = command.ExecuteScalar();
                         _model.Database.Connection.Close();
@@ -336,7 +347,17 @@ namespace SynchronizationService.Controllers
                     return Request.CreateResponse(HttpStatusCode.NoContent);
                 }
             }
-            catch(Exception ex)
+            catch (SqlException e)
+            {
+                if (e.Number == 2627)
+                {
+                    Logger.Log.Error("PostEventIncrease: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.Conflict);
+                }
+                Logger.Log.Error("PostEventIncrease: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            catch (Exception ex)
             {
                 Logger.Log.Error("PostEventMode: " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
@@ -399,6 +420,16 @@ namespace SynchronizationService.Controllers
                     Logger.Log.Error("PostEventCollect: increase == null. Ошибка в данных запроса." + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.NoContent);
                 }
+            }
+            catch (SqlException e)
+            {
+                if (e.Number == 2627)
+                {
+                    Logger.Log.Error("PostEventIncrease: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.Conflict);
+                }
+                Logger.Log.Error("PostEventIncrease: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
             catch (Exception ex)
             {

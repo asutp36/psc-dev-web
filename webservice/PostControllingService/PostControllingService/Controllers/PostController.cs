@@ -144,16 +144,17 @@ namespace PostControllingService.Controllers
 
                     if(address != null || address != "")
                     {
-                        int balance = HttpSender.GetInt("http://"+ address + "/api/post/balance/get");
-                        if (balance == -1)
+                        GetScalarResponse balanceResponse = HttpSender.GetScalar("http://" + address + "/api/post/balance/get");
+
+                        if (balanceResponse.StatusCode != HttpStatusCode.OK)
                         {
-                            Logger.Log.Error("Произошла ошибка при отправке запроса. Ответ -1" + Environment.NewLine);
+                            Logger.Log.Error("GetBalance: Ошибка при запросе на пост: "+ balanceResponse.Result + Environment.NewLine);
                             return Request.CreateResponse(HttpStatusCode.Conflict, "Не удалось устаовить связь с постом");
                         }
                         else
-                        {
+                        { 
                             var response = Request.CreateResponse(HttpStatusCode.OK);
-                            response.Headers.Add("Balance", balance.ToString());
+                            response.Headers.Add("Balance", balanceResponse.Result);
                             return response;
                         }
                     }
@@ -191,15 +192,16 @@ namespace PostControllingService.Controllers
                     string address = GetPostIp(post.Post);
                     if (address != null || address != "")
                     {
-                        string result = HttpSender.GetString("http://"+ address + "/api/post/func/get");
-                        PostFunction func = JsonConvert.DeserializeObject<PostFunction>(result);
-                        if (func == null)
+                        GetScalarResponse getFuncResponse = HttpSender.GetScalar("http://" + address + "/api/post/func/get");
+
+                        if (getFuncResponse.StatusCode != HttpStatusCode.OK)
                         {
-                            Logger.Log.Error("GetCurrentFunction: Произошла ошибка при отправке запроса. Ответ null" + Environment.NewLine);
+                            Logger.Log.Error("GetCurrentFunction: Ошибка при запросе на пост: \n" + getFuncResponse.Result + Environment.NewLine);
                             return Request.CreateResponse(HttpStatusCode.Conflict, "Не удалось установить связь с постом");
                         }
                         else
                         {
+                            PostFunction func = JsonConvert.DeserializeObject<PostFunction>(getFuncResponse.Result);
                             var response = Request.CreateResponse(HttpStatusCode.OK);
                             response.Headers.Add("Function", func.Name);
                             return response;
@@ -283,23 +285,23 @@ namespace PostControllingService.Controllers
             {
                 if (post != null)
                 {
-                    Logger.Log.Debug("HeartBeat");
+                    Logger.Log.Debug("HeartBeat: PostCode: " + post.Post);
 
                     string address = GetPostIp(post.Post);
                     if(address != null || address != "")
                     {
-                        int heartbeat = HttpSender.GetInt("http://" + address + "/api/post/heartbeat");
+                        GetScalarResponse heartbeatResponse = HttpSender.GetScalar("http://" + address + "/api/post/heartbeat");
 
-                        if (heartbeat == -1)
-                        {
-                            Logger.Log.Error("HeartBeat: Произошла ошибка при отправке запроса. Ответ -1" + Environment.NewLine);
-                            return Request.CreateResponse(HttpStatusCode.Conflict);
+                        if (heartbeatResponse.StatusCode == HttpStatusCode.OK)
+                        {                            
+                            var response = Request.CreateResponse(HttpStatusCode.OK);
+                            response.Headers.Add("HeartBeat", heartbeatResponse.Result);
+                            return response;                 
                         }
                         else
                         {
-                            var response = Request.CreateResponse(HttpStatusCode.OK);
-                            response.Headers.Add("HeartBeat", heartbeat.ToString());
-                            return response;
+                            Logger.Log.Error("HeartBeat: Ошибка при запросе на пост:\n" + heartbeatResponse.Result + Environment.NewLine);
+                            return Request.CreateResponse(HttpStatusCode.Conflict);
                         }
                     }
                     else
