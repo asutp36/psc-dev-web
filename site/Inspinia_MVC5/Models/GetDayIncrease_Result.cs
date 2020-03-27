@@ -24,6 +24,7 @@ namespace Inspinia_MVC5.Models
         public Nullable<int> data1DataData1datab100 { get; set; }
         public Nullable<int> data1DataData1datab500 { get; set; }
         public int data1DataData1datab1k { get; set; }
+
         public int sumofm
         {
             get { return (int)(data1DataData1datam10 * 10); }
@@ -36,5 +37,6 @@ namespace Inspinia_MVC5.Models
         {
             get { return sumofb + sumofm; }
         }
+
     }
 }

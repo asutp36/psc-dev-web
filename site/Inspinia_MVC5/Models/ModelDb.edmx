@@ -671,6 +671,26 @@
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="GetIncreaseByEvents" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_RegionCode" Type="smallint" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_PostCode" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="GetIncreaseByPosts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_RegionCode" Type="smallint" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_PostCode" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="GetIncreaseByWashs" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_RegionCode" Type="smallint" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="GetIncreaseOnPosts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_RegionCode" Type="int" Mode="In" />
           <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
@@ -1706,6 +1726,26 @@
             <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
             <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
           </FunctionImport>
+          <FunctionImport Name="GetIncreaseByEvents" ReturnType="Collection(WashCompany.GetIncreaseByEvents_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int16" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+            <Parameter Name="p_PostCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetIncreaseByPosts" ReturnType="Collection(WashCompany.GetIncreaseByPosts_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int16" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+            <Parameter Name="p_PostCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetIncreaseByWashs" ReturnType="Collection(WashCompany.GetIncreaseByWashs_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int16" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetCardList_Result">
           <Property Type="String" Name="Phone" Nullable="false" MaxLength="20" />
@@ -1854,6 +1894,40 @@
           <Property Type="Int32" Name="data1DataB500" Nullable="false" />
           <Property Type="Int32" Name="data1DataB1k" Nullable="false" />
           <Property Type="Int32" Name="s" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetIncreaseByEvents_Result">
+          <Property Type="Int16" Name="RegionCode" Nullable="false" />
+          <Property Type="String" Name="RegionName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="WashCode" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="WashAddress" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="PostCode" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="PostName" Nullable="true" MaxLength="105" />
+          <Property Type="DateTime" Name="DTime" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="amount" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetIncreaseByPosts_Result">
+          <Property Type="Int16" Name="RegionCode" Nullable="false" />
+          <Property Type="String" Name="RegionName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="WashCode" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="WashAddress" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="PostCode" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="PostName" Nullable="true" MaxLength="105" />
+          <Property Type="Int32" Name="m10" Nullable="true" />
+          <Property Type="Int32" Name="b10" Nullable="false" />
+          <Property Type="Int32" Name="b50" Nullable="true" />
+          <Property Type="Int32" Name="b100" Nullable="true" />
+          <Property Type="Int32" Name="b200" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetIncreaseByWashs_Result">
+          <Property Type="Int16" Name="RegionCode" Nullable="false" />
+          <Property Type="String" Name="RegionName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="WashCode" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="WashAddress" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="m10" Nullable="true" />
+          <Property Type="Int32" Name="b10" Nullable="false" />
+          <Property Type="Int32" Name="b50" Nullable="true" />
+          <Property Type="Int32" Name="b100" Nullable="true" />
+          <Property Type="Int32" Name="b200" Nullable="true" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -2350,6 +2424,52 @@
                 <ScalarProperty Name="data1DataB500" ColumnName="data1DataB500" />
                 <ScalarProperty Name="data1DataB1k" ColumnName="data1DataB1k" />
                 <ScalarProperty Name="s" ColumnName="s" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetIncreaseByEvents" FunctionName="Хранилище WashCompany.GetIncreaseByEvents">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WashCompany.GetIncreaseByEvents_Result">
+                <ScalarProperty Name="RegionCode" ColumnName="RegionCode" />
+                <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+                <ScalarProperty Name="WashCode" ColumnName="WashCode" />
+                <ScalarProperty Name="WashAddress" ColumnName="WashAddress" />
+                <ScalarProperty Name="PostCode" ColumnName="PostCode" />
+                <ScalarProperty Name="PostName" ColumnName="PostName" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetIncreaseByPosts" FunctionName="Хранилище WashCompany.GetIncreaseByPosts">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WashCompany.GetIncreaseByPosts_Result">
+                <ScalarProperty Name="RegionCode" ColumnName="RegionCode" />
+                <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+                <ScalarProperty Name="WashCode" ColumnName="WashCode" />
+                <ScalarProperty Name="WashAddress" ColumnName="WashAddress" />
+                <ScalarProperty Name="PostCode" ColumnName="PostCode" />
+                <ScalarProperty Name="PostName" ColumnName="PostName" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b200" ColumnName="b200" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetIncreaseByWashs" FunctionName="Хранилище WashCompany.GetIncreaseByWashs">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WashCompany.GetIncreaseByWashs_Result">
+                <ScalarProperty Name="RegionCode" ColumnName="RegionCode" />
+                <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+                <ScalarProperty Name="WashCode" ColumnName="WashCode" />
+                <ScalarProperty Name="WashAddress" ColumnName="WashAddress" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b200" ColumnName="b200" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

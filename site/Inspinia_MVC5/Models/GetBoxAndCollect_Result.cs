@@ -30,6 +30,7 @@ namespace Inspinia_MVC5.Models
         public int data1DataB500 { get; set; }
         public int data1DataB1k { get; set; }
         public Nullable<int> s { get; set; }
+
         public int sumofm
         {
             get { return data1DataM10 * 10; }

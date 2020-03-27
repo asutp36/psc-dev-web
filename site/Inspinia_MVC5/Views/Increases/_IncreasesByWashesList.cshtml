@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetIncreaseByWashs_Result>
+
+<table id="table-increases" class="display table table-striped table-bordered table-hover responsive">
+    <thead>
+        <tr>
+            <th>Код региона</th>
+            <th>Регион</th>
+            <th>Код мойки</th>
+            <th>Адресс мойки</th>
+            <th>m10</th>
+            <th>b10</th>
+            <th>b50</th>
+            <th>b100</th>
+            <th>b200</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var n in Model)
+        {
+            <tr>
+                <td>@n.RegionCode</td>
+                <td>@n.RegionName</td>
+                <td>
+                    <button type="button" class="btn btn-lg btn-outline-info" onclick="selectWash('@n.WashCode')">@n.WashCode</button>
+                </td>
+                <td>@n.WashAddress</td>
+                <td>@n.m10</td>
+                <td>@n.b10</td>
+                <td>@n.b50</td>
+                <td>@n.b100</td>
+                <td>@n.b200</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+

@@ -244,6 +244,15 @@
     <Compile Include="Models\GetFinanceSummary_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetIncreaseByEvents_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetIncreaseByPosts_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetIncreaseByWashs_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetIncreaseOnPosts_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -1929,6 +1938,8 @@
     <Content Include="Views\Increases\_IncreasesLipetskList.cshtml" />
     <Content Include="Views\CollectWash\CollectLipetskView.cshtml" />
     <Content Include="Views\CollectWash\_CollectLipetskList.cshtml" />
+    <Content Include="Views\Increases\IncreasesByWashesView.cshtml" />
+    <Content Include="Views\Increases\_IncreasesByWashesList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

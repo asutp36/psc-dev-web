@@ -208,5 +208,68 @@ namespace Inspinia_MVC5.Controllers
 
             return PartialView("_IncreasesOnWashesList", view);
         }
+
+        public ActionResult IncreasesByWashesView()
+        {
+            DateTime edate = DateTime.Now;
+            ViewBag.EndDate = edate;
+
+            return View("IncreasesByWashesView");
+        }
+
+        public ActionResult _IncreasesByWashesList(string region, string wash, string begdate, string enddate)
+        {
+            List<GetIncreaseByWashs_Result> view = GetIncreasesByWashes(region, wash, begdate, enddate);
+
+            return PartialView("_IncreasesByWashesList", view);
+        }
+
+        public List<GetIncreaseByWashs_Result> GetIncreasesByWashes(string region, string wash, string begdate, string enddate)
+        {
+            List<GetIncreaseByWashs_Result> resultlist = null;
+
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = DateTime.Today.AddYears(-10);
+
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
+
+            var prmRegion = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
+            if (region == "")
+            {
+                region = "0";
+            }
+            prmRegion.Value = Convert.ToInt32(region);
+
+            var prmWash = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            if (wash == null)
+            {
+                wash = "";
+            }
+            prmWash.Value = wash;
+
+            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            prmBegDate.Value = bdate;
+
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
+
+            var result = db.Database.SqlQuery<GetIncreaseByWashs_Result>
+                ("GetIncreaseByWashs @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode ",
+                prmBegDate, prmEndDate, prmRegion, prmWash).ToList();
+
+            resultlist = result;
+
+            return resultlist;
+        }
+
+        public ActionResult IncreasesByWashesFilter(string region, string wash, string begdate, string enddate)
+        {
+            List<GetIncreaseByWashs_Result> view = GetIncreasesByWashes(region, wash, begdate, enddate);
+
+            return PartialView("_IncreasesByWashesList", view);
+        }
     }
 }
