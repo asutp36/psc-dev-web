@@ -233,9 +233,9 @@ namespace SynchronizationService.Controllers
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "BEGIN TRANSACTION; " +
-                            "INSERT INTO Event (IDPost, IDEventKind, DTime) " +
+                            "INSERT INTO Event (IDPost, IDEventKind, DTime, IDEventPost) " +
                             $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{increase.Device}\')), " +
-                            $"(select ek.IDEventKind from EventKind ek where ek.Code = \'{increase.Kind}\'), \'{increase.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\'); " +
+                            $"(select ek.IDEventKind from EventKind ek where ek.Code = \'{increase.Kind}\'), \'{increase.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\', {increase.IDEventPost}); " +
                             "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, balance) " +
                             $"VALUES ((SELECT SCOPE_IDENTITY()), {increase.Amount}, {increase.m10}, {increase.b10}, {increase.b50}, {increase.b100},{increase.b200}, " +
                             $"{increase.Balance}); " +
@@ -312,9 +312,9 @@ namespace SynchronizationService.Controllers
                         
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "BEGIN TRANSACTION; " +
-                            "INSERT INTO Event (IDPost, IDEventKind, DTime) " +
+                            "INSERT INTO Event (IDPost, IDEventKind, DTime, IDEventPost) " +
                             $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{mode.Device}\')), " +
-                            $"(select ek.IDEventKind from EventKind ek where ek.Code = \'mode\'), \'{mode.DTimeStart.ToString("yyyyMMdd HH:mm:ss.fff")}\'); " +
+                            $"(select ek.IDEventKind from EventKind ek where ek.Code = \'mode\'), \'{mode.DTimeStart.ToString("yyyyMMdd HH:mm:ss.fff")}\', {mode.IDEventPost}); " +
                             "INSERT INTO EventMode (IDEvent, IDMode, DTimeStart, DTimeFinish, Duration, PaymentSign, Cost, CardTypeCode, CardNum, Discount) " +
                             $"VALUES ((SELECT SCOPE_IDENTITY()), (select m.IDMode from Mode m where m.Code = \'{mode.Mode}\'), \'{mode.DTimeStart.ToString("yyyyMMdd HH:mm:ss.fff")}\', {finish}, " +
                             $"{mode.Duration}, {mode.PaymentSign}, {mode.Cost.ToString().Replace(",", CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator)}, \'{mode.CardTypeCode}\', \'{mode.CardNum}\', {mode.Discount}); " +
@@ -388,9 +388,9 @@ namespace SynchronizationService.Controllers
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "BEGIN TRANSACTION; " +
-                            "INSERT INTO Event (IDPost, IDEventKind, DTime) " +
+                            "INSERT INTO Event (IDPost, IDEventKind, DTime, IDEventPost) " +
                             $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{collect.Device}\')), " +
-                            $"(select ek.IDEventKind from EventKind ek where ek.Code = \'collect\'), \'{collect.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\'); " +
+                            $"(select ek.IDEventKind from EventKind ek where ek.Code = \'collect\'), \'{collect.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\', {collect.IDEventPost}); " +
                             "INSERT INTO EventCollect (IDEvent, amount, m10, b10, b50, b100, b200) " +
                             $"VALUES ((SELECT SCOPE_IDENTITY()), {collect.Amount}, {collect.m10}, {collect.b10}, {collect.b50}, {collect.b100},{collect.b200}); " +
                             "SELECT IDENT_CURRENT(\'Event\')" +
