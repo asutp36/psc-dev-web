@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Inspinia_MVC5.Models.GetIncreaseByWashs_Result>
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetIncreaseByPosts_Result>
 
 <table id="table-increases" class="display table table-striped table-bordered table-hover responsive">
     <thead>
@@ -6,7 +6,9 @@
             <th>Код региона</th>
             <th>Регион</th>
             <th>Код мойки</th>
-            <th>Адресс мойки</th>
+            <th>Адрес мойки</th>
+            <th>Код поста</th>
+            <th>Пост</th>
             <th>m10</th>
             <th>b10</th>
             <th>b50</th>
@@ -20,10 +22,10 @@
             <tr>
                 <td>@n.RegionCode</td>
                 <td>@n.RegionName</td>
-                <td>
-                    <a href="#" onclick="selectWash('@n.WashCode')">@n.WashCode</a>
-                </td>
+                <td>@n.WashCode</td>
                 <td>@n.WashAddress</td>
+                <td>@n.PostCode</td>
+                <td>@n.PostName</td>
                 <td>@n.m10</td>
                 <td>@n.b10</td>
                 <td>@n.b50</td>
@@ -33,6 +35,5 @@
         }
     </tbody>
 </table>
-
 
 

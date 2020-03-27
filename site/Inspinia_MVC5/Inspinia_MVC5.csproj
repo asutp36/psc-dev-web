@@ -1940,6 +1940,8 @@
     <Content Include="Views\CollectWash\_CollectLipetskList.cshtml" />
     <Content Include="Views\Increases\IncreasesByWashesView.cshtml" />
     <Content Include="Views\Increases\_IncreasesByWashesList.cshtml" />
+    <Content Include="Views\Increases\IncreasesByPostsView.cshtml" />
+    <Content Include="Views\Increases\_IncreasesByPostsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
