@@ -107,10 +107,12 @@ namespace Inspinia_MVC5
 
             // dataTables css styles
             bundles.Add(new StyleBundle("~/Content/plugins/dataTables/dataTablesStyles").Include(
-                      "~/Content/plugins/dataTables/datatables.min.css"));
+                        "~/Content/plugins/dataTables/datatables.css",
+                        "~/Content/plugins/dataTables/datatables.min.css"));
 
             // dataTables 
             bundles.Add(new ScriptBundle("~/plugins/dataTables").Include(
+                      "~/Scripts/plugins/dataTables/datatables.js",
                       "~/Scripts/plugins/dataTables/datatables.min.js",
                       "~/Scripts/plugins/dataTables/dataTables.bootstrap4.min.js"));
 

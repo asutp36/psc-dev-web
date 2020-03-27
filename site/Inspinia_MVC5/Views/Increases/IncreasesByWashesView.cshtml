@@ -98,6 +98,8 @@
                 "paging": false,
                 "info": false,
                 "searching": false,
+                columnDefs: [{ targets: [2, 3, 4, 5, 6, 7, 8, 9], className: 'dt-body-right' }],
+                columns: [null, null, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }],
                 dom: '<"html5buttons"B>lTfgitp',
                 buttons: [],
                 //buttons: [
@@ -130,13 +132,19 @@
                                 i : 0;
                     };
 
+                    var numFormat = $.fn.dataTable.render.number(' ', '.', 1).display;
+                    var numFormatCoins = $.fn.dataTable.render.number(' ', '', 0).display;
 
                     for (var i = 2; i < 10; ++i) {
                         total = api.column(i).data().reduce(function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0);
-
-                        $(api.column(i).footer()).html(total);
+                        if (i == 3 || i == 8 || i == 9) {
+                            $(api.column(i).footer()).html(numFormat(total));
+                        }
+                        else {
+                            $(api.column(i).footer()).html(numFormatCoins(total));
+                        }
                     }
                 }
             });

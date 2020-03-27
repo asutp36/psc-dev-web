@@ -110,9 +110,10 @@
     function initDataTable() {
         $('#table-increases').DataTable({
             "responsive": true,
-            "paging": false,
             "info": false,
             "searching": false,
+            columnDefs: [{ targets: [4], className: 'dt-body-right' }],
+            columns: [null, null, null, null, { render: $.fn.dataTable.render.number(' ', '.', 1) }],
             dom: '<"html5buttons"B>lTfgitp',
             buttons: [],
             //buttons: [
@@ -145,11 +146,13 @@
                             i : 0;
                 };
 
+                var numFormat = $.fn.dataTable.render.number(' ', '.', 1).display;
+
                 total = api.column(4).data().reduce(function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0);
 
-                $(api.column(4).footer()).html(total);                
+                $(api.column(4).footer()).html(numFormat(total));                
             }
         });
     }
