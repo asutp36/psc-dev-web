@@ -10,7 +10,7 @@ namespace CashIntegration.Controllers.Supplies
 {
     public class Sender
     {
-        public static string SendCash(string addres, string json, bool auth=false)
+        public static IntegrationResponse SendCash(string addres, string json, bool auth=false)
         {
             #region адреса различные
             // тест
@@ -53,20 +53,13 @@ namespace CashIntegration.Controllers.Supplies
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                if (response.StatusCode != HttpStatusCode.OK)
+                string result;
+                using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
                 {
-                    return response.ToString();
+                    result = rdr.ReadToEnd();
                 }
-                else
-                {
-                    string result;
-                    using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
-                    {
-                        result = rdr.ReadToEnd();
-                    }
 
-                    return String.Format("httpStatusCode: {0}; {1}", response.StatusCode, result);
-                }
+                return new IntegrationResponse(response.StatusCode, result);
             }
             catch (WebException ex)
             {
@@ -77,7 +70,7 @@ namespace CashIntegration.Controllers.Supplies
                 {
                     result = rdr.ReadToEnd();
                 }
-                return result + "\nStatusCode: " + webResponse.StatusCode;
+                return new IntegrationResponse(webResponse.StatusCode, result);
             }
         }
     }
