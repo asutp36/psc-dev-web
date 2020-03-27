@@ -1,15 +1,15 @@
 ﻿@{
-    ViewBag.Title = "Внесения на постах";
+    ViewBag.Title = "Внесения на посте";
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Внесения на постах</h2>
+        <h2>Внесения на посте</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="@Url.Action("Dashboard_2", "Dashboards")">Главная</a>
             </li>
             <li class="active breadcrumb-item">
-                <strong>Внесения на постах</strong>
+                <strong>Внесения на посте</strong>
             </li>
         </ol>
     </div>
@@ -77,11 +77,11 @@
         <div class="col-lg-12 table-cards">
             <div class="ibox">
                 <div class="ibox-content-more">
-                    @Html.Action("_IncreasesByPostsList", "Increases", new
+                    @Html.Action("_IncreasesByEventsList", "Increases", new
                {
                    region = ViewBag.Region,
                    wash = ViewBag.Wash,
-                   post = "",
+                   post = ViewBag.Post,
                    begdate = ViewBag.BegDate,
                    enddate = ViewBag.EndDate
                })
@@ -145,14 +145,11 @@
                             i : 0;
                 };
 
+                total = api.column(4).data().reduce(function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
 
-                for (var i = 3; i < 11; ++i) {
-                    total = api.column(i).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
-                    $(api.column(i).footer()).html(total);
-                }
+                $(api.column(4).footer()).html(total);                
             }
         });
     }
@@ -294,15 +291,6 @@
         }
     }
 
-        function selectPost(IDPost) {
-
-            var bdate = $('#bdate').val();
-            var edate = $('#edate').val();
-            var post = IDPost;
-
-            window.location.href = "IncreasesByEventsView?begdate=" + bdate + "&enddate=" + edate + "&post=" + post;
-        }
-
         function filter() {
 
             var bdate = $('#bdate').val();
@@ -326,7 +314,7 @@
                 error: function () {
                     alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
                 },
-                url: "@Url.Action("IncreasesByPostsFilter", "Increases")"
+                url: "@Url.Action("IncreasesByEventsFilter", "Increases")"
             }).done(function (result) {
                 $('.ibox-content-more').html(result);
 
@@ -339,6 +327,8 @@
 
         $('#filter-wash').val('@ViewBag.Wash');
         eventChangeWash();
+
+        $('#filter-post').val('@ViewBag.Post');
 
         $('#bdate').val('@ViewBag.BegDate');
         $('#edate').val('@ViewBag.EndDate');
@@ -428,4 +418,5 @@
         });
     </script>
 }
+
 

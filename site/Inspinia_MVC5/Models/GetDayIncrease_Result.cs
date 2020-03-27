@@ -37,6 +37,5 @@ namespace Inspinia_MVC5.Models
         {
             get { return sumofb + sumofm; }
         }
-
     }
 }

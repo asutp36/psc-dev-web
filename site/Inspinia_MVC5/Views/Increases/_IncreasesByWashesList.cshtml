@@ -3,35 +3,51 @@
 <table id="table-increases" class="display table table-striped table-bordered table-hover responsive">
     <thead>
         <tr>
-            <th>Код региона</th>
-            <th>Регион</th>
-            <th>Код мойки</th>
-            <th>Адресс мойки</th>
-            <th>m10</th>
-            <th>b10</th>
-            <th>b50</th>
-            <th>b100</th>
-            <th>b200</th>
+            <th>Мойка</th>
+            <th>Адрес мойки</th>
+            <th>М10</th>
+            <th>Сумма монет</th>
+            <th>Б10</th>
+            <th>Б50</th>
+            <th>Б100</th>
+            <th>Б200</th>
+            <th>Сумма банкнот</th>
+            <th>Общая сумма</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var n in Model)
         {
             <tr>
-                <td>@n.RegionCode</td>
-                <td>@n.RegionName</td>
                 <td>
                     <a href="#" onclick="selectWash('@n.WashCode')">@n.WashCode</a>
                 </td>
                 <td>@n.WashAddress</td>
                 <td>@n.m10</td>
+                <td>@n.sumofm</td>
                 <td>@n.b10</td>
                 <td>@n.b50</td>
                 <td>@n.b100</td>
                 <td>@n.b200</td>
+                <td>@n.sumofb</td>
+                <td>@n.sum</td>
             </tr>
         }
     </tbody>
+    <tfoot>
+        <tr>
+            <th>Итого:</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tfoot>
 </table>
 
 

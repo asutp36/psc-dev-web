@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetIncreaseByEvents_Result>
+
+<table id="table-increases" class="display table table-striped table-bordered table-hover responsive">
+    <thead>
+        <tr>
+            <th>Мойка</th>
+            <th>Адрес мойки</th>
+            <th>Код поста</th>
+            <th>Время</th>
+            <th>Сумма</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var n in Model)
+        {
+            <tr>
+                <td>@n.WashCode</td>
+                <td>@n.WashAddress</td>
+                <td>@n.PostCode</td>
+                <td>@n.DTime</td>
+                <td>@n.amount</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>Итого:</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tfoot>
+</table>
+
+

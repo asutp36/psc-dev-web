@@ -53,9 +53,17 @@ namespace Inspinia_MVC5.Controllers
                 edate = DateTime.Now;
 
             var prmRegion = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
+            if (region == "")
+            {
+                region = "0";
+            }
             prmRegion.Value = Convert.ToInt32(region);
 
             var prmWash = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            if (wash == null)
+            {
+                wash = "";
+            }
             prmWash.Value = wash;
 
             var prmPost = new System.Data.SqlClient.SqlParameter("@p_PostCode", System.Data.SqlDbType.NVarChar);
@@ -313,12 +321,24 @@ namespace Inspinia_MVC5.Controllers
                 edate = DateTime.Now;
 
             var prmRegion = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
+            if (region == "")
+            {
+                region = "0";
+            }
             prmRegion.Value = Convert.ToInt32(region);
 
             var prmWash = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            if (wash == null)
+            {
+                wash = "";
+            }
             prmWash.Value = wash;
 
             var prmPost = new System.Data.SqlClient.SqlParameter("@p_PostCode", System.Data.SqlDbType.NVarChar);
+            if (post == null)
+            {
+                post = "";
+            }
             prmPost.Value = post;
 
             var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
@@ -341,6 +361,90 @@ namespace Inspinia_MVC5.Controllers
             List<GetIncreaseByPosts_Result> view = GetIncreasesByPosts(region, wash, post, begdate, enddate);
 
             return PartialView("_IncreasesByPostsList", view);
+        }
+
+        public ActionResult IncreasesByEventsView(string begdate, string enddate, string post)
+        {
+            Post Post = _posts.Find(w => w.Code == post);
+
+            ViewBag.Region = Post.Wash.Region.Code;
+            ViewBag.Wash = Post.Wash.Code;
+            ViewBag.Post = Post.Code;
+
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = DateTime.Today.AddYears(-10);
+
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
+
+            ViewBag.BegDate = begdate;
+            ViewBag.EndDate = enddate;
+
+            return View("IncreasesByEventsView");
+        }
+
+        public ActionResult _IncreasesByEventsList(string region, string wash, string post, string begdate, string enddate)
+        {
+            List<GetIncreaseByEvents_Result> view = GetIncreasesByEvents(region, wash, post, begdate, enddate);
+
+            return PartialView("_IncreasesByEventsList", view);
+        }
+
+        public List<GetIncreaseByEvents_Result> GetIncreasesByEvents(string region, string wash, string post, string begdate, string enddate)
+        {
+            List<GetIncreaseByEvents_Result> resultlist = null;
+
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = DateTime.Today.AddYears(-10);
+
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
+
+            var prmRegion = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
+            if (region == "")
+            {
+                region = "0";
+            }
+            prmRegion.Value = Convert.ToInt32(region);
+
+            var prmWash = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            if (wash == null)
+            {
+                wash = "";
+            }
+            prmWash.Value = wash;
+
+            var prmPost = new System.Data.SqlClient.SqlParameter("@p_PostCode", System.Data.SqlDbType.NVarChar);
+            if (post == null)
+            {
+                post = "";
+            }
+            prmPost.Value = post;
+
+            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            prmBegDate.Value = bdate;
+
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
+
+            var result = db.Database.SqlQuery<GetIncreaseByEvents_Result>
+                ("GetIncreaseByEvents @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode ",
+                prmBegDate, prmEndDate, prmRegion, prmWash, prmPost).ToList();
+
+            resultlist = result;
+
+            return resultlist;
+        }
+
+        public ActionResult IncreasesByEventsFilter(string region, string wash, string post, string begdate, string enddate)
+        {
+            List<GetIncreaseByEvents_Result> view = GetIncreasesByEvents(region, wash, post, begdate, enddate);
+
+            return PartialView("_IncreasesByEventsList", view);
         }
     }
 }
