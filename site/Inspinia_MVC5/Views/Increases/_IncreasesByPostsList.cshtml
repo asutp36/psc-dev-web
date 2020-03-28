@@ -1,5 +1,10 @@
 ﻿@model IEnumerable<Inspinia_MVC5.Models.GetIncreaseByPosts_Result>
 
+<div class="sk-spinner sk-spinner-double-bounce">
+    <div class="sk-double-bounce1"></div>
+    <div class="sk-double-bounce2"></div>
+</div>
+
 <table id="table-increases" class="display table table-striped table-bordered table-hover responsive">
     <thead>
         <tr>
@@ -25,14 +30,14 @@
                 <td>
                     <a href="#" onclick="selectPost('@n.PostCode')">@n.PostCode</a>
                 </td>
-                <td>@n.m10</td>
-                <td>@n.sumofm</td>
-                <td>@n.b10</td>
-                <td>@n.b50</td>
-                <td>@n.b100</td>
-                <td>@n.b200</td>
-                <td>@n.sumofb</td>
-                <td>@n.sum</td>
+                <td style="text-align:right">@n.m10</td>
+                <td style="text-align:right">@n.sumofm</td>
+                <td style="text-align:right">@n.b10</td>
+                <td style="text-align:right">@n.b50</td>
+                <td style="text-align:right">@n.b100</td>
+                <td style="text-align:right">@n.b200</td>
+                <td style="text-align:right">@n.sumofb</td>
+                <td style="text-align:right">@n.sum</td>
             </tr>
         }
     </tbody>

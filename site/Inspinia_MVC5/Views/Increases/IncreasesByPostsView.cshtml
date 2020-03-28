@@ -75,8 +75,8 @@
     </div>
     <div class="row">
         <div class="col-lg-12 table-cards">
-            <div class="ibox">
-                <div class="ibox-content-more">
+            <div class="ibox" id="ibox-load">
+                <div class="ibox-content" id="output">
                     @Html.Action("_IncreasesByPostsList", "Increases", new
                {
                    region = ViewBag.Region,
@@ -329,6 +329,12 @@
                     begdate: bdate,
                     enddate: edate
                 },
+                beforeSend: function () {
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                },
+                complete: function () {
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                },
                 success: function () {
                 },
                 error: function () {
@@ -336,7 +342,7 @@
                 },
                 url: "@Url.Action("IncreasesByPostsFilter", "Increases")"
             }).done(function (result) {
-                $('.ibox-content-more').html(result);
+                $('#output').html(result);
 
                 initDataTable();
             });
@@ -374,15 +380,20 @@
 
         //$('#filter-date span').html(moment().startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
 
-        $('#filter-date span').html($('#bdate').val() + ' ' + $('#edate').val());
+        if ($('#bdate').val()) {
+            $('#filter-date span').html('с '$('#bdate').val() + ' по ' + $('#edate').val());
+        }
+        else {
+            $('#filter-date span').html('За всё время');
+        }
 
         $('#filter-date').daterangepicker({
             "timePicker": true,
             "timePicker24Hour": true,
             "timePickerSeconds": true,
             "ranges": {
-                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
                 'сегодня': [moment().startOf('day'), moment()],
+                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
                 'текущий месяц': [moment().startOf('month'), moment()],
                 'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
             },
@@ -422,8 +433,8 @@
             },
             "showCustomRangeLabel": false,
             "alwaysShowCalendars": true,
-            "startDate": moment().subtract(1, 'days').startOf('day'),
-            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "startDate": $('#bdate').val(),
+            "endDate": $('#edate').val(),
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {

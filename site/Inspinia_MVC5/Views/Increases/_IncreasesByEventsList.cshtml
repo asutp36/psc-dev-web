@@ -1,5 +1,10 @@
 ﻿@model IEnumerable<Inspinia_MVC5.Models.GetIncreaseByEvents_Result>
 
+<div class="sk-spinner sk-spinner-double-bounce">
+    <div class="sk-double-bounce1"></div>
+    <div class="sk-double-bounce2"></div>
+</div>
+
 <table id="table-increases" class="display table table-striped table-bordered table-hover responsive">
     <thead>
         <tr>
@@ -18,7 +23,7 @@
                 <td>@n.WashAddress</td>
                 <td>@n.PostCode</td>
                 <td>@n.DTime</td>
-                <td>@n.amount</td>
+                <td style="text-align:right">@n.amount</td>
             </tr>
         }
     </tbody>
