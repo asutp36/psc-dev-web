@@ -67,8 +67,8 @@
                {
                    region = "",
                    wash = "",
-                   begdate = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss"),
-                   enddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")
+                   begdate = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                   enddate = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss")
                })
                 </div>
             </div>
@@ -283,10 +283,10 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#bdate').val(moment().startOf('day').format('DD.MM.YYYY HH:mm:ss'));
-        $('#edate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
+        $('#bdate').val(moment().subtract(1, 'days').startOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        $('#edate').val(moment().subtract(1, 'days').endOf('day').format('DD.MM.YYYY HH:mm:ss'));
 
-        $('#filter-date span').html(moment().startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
+        $('#filter-date span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
 
         $('#filter-date').daterangepicker({
             "timePicker": true,
@@ -334,8 +334,8 @@
             },
             "showCustomRangeLabel": false,
             "alwaysShowCalendars": true,
-            "startDate": moment().startOf('day'),
-            "endDate": moment(),
+            "startDate": moment().subtract(1, 'days').startOf('day'),
+            "endDate": moment().subtract(1, 'days').endOf('day'),
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {
