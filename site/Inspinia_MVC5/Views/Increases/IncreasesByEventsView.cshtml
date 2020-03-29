@@ -1,9 +1,9 @@
 ﻿@{
-    ViewBag.Title = "Внесения на посте";
+    ViewBag.Title = "Зачисления на посту";
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Внесения на посте</h2>
+        <h2>Зачисления на посту</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a>Сводка</a>
@@ -11,8 +11,11 @@
             <li class="breadcrumb-item">
                 <a href="@Url.Action("IncreasesByWashesView","Increases")">Зачисления</a>
             </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("IncreasesByPostsView","Increases", new { begdate = ViewBag.BegDate, enddate = ViewBag.EndDate, wash = ViewBag.Wash })">@ViewBag.Wash</a>
+            </li>
             <li class="active breadcrumb-item">
-                <strong>На посту</strong>
+                <strong>@ViewBag.Post</strong>
             </li>
         </ol>
     </div>
@@ -422,8 +425,8 @@
             },
             "showCustomRangeLabel": false,
             "alwaysShowCalendars": true,
-            "startDate": $('#bdate').val(),
-            "endDate": $('#edate').val(),
+            "startDate": moment($('#bdate').val(), 'DD.MM.YYYY HH:mm:ss'),
+            "endDate": moment($('#edate').val(), 'DD.MM.YYYY HH:mm:ss'),
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {

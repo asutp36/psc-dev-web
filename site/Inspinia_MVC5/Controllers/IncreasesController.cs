@@ -282,6 +282,11 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult IncreasesByPostsView(string begdate, string enddate, string wash)
         {
+            char[] chars = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+            int idx = wash.IndexOfAny(chars);
+            if (idx > -1)
+                wash = 'М' + wash.Substring(idx);
+
             Wash Wash = _washes.Find(w => w.Code == wash);
 
             ViewBag.Region = Wash.Region.Code;
