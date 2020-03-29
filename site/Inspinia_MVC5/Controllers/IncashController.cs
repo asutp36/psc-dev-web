@@ -101,6 +101,9 @@ namespace Inspinia_MVC5.Controllers
         // GET: /FilterIncashes/
         public ActionResult FilterIncashes(string begTime, string endTime, string region, string wash)
         {
+            if (wash == null)
+                wash = "0";
+
             wash = Encoding.GetEncoding(65001).GetString(Encoding.GetEncoding(1251).GetBytes(wash));
 
             List<GetWashAmounts_Result> viewList = GetIncomesFromDB(begTime, endTime, region, wash);
