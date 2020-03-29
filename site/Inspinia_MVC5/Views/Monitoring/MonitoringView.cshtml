@@ -1,0 +1,330 @@
+﻿@model IEnumerable<Inspinia_MVC5.Models.Company>
+
+@{
+    ViewBag.Title = "Мониторинг";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Мониторинг</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Главная</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Мониторинг</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight ecommerce">
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="ibox" id="ibox-load">
+                <div class="ibox-title">
+                    <h2>Выберите пост  <small>за которым хотите наблюдать</small></h2>
+                </div>
+                <div class="ibox-content">
+
+                    <div class="sk-spinner sk-spinner-double-bounce">
+                        <div class="sk-double-bounce1"></div>
+                        <div class="sk-double-bounce2"></div>
+                    </div>
+
+                    <div id="jstree1">
+                        <ul>
+                            @foreach (var c in Model)
+                            {
+                                <li class="jstree">
+                                    @c.Name
+                                    <ul>
+                                        @foreach (var m in c.Regions)
+                                        {
+                                            <li>
+                                                @m.Name
+                                                <ul>
+                                                    @foreach (var n in m.Washes)
+                                                    {
+                                                        <li>
+                                                            @n.Name
+                                                            <ul>
+                                                                @foreach (var k in n.Posts)
+                                                                {
+                                                                    <li class="my-1" onclick="select_post(@k.IDPost)" id="@k.IDPost">
+                                                                        @k.Code
+                                                                    </li>
+                                                                }
+                                                            </ul>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="ibox-content-more">
+                    <a style="margin-left:15px" id="btn-history" class="btn btn-secondary btn-sm" href="@Url.Action("IncreasesOnWashesView","Increases")"><i class="fa fa-history"></i> История пополнений на мойках</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div id="post" class="ibox ">
+                <div id="cur_post" class="ibox-content">
+                </div>
+                <div class="ibox-content-more">
+                    <div class="row" style="margin-left:2px">
+                        <div class="col-lg-4">
+                            <input id="input-balance" required type="text" onkeypress="validate(event)" class="form-control" placeholder="Введите сумму" />
+                        </div>
+                        <div class="col-lg-4"></div>
+                        <div class="col-lg-4">
+                            <button type="submit" id="btn-increase" class="ladda-button btn btn-outline btn-primary font-bold" data-style="expand-right"><i class="fa fa-credit-card"></i> Внести</button>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-left:2px; margin-top:4px;">
+                        <div class="col-lg-4">
+                            <input id="input-function" class="form-control" type="text" placeholder="Смена функции" />
+                        </div>
+                        <div class="col-lg-4"></div>
+                        <div class="col-lg-4">
+                            <button type="submit" id="btn-change" class="ladda-button btn btn-outline btn-danger font-bold" data-style="expand-right"><i class="fa fa-exchange-alt"></i> Поменять</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="alert-sum" class="alert alert-warning">
+                Введите сумму!
+            </div>
+            <div id="alert-success-sum" class="alert alert-success">
+                Запрос на внесение суммы отправлен!
+            </div>
+            <div id="alert-success-fun" class="alert alert-success">
+                Запрос на изменение функции отправлен!
+            </div>
+            <div id="alert-function" class="alert alert-warning">
+                Введите функцию!
+            </div>
+        </div>
+    </div>
+</div>
+
+<input hidden id="cur_idpost" />
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/jsTree")
+    @Styles.Render("~/plugins/laddaStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/jsTree")
+    @Scripts.Render("~/plugins/ladda")
+
+    <script type="text/javascript">
+
+        function hideall() {
+            $('#alert-sum').hide()
+            $('#alert-success-sum').hide()
+            $('#alert-function').hide()
+            $('#alert-success-fun').hide()
+            $('#alert-intsererr').hide();
+        }
+
+        function clearall() {
+            $('#input-balance').val("");
+            $('#input-function').val("");
+        }
+
+        var timeid = -1;
+        $('#post').hide();
+
+        function validate(evt) {
+            var theEvent = evt || window.event;
+            var key = theEvent.keyCode || theEvent.which;
+            key = String.fromCharCode(key);
+            var regex = /[0-9]/;
+            if (!regex.test(key)) {
+                theEvent.returnValue = false;
+                if (theEvent.preventDefault) theEvent.preventDefault();
+            }
+        }
+
+        function check_state() {
+
+            if ($('#state').text() == "Нет доступа") {
+                $('#label-balance').attr("class", "label label-secondary");
+                $('#label-function').attr("class", "label label-secondary");
+                $('#label-state').attr("class", "label label-secondary");
+            }
+            else {
+                $('#label-balance').attr("class", "label label-primary");
+                $('#label-function').attr("class", "label label-primary");
+                $('#label-state').attr("class", "label label-primary");
+            }
+        }
+
+        function show() {
+            let id = $('#cur_idpost').val()
+        $.ajax({
+            type: "GET",
+            cache: false,
+            data: {
+                IDPost: id
+            },
+            success: function () {
+                check_state()
+            },
+            error: function () {
+                alert("error-show");
+            },
+            url: "@Url.Action("PostMonitoringView", "Monitoring")",
+        }).done(function (result) {
+            $('#cur_post').html(result);
+        });
+        }
+
+        function select_post(IDPost) {
+            hideall();
+
+            if (timeid != -1) {
+                clearInterval(timeid);
+                timeid = -1;
+            }
+
+            $('#cur_idpost').val(IDPost);
+            $.ajax({
+                type: "GET",
+                cache: false,
+                data: {
+                    IDPost: IDPost
+                },
+                beforeSend: function () {
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                },
+                complete: function () {
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                },
+                error: function () {
+                    alert('Возникла ошибка!');
+                },
+                success: function () {
+                    if (timeid == -1) {
+                        timeid = setInterval(show, 1500);
+                    }
+                    $('#post').show('fade')
+                },
+                url: "@Url.Action("PostMonitoringView", "Monitoring")",
+            }).done(function (result) {
+                $('#cur_post').html(result);
+                });
+        }
+
+        hideall();
+
+        function initjstree () {
+            $('#jstree1').jstree({
+                'core': {
+                    'themes': {
+                        'responsive': true
+                    }
+                },
+                'plugins': ['types'],
+                'types': {
+                    'default': {
+                        //'icon': 'fa fa-circle'
+                        'icon': false
+                    }
+                }
+            });
+        }
+
+        initjstree();
+
+        $(document).ready(function () {
+
+            $('#btn-increase').ladda();
+            $('#btn-change').ladda();
+
+            $(document).on("click", "#btn-increase", function () {
+                hideall();
+                if ($('#input-balance').val() != "") {
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        data: {
+                            Post: $('#cur_idpost').val(),
+                            sum: $('#input-balance').val(),
+                            login: "@User.Identity.Name.ToString()"
+                        },
+                        beforeSend: function () {
+                            $('#btn-increase').ladda('start');
+                            $('#input-balance').attr('readonly', true);
+                        },
+                        complete: function () {
+                            $('#btn-increase').ladda('stop');
+                            $('#input-balance').attr('readonly', false);
+                        },
+                        error: function (xhr, ajaxOPtions, thrownError) {
+                            alert(xhr.responseText);
+                            alert(thrownError);
+                        },
+                        success: function ()
+                        {
+                            $('#input-balance').val('');
+                            $('#alert-success-sum').show('fade')
+                        },
+                        url: "@Url.Action("IncreaseBalance", "Monitoring")",
+                    }).done(function (result) {
+                        $('#cur_post').html(result);
+                    });
+                }
+                else {
+                    $('#alert-sum').show('fade')
+                }
+            });
+
+            $(document).on("click", "#btn-change", function () {
+                hideall();
+                if ($('#input-function').val() != "") {
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        data: {
+                            Post: $('#cur_idpost').val(),
+                            Function: $('#input-function').val(),
+                            login: "@User.Identity.Name.ToString()"
+                        },
+                        beforeSend: function () {
+                            $('#btn-change').ladda('start');
+                            $('#input-function').attr('readonly', true);
+                        },
+                        complete: function () {
+                            $('#btn-change').ladda('stop');
+                            $('#input-function').attr('readonly', false);
+                        },
+                        error: function () {
+                            alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
+                        },
+                        success: function ()
+                        {
+                            $('#input-function').val('');
+                        },
+                        url: "@Url.Action("ChangeFunction", "Monitoring")",
+                    }).done(function (result) {
+                        $('#cur_post').html(result);
+                        $('#alert-success-fun').show('fade')
+                    });
+                }
+                else {
+                    $('#alert-function').show('fade')
+                }
+            });
+        });
+    </script>
+}

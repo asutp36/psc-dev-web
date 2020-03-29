@@ -1,0 +1,23 @@
+﻿<div class="mail-body">
+    <form method="get">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Кому:</label>
+
+            <div class="col-sm-10">
+                <select id="input-who" data-placeholder="Введите номер телефона/название чата" class="form-control chosen-select" multiple>
+                    @foreach (var item in ViewBag.Recepients)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div style="padding-left:20px; padding-right:20px;">
+    <textarea style="border-radius:4px;" id="input-text" class="form-control" placeholder="Введите текст оповещения..." rows="5"></textarea>
+</div>
+<div style="padding:20px;">
+    <button id="btn-send" class="ladda-button btn btn-primary btn-sm" data-style="expand-right"><i class="fa fa-reply"></i> Отправить</button>
+</div>

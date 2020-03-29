@@ -7,7 +7,7 @@
         <h2>Финансовые операции</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Главная</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>Финансовые операции</strong>
@@ -100,6 +100,37 @@
     @Scripts.Render("~/plugins/chartjs")
 
     <script type="text/javascript">
+
+        function initDataTable() {
+            $('.table_incashwashes').DataTable({
+                "responsive": true,
+                "paging": false,
+                "info": false,
+                "searching": false,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    { extend: 'excel', title: 'Report' },
+                    { extend: 'pdf', title: 'Report' },
+
+                    {
+                        extend: 'print',
+                        customize: function (win) {
+                            $(win.document.body).addClass('white-bg');
+                            $(win.document.body).css('font-size', '10px');
+
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
+                        }
+                    }
+                ],
+                "language": {
+                    "zeroRecords": "Данные по заданному фильтру не найдены",
+                    "emptyTable": "Данные по заданному фильтру не найдены"
+                }
+            });
+        }
+
         $(document).ready(function () {
 
             var popCanvas = document.getElementById("popChart");
@@ -126,52 +157,8 @@
                 }
             });
 
-            //var doughnutData = {
-            //    labels: ["50", "100", "200", "500", "1 000"],
-            //    datasets: [{
-            //        data: [102, 78, 22, 31, 9],
-            //        backgroundColor: ["#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba"]
-            //    }]
-            //};
-
-
-            //var doughnutOptions = {
-            //    responsive: false,
-            //    legend: {
-            //        position: 'left'
-            //    }
-            //};
-
-
-            //var ctx = document.getElementById("doughnutChart").getContext("2d");
-            //new Chart(ctx, {
-            //    type: 'doughnut',
-            //    data: doughnutData,
-            //    options: doughnutOptions
-            //});
-
-            $('.table_incashwashes').DataTable({
-                "paging": false,
-                "info": false,
-                "searching": false,
-                dom: '<"html5buttons"B>lTfgitp',
-                buttons: [
-                    { extend: 'excel', title: 'Report' },
-                    { extend: 'pdf', title: 'Report' },
-                    {
-                        extend: 'print',
-                        customize: function (win) {
-                            $(win.document.body).addClass('white-bg');
-                            $(win.document.body).css('font-size', '10px');
-
-                            $(win.document.body).find('table')
-                                .addClass('compact')
-                                .css('font-size', 'inherit');
-                        }
-                    }
-                ]
-            });
-
+            initDataTable();
+            
             $(document).on("click", "#clear_drp_op", function () {
                 $('#time-operation-filter span').empty();
                 $('#filter-timeoperationbeg').val("");
@@ -181,6 +168,17 @@
             $(document).on("click", "#btn-for-filter", function () {
                 var startDate = $('#filter-timeoperationbeg').val();
                 var stopDate = $('#filter-timeoperationend').val();
+
+                var doughnutData = {
+                    labels: ["50", "100", "200", "500", "1 000"],
+                    datasets: [{
+                        data: [25, 104, 45, 10, 60],
+                        backgroundColor: ["#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba"]
+                    }]
+                };
+                popCanvas.getContext("2d").clearRect(0,0,popCanvas.width, popCanvas.height);
+                barChart.data = doughnutData;
+                barChart.update();
 
                 $.ajax({
                     type: "GET",
@@ -200,34 +198,8 @@
                 }).done(function (result) {
                     $('.table-finance-operations').find('.ibox-content-more').html(result);
 
-                    $('.table_incashwashes').DataTable({
-                        "paging": false,
-                        "info": false,
-                        "searching": false,
-                        dom: '<"html5buttons"B>lTfgitp',
-                        buttons: [
-                            { extend: 'excel', title: 'Report' },
-                            { extend: 'pdf', title: 'Report' },
-
-                            {
-                                extend: 'print',
-                                customize: function (win) {
-                                    $(win.document.body).addClass('white-bg');
-                                    $(win.document.body).css('font-size', '10px');
-
-                                    $(win.document.body).find('table')
-                                        .addClass('compact')
-                                        .css('font-size', 'inherit');
-                                }
-                            }
-                        ],
-                        "language": {
-                            "zeroRecords": "Данные по заданному фильтру не найдены",
-                            "emptyTable": "Данные по заданному фильтру не найдены"
-                        }
-                    });
+                    initDataTable();
                 });
-
 
                 $.ajax({
                     type: "GET",

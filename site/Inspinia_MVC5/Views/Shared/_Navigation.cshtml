@@ -1,11 +1,13 @@
-﻿<nav class="navbar-default navbar-static-side" role="navigation">
+﻿@model IEnumerable<Inspinia_MVC5.Models.Region>
+
+<nav class="navbar-default navbar-static-side" role="navigation">
     <div class="sidebar-collapse">
         <ul class="nav metismenu" id="side-menu">
             <li class="nav-header">
                 <div class="dropdown profile-element">
-                    <img alt="image" class="rounded-circle" src="~/Images/profile_small2.jpg" />
+                    <img alt="image" src="~/Images/logo-eco.png" />
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                        <span class="block m-t-xs font-bold">Иван</span>
+                        <span class="block m-t-xs font-bold">eco</span>
                     </a>
                 </div>
                 <div class="logo-element">
@@ -13,36 +15,40 @@
                 </div>
             </li>
             @*<li class="@Html.IsSelected(controller: "Metrics")">
-                <a href="@Url.Action("Index", "Layouts")"><i class="fa fa-bar-chart-o"></i> <span class="nav-label" data-i18n="nav.layouts">Dashboard</span></a>
-            </li>
-            <li class="@Html.IsSelected(controller: "Metrics")">
-                <a href="@Url.Action("Index", "Layouts")"><i class="fa fa-laptop"></i> <span class="nav-label" data-i18n="nav.layouts">POS</span></a>
-                <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Dumb", cssClass: "in")">
-                    <li class="@Html.IsSelected(action: "Dashboard_5")"><a href="@Url.Action("Dashboard_5", "Dumb")">Orders</a></li>
-                </ul>
-            </li>
-            <li class="@Html.IsSelected(controller: "Metrics")">
-                <a href="@Url.Action("Index", "Layouts")"><i class="fa  fa-flask"></i> <span class="nav-label" data-i18n="nav.layouts">Factory</span></a>
-            </li>
-            <li class="@Html.IsSelected(controller: "Metrics")">
-                <a href="@Url.Action("Index", "Layouts")"><i class="fa fa-shopping-cart"></i> <span class="nav-label" data-i18n="nav.layouts">Shipment</span></a>
-            </li>
-            <li class="@Html.IsSelected(controller: "Metrics")">
-                <a href="@Url.Action("Index", "Layouts")"><i class="fa fa-shopping-basket"></i> <span class="nav-label" data-i18n="nav.layouts">Customers</span></a>
-            </li>*@
+            <a href="@Url.Action("Index", "Layouts")"><i class="fa fa-bar-chart-o"></i> <span class="nav-label" data-i18n="nav.layouts">Dashboard</span></a>
+        </li>
+        <li class="@Html.IsSelected(controller: "Metrics")">
+            <a href="@Url.Action("Index", "Layouts")"><i class="fa fa-laptop"></i> <span class="nav-label" data-i18n="nav.layouts">POS</span></a>
+            <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Dumb", cssClass: "in")">
+                <li class="@Html.IsSelected(action: "Dashboard_5")"><a href="@Url.Action("Dashboard_5", "Dumb")">Orders</a></li>
+            </ul>
+        </li>
+        <li class="@Html.IsSelected(controller: "Metrics")">
+            <a href="@Url.Action("Index", "Layouts")"><i class="fa  fa-flask"></i> <span class="nav-label" data-i18n="nav.layouts">Factory</span></a>
+        </li>
+        <li class="@Html.IsSelected(controller: "Metrics")">
+            <a href="@Url.Action("Index", "Layouts")"><i class="fa fa-shopping-cart"></i> <span class="nav-label" data-i18n="nav.layouts">Shipment</span></a>
+        </li>
+        <li class="@Html.IsSelected(controller: "Metrics")">
+            <a href="@Url.Action("Index", "Layouts")"><i class="fa fa-shopping-basket"></i> <span class="nav-label" data-i18n="nav.layouts">Customers</span></a>
+        </li>*@
 
 
             <li class="@Html.IsSelected(controller: "Dashboards")">
-                <a href="@Url.Action("Dashboard_2", "Dashboards")"><i class="fa fa-th-large"></i> <span class="nav-label" data-i18n="nav.dashboard">Панели</span> </span></a>
+                <a href="@Url.Action("Dashboard_2", "Dashboards")"><i class="fa fa-th-large"></i> <span class="nav-label" data-i18n="nav.dashboard">Главная</span></a>
             </li>
-            <li class="@Html.IsSelected(controller: "Graphs")">
-                <a href="#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label" data-i18n="nav.graphs">Диаграммы</span></a>
+            <li class="@Html.IsSelected(controller: "Pricing")">
+                <a href="@Url.Action("NewPricesWrapper","Pricing")"><i class="fa fa-tags"></i> <span class="nav-label" data-i18n="nav.graphs">Ценообразование</span></a>
             </li>
-            <li class="@Html.IsSelected(controller: "Mailbox")">
-                <a href="#"><i class="fa fa-envelope"></i> <span class="nav-label" data-i18n="nav.mailbox">Сообщения </span><span class="label label-warning float-right">16/24</span></a>
+            <li class="@Html.IsSelected(controller: "Monitoring")">
+                <a href="@Url.Action("MonitoringView","Monitoring")"><i class="fa fa-desktop"></i> <span class="nav-label" data-i18n="nav.mailbox">Мониторинг</span></a>
             </li>
-            <li class="@Html.IsSelected(controller: "Widgets")">
-                <a href="#"><i class="fa fa-flask"></i> <span class="nav-label" data-i18n="nav.widgets">Функции</span> </a>
+            <li class="@Html.IsSelected(controller: "Notifications")">
+                <a href="#"><i class="fa fa-bell"></i> <span class="nav-label" data-i18n="nav.widgets">Оповещения</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Notifications", cssClass:"in")">
+                    <li class="@Html.IsSelected(action:"NotificationsSendingView")"><a href="@Url.Action("NotificationsSendingView","Notifications")">Отправка</a></li>
+                    <li class="@Html.IsSelected(action:"NotificationsHistoryView")"><a href="@Url.Action("NotificationsHistoryView","Notifications")">История</a></li>
+                </ul>
             </li>
             <li class="@Html.IsSelected(controller: "Forms")">
                 <a href="#"><i class="fa fa-edit"></i> <span class="nav-label" data-i18n="nav.forms">Карты</span></a>
@@ -57,6 +63,26 @@
                     <li class="@Html.IsSelected(action: "LockScreen")"><a href="@Url.Action("LockScreen", "Dumb")">Инкассация</a></li>
                     <li class="@Html.IsSelected(action: "Invoice")"><a href="@Url.Action("Invoice", "Dumb")">Наличие в боксах</a></li>
                 </ul>
+            </li>
+            <li class="@Html.IsSelected(controller: "Monitoring")">
+                <a href="#"><i class="fa fa-desktop"></i> <span class="nav-label" data-i18n="nav.widgets">Мониторинг</span><span class="fa arrow"></span></a>
+                @foreach (var c in Model)
+                {
+                    <ul class="nav nav-second-level collapse">
+                        <li class="">
+                            <a href="#"><span class="nav-label" data-i18n="nav.widgets">@c.Name</span><span class="fa arrow"></span></a>
+                            @foreach (var m in c.Washes)
+                            {
+                                <ul class=" nav nav-third-level collapse">
+                                    <li class="">
+                                        <a href="#">@m.Name</a>
+                                    </li>
+                                </ul>
+                            }
+                        </li>
+                    </ul>
+                }
+
             </li>
         </ul>
     </div>

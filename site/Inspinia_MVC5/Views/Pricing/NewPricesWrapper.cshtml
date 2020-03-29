@@ -1,0 +1,172 @@
+﻿
+@{
+    ViewBag.Title = "Ценообразование";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Ценообразование</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Ценообразование</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+
+<div id="price-wrapper" class="wrapper wrapper-content animated fadeInRight ecommerce load">
+    @Html.Action("NewPricesView", "Pricing")
+</div>
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/jsTree")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/jsTree")
+
+    <script type="text/javascript">
+        var outputList = [];
+
+        function hidealerts()
+        {
+            $('#alert-common').hide()
+            $('#alert-prices').hide()
+            $('#alert-posts').hide()
+        }
+
+        function initjstree() {
+            $('#jstree1').jstree({
+                'core': {
+                    'themes': {
+                        'variant': 'large'
+                    },
+                    'check_callback': true,
+                    'mulptiple': false,
+                    'animation': 0
+                },
+                'checkbox': {
+                    'keep_selected_style': true
+                },
+                'plugins': ['wholerow', 'types', 'checkbox'],
+                'types': {
+                    'default': {
+                        //'icon': 'fa fa-circle'
+                        'icon': false
+                    }
+
+                }
+            });
+        }
+
+        function initchangevent () {
+            $('#jstree1').on('changed.jstree', function (e, data) {
+                var objects = data.instance.get_selected(true)
+                var leaves = $.grep(objects, function (o) { return data.instance.is_leaf(o) })
+                outputList = [];
+                $.each(leaves, function (i, o) {
+                    outputList.push($(o).attr('id'))
+                })
+                var list = $('#output')
+                list.empty()
+                $.each(leaves, function (i, o) {
+                    $('<span/>').text($(o).attr('id') + " ").appendTo(list)
+                })
+            })
+        }
+
+        hidealerts();
+
+        $(document).ready(function () {
+
+            $(document).on("click", "#btn-save", function () {
+                var prices = [];
+
+                for (let i = 1; i < 9; i++) {
+                    var curid = '#price-' + i;
+                    if ($(curid).val() != "") {
+                        var price = [];
+                        price.push($(curid).attr('name'));
+                        price.push($(curid).val());
+
+                        prices.push(price);
+                    }
+                }
+
+                var posts = outputList;
+
+                if (prices == "" && posts == "") {
+                    $('#alert-prices').hide('fade')
+                    $('#alert-posts').hide('fade')
+                    $('#alert-common').show('fade') // в этом варианте алёрты не скрываются со временем; скрываются при каких-либо действиях;
+
+                    // в этом варианте алёрты скрываются со временем; скрывается через 10 секунд после появления;
+                    //$('#alert-common').fadeTo(10000, 500).slideUp(500, function () {
+                    //    $('#alert-common').slideUp(500)
+                    //})
+                }
+                else {
+                    if (prices == "") {
+                        $('#alert-common').hide('fade')
+                        $('#alert-posts') .hide('fade')
+                        $('#alert-prices').show('fade')
+                    }
+                    else {
+                        if (posts == "") {
+                            $('#alert-prices').hide('fade')
+                            $('#alert-common').hide('fade')
+                            $('#alert-posts') .show('fade')
+                        }
+                        else {
+                            $.ajax({
+                                type: "POST",
+                                cache: false,
+                                data: {
+                                    prices: prices,
+                                    posts: posts
+                                },
+                                beforeSend: function () {
+                                    $('#price-wrapper').toggleClass('sk-loading');
+                                },
+                                complete: function () {
+                                    $('#price-wrapper').toggleClass('sk-loading');
+                                },
+                                error: function (xhr, ajaxOptions, response) {
+                                    alert(xhr.responseText);
+                                    alert(response);
+                                },
+                                url: "@Url.Action("SaveNewPrices", "Pricing")",
+                            }).done(function (result) {
+                                $('#price-wrapper').html(result);
+                                hidealerts();
+                                initjstree();
+                                initchangevent();
+                            });
+                        }
+                    }
+                }
+            });
+
+            initjstree();
+            
+            initchangevent();
+        });
+
+        function validate(evt) {
+            var theEvent = evt || window.event;
+            var key = theEvent.keyCode || theEvent.which;
+            key = String.fromCharCode(key);
+            var regex = /[0-9]/;
+            if (!regex.test(key)) {
+                theEvent.returnValue = false;
+                if (theEvent.preventDefault) theEvent.preventDefault();
+            }
+        }
+
+    </script>
+}

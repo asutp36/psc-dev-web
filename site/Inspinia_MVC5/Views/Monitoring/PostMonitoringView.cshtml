@@ -1,0 +1,21 @@
+﻿@model Inspinia_MVC5.Helpers.InfoPost
+
+<h2>@Model.Post.Wash.Region.Name/@Model.Post.Wash.Name/<strong>Пост @Model.Post.Name</strong></h2>
+<hr />
+<div class="row">
+    <div class="col-lg-4">
+        <h4 id="label-balance" style="display:inline" class="label label-primary">Баланс</h4>
+        <h2>@Model.Balance</h2>
+    </div>
+    <div class="col-lg-4">
+        <h4 id="label-function" style="display:inline" class="label label-primary">Функция</h4>
+        <h2>@Model.Function</h2>
+    </div>
+    <div class="col-lg-4">
+        <h4 id="label-state" style="display:inline" class="label label-primary">Состояние</h4>
+        <h2 id="state">@Model.State</h2>
+    </div>
+</div>
+
+<script>
+</script>

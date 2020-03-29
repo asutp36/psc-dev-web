@@ -1,4 +1,5 @@
-﻿
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetCardList_Result>
+
 @{
     ViewBag.Title = "Операции по картам";
 }
@@ -101,7 +102,7 @@
         <div class="col-sm-4">
             <div class="form-group">
                 @*<label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Показать</label>*@
-                <button type="button" id="btn-for-filter"  class="btn btn-block btn-outline btn-success font-bold">Показать</button>
+                <button type="button" id="btn-for-filter" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
             </div>
         </div>
         <div class="col-sm-4">
@@ -324,7 +325,7 @@
         }, function (start, end, label) {
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
             $('#time_operation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
-            
+
             $('#filter-startdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
             $('#filter-stopdate').val(end.format('DD.MM.YYYY HH:mm:ss'));
         });

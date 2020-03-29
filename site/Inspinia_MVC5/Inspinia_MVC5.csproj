@@ -148,15 +148,19 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IncashController.cs" />
     <Compile Include="Controllers\IncashWashController.cs" />
+    <Compile Include="Controllers\IncreasesController.cs" />
     <Compile Include="Controllers\JsonController.cs" />
     <Compile Include="Controllers\LandingController.cs" />
     <Compile Include="Controllers\LayoutsController.cs" />
     <Compile Include="Controllers\MailboxController.cs" />
     <Compile Include="Controllers\MetricsController.cs" />
     <Compile Include="Controllers\MiscellaneousController.cs" />
+    <Compile Include="Controllers\MonitoringController.cs" />
+    <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Controllers\OperationsTypedWashController.cs" />
     <Compile Include="Controllers\OperationsController.cs" />
     <Compile Include="Controllers\PagesController.cs" />
+    <Compile Include="Controllers\PricingController.cs" />
     <Compile Include="Controllers\ScaffoldingController.cs" />
     <Compile Include="Controllers\TablesController.cs" />
     <Compile Include="Controllers\UIElementsController.cs" />
@@ -165,7 +169,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ChangeFunctionOnPost.cs" />
+    <Compile Include="Helpers\ChangePricesData.cs" />
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />
+    <Compile Include="Helpers\IncreaseBalanceOnPostClass.cs" />
+    <Compile Include="Helpers\InfoPost.cs" />
+    <Compile Include="Helpers\NotificationClass.cs" />
     <Compile Include="Models\Card.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -178,19 +187,19 @@
     <Compile Include="Models\Company.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\CountersOperating.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\CountersTotal.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Device.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DeviceType.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Event.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\EventCash.cs">
+    <Compile Include="Models\EventCollect.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventIncrease.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EventKind.cs">
@@ -208,6 +217,9 @@
     <Compile Include="Models\FinanceType.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetBoxAndCollect_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetCardListMinMaxDiapasons_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -220,6 +232,9 @@
     <Compile Include="Models\GetCollectWashList_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetDayIncrease_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetFinanceByNominals_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -227,6 +242,27 @@
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetFinanceSummary_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetIncreaseByEvents_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetIncreaseByPosts_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetIncreaseByWashs_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetIncreaseOnPosts_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetIncreaseOnWashes_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetNoticeHistoryList_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetNoticeRecipient_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetPostAmounts_Result.cs">
@@ -252,6 +288,15 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelDb.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\NoticeHistory.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\NoticeRecipientsGroup.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\NoticeStatu.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Operation.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
@@ -291,6 +336,7 @@
       <DependentUpon>Resource.en.resx</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\LoginModel.cs" />
+    <Compile Include="Controllers\SharedController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\animate.css" />
@@ -439,6 +485,8 @@
     <Content Include="Content\plugins\slick\fonts\slick.ttf" />
     <Content Include="Content\plugins\slick\fonts\slick.woff" />
     <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Images\logo-eco.jpg" />
+    <Content Include="Images\logo-eco.png" />
     <Content Include="Images\profile_small2.jpg" />
     <Content Include="locales\en.json" />
     <Content Include="locales\es.json" />
@@ -1876,6 +1924,28 @@
     <Content Include="Views\Finance\_FinanceOperationsByNominals.cshtml" />
     <Content Include="Views\CollectWash\CollectList.cshtml" />
     <Content Include="Views\CollectWash\_CollectList.cshtml" />
+    <Content Include="Views\Pricing\NewPricesView.cshtml" />
+    <Content Include="Views\Monitoring\MonitoringView.cshtml" />
+    <Content Include="Views\Monitoring\PostMonitoringView.cshtml" />
+    <Content Include="Views\Notifications\NotificationsHistoryView.cshtml" />
+    <Content Include="Views\Notifications\_NotificationsHistoryList.cshtml" />
+    <Content Include="Views\Notifications\NotificationsSendingView.cshtml" />
+    <Content Include="Views\Notifications\_NotificationsFormView.cshtml" />
+    <Content Include="Views\Pricing\NewPricesWrapper.cshtml" />
+    <Content Include="Views\Increases\IncreasesOnPostsView.cshtml" />
+    <Content Include="Views\Increases\IncreasesOnWashesView.cshtml" />
+    <Content Include="Views\Increases\_IncreasesOnPostsList.cshtml" />
+    <Content Include="Views\Increases\_IncreasesOnWashesList.cshtml" />
+    <Content Include="Views\Increases\IncreasesLipetskView.cshtml" />
+    <Content Include="Views\Increases\_IncreasesLipetskList.cshtml" />
+    <Content Include="Views\CollectWash\CollectLipetskView.cshtml" />
+    <Content Include="Views\CollectWash\_CollectLipetskList.cshtml" />
+    <Content Include="Views\Increases\IncreasesByWashesView.cshtml" />
+    <Content Include="Views\Increases\_IncreasesByWashesList.cshtml" />
+    <Content Include="Views\Increases\IncreasesByPostsView.cshtml" />
+    <Content Include="Views\Increases\_IncreasesByPostsList.cshtml" />
+    <Content Include="Views\Increases\IncreasesByEventsView.cshtml" />
+    <Content Include="Views\Increases\_IncreasesByEventsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

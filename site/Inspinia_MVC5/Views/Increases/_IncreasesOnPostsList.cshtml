@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetIncreaseOnPosts_Result>
+
+<table id="table-increases" class="display table table-striped table-bordered table-hover responsive">
+    <thead>
+        <tr>
+            <th>Регион</th>
+            <th>ID Мойки</th>
+            <th>Название мойки</th>
+            <th>Адрес мойки</th>
+            <th>Название поста</th>
+            <th>Сумма</th>
+            <th>10-руб. монеты</th>
+            <th>10-руб. купюры</th>
+            <th>50-руб. купюры</th>
+            <th>100-руб. купюры</th>
+            <th>200-руб. купюры</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var n in Model)
+        {
+        <tr>
+            <td>@n.region</td>
+            <td>@n.IDWash</td>
+            <td>@n.washName</td>
+            <td>@n.washAddress</td>
+            <td>@n.Name</td>
+            <td>@n.amount</td>
+            <td>@n.m10</td>
+            <td>@n.b10</td>
+            <td>@n.b50</td>
+            <td>@n.b100</td>
+            <td>@n.b200</td>
+        </tr>
+        }
+    </tbody>
+</table>
+

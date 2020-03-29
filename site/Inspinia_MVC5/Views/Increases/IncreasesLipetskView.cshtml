@@ -1,0 +1,159 @@
+﻿@{
+    ViewBag.Title = "Поступления денежных средств через терминалы";
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Поступления денежных средств через терминалы</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Главная</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Поступления денежных средств через терминалы</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="ibox-content m-b-sm border-bottom" id="filter-i">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="font-normal">Период поступлений</label>
+                <div class="input-group date" id="date-f" data-date="12/03/2012">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" value="@ViewBag.EndDate">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 table-cards">
+            <div class="ibox">
+                <div class="ibox-content-more">
+                    @Html.Action("_IncreasesLipetskList", "Increases", new
+               {
+                   date = ViewBag.Date
+               })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input hidden id="edate" />
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/dateRange")
+
+    <script type="text/javascript">
+
+    function initDataTable() {
+        $('#table-increases').DataTable({
+            "responsive": true,
+            "paging": false,
+            "info": false,
+            "searching": false,
+            dom: '<"html5buttons"B>lTfgitp',
+            buttons: [
+                { extend: 'excel', footer: true, title: 'Липецк Поступления денежных средств через терминалы за период с ' + $('#edate').val() + ' 00:00:00 по ' + $('#edate').val() + ' 23:59:59'},
+                { extend: 'pdf', footer: true, title: 'Липецк Поступления денежных средств через терминалы за период с ' + $('#edate').val() + ' 00:00:00 по ' + $('#edate').val() + ' 23:59:59' },
+
+                {
+                    extend: 'print',
+                    customize: function (win) {
+                        $(win.document.body).addClass('white-bg');
+                        $(win.document.body).css('font-size', '10px');
+
+                        $(win.document.body).find('table')
+                            .addClass('compact')
+                            .css('font-size', 'inherit');
+                    }
+                }
+            ],
+            "language": {
+                "zeroRecords": "Данные по заданному фильтру не найдены",
+                "emptyTable": "Данные по заданному фильтру не найдены"
+            },
+            "footerCallback": function () {
+                var api = this.api();
+
+                var intVal = function (i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+
+
+                for (var i = 1; i < 9; ++i) {
+                    total = api.column(i).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                    $(api.column(i).footer()).html(total);
+                }
+            }
+        });
+    }
+
+        function filter() {
+
+            var edate = $('#edate').val();
+
+            $.ajax({
+                type: "POST",
+                cache: true,
+                data: {
+                    date: edate
+                },
+                success: function () {
+                },
+                error: function () {
+                    alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
+                },
+                url: "@Url.Action("IncreasesLipetskFilter", "Increases")"
+            }).done(function (result) {
+                $('.ibox-content-more').html(result);
+
+                initDataTable();
+            });
+        }
+
+        $('#edate').val('@ViewBag.EndDate');
+
+        $('#date-f').datepicker({
+            format: "dd.mm.yyyy",
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: false,
+            autoclose: true,
+            locale: "ru"
+        }).on('changeDate', function () {
+            var ttt = $('#date-f').datepicker('getFormattedDate');
+            ttt instanceof Date;
+            $('#edate').val(ttt);
+            filter();
+            });
+
+        $('#date-f').datepicker('update', moment().format('DD.MM.YYYY'));
+        $('#edate').val($('#date-f').datepicker('getFormattedDate'));
+
+        $(document).ready(function () {
+
+            $("#filter-i").on("input", filter);
+            initDataTable();
+            filter();
+        });
+
+    </script>
+}

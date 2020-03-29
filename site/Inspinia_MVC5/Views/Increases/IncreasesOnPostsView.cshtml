@@ -1,0 +1,401 @@
+﻿@{
+    ViewBag.Title = "История пополнения на постах";
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>История пополнения на постах</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Главная</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>История пополнения на постах</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="ibox-content m-b-sm border-bottom" id="filter-i">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe">Регион</label>
+                <select id="filter-region" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.Regions)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe">Мойка</label>
+                <select id="filter-wash" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.Washes)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-labe">Пост</label>
+                <select id="filter-post" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.Posts)
+                    {
+                        <option value="@item.Code">@item.Code</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-labe">Дата пополнения</label>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <div id="filter-date" class="form-control">
+                            <i class="fa fa-calendar"></i>
+                            <span></span> <b class="caret"></b>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button id="clear-date" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 table-cards">
+            <div class="ibox">
+                <div class="ibox-content-more">
+                    @Html.Action("_IncreasesOnPostsList", "Increases", new
+               {
+                   region = ViewBag.Region,
+                   wash = ViewBag.Wash,
+                   post = "",
+                   begdate = ViewBag.BegDate,
+                   enddate = ViewBag.EndDate
+               })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input hidden id="bdate" />
+<input hidden id="edate" />
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/dateRange")
+
+    <script type="text/javascript">
+
+    function initDataTable() {
+        $('#table-increases').DataTable({
+            "responsive": true,
+            "paging": false,
+            "info": false,
+            "searching": false,
+            dom: '<"html5buttons"B>lTfgitp',
+            buttons: [
+                { extend: 'excel', title: 'Report' },
+                { extend: 'pdf', title: 'Report' },
+
+                {
+                    extend: 'print',
+                    customize: function (win) {
+                        $(win.document.body).addClass('white-bg');
+                        $(win.document.body).css('font-size', '10px');
+
+                        $(win.document.body).find('table')
+                            .addClass('compact')
+                            .css('font-size', 'inherit');
+                    }
+                }
+            ],
+            "language": {
+                "zeroRecords": "Данные по заданному фильтру не найдены",
+                "emptyTable": "Данные по заданному фильтру не найдены"
+            }
+        });
+    }
+
+    var regions = [];
+    var washes = [];
+    var posts = [];
+
+    @foreach (var item in ViewBag.Regions) {
+        <text>
+            regions.push({ value:"@item.Code", text:"@item.Name", washes:[
+                @foreach(var w in item.Washes)
+                {
+                    <text>
+                {
+                    value: "@w.Code", text: "@w.Name", posts: [
+                        @foreach(var p in w.Posts)
+                        {
+                            <text>
+                        {
+                            value: "@p.Code", text: "@p.Code"
+                        },
+                            </text>
+                        }
+                    ]
+                },
+                    </text>
+                }
+                ]});
+        </text>
+    }
+
+    @foreach (var item in ViewBag.Washes) {
+        <text>
+            washes.push({ value:"@item.Code", text:"@item.Name", posts:[
+                @foreach(var w in item.Posts)
+                {
+                    <text>
+                {
+                    value: "@w.Code", text: "@w.Code"
+                },
+                    </text>
+                }
+                ]});
+        </text>
+    }
+
+    @foreach (var item in ViewBag.Posts) {
+        <text>
+            posts.push({ value: "@item.Code", text: "@item.Code" }, );
+        </text>
+    }
+
+    function eventChangeRegion () {
+
+        var curreg = $('#filter-region').find(":selected").val();
+        var curwashval = $('#filter-wash').find(":selected").val();
+        var curpostval = $('#filter-post').find(":selected").val();
+
+        if (curreg == "") {
+            var $selwash = $('#filter-wash');
+
+            $selwash.empty();
+            $selwash.append($("<option></option>", { value: "", text: "" }));
+            washes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
+
+            $selwash.val(curwashval);
+
+            eventChangeWash();
+        }
+        else {
+            var newwashes = [];
+            newwashes = regions.find(reg => reg.value == curreg).washes;
+
+            var $selwash = $('#filter-wash');
+
+            $selwash.empty();
+            $selwash.append($("<option></option>", { value: "", text: "" }));
+            newwashes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
+
+            $selwash.val(curwashval);
+
+            var newposts = [];
+            newwashes.forEach(element => element.posts.forEach(el => newposts.push(el)));
+
+            var $selpost = $('#filter-post');
+
+            $selpost.empty();
+            $selpost.append($("<option></option>", { value: "", text: "" }));
+            newposts.forEach(element => $selpost.append($("<option></option>", { value: element.value, text: element.text })));
+
+            $selpost.val(curpostval);
+        }
+    }
+
+    function eventChangeWash() {
+
+        var curpostval = $('#filter-post').find(":selected").val();
+        var curreg = $('#filter-region').find(":selected").val();
+        var curwash = $('#filter-wash').find(":selected").val();
+
+        if (curwash == "") {
+            if (curreg == "") {
+                var $selpost = $('#filter-post');
+
+                $selpost.empty();
+                $selpost.append($("<option></option>", { value: "", text: "" }));
+                posts.forEach(element => $selpost.append($("<option></option>", { value: element.value, text: element.text })));
+
+                $selpost.val(curpostval);
+            }
+            else {
+                var newwashes = [];
+                newwashes = regions.find(reg => reg.value == curreg).washes;
+
+                var newposts = [];
+                newwashes.forEach(element => element.posts.forEach(el => newposts.push(el)));
+
+                var $selpost = $('#filter-post');
+
+                $selpost.empty();
+                $selpost.append($("<option></option>", { value: "", text: "" }));
+                newposts.forEach(element => $selpost.append($("<option></option>", { value: element.value, text: element.text })));
+
+                $selpost.val(curpostval);
+            }
+        }
+        else {
+            var newposts = [];
+            newposts = washes.find(wash => wash.value == curwash).posts;
+
+            var $selpost = $('#filter-post');
+
+            $selpost.empty();
+            $selpost.append($("<option></option>", { value: "", text: "" }));
+            newposts.forEach(element => $selpost.append($("<option></option>", { value: element.value, text: element.text })));
+
+            $selpost.val(curpostval);
+        }
+    }
+
+        function filter() {
+
+            var bdate = $('#bdate').val();
+            var edate = $('#edate').val();
+            var region = $('#filter-region').find(":selected").val();
+            var wash = $('#filter-wash').find(":selected").val();
+            var post = $('#filter-post').find(":selected").val();
+
+            $.ajax({
+                type: "POST",
+                cache: true,
+                data: {
+                    region: region,
+                    wash: wash,
+                    post: post,
+                    begdate: bdate,
+                    enddate: edate
+                },
+                success: function () {
+                },
+                error: function () {
+                    alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
+                },
+                url: "@Url.Action("IncreasesOnPostsFilter", "Increases")"
+            }).done(function (result) {
+                $('.ibox-content-more').html(result);
+
+                initDataTable();
+            });
+        }
+
+        $('#filter-region').val('@ViewBag.Region');
+        eventChangeRegion();
+
+        $('#filter-wash').val('@ViewBag.Wash');
+        eventChangeWash();
+
+        $('#bdate').val('@ViewBag.BegDate');
+        $('#edate').val('@ViewBag.EndDate');
+
+        $(document).ready(function () {
+
+            $('#filter-region').change(eventChangeRegion);
+            $('#filter-wash').change(eventChangeWash);
+
+            $("#filter-i").on("input", filter);
+            initDataTable();
+
+            $(document).on("click", "#clear-date", function () {
+                $('#filter-date span').html(" За всё время");
+                $('#bdate').val("");
+                $('#edate').val("");
+                filter();
+            });
+        });
+
+        $('input[name="daterange"]').daterangepicker();
+
+        //$('#bdate').val(moment().startOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        //$('#edate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
+
+        //$('#filter-date span').html(moment().startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
+
+        $('#filter-date span').html($('#bdate').val() + ' ' + $('#edate').val());
+
+        $('#filter-date').daterangepicker({
+            "timePicker": true,
+            "timePicker24Hour": true,
+            "timePickerSeconds": true,
+            "ranges": {
+                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                'сегодня': [moment().startOf('day'), moment()],
+                'текущий месяц': [moment().startOf('month'), moment()],
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "locale": {
+                "format": "DD.MM.YYYY",
+                "separator": " ",
+                "applyLabel": "Выбрать",
+                "cancelLabel": "Отмена",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "Вс",
+                    "Пн",
+                    "Вт",
+                    "Ср",
+                    "Чт",
+                    "Пт",
+                    "Сб"
+                ],
+                "monthNames": [
+                    "Январь",
+                    "Февраль",
+                    "Март",
+                    "Апрель",
+                    "Май",
+                    "Июнь",
+                    "Июль",
+                    "Август",
+                    "Сентябрь",
+                    "Октябрь",
+                    "Ноябрь",
+                    "Декабрь"
+                ],
+                "firstDay": 1
+            },
+            "showCustomRangeLabel": false,
+            "alwaysShowCalendars": true,
+            "startDate": moment().subtract(1, 'days').startOf('day'),
+            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "opens": "right",
+            "drops": "down"
+        }, function (start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            $('#filter-date span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+
+            $('#bdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
+            filter();
+        });
+    </script>
+}

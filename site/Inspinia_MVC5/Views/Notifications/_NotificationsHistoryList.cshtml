@@ -1,0 +1,32 @@
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetNoticeHistoryList_Result>
+
+<table id="table-notifications" class="display table table-striped table-bordered table-hover responsive">
+    <thead>
+        <tr>
+            <th>Отправитель</th>
+            <th>Время получения</th>
+            <th>Код получателя</th>
+            <th>Имя получателя</th>
+            <th>Время отправления</th>
+            <th>Код оповещения</th>
+            <th>Статус оповещения</th>
+            <th>Текст</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var n in Model)
+        {
+        <tr>
+            <td>@n.Sender</td>
+            <td>@n.DTimeReceive</td>
+            <td>@n.RecipientsCode</td>
+            <td>@n.RecipientsName</td>
+            <td>@n.DTimeSent</td>
+            <td>@n.NoticeStatusCode</td>
+            <td>@n.NoticeStatusName</td>
+            <td>@n.Message</td>
+        </tr>
+        }
+    </tbody>        
+</table>
+

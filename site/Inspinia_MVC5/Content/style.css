@@ -7828,6 +7828,31 @@ body.body-small .vote-icon {
   right: 0;
   z-index: 2000;
 }
+
+.load > .sk-spinner {
+  display: none;
+}
+.load.sk-loading {
+  position: relative;
+}
+.load.sk-loading:after {
+  content: '';
+  background-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0px 30px 50px 0px rgba(255,255,255, 0.7);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.load.sk-loading > .sk-spinner {
+  display: block;
+  position: absolute;
+  top: 40%;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+}
 /* PACE PLUGIN
 -------------------------------------------------- */
 .landing-page.pace .pace-progress {

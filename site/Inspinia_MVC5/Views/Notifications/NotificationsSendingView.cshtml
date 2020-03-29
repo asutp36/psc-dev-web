@@ -1,0 +1,145 @@
+﻿@{
+    ViewBag.Title = "Отправка оповещений";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Создать оповещение</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Главная</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Создать оповещение</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-lg-9 animated fadeInRight">
+            <div class="mail-box-header">
+                <div class="float-right tooltip-demo">
+                    <button id="btn-clear" class="btn btn-danger btn-sm"><i class="fa fa-times"></i> Очистить всё</button>
+                </div>
+                <h2>
+                    Создать оповещение
+                </h2>
+            </div>
+            <div class="mail-box">
+                @Html.Action("_NotificationsFormView", "Notifications")
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div id="alert-who" class="alert alert-warning">
+                Получатель не выбран!
+            </div>
+            <div id="alert-text" class="alert alert-danger">
+                Введите текст оповещения!
+            </div>
+            <div id="alert-sent" class="alert alert-success">
+                Запрос на отправку оповещения отправлен!
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    @Styles.Render("~/plugins/summernoteStyles")
+    @Styles.Render("~/plugins/tagInputsStyles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/plugins/laddaStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/summernote")
+    @Scripts.Render("~/plugins/tagInputs")
+    @Scripts.Render("~/plugins/typehead")
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/ladda")
+
+    <script type="text/javascript">
+
+        function clear_inputs() {
+            $('#input-who').val('').trigger('chosen:updated');
+            $('#input-text').val('');
+        }
+
+        function hide_alerts() {
+            $('#alert-who').hide();
+            $('#alert-text').hide();
+            $('#alert-sent').hide();
+        }
+
+        hide_alerts();
+
+        $(document).ready(function () {
+
+            $('#btn-send').ladda();
+            $('#input-who').chosen({ width: "100%" });
+
+            $(document).on("click", "#btn-clear", function () {
+                clear_inputs();
+            });
+
+            $(document).on("click", "#btn-send", function () {
+                hide_alerts();
+                if ($('#input-who').val() && $('#input-text').val()) {
+
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        data: {
+                            sender: "@User.Identity.Name.ToString()",
+                            receiver: $('#input-who').val(),
+                            text: $('#input-text').val()
+                        },
+                        error: function () {
+                            alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
+                        },
+                        beforeSend: function () {
+                            $('#btn-send').ladda('start');
+                            $('#input-who').attr('readonly', true);
+                            $('#input-text').attr('readonly', true);
+                        },
+                        complete: function () {
+                            $('#btn-send').ladda('stop');
+                            $('#input-who').attr('readonly', false);
+                            $('#input-text').attr('readonly', false);
+                        },
+                        success: function () {
+                            $('#alert-sent').show('fade');
+                        },
+                        url: "@Url.Action("NotificationsToReceiversSend", "Notifications")",
+                    }).done(function (result) {
+                        $('.mail-box').html(result);
+                        $('#input-who').chosen({ width: "100%" });
+                    });
+                }
+                else {
+                    if ($('#input-who').val().length != 0) {
+                        $('#alert-text').show('fade');
+                    }
+                    else {
+                        $('#alert-who').show('fade');
+                    }
+                }
+            });
+
+            $(document).on("click", "#btn-history", function () {
+                $.ajax({
+                    type: "GET",
+                    cache: false,
+                    error: function () {
+                        alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
+                    },
+                    url: "@Url.Action("NotificationsHistoryView", "Notifications")",
+                }).done(function (result) {
+                    $('#wrapper').html(result);
+                });
+            });
+        });
+    </script>}

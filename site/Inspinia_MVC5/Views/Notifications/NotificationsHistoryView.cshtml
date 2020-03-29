@@ -1,0 +1,388 @@
+﻿@{
+    ViewBag.Title = "История оповещений";
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>История оповещений</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Инфо</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>История оповещений</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="ibox-content m-b-sm border-bottom">
+    <div id="search-n">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-form-labe">Дата получения</label>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <div id="filter-date-rec" class="form-control">
+                                <i class="fa fa-calendar"></i>
+                                <span></span> <b class="caret"></b>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <button id="clear-date-rec" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-form-labe">Дата отправки</label>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <div id="filter-date-sent" class="form-control">
+                                <i class="fa fa-calendar"></i>
+                                <span></span> <b class="caret"></b>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <button id="clear-date-sent" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-form-labe">Отправитель</label>
+                    <input type="text" id="filter-sender" class="form-control" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-form-labe">Код получателя</label>
+                    <input type="text" id="filter-rec-code" class="form-control" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-form-labe">Имя получателя</label>
+                    <input type="text" id="filter-rec-name" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-form-labe">Код оповещения</label>
+                    <select id="filter-notice-code" class="form-control">
+                        <option value="" selected=""></option>
+                        @foreach (var item in ViewBag.Notices)
+                        {
+                            <option value="@item.Code">@item.Code</option>
+                        }
+                    </select>                
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-form-labe">Статус оповещения</label>
+                    <select id="filter-notice-name" class="form-control">
+                        <option value="" selected=""></option>
+                        @foreach (var item in ViewBag.Notices)
+                        {
+                            <option value="@item.Name">@item.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-form-labe">Текст</label>
+                    <input type="text" id="filter-text" class="form-control" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 table-cards">
+            <div class="ibox">
+                <div class="ibox-content-more">
+                    @Html.Action("_NotificationsHistoryList", "Notifications", new
+               {
+                   sender = "",
+                   recbegdate = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                   recenddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"),
+                   reccode = "",
+                   recname = "",
+                   sbegdate = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                   senddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"),
+                   noticestatuscode = "",
+                   noticestatusname = "",
+                   message = ""
+               })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input hidden id="rbdate" />
+<input hidden id="redate" />
+<input hidden id="sbdate" />
+<input hidden id="sedate" />
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/dateRange")
+
+    <script type="text/javascript">
+
+        function filter() {
+
+            var sender = $('#filter-sender').val();
+            var reccode = $('#filter-rec-code').val();
+            var recname = $('#filter-rec-name').val();
+            var noticestatuscode = $('#filter-notice-code').find(":selected").val();
+            var noticestatusname = $('#filter-notice-name').find(":selected").val();
+            var message = $('#filter-text').val();
+            var rbdate = $('#rbdate').val();
+            var redate = $('#redate').val();
+            var sbdate = $('#sbdate').val();
+            var sedate = $('#sedate').val();
+
+            $.ajax({
+                type: "POST",
+                cache: true,
+                data: {
+                    sender: sender,
+                    recbegdate: rbdate,
+                    recenddate: redate,
+                    reccode: reccode,
+                    recname: recname,
+                    sbegdate: sbdate,
+                    senddate: sedate,
+                    noticestatuscode: noticestatuscode,
+                    noticestatusname: noticestatusname,
+                    message: message
+                },
+                success: function () {
+                },
+                error: function () {
+                    alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
+                },
+                url: "@Url.Action("NotificationsFilter", "Notifications")"
+            }).done(function (result) {
+                $('.ibox-content-more').html(result);
+                $('#table-notifications').DataTable({
+                    "responsive": true,
+                    "paging": false,
+                    "info": false,
+                    "searching": false,
+                    dom: '<"html5buttons"B>lTfgitp',
+                    buttons: [
+                        { extend: 'excel', title: 'Report' },
+                        { extend: 'pdf', title: 'Report' },
+                        {
+                            extend: 'print',
+                            customize: function (win) {
+                                $(win.document.body).addClass('white-bg');
+                                $(win.document.body).css('font-size', '10px');
+
+                                $(win.document.body).find('table')
+                                    .addClass('compact')
+                                    .css('font-size', 'inherit');
+                            }
+                        }
+                    ],
+                    "language": {
+                        "zeroRecords": "Данные по заданному фильтру не найдены",
+                        "emptyTable": "Данные по заданному фильтру не найдены"
+                    }
+                });
+            });
+        }
+
+        $(document).ready(function () {
+
+            $("#search-n").on("input", filter);
+
+            $('#table-notifications').DataTable({
+                "responsive": true,
+                "paging": false,
+                "info": false,
+                "searching": false,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    { extend: 'excel', title: 'Report' },
+                    { extend: 'pdf', title: 'Report' },
+                    {
+                        extend: 'print',
+                        customize: function (win) {
+                            $(win.document.body).addClass('white-bg');
+                            $(win.document.body).css('font-size', '10px');
+
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
+                        }
+                    }
+                ]
+            });
+
+            $(document).on("click", "#clear-date-rec", function () {
+                $('#filter-date-rec span').empty();
+                $('#rbdate').val("");
+                $('#redate').val("");
+                filter();
+            });
+
+            $(document).on("click", "#clear-date-sent", function () {
+                $('#filter-date-sent span').empty();
+                $('#sbdate').val("");
+                $('#sedate').val("");
+                filter();
+            });
+        });
+
+        $('input[name="daterange"]').daterangepicker();
+
+        $('#rbdate').val(moment().startOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        $('#redate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
+
+        $('#filter-date-rec span').html(moment().startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
+
+        $('#filter-date-rec').daterangepicker({
+            "timePicker": true,
+            "timePicker24Hour": true,
+            "timePickerSeconds": true,
+            "ranges": {
+                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                'сегодня': [moment().startOf('day'), moment()],
+                'текущий месяц': [moment().startOf('month'), moment()],
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "locale": {
+                "format": "DD.MM.YYYY",
+                "separator": " ",
+                "applyLabel": "Выбрать",
+                "cancelLabel": "Отмена",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "Вс",
+                    "Пн",
+                    "Вт",
+                    "Ср",
+                    "Чт",
+                    "Пт",
+                    "Сб"
+                ],
+                "monthNames": [
+                    "Январь",
+                    "Февраль",
+                    "Март",
+                    "Апрель",
+                    "Май",
+                    "Июнь",
+                    "Июль",
+                    "Август",
+                    "Сентябрь",
+                    "Октябрь",
+                    "Ноябрь",
+                    "Декабрь"
+                ],
+                "firstDay": 1
+            },
+            "showCustomRangeLabel": false,
+            "alwaysShowCalendars": true,
+            "startDate": moment().subtract(1, 'days').startOf('day'),
+            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "opens": "right",
+            "drops": "down"
+        }, function (start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            $('#filter-date-rec span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+
+            $('#rbdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#redate').val(end.format('DD.MM.YYYY HH:mm:ss'));
+            filter();
+            });
+
+        $('input[name="daterange"]').daterangepicker();
+
+        $('#sbdate').val(moment().startOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        $('#sedate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
+
+        $('#filter-date-sent span').html(moment().startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
+
+        $('#filter-date-sent').daterangepicker({
+            "timePicker": true,
+            "timePicker24Hour": true,
+            "timePickerSeconds": true,
+            "ranges": {
+                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                'сегодня': [moment().startOf('day'), moment()],
+                'текущий месяц': [moment().startOf('month'), moment()],
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "locale": {
+                "format": "DD.MM.YYYY",
+                "separator": " ",
+                "applyLabel": "Выбрать",
+                "cancelLabel": "Отмена",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "Вс",
+                    "Пн",
+                    "Вт",
+                    "Ср",
+                    "Чт",
+                    "Пт",
+                    "Сб"
+                ],
+                "monthNames": [
+                    "Январь",
+                    "Февраль",
+                    "Март",
+                    "Апрель",
+                    "Май",
+                    "Июнь",
+                    "Июль",
+                    "Август",
+                    "Сентябрь",
+                    "Октябрь",
+                    "Ноябрь",
+                    "Декабрь"
+                ],
+                "firstDay": 1
+            },
+            "showCustomRangeLabel": false,
+            "alwaysShowCalendars": true,
+            "startDate": moment().subtract(1, 'days').startOf('day'),
+            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "opens": "right",
+            "drops": "down"
+        }, function (start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            $('#filter-date-sent span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+
+            $('#sbdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#sedate').val(end.format('DD.MM.YYYY HH:mm:ss'));
+            filter();
+        });
+    </script>
+}

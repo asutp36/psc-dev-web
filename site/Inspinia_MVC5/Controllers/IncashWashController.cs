@@ -48,7 +48,7 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.region = region;
             ViewBag.wash = wash;
 
-            //            ViewBag.Incomes = GetIncomesFromDB(startDTime, stopDTime, "", "");
+            //ViewBag.Incomes = GetIncomesFromDB(startDTime, stopDTime, "", "");
 
             return View();
         }

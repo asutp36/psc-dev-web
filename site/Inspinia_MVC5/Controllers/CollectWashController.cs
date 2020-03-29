@@ -88,5 +88,51 @@ namespace Inspinia_MVC5.Controllers
 
             return resultset;
         }
+
+        public ActionResult CollectLipetskView()
+        {
+            return View("CollectLipetskView");
+        }
+
+        public ActionResult _CollectLipetskList(string date)
+        {
+            List<GetBoxAndCollect_Result> view = GetCollectLipetsk(date);
+
+            return PartialView("_CollectLipetskList", view);
+        }
+
+        public ActionResult CollectLipetskFilter(string date)
+        {
+            List<GetBoxAndCollect_Result> view = GetCollectLipetsk(date);
+
+            return PartialView("_CollectLipetskList", view);
+        }
+
+        public List<GetBoxAndCollect_Result> GetCollectLipetsk(string date)
+        {
+            List<GetBoxAndCollect_Result> resultlist = null;
+
+            DateTime bdate;
+            if (!DateTime.TryParse(date, out bdate))
+                bdate = DateTime.Today;
+
+            DateTime edate = bdate.AddDays(1);
+
+            edate = edate.AddSeconds(-1);
+
+            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            prmBegDate.Value = bdate;
+
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
+
+            var result = db.Database.SqlQuery<GetBoxAndCollect_Result>
+                ("GetBoxAndCollect @p_DateBeg, @p_DateEnd",
+                prmBegDate, prmEndDate).ToList();
+
+            resultlist = result;
+
+            return resultlist;
+        }
     }
 }
