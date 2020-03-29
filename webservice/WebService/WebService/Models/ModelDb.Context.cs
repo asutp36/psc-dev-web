@@ -7,16 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Inspinia_MVC5.Models
+namespace WebService.Models
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
-    public partial class bakeryDBEntities : DbContext
+    public partial class ModelDb : DbContext
     {
-        public bakeryDBEntities()
-            : base("name=bakeryDBEntities")
+        public ModelDb()
+            : base("name=ModelDb")
         {
         }
     
@@ -25,8 +27,12 @@ namespace Inspinia_MVC5.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<ProductGroup> ProductGroup { get; set; }
-        public virtual DbSet<Order> Order { get; set; }
-        public virtual DbSet<Product> Product { get; set; }
+        public virtual DbSet<Card> Cards { get; set; }
+        public virtual DbSet<CardStatus> CardStatuses { get; set; }
+        public virtual DbSet<CardType> CardTypes { get; set; }
+        public virtual DbSet<Operation> Operations { get; set; }
+        public virtual DbSet<OperationType> OperationTypes { get; set; }
+        public virtual DbSet<Owner> Owners { get; set; }
+        public virtual DbSet<Psce> Psces { get; set; }
     }
 }

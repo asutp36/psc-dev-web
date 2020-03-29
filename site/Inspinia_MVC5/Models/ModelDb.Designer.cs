@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Users\sda\Documents\14\dev\web\inspn\Inspinia_MVC5\Models\BakeryModel.edmx'. 
+﻿// T4 code generation is enabled for model 'D:\lexa\WEBBBBB\old3 psc-dev-web\site\Inspinia_MVC5\Models\ModelDb.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

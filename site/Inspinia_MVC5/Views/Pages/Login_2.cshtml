@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Inspinia_MVC5.ViewModels.LoginModel
+
+@{
     Layout = null;
 }
 
@@ -9,7 +11,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>BAKERY | Login</title>
+    <title>ECO | Login</title>
 
     <link href="~/Content/bootstrap.min.css" rel="stylesheet">
     <link href="~/Fonts/font-awesome/css/all.css" rel="stylesheet">
@@ -25,14 +27,14 @@
         <div class="row">
 
             <div class="col-md-6">
-                <h2 class="font-bold">Welcome to ECO carwash</h2>
+                <h2 class="font-bold">ЭКО мойки</h2>
 
                 <p>
-                    Perfectly designed and precisely prepared ERP theme with operating pages with extra new web app views.
+                    This is simply dummy text of the printing and typesetting industry. This is simply dummy text of the printing and typesetting industry.
                 </p>
 
                 <p>
-                    ERP for Carwash is disigned to automate for processing orders.
+                    This is simply dummy text of the printing and typesetting industry. This is simply dummy text of the printing and typesetting industry.
                 </p>
 
                 <p>
@@ -46,12 +48,17 @@
             </div>
             <div class="col-md-6">
                 <div class="ibox-content">
-                    <form class="m-t" role="form" action="index.html">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        @*<form class="m-t" role="form" action="index.html">*@
                         <div class="form-group">
-                            <input type="email" class="form-control" placeholder="Username" required="">
+                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { placeholder = "логин", autofocus = " " } })
+                            @*<input type="email" class="form-control" placeholder="Username" required="">*@
                         </div>
                         <div class="form-group">
-                            <input type="password" class="form-control" placeholder="Password" required="">
+                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { placeholder = "пароль" } })
+                            @*<input type="password" class="form-control" placeholder="Password" required="">*@
                         </div>
                         <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
 
@@ -63,9 +70,10 @@
                             <small>Do not have an account?</small>
                         </p>
                         <a class="btn btn-sm btn-white btn-block" href="register.html">Create an account</a>
-                    </form>
+                        @*</form>*@
+                    }
                     <p class="m-t">
-                        <small>Contact ERP administrator to confirm an account</small>
+                        <small>Contact ECO administrator to confirm an account</small>
                     </p>
                 </div>
             </div>

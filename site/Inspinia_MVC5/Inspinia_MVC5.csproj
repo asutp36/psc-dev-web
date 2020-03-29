@@ -13,7 +13,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Inspinia_MVC5</RootNamespace>
     <AssemblyName>Inspinia_MVC5</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -48,12 +48,10 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -137,20 +135,27 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AppViewsController.cs" />
+    <Compile Include="Controllers\CardsController.cs" />
+    <Compile Include="Controllers\CollectWashController.cs" />
     <Compile Include="Controllers\CSSAnimationsController.cs" />
     <Compile Include="Controllers\EcommerceController.cs" />
+    <Compile Include="Controllers\FinanceController.cs" />
     <Compile Include="Controllers\FormsController.cs" />
     <Compile Include="Controllers\GalleryController.cs" />
     <Compile Include="Controllers\GraphsController.cs" />
     <Compile Include="Controllers\GridOptionsController.cs" />
     <Compile Include="Controllers\DashboardsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IncashController.cs" />
+    <Compile Include="Controllers\IncashWashController.cs" />
     <Compile Include="Controllers\JsonController.cs" />
     <Compile Include="Controllers\LandingController.cs" />
     <Compile Include="Controllers\LayoutsController.cs" />
     <Compile Include="Controllers\MailboxController.cs" />
     <Compile Include="Controllers\MetricsController.cs" />
     <Compile Include="Controllers\MiscellaneousController.cs" />
+    <Compile Include="Controllers\OperationsTypedWashController.cs" />
+    <Compile Include="Controllers\OperationsController.cs" />
     <Compile Include="Controllers\PagesController.cs" />
     <Compile Include="Controllers\ScaffoldingController.cs" />
     <Compile Include="Controllers\TablesController.cs" />
@@ -161,23 +166,119 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />
-    <Compile Include="Models\BakeryModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>BakeryModel.Context.tt</DependentUpon>
+    <Compile Include="Models\Card.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\BakeryModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>BakeryModel.tt</DependentUpon>
+    <Compile Include="Models\CardStatus.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\BakeryModel.Designer.cs">
+    <Compile Include="Models\CardType.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Company.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CountersOperating.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CountersTotal.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Device.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Event.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventCash.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventKind.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventMode.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventSimple.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Finance.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\FinanceType.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCardListMinMaxDiapasons_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCardList_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCardsOperations_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCollectWashList_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetFinanceByNominals_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetFinanceList_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetFinanceSummary_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetPostAmounts_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetWashAmounts_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Mode.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ModelDb.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>BakeryModel.edmx</DependentUpon>
+      <DependentUpon>ModelDb.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ModelDb.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ModelDb.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelDb.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Operation.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OperationType.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Owner.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Post.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Psce.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Region.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ScaffoldingContext.cs" />
     <Compile Include="Models\ScaffoldingController.cs" />
+    <Compile Include="Models\User.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Wash.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Resource.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -189,6 +290,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.en.resx</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\LoginModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\animate.css" />
@@ -242,7 +344,7 @@
     <Content Include="Content\plugins\cropper\cropper.min.css" />
     <Content Include="Content\plugins\datapicker\datepicker3.css" />
     <Content Include="Content\plugins\dataTables\datatables.min.css" />
-    <Content Include="Content\plugins\daterangepicker\daterangepicker-bs3.css" />
+    <Content Include="Content\plugins\daterangepicker\daterangepicker.css" />
     <Content Include="Content\plugins\dropzone\basic.css" />
     <Content Include="Content\plugins\dropzone\dropzone.css" />
     <Content Include="Content\plugins\dualListbox\bootstrap-duallistbox.min.css" />
@@ -297,9 +399,11 @@
     <Content Include="Content\plugins\toastr\toastr.min.css" />
     <Content Include="Content\plugins\touchspin\jquery.bootstrap-touchspin.min.css" />
     <Content Include="favicon.ico" />
-    <Content Include="fonts\font-awesome\css\font-awesome.css" />
-    <Content Include="fonts\font-awesome\css\font-awesome.min.css" />
-    <Content Include="fonts\font-awesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\font-awesome\css\all.css" />
+    <Content Include="fonts\font-awesome\css\all.min.css" />
+    <Content Include="fonts\font-awesome\webfonts\fa-brands-400.svg" />
+    <Content Include="fonts\font-awesome\webfonts\fa-regular-400.svg" />
+    <Content Include="fonts\font-awesome\webfonts\fa-solid-900.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\style.css" />
@@ -316,25 +420,6 @@
     <Content Include="CodeTemplates\MvcView\Imports.include.t4" />
     <Content Include="CodeTemplates\MvcView\List.cs.t4" />
     <Content Include="CodeTemplates\MvcView\ModelMetadataFunctions.cs.include.t4" />
-    <Content Include="fonts\font-awesome\fonts\fontawesome-webfont.eot" />
-    <Content Include="fonts\font-awesome\fonts\fontawesome-webfont.ttf" />
-    <Content Include="fonts\font-awesome\fonts\fontawesome-webfont.woff" />
-    <Content Include="fonts\font-awesome\fonts\fontawesome-webfont.woff2" />
-    <Content Include="fonts\font-awesome\fonts\FontAwesome.otf" />
-    <Content Include="fonts\font-awesome\less\animated.less" />
-    <Content Include="fonts\font-awesome\less\bordered-pulled.less" />
-    <Content Include="fonts\font-awesome\less\core.less" />
-    <Content Include="fonts\font-awesome\less\fixed-width.less" />
-    <Content Include="fonts\font-awesome\less\font-awesome.less" />
-    <Content Include="fonts\font-awesome\less\icons.less" />
-    <Content Include="fonts\font-awesome\less\larger.less" />
-    <Content Include="fonts\font-awesome\less\list.less" />
-    <Content Include="fonts\font-awesome\less\mixins.less" />
-    <Content Include="fonts\font-awesome\less\path.less" />
-    <Content Include="fonts\font-awesome\less\rotated-flipped.less" />
-    <Content Include="fonts\font-awesome\less\stacked.less" />
-    <Content Include="fonts\font-awesome\less\variables.less" />
-    <Content Include="fonts\font-awesome\scss\font-awesome.scss" />
     <Content Include="fonts\font-awesome\scss\_animated.scss" />
     <Content Include="fonts\font-awesome\scss\_bordered-pulled.scss" />
     <Content Include="fonts\font-awesome\scss\_core.scss" />
@@ -343,7 +428,6 @@
     <Content Include="fonts\font-awesome\scss\_larger.scss" />
     <Content Include="fonts\font-awesome\scss\_list.scss" />
     <Content Include="fonts\font-awesome\scss\_mixins.scss" />
-    <Content Include="fonts\font-awesome\scss\_path.scss" />
     <Content Include="fonts\font-awesome\scss\_rotated-flipped.scss" />
     <Content Include="fonts\font-awesome\scss\_stacked.scss" />
     <Content Include="fonts\font-awesome\scss\_variables.scss" />
@@ -358,27 +442,57 @@
     <Content Include="Images\profile_small2.jpg" />
     <Content Include="locales\en.json" />
     <Content Include="locales\es.json" />
-    <Content Include="Models\BakeryModel.Context.tt">
+    <Content Include="Models\ModelDb.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>BakeryModel.edmx</DependentUpon>
-      <LastGenOutput>BakeryModel.Context.cs</LastGenOutput>
+      <DependentUpon>ModelDb.edmx</DependentUpon>
+      <LastGenOutput>ModelDb.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\BakeryModel.tt">
+    <Content Include="Models\ModelDb.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>BakeryModel.edmx</DependentUpon>
-      <LastGenOutput>BakeryModel.cs</LastGenOutput>
+      <DependentUpon>ModelDb.edmx</DependentUpon>
+      <LastGenOutput>ModelDb.cs</LastGenOutput>
     </Content>
     <Content Include="pdf\example.pdf" />
     <Content Include="Content\plugins\summernote\font\summernote.eot" />
     <Content Include="Content\plugins\summernote\font\summernote.ttf" />
     <Content Include="Content\plugins\summernote\font\summernote.woff" />
-    <EntityDeploy Include="Models\BakeryModel.edmx">
+    <Content Include="fonts\font-awesome\less\brands.less" />
+    <Content Include="fonts\font-awesome\less\fontawesome.less" />
+    <Content Include="fonts\font-awesome\less\regular.less" />
+    <Content Include="fonts\font-awesome\less\solid.less" />
+    <Content Include="fonts\font-awesome\less\v4-shims.less" />
+    <Content Include="fonts\font-awesome\less\_animated.less" />
+    <Content Include="fonts\font-awesome\less\_core.less" />
+    <Content Include="fonts\font-awesome\less\_icons.less" />
+    <Content Include="fonts\font-awesome\less\_larger.less" />
+    <Content Include="fonts\font-awesome\less\_shims.less" />
+    <Content Include="fonts\font-awesome\less\_variables.less" />
+    <Content Include="fonts\font-awesome\scss\brands.scss" />
+    <Content Include="fonts\font-awesome\scss\fontawesome.scss" />
+    <Content Include="fonts\font-awesome\scss\regular.scss" />
+    <Content Include="fonts\font-awesome\scss\solid.scss" />
+    <Content Include="fonts\font-awesome\scss\v4-shims.scss" />
+    <Content Include="fonts\font-awesome\scss\_shims.scss" />
+    <Content Include="fonts\font-awesome\webfonts\fa-brands-400.eot" />
+    <Content Include="fonts\font-awesome\webfonts\fa-brands-400.ttf" />
+    <Content Include="fonts\font-awesome\webfonts\fa-brands-400.woff" />
+    <Content Include="fonts\font-awesome\webfonts\fa-brands-400.woff2" />
+    <Content Include="fonts\font-awesome\webfonts\fa-regular-400.eot" />
+    <Content Include="fonts\font-awesome\webfonts\fa-regular-400.ttf" />
+    <Content Include="fonts\font-awesome\webfonts\fa-regular-400.woff" />
+    <Content Include="fonts\font-awesome\webfonts\fa-regular-400.woff2" />
+    <Content Include="fonts\font-awesome\webfonts\fa-solid-900.eot" />
+    <Content Include="fonts\font-awesome\webfonts\fa-solid-900.ttf" />
+    <Content Include="fonts\font-awesome\webfonts\fa-solid-900.woff" />
+    <Content Include="fonts\font-awesome\webfonts\fa-solid-900.woff2" />
+    <EntityDeploy Include="Models\ModelDb.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>BakeryModel.Designer.cs</LastGenOutput>
+      <LastGenOutput>ModelDb.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="Models\BakeryModel.edmx.diagram">
-      <DependentUpon>BakeryModel.edmx</DependentUpon>
+    <Content Include="Models\ModelDb.edmx.diagram">
+      <DependentUpon>ModelDb.edmx</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\Inspinia.pubxml" />
     <Content Include="Scripts\api\typehead_collection.json" />
     <Content Include="Images\a1.jpg" />
@@ -1246,7 +1360,7 @@
     <Content Include="Scripts\plugins\bootstrapTour\bootstrap-tour.min.js" />
     <Content Include="Scripts\plugins\c3\c3.min.js" />
     <Content Include="Scripts\plugins\chartist\chartist.min.js" />
-    <Content Include="Scripts\plugins\chartJs\Chart.min.js" />
+    <Content Include="Scripts\plugins\chartJs\Chart.js" />
     <Content Include="Scripts\plugins\chosen\chosen.jquery.js" />
     <Content Include="Scripts\plugins\clipboard\clipboard.min.js" />
     <Content Include="Scripts\plugins\clockpicker\clockpicker.js" />
@@ -1481,6 +1595,7 @@
     <Content Include="Scripts\plugins\i18next\i18next.min.js" />
     <Content Include="Scripts\plugins\iCheck\icheck.min.js" />
     <Content Include="Scripts\plugins\idle-timer\idle-timer.min.js" />
+    <Content Include="Scripts\plugins\ionRangeSlider\ion.rangeSlider.js" />
     <Content Include="Scripts\plugins\ionRangeSlider\ion.rangeSlider.min.js" />
     <Content Include="Scripts\plugins\jasny\jasny-bootstrap.min.js" />
     <Content Include="Scripts\plugins\jeditable\jquery.jeditable.js" />
@@ -1597,6 +1712,7 @@
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -1744,6 +1860,22 @@
     <Content Include="Scripts\bootstrap.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Incash\IncashWashes.cshtml" />
+    <Content Include="Views\Operations\OperationsCards.cshtml" />
+    <Content Include="Views\Incash\_IncashWashesList.cshtml" />
+    <Content Include="Views\IncashWash\IncashPosts.cshtml" />
+    <Content Include="Views\IncashWash\_IncashPostsList.cshtml" />
+    <Content Include="Views\Operations\_OperationsCardsList.cshtml" />
+    <Content Include="Views\Cards\Cards.cshtml" />
+    <Content Include="Views\Cards\_CardsList.cshtml" />
+    <Content Include="Views\OperationsTypedWash\OperationsCardsTypedWash.cshtml" />
+    <Content Include="Views\OperationsTypedWash\_OperationsCardsTypedWashList.cshtml" />
+    <Content Include="Views\Finance\FinanceOperations.cshtml" />
+    <Content Include="Views\Finance\_FinanceOperationsList.cshtml" />
+    <Content Include="Views\Finance\_FinanceOperationsSummary.cshtml" />
+    <Content Include="Views\Finance\_FinanceOperationsByNominals.cshtml" />
+    <Content Include="Views\CollectWash\CollectList.cshtml" />
+    <Content Include="Views\CollectWash\_CollectList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

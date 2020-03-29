@@ -95,7 +95,7 @@ namespace Inspinia_MVC5
 
             // ChartJS chart
             bundles.Add(new ScriptBundle("~/plugins/chartJs").Include(
-                      "~/Scripts/plugins/chartjs/Chart.min.js"));
+                      "~/Scripts/plugins/chartjs/Chart.js"));
 
             // iCheck css styles
             bundles.Add(new StyleBundle("~/Content/plugins/iCheck/iCheckStyles").Include(
@@ -168,7 +168,7 @@ namespace Inspinia_MVC5
 
             // ionRange 
             bundles.Add(new ScriptBundle("~/plugins/ionRange").Include(
-                      "~/Scripts/plugins/ionRangeSlider/ion.rangeSlider.min.js"));
+                      "~/Scripts/plugins/ionRangeSlider/ion.rangeSlider.js"));
 
             // dataPicker styles
             bundles.Add(new StyleBundle("~/plugins/dataPickerStyles").Include(
@@ -306,7 +306,7 @@ namespace Inspinia_MVC5
 
             // Date range picker Styless
             bundles.Add(new StyleBundle("~/plugins/dateRangeStyles").Include(
-                      "~/Content/plugins/daterangepicker/daterangepicker-bs3.css"));
+                      "~/Content/plugins/daterangepicker/daterangepicker.css"));
 
             // Date range picker
             bundles.Add(new ScriptBundle("~/plugins/dateRange").Include(

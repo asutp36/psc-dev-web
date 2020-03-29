@@ -11,16 +11,25 @@
   src: url('../fonts/glyphicons-halflings-regular.eot');
   src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg') format('svg');
 }
+#table-operation thead tr th input{
+    width: 90%;
+}
+#table-op thead tr th{
+    width: 70%!important;
+}
+#table-op tbody tr td {
+    width: 70% !important;
+}
 .glyphicon {
-  position: relative;
-  top: 1px;
-  display: inline-block;
-  font-family: 'Glyphicons Halflings';
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 .glyphicon-asterisk:before {
   content: "\002a";
@@ -2533,7 +2542,7 @@ table.dataTable thead .sorting_desc_disabled {
   margin-right: 5px;
 }
 .html5buttons {
-  float: right;
+  float: left;
 }
 .html5buttons a {
   border: 1px solid #e7eaec;
@@ -4916,6 +4925,15 @@ code {
   border-image: none;
   border-style: solid solid none;
   border-width: 1px 0;
+}
+.ibox-content-more {
+    background-color: #ffffff;
+    color: inherit;
+    padding: 15px 3px 20px 3px;
+    border-color: #e7eaec;
+    border-image: none;
+    border-style: solid solid none;
+    border-width: 1px 0;
 }
 .ibox-footer {
   color: inherit;
