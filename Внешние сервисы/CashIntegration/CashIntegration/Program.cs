@@ -124,14 +124,14 @@ namespace CashIntegration
         public static List<CashWId> GetDataToSend()
         {
             List<CashWId> cash = new List<CashWId>();
-
+            
             ModelDb model = new ModelDb();
 
             DbConnection con1 = model.Database.Connection;
             con1.Open();
             DbCommand command = con1.CreateCommand();
 
-            command.CommandText = "select top 1000" +
+            command.CommandText = "select" +
                 " * " +
                 "from " +
                 "(" +
