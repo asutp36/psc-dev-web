@@ -28,7 +28,7 @@
                 <td>@n.WashCode</td>
                 <td>@n.WashAddress</td>
                 <td>
-                    <a href="#" onclick="selectDate('@n.WashCode')">@n.CollectDay</a>
+                    <a href="#" onclick="selectDate('@n.WashCode','@(((DateTime)n.CollectDay).ToString( "s", System.Globalization.CultureInfo.InvariantCulture ))')">@(((DateTime)n.CollectDay).ToString("d"))</a>
                 </td>
                 <td style="text-align:right">@n.m10</td>
                 <td style="text-align:right">@n.sumofm</td>

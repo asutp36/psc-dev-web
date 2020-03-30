@@ -225,10 +225,10 @@
             }
         }
 
-        function selectDate(IDWash) {
+        function selectDate(IDWash, CollectDay) {
 
-            var bdate = $('#bdate').val();
-            var edate = $('#edate').val();
+            var bdate = moment(CollectDay).format('DD.MM.YYYY HH:mm:ss');
+            var edate = moment(CollectDay).endOf('day').format('DD.MM.YYYY HH:mm:ss');
             var wash = IDWash;
 
             window.location.href = "CollectByPostsView?begdate=" + bdate + "&enddate=" + edate + "&wash=" + wash;
@@ -273,7 +273,6 @@
         eventChangeRegion();
 
         $('#filter-wash').val('@ViewBag.Wash');
-        eventChangeWash();
 
         $('#bdate').val('@ViewBag.BegDate');
         $('#edate').val('@ViewBag.EndDate');
@@ -360,8 +359,6 @@
             $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
             filter();
         });
+
     </script>
 }
-
-
-

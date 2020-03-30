@@ -1,18 +1,21 @@
 ﻿@{
-    ViewBag.Title = "Зачисления на мойке";
+    ViewBag.Title = "Инкассация на постах";
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Зачисления на постах</h2>
+        <h2>Инкассация на постах</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a>Сводка</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action("IncreasesByWashesView","Increases")">Зачисления</a>
+                <a href="@Url.Action("CollectByWashesView","CollectWash")">Инкассация</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("CollectByDaysView","CollectWash", new { begdate = ViewBag.BegDate, enddate = ViewBag.EndDate, wash = ViewBag.Wash })">@ViewBag.Wash</a>
             </li>
             <li class="active breadcrumb-item">
-                <strong>@ViewBag.Wash</strong>
+                <strong>@ViewBag.Wash по постам</strong>
             </li>
         </ol>
     </div>
@@ -80,7 +83,7 @@
         <div class="col-lg-12 table-cards">
             <div class="ibox" id="ibox-load">
                 <div class="ibox-content" id="output">
-                    @Html.Action("_IncreasesByPostsList", "Increases", new
+                    @Html.Action("_CollectByPostsList", "CollectWash", new
                {
                    region = ViewBag.Region,
                    wash = ViewBag.Wash,
@@ -305,15 +308,6 @@
         }
     }
 
-        function selectPost(IDPost) {
-
-            var bdate = $('#bdate').val();
-            var edate = $('#edate').val();
-            var post = IDPost;
-
-            window.location.href = "IncreasesByEventsView?begdate=" + bdate + "&enddate=" + edate + "&post=" + post;
-        }
-
         function filter() {
 
             var bdate = $('#bdate').val();
@@ -343,7 +337,7 @@
                 error: function () {
                     alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
                 },
-                url: "@Url.Action("IncreasesByPostsFilter", "Increases")"
+                url: "@Url.Action("CollectByPostsFilter", "CollectWash")"
             }).done(function (result) {
                 $('#output').html(result);
 

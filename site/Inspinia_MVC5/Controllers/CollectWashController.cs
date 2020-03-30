@@ -13,14 +13,25 @@ namespace Inspinia_MVC5.Controllers
         private ModelDb db = new ModelDb();
         List<Region> _regions = null;
         List<Wash> _washes = null;
+        List<Post> _posts = null;
 
         public CollectWashController()
         {
-            _regions = db.Regions.ToList();
-            _washes = db.Washes.ToList();
+            _washes = db.Washes.Where(w => w.Code == "М13" || w.Code == "М14").ToList();
+
+            _regions = new List<Region>();
+            _posts = new List<Post>();
+            foreach (Wash w in _washes)
+            {
+                if (!_regions.Contains(w.Region))
+                    _regions.Add(w.Region);
+
+                _posts.AddRange(w.Posts);
+            }
 
             ViewBag.Regions = _regions;
             ViewBag.Washes = _washes;
+            ViewBag.Posts = _posts;
         }
 
         public ActionResult CollectList(string begTime, string endTime)
