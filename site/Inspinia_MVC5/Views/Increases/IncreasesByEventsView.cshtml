@@ -117,7 +117,8 @@
         $('#table-increases').DataTable({
             "responsive": false,
             "searching": false,
-            "pageLength": 25,
+            "pageLength": 100,
+            "lengthChange": false,
             "pagingType": "full_numbers",
             columnDefs: [{ targets: [4], className: 'dt-body-right' }],
             columns: [null, null, null, null, { render: $.fn.dataTable.render.number(' ', '.', 1) }],
@@ -140,6 +141,13 @@
             //    }
             //],
             "language": {
+                "info": "Показано с _START_ по _END_ из _TOTAL_ записей",
+                "paginate": {
+                    "first": "Первая",
+                    "previous": "Предыдущая",
+                    "next": "Следующая",
+                    "last": "Последняя"
+                },
                 "zeroRecords": "Данные по заданному фильтру не найдены",
                 "emptyTable": "Данные по заданному фильтру не найдены"
             },
