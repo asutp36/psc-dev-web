@@ -102,7 +102,7 @@
                 "info": false,
                 "searching": false,
                 columnDefs: [{ targets: [3, 4, 5, 6, 7, 8, 9, 10], className: 'dt-body-right' }],
-                columns: [null, null, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }],
+                columns: [null, null, null, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }],
                 dom: '<"html5buttons"B>lTfgitp',
                 buttons: [],
                 //buttons: [
@@ -269,6 +269,15 @@
             });
         }
 
+        $('#filter-region').val('@ViewBag.Region');
+        eventChangeRegion();
+
+        $('#filter-wash').val('@ViewBag.Wash');
+        eventChangeWash();
+
+        $('#bdate').val('@ViewBag.BegDate');
+        $('#edate').val('@ViewBag.EndDate');
+
         $(document).ready(function () {
 
             $('#filter-region').change(eventChangeRegion);
@@ -286,10 +295,12 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#bdate').val(moment().subtract(1, 'days').startOf('day').format('DD.MM.YYYY HH:mm:ss'));
-        $('#edate').val(moment().subtract(1, 'days').endOf('day').format('DD.MM.YYYY HH:mm:ss'));
-
-        $('#filter-date span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
+        if ($('#bdate').val()) {
+            $('#filter-date span').html('с ' + $('#bdate').val() + ' по ' + $('#edate').val());
+        }
+        else {
+            $('#filter-date span').html('За всё время');
+        }
 
         $('#filter-date').daterangepicker({
             "timePicker": true,
@@ -337,8 +348,8 @@
             },
             "showCustomRangeLabel": false,
             "alwaysShowCalendars": true,
-            "startDate": moment().subtract(1, 'days').startOf('day'),
-            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "startDate": moment($('#bdate').val(), 'DD.MM.YYYY HH:mm:ss'),
+            "endDate": moment($('#edate').val(), 'DD.MM.YYYY HH:mm:ss'),
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {

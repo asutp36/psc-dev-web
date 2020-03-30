@@ -183,7 +183,7 @@ namespace Inspinia_MVC5.Controllers
             prmEndDate.Value = edate;
 
             var result = db.Database.SqlQuery<GetCollectByWashs_Result>
-                ("GetIncreaseByWashs @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode ",
+                ("GetCollectByWashs @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode ",
                 prmBegDate, prmEndDate, prmRegion, prmWash).ToList();
 
             resultlist = result;
@@ -197,5 +197,175 @@ namespace Inspinia_MVC5.Controllers
 
             return PartialView("_CollectByWashesList", view);
         }
+
+        public ActionResult CollectByDaysView(string begdate, string enddate, string wash)
+        {
+            char[] chars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+            int idx = wash.IndexOfAny(chars);
+            if (idx > -1)
+                wash = 'М' + wash.Substring(idx);
+
+            Wash Wash = _washes.Find(w => w.Code == wash);
+
+            ViewBag.Region = Wash.Region.Code;
+            ViewBag.Wash = Wash.Code;
+
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = DateTime.Today.AddYears(-10);
+
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
+
+            ViewBag.BegDate = begdate;
+            ViewBag.EndDate = enddate;
+
+            return View("CollectByDaysView");
+        }
+
+        public ActionResult _CollectByDaysList(string region, string wash, string begdate, string enddate)
+        {
+            List<GetCollectByDays_Result> view = GetCollectByDays(region, wash, begdate, enddate);
+
+            return PartialView("_CollectByDaysList", view);
+        }
+
+        public List<GetCollectByDays_Result> GetCollectByDays(string region, string wash, string begdate, string enddate)
+        {
+            List<GetCollectByDays_Result> resultlist = null;
+
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = DateTime.Today.AddYears(-10);
+
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
+
+            var prmRegion = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
+            if (region == "")
+            {
+                region = "0";
+            }
+            prmRegion.Value = Convert.ToInt32(region);
+
+            var prmWash = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            if (wash == null)
+            {
+                wash = "";
+            }
+            prmWash.Value = wash;
+
+            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            prmBegDate.Value = bdate;
+
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
+
+            var result = db.Database.SqlQuery<GetCollectByDays_Result>
+                ("GetCollectByDays @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode ",
+                prmBegDate, prmEndDate, prmRegion, prmWash).ToList();
+
+            resultlist = result;
+
+            return resultlist;
+        }
+
+        public ActionResult CollectByDaysFilter(string region, string wash, string begdate, string enddate)
+        {
+            List<GetCollectByDays_Result> view = GetCollectByDays(region, wash, begdate, enddate);
+
+            return PartialView("_CollectByDaysList", view);
+        }
+
+        public ActionResult CollectByPostsView(string begdate, string enddate, string wash)
+        {
+            char[] chars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+            int idx = wash.IndexOfAny(chars);
+            if (idx > -1)
+                wash = 'М' + wash.Substring(idx);
+
+            Wash Wash = _washes.Find(w => w.Code == wash);
+
+            ViewBag.Region = Wash.Region.Code;
+            ViewBag.Wash = Wash.Code;
+
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = DateTime.Today.AddYears(-10);
+
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
+
+            ViewBag.BegDate = begdate;
+            ViewBag.EndDate = enddate;
+
+            return View("CollectByPostsView");
+        }
+
+        public ActionResult _CollectByPostsList(string region, string wash, string post, string begdate, string enddate)
+        {
+            List<GetCollectByPosts_Result> view = GetCollectByPosts(region, wash, post, begdate, enddate);
+
+            return PartialView("_CollectByPostsList", view);
+        }
+
+        public List<GetCollectByPosts_Result> GetCollectByPosts(string region, string wash, string post, string begdate, string enddate)
+        {
+            List<GetCollectByPosts_Result> resultlist = null;
+
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = DateTime.Today.AddYears(-10);
+
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
+
+            var prmRegion = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
+            if (region == "")
+            {
+                region = "0";
+            }
+            prmRegion.Value = Convert.ToInt32(region);
+
+            var prmWash = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            if (wash == null)
+            {
+                wash = "";
+            }
+            prmWash.Value = wash;
+
+            var prmPost = new System.Data.SqlClient.SqlParameter("@p_PostCode", System.Data.SqlDbType.NVarChar);
+            if (post == null)
+            {
+                post = "";
+            }
+            prmPost.Value = post;
+
+            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            prmBegDate.Value = bdate;
+
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
+
+            var result = db.Database.SqlQuery<GetCollectByPosts_Result>
+                ("GetCollectByPosts @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode ",
+                prmBegDate, prmEndDate, prmRegion, prmWash, prmPost).ToList();
+
+            resultlist = result;
+
+            return resultlist;
+        }
+
+        public ActionResult CollectByPostsFilter(string region, string wash, string post, string begdate, string enddate)
+        {
+            List<GetCollectByPosts_Result> view = GetCollectByPosts(region, wash, post, begdate, enddate);
+
+            return PartialView("_CollectByPostsList", view);
+        }
+
     }
 }

@@ -21,7 +21,7 @@ namespace Inspinia_MVC5.Models
         }
     
         public int IDMode { get; set; }
-        public short Code { get; set; }
+        public string Code { get; set; }
         public string Name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
