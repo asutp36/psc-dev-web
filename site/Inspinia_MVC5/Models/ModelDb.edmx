@@ -67,6 +67,7 @@
           <Property Name="IDPost" Type="int" Nullable="false" />
           <Property Name="IDEventKind" Type="int" Nullable="false" />
           <Property Name="DTime" Type="datetime" Nullable="false" />
+          <Property Name="IDEventPost" Type="int" />
         </EntityType>
         <EntityType Name="EventCollect">
           <Key>
@@ -150,7 +151,7 @@
             <PropertyRef Name="IDMode" />
           </Key>
           <Property Name="IDMode" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Code" Type="smallint" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="15" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <EntityType Name="NoticeHistory">
@@ -170,7 +171,7 @@
             <PropertyRef Name="IDNoticeRecipientsGroup" />
           </Key>
           <Property Name="IDNoticeRecipientsGroup" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="20" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="Recipient" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
@@ -648,6 +649,25 @@
           <Parameter Name="p_LocalizedBy" Type="int" Mode="In" />
           <Parameter Name="p_LocalizedID" Type="int" Mode="In" />
         </Function>
+        <Function Name="GetCollectByDays" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_RegionCode" Type="smallint" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="GetCollectByPosts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_RegionCode" Type="smallint" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_PostCode" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="GetCollectByWashs" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_RegionCode" Type="smallint" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="GetCollectWashList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_RegionCode" Type="int" Mode="In" />
           <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
@@ -937,6 +957,7 @@
           <NavigationProperty Name="EventCollect" Relationship="Self.FK_EventCollect_Event" FromRole="Event" ToRole="EventCollect" />
           <NavigationProperty Name="EventMode" Relationship="Self.FK_EventMode_Event" FromRole="Event" ToRole="EventMode" />
           <NavigationProperty Name="EventSimple" Relationship="Self.FK_EventSimple_Event" FromRole="Event" ToRole="EventSimple" />
+          <Property Name="IDEventPost" Type="Int32" />
         </EntityType>
         <EntityType Name="EventCollect">
           <Key>
@@ -1052,7 +1073,7 @@
             <PropertyRef Name="IDNoticeRecipientsGroup" />
           </Key>
           <Property Name="IDNoticeRecipientsGroup" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Recipient" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="NoticeHistories" Relationship="Self.FK_NoticeHistory_NoticeRecipientsGroup" FromRole="NoticeRecipientsGroup" ToRole="NoticeHistory" />
@@ -1746,6 +1767,25 @@
             <Parameter Name="p_RegionCode" Mode="In" Type="Int16" />
             <Parameter Name="p_WashCode" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="GetCollectByDays" ReturnType="Collection(WashCompany.GetCollectByDays_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int16" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetCollectByPosts" ReturnType="Collection(WashCompany.GetCollectByPosts_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int16" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+            <Parameter Name="p_PostCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetCollectByWashs" ReturnType="Collection(WashCompany.GetCollectByWashs_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int16" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetCardList_Result">
           <Property Type="String" Name="Phone" Nullable="false" MaxLength="20" />
@@ -1929,6 +1969,42 @@
           <Property Type="Int32" Name="b100" Nullable="true" />
           <Property Type="Int32" Name="b200" Nullable="true" />
         </ComplexType>
+        <ComplexType Name="GetCollectByDays_Result">
+          <Property Type="Int16" Name="RegionCode" Nullable="false" />
+          <Property Type="String" Name="RegionName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="WashCode" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="WashAddress" Nullable="true" MaxLength="100" />
+          <Property Type="DateTime" Name="CollectDay" Nullable="true" />
+          <Property Type="Int32" Name="m10" Nullable="true" />
+          <Property Type="Int32" Name="b10" Nullable="true" />
+          <Property Type="Int32" Name="b50" Nullable="true" />
+          <Property Type="Int32" Name="b100" Nullable="true" />
+          <Property Type="Int32" Name="b200" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetCollectByPosts_Result">
+          <Property Type="Int16" Name="RegionCode" Nullable="false" />
+          <Property Type="String" Name="RegionName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="WashCode" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="WashAddress" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="PostCode" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="PostName" Nullable="true" MaxLength="105" />
+          <Property Type="Int32" Name="m10" Nullable="true" />
+          <Property Type="Int32" Name="b10" Nullable="true" />
+          <Property Type="Int32" Name="b50" Nullable="true" />
+          <Property Type="Int32" Name="b100" Nullable="true" />
+          <Property Type="Int32" Name="b200" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetCollectByWashs_Result">
+          <Property Type="Int16" Name="RegionCode" Nullable="false" />
+          <Property Type="String" Name="RegionName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="WashCode" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="WashAddress" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="m10" Nullable="true" />
+          <Property Type="Int32" Name="b10" Nullable="true" />
+          <Property Type="Int32" Name="b50" Nullable="true" />
+          <Property Type="Int32" Name="b100" Nullable="true" />
+          <Property Type="Int32" Name="b200" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1998,6 +2074,7 @@
           <EntitySetMapping Name="Events">
             <EntityTypeMapping TypeName="WashCompany.Event">
               <MappingFragment StoreEntitySet="Event">
+                <ScalarProperty Name="IDEventPost" ColumnName="IDEventPost" />
                 <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
                 <ScalarProperty Name="IDPost" ColumnName="IDPost" />
                 <ScalarProperty Name="IDEventKind" ColumnName="IDEventKind" />
@@ -2461,6 +2538,54 @@
           <FunctionImportMapping FunctionImportName="GetIncreaseByWashs" FunctionName="Хранилище WashCompany.GetIncreaseByWashs">
             <ResultMapping>
               <ComplexTypeMapping TypeName="WashCompany.GetIncreaseByWashs_Result">
+                <ScalarProperty Name="RegionCode" ColumnName="RegionCode" />
+                <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+                <ScalarProperty Name="WashCode" ColumnName="WashCode" />
+                <ScalarProperty Name="WashAddress" ColumnName="WashAddress" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b200" ColumnName="b200" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetCollectByDays" FunctionName="Хранилище WashCompany.GetCollectByDays">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WashCompany.GetCollectByDays_Result">
+                <ScalarProperty Name="RegionCode" ColumnName="RegionCode" />
+                <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+                <ScalarProperty Name="WashCode" ColumnName="WashCode" />
+                <ScalarProperty Name="WashAddress" ColumnName="WashAddress" />
+                <ScalarProperty Name="CollectDay" ColumnName="CollectDay" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b200" ColumnName="b200" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetCollectByPosts" FunctionName="Хранилище WashCompany.GetCollectByPosts">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WashCompany.GetCollectByPosts_Result">
+                <ScalarProperty Name="RegionCode" ColumnName="RegionCode" />
+                <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+                <ScalarProperty Name="WashCode" ColumnName="WashCode" />
+                <ScalarProperty Name="WashAddress" ColumnName="WashAddress" />
+                <ScalarProperty Name="PostCode" ColumnName="PostCode" />
+                <ScalarProperty Name="PostName" ColumnName="PostName" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b200" ColumnName="b200" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetCollectByWashs" FunctionName="Хранилище WashCompany.GetCollectByWashs">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WashCompany.GetCollectByWashs_Result">
                 <ScalarProperty Name="RegionCode" ColumnName="RegionCode" />
                 <ScalarProperty Name="RegionName" ColumnName="RegionName" />
                 <ScalarProperty Name="WashCode" ColumnName="WashCode" />

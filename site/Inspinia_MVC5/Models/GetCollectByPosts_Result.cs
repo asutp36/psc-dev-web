@@ -10,21 +10,19 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class Event
+    public partial class GetCollectByPosts_Result
     {
-        public int IDEvent { get; set; }
-        public int IDPost { get; set; }
-        public int IDEventKind { get; set; }
-        public System.DateTime DTime { get; set; }
-        public Nullable<int> IDEventPost { get; set; }
-    
-        public virtual EventKind EventKind { get; set; }
-        public virtual Post Post { get; set; }
-        public virtual EventIncrease EventIncrease { get; set; }
-        public virtual EventCollect EventCollect { get; set; }
-        public virtual EventMode EventMode { get; set; }
-        public virtual EventSimple EventSimple { get; set; }
+        public short RegionCode { get; set; }
+        public string RegionName { get; set; }
+        public string WashCode { get; set; }
+        public string WashAddress { get; set; }
+        public string PostCode { get; set; }
+        public string PostName { get; set; }
+        public Nullable<int> m10 { get; set; }
+        public Nullable<int> b10 { get; set; }
+        public Nullable<int> b50 { get; set; }
+        public Nullable<int> b100 { get; set; }
+        public Nullable<int> b200 { get; set; }
     }
 }

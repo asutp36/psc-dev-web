@@ -572,5 +572,72 @@ namespace Inspinia_MVC5.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetIncreaseByWashs_Result>("GetIncreaseByWashs", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter);
         }
+    
+        public virtual ObjectResult<GetCollectByDays_Result> GetCollectByDays(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCollectByDays_Result>("GetCollectByDays", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter);
+        }
+    
+        public virtual ObjectResult<GetCollectByPosts_Result> GetCollectByPosts(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode, string p_PostCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCollectByPosts_Result>("GetCollectByPosts", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
+        }
+    
+        public virtual ObjectResult<GetCollectByWashs_Result> GetCollectByWashs(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCollectByWashs_Result>("GetCollectByWashs", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter);
+        }
     }
 }

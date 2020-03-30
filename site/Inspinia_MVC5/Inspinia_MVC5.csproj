@@ -229,6 +229,15 @@
     <Compile Include="Models\GetCardsOperations_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetCollectByDays_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCollectByPosts_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetCollectByWashs_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetCollectWashList_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -1947,6 +1956,12 @@
     <Content Include="Views\Increases\_IncreasesByPostsList.cshtml" />
     <Content Include="Views\Increases\IncreasesByEventsView.cshtml" />
     <Content Include="Views\Increases\_IncreasesByEventsList.cshtml" />
+    <Content Include="Views\CollectWash\CollectByWashesView.cshtml" />
+    <Content Include="Views\CollectWash\_CollectByWashesList.cshtml" />
+    <Content Include="Views\CollectWash\CollectByDaysView.cshtml" />
+    <Content Include="Views\CollectWash\_CollectByDaysList.cshtml" />
+    <Content Include="Views\CollectWash\CollectByPostsView.cshtml" />
+    <Content Include="Views\CollectWash\_CollectByPostsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
