@@ -129,12 +129,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
+    <Folder Include="Views\Box\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AppViewsController.cs" />
+    <Compile Include="Controllers\BoxesController.cs" />
     <Compile Include="Controllers\CardsController.cs" />
     <Compile Include="Controllers\CollectWashController.cs" />
     <Compile Include="Controllers\CSSAnimationsController.cs" />
@@ -1962,6 +1964,10 @@
     <Content Include="Views\CollectWash\_CollectByDaysList.cshtml" />
     <Content Include="Views\CollectWash\CollectByPostsView.cshtml" />
     <Content Include="Views\CollectWash\_CollectByPostsList.cshtml" />
+    <Content Include="Views\Boxes\BoxByWashesView.cshtml" />
+    <Content Include="Views\Boxes\_BoxByWashesList.cshtml" />
+    <Content Include="Views\Boxes\BoxByPostsView.cshtml" />
+    <Content Include="Views\Boxes\_BoxByPostsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

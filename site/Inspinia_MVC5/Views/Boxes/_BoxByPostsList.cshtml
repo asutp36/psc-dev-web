@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Inspinia_MVC5.Models.GetCollectByWashs_Result>
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetBoxByPosts_Result>
 
 <div class="sk-spinner sk-spinner-double-bounce">
     <div class="sk-double-bounce1"></div>
@@ -10,6 +10,7 @@
         <tr>
             <th>Мойка</th>
             <th>Адрес мойки</th>
+            <th>Пост</th>
             <th>М10</th>
             <th>Сумма монет</th>
             <th>Б10</th>
@@ -24,10 +25,9 @@
         @foreach (var n in Model)
         {
             <tr>
-                <td>
-                    <a href="#" onclick="selectWash('@n.WashCode')">@n.WashCode</a>
-                </td>
+                <td>@n.WashCode</td>
                 <td>@n.WashAddress</td>
+                <td>@n.PostCode</td>
                 <td style="text-align:right">@n.m10</td>
                 <td style="text-align:right">@n.sumofm</td>
                 <td style="text-align:right">@n.b10</td>
@@ -42,6 +42,7 @@
     <tfoot>
         <tr>
             <th>Итого:</th>
+            <th></th>
             <th></th>
             <th style="text-align:right"></th>
             <th style="text-align:right"></th>

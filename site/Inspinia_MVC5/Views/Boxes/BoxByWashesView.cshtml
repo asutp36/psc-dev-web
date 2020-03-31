@@ -1,0 +1,325 @@
+﻿@{
+    ViewBag.Title = "Наличие средств";
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Наличие средств на мойках</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a>Сводка</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Наличие на мойках</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="ibox-content m-b-sm border-bottom" id="filter-i">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe">Регион</label>
+                <select id="filter-region" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.Regions)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe">Мойка</label>
+                <select id="filter-wash" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.Washes)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-labe">Время</label>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="filter-date" class="form-control">
+                            <i class="fa fa-calendar"></i>
+                            <span></span> <b class="caret"></b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 table-cards">
+            <div class="ibox" id="ibox-load">
+                <div class="ibox-content" id="output">
+                    @Html.Action("_BoxByWashesList", "Boxes", new
+               {
+                   region = "",
+                   wash = "",
+                   curdate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"),
+               })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input hidden id="curdate" />
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/dateRange")
+
+    <script type="text/javascript">
+
+        function initDataTable() {
+            $('#table-increases').DataTable({
+                "responsive": true,
+                "paging": false,
+                "info": false,
+                "searching": false,
+                columnDefs: [{ targets: [2, 3, 4, 5, 6, 7, 8, 9], className: 'dt-body-right' }],
+                columns: [null, null, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }],
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [],
+                //buttons: [
+                //    { extend: 'excel', title: 'Report' },
+                //    { extend: 'pdf', title: 'Report' },
+
+                //    {
+                //        extend: 'print',
+                //        customize: function (win) {
+                //            $(win.document.body).addClass('white-bg');
+                //            $(win.document.body).css('font-size', '10px');
+
+                //            $(win.document.body).find('table')
+                //                .addClass('compact')
+                //                .css('font-size', 'inherit');
+                //        }
+                //    }
+                //],
+                "language": {
+                    "zeroRecords": "Данные по заданному фильтру не найдены",
+                    "emptyTable": "Данные по заданному фильтру не найдены"
+                },
+                "footerCallback": function () {
+                    var api = this.api();
+
+                    var intVal = function (i) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+
+                    var numFormat = $.fn.dataTable.render.number(' ', '.', 1).display;
+                    var numFormatCoins = $.fn.dataTable.render.number(' ', '', 0).display;
+
+                    for (var i = 2; i < 10; ++i) {
+                        total = api.column(i).data().reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                        if (i == 3 || i == 8 || i == 9) {
+                            $(api.column(i).footer()).html(numFormat(total));
+                        }
+                        else {
+                            $(api.column(i).footer()).html(numFormatCoins(total));
+                        }
+                    }
+                }
+            });
+        }
+
+        var regions = [];
+        var washes = [];
+
+        @foreach (var item in ViewBag.Regions) {
+            <text>
+                regions.push({ value:"@item.Code", text:"@item.Name", washes:[
+                    @foreach(var w in item.Washes)
+                    {
+                        <text>
+                    {
+                        value: "@w.Code", text: "@w.Name", posts: [
+                            @foreach(var p in w.Posts)
+                            {
+                                <text>
+                            {
+                                value: "@p.Code", text: "@p.Code"
+                            },
+                                </text>
+                            }
+                        ]
+                    },
+                        </text>
+                    }
+                    ]});
+            </text>
+        }
+
+        @foreach (var item in ViewBag.Washes) {
+            <text>
+                washes.push({ value:"@item.Code", text:"@item.Name", posts:[
+                    @foreach(var w in item.Posts)
+                    {
+                        <text>
+                    {
+                        value: "@w.Code", text: "@w.Code"
+                    },
+                        </text>
+                    }
+                    ]});
+            </text>
+        }
+
+        function eventChangeRegion () {
+
+            var curreg = $('#filter-region').find(":selected").val();
+            var curwashval = $('#filter-wash').find(":selected").val();
+
+            if (curreg == "") {
+                var $selwash = $('#filter-wash');
+
+                $selwash.empty();
+                $selwash.append($("<option></option>", { value: "", text: "" }));
+                washes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
+
+                $selwash.val(curwashval);
+            }
+            else {
+                var newwashes = [];
+                newwashes = regions.find(reg => reg.value == curreg).washes;
+
+                var $selwash = $('#filter-wash');
+
+                $selwash.empty();
+                $selwash.append($("<option></option>", { value: "", text: "" }));
+                newwashes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
+
+                $selwash.val(curwashval);
+            }
+        }
+
+        function selectWash(IDWash) {
+
+            var curdate = $('#curdate').val();
+            var wash = IDWash;
+
+            window.location.href = "CollectByDaysView?curdate=" + curdate + "&wash=" + wash;
+        }
+
+        function filter() {
+
+            var curdate = $('#curdate').val();
+            var region = $('#filter-region').find(":selected").val();
+            var wash = $('#filter-wash').find(":selected").val();
+
+            $.ajax({
+                type: "POST",
+                cache: true,
+                data: {
+                    region: region,
+                    wash: wash,
+                    curdate: curdate,
+                },
+                beforeSend: function () {
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                },
+                complete: function () {
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                },
+                success: function () {
+                },
+                error: function () {
+                    alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
+                },
+                url: "@Url.Action("BoxByWashesFilter", "Boxes")"
+            }).done(function (result) {
+                $('#output').html(result);
+
+                initDataTable();
+            });
+        }
+
+        $(document).ready(function () {
+
+            $('#filter-region').change(eventChangeRegion);
+
+            $("#filter-i").on("input", filter);
+            initDataTable();
+        });
+
+        $('input[name="daterange"]').daterangepicker();
+
+        $('#curdate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
+
+        $('#filter-date span').html(moment().format('с DD.MM.YYYY HH:mm:ss'));
+
+        $('#filter-date').daterangepicker({
+            "singleDatePicker": true,
+            "timePicker": true,
+            "timePicker24Hour": true,
+            "timePickerSeconds": true,
+            "locale": {
+                "format": "DD.MM.YYYY",
+                "separator": " ",
+                "applyLabel": "Выбрать",
+                "cancelLabel": "Отмена",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "Вс",
+                    "Пн",
+                    "Вт",
+                    "Ср",
+                    "Чт",
+                    "Пт",
+                    "Сб"
+                ],
+                "monthNames": [
+                    "Январь",
+                    "Февраль",
+                    "Март",
+                    "Апрель",
+                    "Май",
+                    "Июнь",
+                    "Июль",
+                    "Август",
+                    "Сентябрь",
+                    "Октябрь",
+                    "Ноябрь",
+                    "Декабрь"
+                ],
+                "firstDay": 1
+            },
+            "showCustomRangeLabel": false,
+            "alwaysShowCalendars": true,
+            "startDate": moment(),
+            "endDate": moment(),
+            "opens": "right",
+            "drops": "down"
+        }, function (start, end, label) {
+            $('#filter-date span').html(start.format('DD.MM.YYYY HH:mm:ss'));
+
+            $('#curdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            filter();
+        });
+    </script>
+}
