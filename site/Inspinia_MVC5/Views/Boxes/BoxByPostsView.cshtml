@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Наличие денег на мойке";
+    ViewBag.Title = "Наличие средств на мойке";
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -327,7 +327,7 @@
                 error: function () {
                     alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
                 },
-                url: "@Url.Action("IncreasesByPostsFilter", "Increases")"
+                url: "@Url.Action("BoxByPostsFilter", "Boxes")"
             }).done(function (result) {
                 $('#output').html(result);
 
@@ -354,27 +354,20 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        //$('#bdate').val(moment().startOf('day').format('DD.MM.YYYY HH:mm:ss'));
-        //$('#edate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
+        $('#curdate').val('@ViewBag.CurDate');
 
-        //$('#filter-date span').html(moment().startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
-
-        if ($('#bdate').val()) {
-            $('#filter-date span').html('с ' + $('#bdate').val() + ' по ' + $('#edate').val());
-        }
-        else {
-            $('#filter-date span').html('За всё время');
-        }
+        $('#filter-date span').html($('#curdate').val());
 
         $('#filter-date').daterangepicker({
+            "singleDatePicker": true,
             "timePicker": true,
             "timePicker24Hour": true,
             "timePickerSeconds": true,
             "ranges": {
-                'сегодня': [moment().startOf('day'), moment()],
-                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
-                'текущий месяц': [moment().startOf('month'), moment()],
-                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                'сейчас': [moment(), moment()],
+                'день назад': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'неделю назад': [moment().subtract(7, 'days'), moment().subtract(7, 'days')],
+                'месяц назад': [moment().subtract(1, 'month'), moment().subtract(1, 'month')]
             },
             "locale": {
                 "format": "DD.MM.YYYY",
@@ -412,16 +405,14 @@
             },
             "showCustomRangeLabel": false,
             "alwaysShowCalendars": true,
-            "startDate": moment($('#bdate').val(), 'DD.MM.YYYY HH:mm:ss'),
-            "endDate": moment($('#edate').val(), 'DD.MM.YYYY HH:mm:ss'),
+            "startDate": moment($('#curdate').val(), 'DD.MM.YYYY HH:mm:ss'),
+            "endDate": moment($('#curdate').val(), 'DD.MM.YYYY HH:mm:ss'),
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {
-            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
-            $('#filter-date span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+            $('#filter-date span').html(start.format('DD.MM.YYYY HH:mm:ss'));
 
-            $('#bdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
-            $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
+            $('#curdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
             filter();
         });
     </script>

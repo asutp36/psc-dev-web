@@ -639,5 +639,43 @@ namespace Inspinia_MVC5.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCollectByWashs_Result>("GetCollectByWashs", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter);
         }
+    
+        public virtual ObjectResult<GetBoxByPosts_Result> GetBoxByPosts(Nullable<System.DateTime> p_ReportDate, Nullable<short> p_RegionCode, string p_WashCode, string p_PostCode)
+        {
+            var p_ReportDateParameter = p_ReportDate.HasValue ?
+                new ObjectParameter("p_ReportDate", p_ReportDate) :
+                new ObjectParameter("p_ReportDate", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetBoxByPosts_Result>("GetBoxByPosts", p_ReportDateParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
+        }
+    
+        public virtual ObjectResult<GetBoxByWashs_Result> GetBoxByWashs(Nullable<System.DateTime> p_ReportDate, Nullable<short> p_RegionCode, string p_WashCode)
+        {
+            var p_ReportDateParameter = p_ReportDate.HasValue ?
+                new ObjectParameter("p_ReportDate", p_ReportDate) :
+                new ObjectParameter("p_ReportDate", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetBoxByWashs_Result>("GetBoxByWashs", p_ReportDateParameter, p_RegionCodeParameter, p_WashCodeParameter);
+        }
     }
 }

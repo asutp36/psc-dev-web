@@ -220,7 +220,7 @@
             var curdate = $('#curdate').val();
             var wash = IDWash;
 
-            window.location.href = "CollectByDaysView?curdate=" + curdate + "&wash=" + wash;
+            window.location.href = "BoxByPostsView?curdate=" + curdate + "&wash=" + wash;
         }
 
         function filter() {
@@ -268,13 +268,19 @@
 
         $('#curdate').val(moment().format('DD.MM.YYYY HH:mm:ss'));
 
-        $('#filter-date span').html(moment().format('с DD.MM.YYYY HH:mm:ss'));
+        $('#filter-date span').html(moment().format('DD.MM.YYYY HH:mm:ss'));
 
         $('#filter-date').daterangepicker({
             "singleDatePicker": true,
             "timePicker": true,
             "timePicker24Hour": true,
             "timePickerSeconds": true,
+            "ranges": {
+                'сейчас': [moment(), moment()],
+                'день назад': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'неделю назад': [moment().subtract(7, 'days'), moment().subtract(7, 'days')],
+                'месяц назад': [moment().subtract(1, 'month'), moment().subtract(1, 'month')]
+            },
             "locale": {
                 "format": "DD.MM.YYYY",
                 "separator": " ",

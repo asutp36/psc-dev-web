@@ -93,5 +93,82 @@ namespace Inspinia_MVC5.Controllers
 
             return PartialView("_BoxByWashesList", view);
         }
+
+        public ActionResult BoxByPostsView(string curdate, string wash)
+        {
+            char[] chars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+            int idx = wash.IndexOfAny(chars);
+            if (idx > -1)
+                wash = 'М' + wash.Substring(idx);
+
+            Wash Wash = _washes.Find(w => w.Code == wash);
+
+            ViewBag.Region = Wash.Region.Code;
+            ViewBag.Wash = Wash.Code;
+
+            DateTime cdate;
+            if (!DateTime.TryParse(curdate, out cdate))
+                cdate = DateTime.Now;
+
+            ViewBag.CurDate = curdate;
+
+            return View("BoxByPostsView");
+        }
+
+        public ActionResult _BoxByPostsList(string region, string wash, string post, string curdate)
+        {
+            List<GetBoxByPosts_Result> view = GetBoxByPosts(region, wash, post, curdate);
+
+            return PartialView("_BoxByPostsList", view);
+        }
+
+        public List<GetBoxByPosts_Result> GetBoxByPosts(string region, string wash, string post, string curdate)
+        {
+            List<GetBoxByPosts_Result> resultlist = null;
+
+            DateTime cdate;
+            if (!DateTime.TryParse(curdate, out cdate))
+                cdate = DateTime.Now;
+
+            var prmRegion = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
+            if (region == "")
+            {
+                region = "0";
+            }
+            prmRegion.Value = Convert.ToInt32(region);
+
+            var prmWash = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            if (wash == null)
+            {
+                wash = "";
+            }
+            prmWash.Value = wash;
+
+            var prmPost = new System.Data.SqlClient.SqlParameter("@p_PostCode", System.Data.SqlDbType.NVarChar);
+            if (post == null)
+            {
+                post = "";
+            }
+            prmPost.Value = post;
+
+            var prmCurDate = new System.Data.SqlClient.SqlParameter("@p_ReportDate", System.Data.SqlDbType.DateTime);
+            prmCurDate.Value = cdate;
+
+            var result = db.Database.SqlQuery<GetBoxByPosts_Result>
+                ("GetBoxByPosts @p_ReportDate, @p_RegionCode, @p_WashCode, @p_PostCode ",
+                prmCurDate, prmRegion, prmWash, prmPost).ToList();
+
+            resultlist = result;
+
+            return resultlist;
+        }
+
+        public ActionResult BoxByPostsFilter(string region, string wash, string post, string curdate)
+        {
+            List<GetBoxByPosts_Result> view = GetBoxByPosts(region, wash, post, curdate);
+
+            return PartialView("_BoxByPostsList", view);
+        }
+
     }
 }

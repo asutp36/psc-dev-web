@@ -222,6 +222,12 @@
     <Compile Include="Models\GetBoxAndCollect_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetBoxByPosts_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetBoxByWashs_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetCardListMinMaxDiapasons_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>

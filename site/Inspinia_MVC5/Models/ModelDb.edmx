@@ -595,6 +595,17 @@
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="GetBoxByPosts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_ReportDate" Type="datetime" Mode="In" />
+          <Parameter Name="p_RegionCode" Type="smallint" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_PostCode" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="GetBoxByWashs" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_ReportDate" Type="datetime" Mode="In" />
+          <Parameter Name="p_RegionCode" Type="smallint" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="GetCardBalance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Card" Type="nvarchar" Mode="In" />
         </Function>
@@ -1050,7 +1061,7 @@
             <PropertyRef Name="IDMode" />
           </Key>
           <Property Name="IDMode" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" Nullable="false" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="15" Unicode="true" FixedLength="false" />
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="EventModes" Relationship="Self.FK_EventMode_Mode" FromRole="Mode" ToRole="EventMode" />
         </EntityType>
@@ -1786,6 +1797,17 @@
             <Parameter Name="p_RegionCode" Mode="In" Type="Int16" />
             <Parameter Name="p_WashCode" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="GetBoxByPosts" ReturnType="Collection(WashCompany.GetBoxByPosts_Result)">
+            <Parameter Name="p_ReportDate" Mode="In" Type="DateTime" />
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int16" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+            <Parameter Name="p_PostCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetBoxByWashs" ReturnType="Collection(WashCompany.GetBoxByWashs_Result)">
+            <Parameter Name="p_ReportDate" Mode="In" Type="DateTime" />
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int16" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetCardList_Result">
           <Property Type="String" Name="Phone" Nullable="false" MaxLength="20" />
@@ -1995,6 +2017,30 @@
           <Property Type="Int32" Name="b200" Nullable="true" />
         </ComplexType>
         <ComplexType Name="GetCollectByWashs_Result">
+          <Property Type="Int16" Name="RegionCode" Nullable="false" />
+          <Property Type="String" Name="RegionName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="WashCode" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="WashAddress" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="m10" Nullable="true" />
+          <Property Type="Int32" Name="b10" Nullable="true" />
+          <Property Type="Int32" Name="b50" Nullable="true" />
+          <Property Type="Int32" Name="b100" Nullable="true" />
+          <Property Type="Int32" Name="b200" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetBoxByPosts_Result">
+          <Property Type="Int16" Name="RegionCode" Nullable="false" />
+          <Property Type="String" Name="RegionName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="WashCode" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="WashAddress" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="PostCode" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="PostName" Nullable="true" MaxLength="105" />
+          <Property Type="Int32" Name="m10" Nullable="true" />
+          <Property Type="Int32" Name="b10" Nullable="true" />
+          <Property Type="Int32" Name="b50" Nullable="true" />
+          <Property Type="Int32" Name="b100" Nullable="true" />
+          <Property Type="Int32" Name="b200" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetBoxByWashs_Result">
           <Property Type="Int16" Name="RegionCode" Nullable="false" />
           <Property Type="String" Name="RegionName" Nullable="false" MaxLength="100" />
           <Property Type="String" Name="WashCode" Nullable="false" MaxLength="5" />
@@ -2586,6 +2632,38 @@
           <FunctionImportMapping FunctionImportName="GetCollectByWashs" FunctionName="Хранилище WashCompany.GetCollectByWashs">
             <ResultMapping>
               <ComplexTypeMapping TypeName="WashCompany.GetCollectByWashs_Result">
+                <ScalarProperty Name="RegionCode" ColumnName="RegionCode" />
+                <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+                <ScalarProperty Name="WashCode" ColumnName="WashCode" />
+                <ScalarProperty Name="WashAddress" ColumnName="WashAddress" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b200" ColumnName="b200" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetBoxByPosts" FunctionName="Хранилище WashCompany.GetBoxByPosts">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WashCompany.GetBoxByPosts_Result">
+                <ScalarProperty Name="RegionCode" ColumnName="RegionCode" />
+                <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+                <ScalarProperty Name="WashCode" ColumnName="WashCode" />
+                <ScalarProperty Name="WashAddress" ColumnName="WashAddress" />
+                <ScalarProperty Name="PostCode" ColumnName="PostCode" />
+                <ScalarProperty Name="PostName" ColumnName="PostName" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b200" ColumnName="b200" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetBoxByWashs" FunctionName="Хранилище WashCompany.GetBoxByWashs">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WashCompany.GetBoxByWashs_Result">
                 <ScalarProperty Name="RegionCode" ColumnName="RegionCode" />
                 <ScalarProperty Name="RegionName" ColumnName="RegionName" />
                 <ScalarProperty Name="WashCode" ColumnName="WashCode" />
