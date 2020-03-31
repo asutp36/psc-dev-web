@@ -15,7 +15,9 @@
                 <a href="@Url.Action("CollectByDaysView","CollectWash", new { begdate = ViewBag.BegDate, enddate = ViewBag.EndDate, wash = ViewBag.Wash })">@ViewBag.Wash</a>
             </li>
             <li class="active breadcrumb-item">
-                <strong>@ViewBag.Wash по постам</strong>
+                <strong>@ViewBag.BegDate.Substring(0, 10)</strong>
+@*                <strong>@DateTime.ParseExact(ViewBag.BegDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture).ToString("d")</strong>*@
+                @*<strong>@(((DateTime)ViewBag.BegDate).ToString("d"))</strong>*@
             </li>
         </ol>
     </div>
@@ -64,7 +66,7 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">
-                <label class="col-form-labe">Дата пополнения</label>
+                <label class="col-form-labe">Период инкассации</label>
                 <div class="row">
                     <div class="col-sm-10">
                         <div id="filter-date" class="form-control">

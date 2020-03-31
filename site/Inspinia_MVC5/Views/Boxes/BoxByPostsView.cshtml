@@ -1,15 +1,15 @@
 ﻿@{
-    ViewBag.Title = "Наличие средств на мойке";
+    ViewBag.Title = "Наличие в боксах на мойке";
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Наличие на постах</h2>
+        <h2>Наличие в боксах на постах</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a>Сводка</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action("BoxByWashesView","Boxes")">Наличие на мойках</a>
+                <a href="@Url.Action("BoxByWashesView","Boxes")">Наличие в боксах</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@ViewBag.Wash</strong>
@@ -61,7 +61,7 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">
-                <label class="col-form-labe">Дата</label>
+                <label class="col-form-labe">Время</label>
                 <div class="row">
                     <div class="col-sm-12">
                         <div id="filter-date" class="form-control">
