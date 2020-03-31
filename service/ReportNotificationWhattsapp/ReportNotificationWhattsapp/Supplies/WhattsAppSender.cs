@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,9 +11,9 @@ namespace ReportNotificationWhattsapp.Supplies
 {
     class WhattsAppSender
     {
-        public static ResponseSendMessage SendMessage(string json, string url)
+        public static ResponseSendMessage SendMessage(string json)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://eu33.chat-api.com/instance27633/sendMessage?token=0qgid5wjmhb8vw7d");
             request.KeepAlive = false;
             request.ProtocolVersion = HttpVersion.Version10;
             request.Method = "POST";
@@ -28,14 +29,26 @@ namespace ReportNotificationWhattsapp.Supplies
             requestStream.Write(postBytes, 0, postBytes.Length);
             requestStream.Close();
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            string result;
-            using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+            try
             {
-                result = rdr.ReadToEnd();
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                string result;
+                using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+                {
+                    result = rdr.ReadToEnd();
+                }
+                return JsonConvert.DeserializeObject<ResponseSendMessage>(result);
             }
-
-            return JsonConvert.DeserializeObject<ResponseSendMessage>(result);
+            catch (Exception e)
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                string result;
+                using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+                {
+                    result = rdr.ReadToEnd();
+                }
+                return JsonConvert.DeserializeObject<ResponseSendMessage>(result);
+            }
         }
     }
 }

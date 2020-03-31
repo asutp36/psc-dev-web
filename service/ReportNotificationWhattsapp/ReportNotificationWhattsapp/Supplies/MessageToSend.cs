@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ReportNotificationWhattsapp.Supplies
 {
-    class ResponseSendMessage
+    class MessageToSend
     {
-        public bool sent { get; set; }
-        public string message { get; set; }
+        public string chatId { get; set; }
+        public string body { get; set; }
     }
 }
