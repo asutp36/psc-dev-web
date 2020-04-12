@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetEventsByPosts_Result>
+
+<div class="sk-spinner sk-spinner-double-bounce">
+    <div class="sk-double-bounce1"></div>
+    <div class="sk-double-bounce2"></div>
+</div>
+
+<table id="table-increases" class="display table table-striped table-bordered table-hover responsive">
+    <thead>
+        <tr>
+            <th>Время</th>
+            <th>Операция</th>
+            <th>Данные</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var n in Model)
+        {
+            <tr>
+                <td>@n.DTime</td>
+                <td>@n.KindEvent</td>
+                <td>@n.DataCommon</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

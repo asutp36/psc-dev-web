@@ -141,6 +141,7 @@
     <Compile Include="Controllers\CollectWashController.cs" />
     <Compile Include="Controllers\CSSAnimationsController.cs" />
     <Compile Include="Controllers\EcommerceController.cs" />
+    <Compile Include="Controllers\EventsPostController.cs" />
     <Compile Include="Controllers\FinanceController.cs" />
     <Compile Include="Controllers\FormsController.cs" />
     <Compile Include="Controllers\GalleryController.cs" />
@@ -250,6 +251,9 @@
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetDayIncrease_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GetEventsByPosts_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetFinanceByNominals_Result.cs">
@@ -1974,6 +1978,8 @@
     <Content Include="Views\Boxes\_BoxByWashesList.cshtml" />
     <Content Include="Views\Boxes\BoxByPostsView.cshtml" />
     <Content Include="Views\Boxes\_BoxByPostsList.cshtml" />
+    <Content Include="Views\EventsPost\EventsByPostsView.cshtml" />
+    <Content Include="Views\EventsPost\_EventsByPostsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
