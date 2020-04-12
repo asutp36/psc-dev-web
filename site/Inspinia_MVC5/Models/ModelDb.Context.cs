@@ -678,7 +678,7 @@ namespace Inspinia_MVC5.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetBoxByWashs_Result>("GetBoxByWashs", p_ReportDateParameter, p_RegionCodeParameter, p_WashCodeParameter);
         }
     
-        public virtual ObjectResult<GetEventsByPosts_Result> GetEventsByPosts(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, string p_PostCode)
+        public virtual ObjectResult<GetEventsByPost_Result> GetEventsByPost(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, string p_PostCode, string p_KindEventCode)
         {
             var p_DateBegParameter = p_DateBeg.HasValue ?
                 new ObjectParameter("p_DateBeg", p_DateBeg) :
@@ -692,7 +692,11 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_PostCode", p_PostCode) :
                 new ObjectParameter("p_PostCode", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEventsByPosts_Result>("GetEventsByPosts", p_DateBegParameter, p_DateEndParameter, p_PostCodeParameter);
+            var p_KindEventCodeParameter = p_KindEventCode != null ?
+                new ObjectParameter("p_KindEventCode", p_KindEventCode) :
+                new ObjectParameter("p_KindEventCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEventsByPost_Result>("GetEventsByPost", p_DateBegParameter, p_DateEndParameter, p_PostCodeParameter, p_KindEventCodeParameter);
         }
     }
 }

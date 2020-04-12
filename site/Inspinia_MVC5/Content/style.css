@@ -5041,6 +5041,15 @@ table.table-mail tr td {
 .white-bg {
   background-color: #ffffff;
 }
+.green-bg {
+    background-color: #9aff9a !important;
+}
+.right-blue-bg {
+    background-color: #66cdff !important;
+}
+.right-yellow-bg {
+    background-color: #ffff9a !important;
+}
 .blue-bg,
 .bg-success {
   background-color: #1c84c6 !important;

@@ -253,7 +253,7 @@
     <Compile Include="Models\GetDayIncrease_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\GetEventsByPosts_Result.cs">
+    <Compile Include="Models\GetEventsByPost_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GetFinanceByNominals_Result.cs">

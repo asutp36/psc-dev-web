@@ -62,14 +62,14 @@ namespace Inspinia_MVC5.Controllers
         }
         public ActionResult _EventsByPostsList(string post, string begdate, string enddate, string operation)
         {
-            List<GetEventsByPosts_Result> view = GetEventsByPosts(post, begdate, enddate, operation);
+            List<GetEventsByPost_Result> view = GetEventsByPosts(post, begdate, enddate, operation);
 
             return PartialView("_EventsByPostsList", view);
         }
 
-        public List<GetEventsByPosts_Result> GetEventsByPosts(string post, string begdate, string enddate, string operation)
+        public List<GetEventsByPost_Result> GetEventsByPosts(string post, string begdate, string enddate, string operation)
         {
-            List<GetEventsByPosts_Result> resultlist = null;
+            List<GetEventsByPost_Result> resultlist = null;
 
             DateTime bdate;
             if (!DateTime.TryParse(begdate, out bdate))
@@ -92,16 +92,16 @@ namespace Inspinia_MVC5.Controllers
             var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
             prmEndDate.Value = edate;
 
-            var prmOperation = new System.Data.SqlClient.SqlParameter("@p_KindEvent", System.Data.SqlDbType.NVarChar);
+            var prmOperation = new System.Data.SqlClient.SqlParameter("@p_KindEventCode", System.Data.SqlDbType.NVarChar);
             if (operation == null)
             {
-                post = "";
+                operation = "";
             }
             prmOperation.Value = operation;
 
-            var result = db.Database.SqlQuery<GetEventsByPosts_Result>
-                ("GetEventsByPosts @p_DateBeg, @p_DateEnd, @p_PostCode ",
-                prmBegDate, prmEndDate, prmPost).ToList();
+            var result = db.Database.SqlQuery<GetEventsByPost_Result>
+                ("GetEventsByPost @p_DateBeg, @p_DateEnd, @p_PostCode, @p_KindEventCode ",
+                prmBegDate, prmEndDate, prmPost, prmOperation).ToList();
 
             resultlist = result;
 
@@ -110,7 +110,7 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult EventsByPostsFilter(string post, string begdate, string enddate, string operation)
         {
-            List<GetEventsByPosts_Result> view = GetEventsByPosts(post, begdate, enddate, operation);
+            List<GetEventsByPost_Result> view = GetEventsByPosts(post, begdate, enddate, operation);
 
             return PartialView("_EventsByPostsList", view);
         }

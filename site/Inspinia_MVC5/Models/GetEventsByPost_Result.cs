@@ -11,7 +11,7 @@ namespace Inspinia_MVC5.Models
 {
     using System;
     
-    public partial class GetEventsByPosts_Result
+    public partial class GetEventsByPost_Result
     {
         public string PostCode { get; set; }
         public System.DateTime DTime { get; set; }

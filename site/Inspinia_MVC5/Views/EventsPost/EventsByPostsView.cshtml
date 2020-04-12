@@ -57,23 +57,16 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <div class="form-group">
                 <label class="col-form-labe">Период зачислений</label>
-                <div class="row">
-                    <div class="col-sm-10">
-                        <div id="filter-date" class="form-control">
-                            <i class="fa fa-calendar"></i>
-                            <span></span> <b class="caret"></b>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <button id="clear-date" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
-                    </div>
+                <div id="filter-date" class="form-control">
+                    <i class="fa fa-calendar"></i>
+                    <span></span> <b class="caret"></b>
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <div class="form-group">
                 <label class="col-form-labe">Операция</label>
                 <select id="filter-operation" class="form-control">
@@ -126,6 +119,18 @@
             "pageLength": 100,
             "lengthChange": false,
             "pagingType": "full_numbers",
+            "createdRow": function (row, data, dataIndex) {
+                if (data[1] == "инкассация") {
+                    $(row).addClass('right-blue-bg');
+                }
+                if (data[1] == "пополнение наличными") {
+                    $(row).addClass('green-bg');
+                }
+                if (data[1] == "режим") {
+                    $(row).addClass('right-yellow-bg');
+                }
+            },
+            "bSortClasses": false,
             dom: '<"html5buttons"B>lTfgitp',
             buttons: [],
             //buttons: [
@@ -346,6 +351,8 @@
             $('#filter-wash').change(eventChangeWash);
 
             $("#filter-post").on("input", filter);
+            $("#filter-operation").on("input", filter);
+
             initDataTable();
 
             $(document).on("click", "#clear-date", function () {
