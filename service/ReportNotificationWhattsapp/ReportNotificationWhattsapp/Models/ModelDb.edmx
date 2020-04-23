@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="WashCompanyEntities.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <Function Name="GetDayReportIncrease" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_ReportDate" Type="datetime" Mode="In" />
+        </Function>
+        <EntityContainer Name="WashCompanyEntitiesStoreContainer" />
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="WashCompanyEntities" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="ModelDb" annotation:LazyLoadingEnabled="true" >
+          <FunctionImport Name="GetDayReportIncrease" ReturnType="Collection(WashCompanyEntities.GetDayReportIncrease_Result)">
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+            <Parameter Name="p_ReportDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="GetDayReportIncrease_Result">
+          <Property Type="String" Name="msg" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="Wash" Nullable="true" MaxLength="5" />
+          <Property Type="String" Name="ss" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="bs" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="ms" Nullable="true" MaxLength="4000" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="WashCompanyEntitiesStoreContainer" CdmEntityContainer="ModelDb" >
+          <FunctionImportMapping FunctionImportName="GetDayReportIncrease" FunctionName="WashCompanyEntities.Store.GetDayReportIncrease">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="WashCompanyEntities.GetDayReportIncrease_Result">
+                <ScalarProperty Name="msg" ColumnName="msg" />
+                <ScalarProperty Name="Wash" ColumnName="Wash" />
+                <ScalarProperty Name="ss" ColumnName="ss" />
+                <ScalarProperty Name="bs" ColumnName="bs" />
+                <ScalarProperty Name="ms" ColumnName="ms" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
