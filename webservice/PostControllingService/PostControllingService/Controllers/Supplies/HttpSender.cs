@@ -55,7 +55,7 @@ namespace PostControllingService.Controllers.Supplies
                 {
                     result = rdr.ReadToEnd();
                 }
-                return new SendPostResponse(webResponse.StatusCode, result);
+                return new SendPostResponse(webResponse.StatusCode, ex.Message);
             }
         }
 
@@ -108,6 +108,32 @@ namespace PostControllingService.Controllers.Supplies
                 HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
 
                 return null;
+            }
+        }
+
+        public static GetScalarResponse GetScalar(string url)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Method = "GET";
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                string result;
+                using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+                {
+                    result = rdr.ReadToEnd();
+                }
+
+                return new GetScalarResponse(response.StatusCode, result);
+            }
+            catch (WebException ex)
+            {
+                HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
+
+                return new GetScalarResponse(webResponse.StatusCode, ex.Message);
             }
         }
     }

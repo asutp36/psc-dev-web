@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="WashCompanyEntities.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDPost" Type="int" Nullable="false" />
+          <Property Name="IDEventKind" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime" Nullable="false" />
+          <Property Name="IDEventPost" Type="int" />
+        </EntityType>
+        <EntityType Name="EventIncrease">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="int" Nullable="false" />
+          <Property Name="amount" Type="int" />
+          <Property Name="m10" Type="int" />
+          <Property Name="b10" Type="int" />
+          <Property Name="b50" Type="int" />
+          <Property Name="b100" Type="int" />
+          <Property Name="b200" Type="int" />
+          <Property Name="balance" Type="int" />
+        </EntityType>
+        <EntityType Name="Posts">
+          <Key>
+            <PropertyRef Name="IDPost" />
+          </Key>
+          <Property Name="IDPost" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="IDWash" Type="int" Nullable="false" />
+          <Property Name="IDDevice" Type="int" />
+        </EntityType>
+        <Association Name="FK_Event_Point">
+          <End Role="Posts" Type="Self.Posts" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Event" Type="Self.Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Posts">
+              <PropertyRef Name="IDPost" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="IDPost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventCash_Event">
+          <End Role="Event" Type="Self.Event" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventIncrease" Type="Self.EventIncrease" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="IDEvent" />
+            </Principal>
+            <Dependent Role="EventIncrease">
+              <PropertyRef Name="IDEvent" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="WashCompanyEntitiesStoreContainer">
+          <EntitySet Name="Event" EntityType="Self.Event" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventIncrease" EntityType="Self.EventIncrease" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Posts" EntityType="Self.Posts" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Event_Point" Association="Self.FK_Event_Point">
+            <End Role="Posts" EntitySet="Posts" />
+            <End Role="Event" EntitySet="Event" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventCash_Event" Association="Self.FK_EventCash_Event">
+            <End Role="Event" EntitySet="Event" />
+            <End Role="EventIncrease" EntitySet="EventIncrease" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="WashCompanyEntities" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDPost" Type="Int32" Nullable="false" />
+          <Property Name="IDEventKind" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IDEventPost" Type="Int32" />
+          <NavigationProperty Name="Posts" Relationship="Self.FK_Event_Point" FromRole="Event" ToRole="Posts" />
+          <NavigationProperty Name="EventIncrease" Relationship="Self.FK_EventCash_Event" FromRole="Event" ToRole="EventIncrease" />
+        </EntityType>
+        <EntityType Name="EventIncrease">
+          <Key>
+            <PropertyRef Name="IDEvent" />
+          </Key>
+          <Property Name="IDEvent" Type="Int32" Nullable="false" />
+          <Property Name="amount" Type="Int32" />
+          <Property Name="m10" Type="Int32" />
+          <Property Name="b10" Type="Int32" />
+          <Property Name="b50" Type="Int32" />
+          <Property Name="b100" Type="Int32" />
+          <Property Name="b200" Type="Int32" />
+          <Property Name="balance" Type="Int32" />
+          <NavigationProperty Name="Event" Relationship="Self.FK_EventCash_Event" FromRole="EventIncrease" ToRole="Event" />
+        </EntityType>
+        <EntityType Name="Posts">
+          <Key>
+            <PropertyRef Name="IDPost" />
+          </Key>
+          <Property Name="IDPost" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IDWash" Type="Int32" Nullable="false" />
+          <Property Name="IDDevice" Type="Int32" />
+          <NavigationProperty Name="Event" Relationship="Self.FK_Event_Point" FromRole="Posts" ToRole="Event" />
+        </EntityType>
+        <Association Name="FK_Event_Point">
+          <End Role="Posts" Type="Self.Posts" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Event" Type="Self.Event" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Posts">
+              <PropertyRef Name="IDPost" />
+            </Principal>
+            <Dependent Role="Event">
+              <PropertyRef Name="IDPost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventCash_Event">
+          <End Role="Event" Type="Self.Event" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventIncrease" Type="Self.EventIncrease" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Event">
+              <PropertyRef Name="IDEvent" />
+            </Principal>
+            <Dependent Role="EventIncrease">
+              <PropertyRef Name="IDEvent" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ModelDb" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Event" EntityType="Self.Event" />
+          <EntitySet Name="EventIncrease" EntityType="Self.EventIncrease" />
+          <EntitySet Name="Posts" EntityType="Self.Posts" />
+          <AssociationSet Name="FK_Event_Point" Association="Self.FK_Event_Point">
+            <End Role="Posts" EntitySet="Posts" />
+            <End Role="Event" EntitySet="Event" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventCash_Event" Association="Self.FK_EventCash_Event">
+            <End Role="Event" EntitySet="Event" />
+            <End Role="EventIncrease" EntitySet="EventIncrease" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="WashCompanyEntitiesStoreContainer" CdmEntityContainer="ModelDb">
+          <EntitySetMapping Name="Event">
+            <EntityTypeMapping TypeName="WashCompanyEntities.Event">
+              <MappingFragment StoreEntitySet="Event">
+                <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
+                <ScalarProperty Name="IDPost" ColumnName="IDPost" />
+                <ScalarProperty Name="IDEventKind" ColumnName="IDEventKind" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="IDEventPost" ColumnName="IDEventPost" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventIncrease">
+            <EntityTypeMapping TypeName="WashCompanyEntities.EventIncrease">
+              <MappingFragment StoreEntitySet="EventIncrease">
+                <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="b10" ColumnName="b10" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b200" ColumnName="b200" />
+                <ScalarProperty Name="balance" ColumnName="balance" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Posts">
+            <EntityTypeMapping TypeName="WashCompanyEntities.Posts">
+              <MappingFragment StoreEntitySet="Posts">
+                <ScalarProperty Name="IDPost" ColumnName="IDPost" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+                <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

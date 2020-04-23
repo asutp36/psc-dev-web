@@ -4,13 +4,15 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Web;
+using System.Threading.Tasks;
+using CashIntegration.Supplies;
+using Newtonsoft.Json;
 
-namespace CashIntegration.Controllers.Supplies
+namespace CashIntegration.Supplies
 {
-    public class Sender
+    class HttpSender
     {
-        public static IntegrationResponse SendCash(string addres, string json, bool auth=false)
+        public static IntegrationResponse SendCash(string addres, string json, bool auth = false)
         {
             #region адреса различные
             // тест
@@ -31,9 +33,9 @@ namespace CashIntegration.Controllers.Supplies
             if (auth)
             {
                 request.Host = "api.myeco24.ru";
-                request.Headers.Add("Authorization", "Basic ZWMwMjRfQXBJOl9FY09fMl8yMl9XM2JfQHB8");
+                request.Headers.Add("Authorization", "Basic X0VDMDI0X19AcElfOl9ARWNPM19fMjcwMV9XNXlfcF98X18=");
             }
-            
+
             request.KeepAlive = false;
             request.PreAuthenticate = true;
             request.ProtocolVersion = HttpVersion.Version10;
@@ -58,8 +60,9 @@ namespace CashIntegration.Controllers.Supplies
                 {
                     result = rdr.ReadToEnd();
                 }
-
-                return new IntegrationResponse(response.StatusCode, result);
+                IntegrationResponse res = JsonConvert.DeserializeObject<IntegrationResponse>(result);
+                res.StatusCode = 200;
+                return res;
             }
             catch (WebException ex)
             {
@@ -70,7 +73,8 @@ namespace CashIntegration.Controllers.Supplies
                 {
                     result = rdr.ReadToEnd();
                 }
-                return new IntegrationResponse(webResponse.StatusCode, result);
+                IntegrationResponse res = JsonConvert.DeserializeObject<IntegrationResponse>(result);
+                return res;
             }
         }
     }
