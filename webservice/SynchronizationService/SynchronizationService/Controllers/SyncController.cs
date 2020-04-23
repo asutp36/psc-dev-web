@@ -242,7 +242,7 @@ namespace SynchronizationService.Controllers
                             "SELECT IDENT_CURRENT(\'Event\')" +
                             "COMMIT;";
 
-                        //Logger.Log.Debug("Command is: " + command.CommandText);
+                        Logger.Log.Debug("Command is: " + command.CommandText);
 
                         var id = command.ExecuteScalar();
                         _model.Database.Connection.Close();
