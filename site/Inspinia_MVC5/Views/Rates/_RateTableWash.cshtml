@@ -1,0 +1,87 @@
+﻿@model IEnumerable<Inspinia_MVC5.Helpers.RatesWash>
+
+<div class="sk-spinner sk-spinner-double-bounce">
+    <div class="sk-double-bounce1"></div>
+    <div class="sk-double-bounce2"></div>
+</div>
+
+@foreach (var wash in ViewBag.Washes)
+{
+    <h2>@wash.Name</h2>
+    <table id="table-wash-@wash.Code" class="display table table-bordered table-hover responsive">
+        <thead>
+            <tr>
+                <th>Тарифы</th>
+                <th>Задать тарифы</th>
+                @foreach (var item in wash.Posts)
+                {
+                    <th>@item.Code</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < 8; i++)
+            {
+            <tr>
+                <td>@Model.ToList().Find(w => w.Wash == wash.Code).Rates[0].Prices[i].Func</td>
+                <td><input name="@Model.ToList().Find(w => w.Wash == wash.Code).Rates[0].Prices[i].Code" id="rate-@(i+1)-@wash.IDWash" /></td>
+                @foreach (var post in Model.ToList().Find(w => w.Wash == wash.Code).Rates)
+                {
+                    <td>@post.Prices[i].Rate</td>
+                }
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="form-group">
+        <button type="submit" id="btn-save-@wash.IDWash" class="btn btn-outline btn-success font-bold">Сохранить</button>
+    </div>
+
+    <br />
+
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $(document).on("click", "#btn-save-@wash.IDWash", function () {
+
+            var rates = [];
+
+            for (let i = 1; i < 9; i++) {
+                var curid = '#rate-' + i + '-' + '@wash.IDWash';
+                if ($(curid).val() != "") {
+                    var rate = [];
+                    rate.push($(curid).attr('name'));
+                    rate.push($(curid).val());
+
+                    rates.push(rate);
+                }
+            }
+
+            $.ajax({
+                type: "POST",
+                cache: false,
+                data: {
+                    rates: rates,
+                    wash: '@wash.Code'
+                },
+                //beforeSend: function () {
+                //    $('#price-wrapper').toggleClass('sk-loading');
+                //},
+                //complete: function () {
+                //    $('#price-wrapper').toggleClass('sk-loading');
+                //},
+                //error: function (xhr, ajaxOptions, response) {
+                //    alert(xhr.responseText);
+                //    alert(response);
+                //},
+                url: "@Url.Action("SaveNewRates", "Rates")",
+            }).done(function (result) {
+                $('#output').html(result);
+            });                
+        });
+    });
+
+    </script>
+}

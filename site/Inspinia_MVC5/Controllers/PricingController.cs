@@ -27,7 +27,7 @@ namespace Inspinia_MVC5.Controllers
         {
             if (prices != null && posts != null)
             {
-                string data = JsonConvert.SerializeObject(new ChangePricesData(posts, prices));
+                string data = JsonConvert.SerializeObject(new ChangeRatesData(posts, prices));
                 string testlog = SendPrices(data);
             }
             return PartialView("NewPricesView", _companies);

@@ -164,6 +164,7 @@
     <Compile Include="Controllers\OperationsController.cs" />
     <Compile Include="Controllers\PagesController.cs" />
     <Compile Include="Controllers\PricingController.cs" />
+    <Compile Include="Controllers\RatesController.cs" />
     <Compile Include="Controllers\ScaffoldingController.cs" />
     <Compile Include="Controllers\TablesController.cs" />
     <Compile Include="Controllers\UIElementsController.cs" />
@@ -173,11 +174,12 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\ChangeFunctionOnPost.cs" />
-    <Compile Include="Helpers\ChangePricesData.cs" />
+    <Compile Include="Helpers\ChangeRatesData.cs" />
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />
     <Compile Include="Helpers\IncreaseBalanceOnPostClass.cs" />
     <Compile Include="Helpers\InfoPost.cs" />
     <Compile Include="Helpers\NotificationClass.cs" />
+    <Compile Include="Helpers\RatesWash.cs" />
     <Compile Include="Models\Card.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -1980,6 +1982,9 @@
     <Content Include="Views\Boxes\_BoxByPostsList.cshtml" />
     <Content Include="Views\EventsPost\EventsByPostsView.cshtml" />
     <Content Include="Views\EventsPost\_EventsByPostsList.cshtml" />
+    <Content Include="Views\Rates\RatesView.cshtml" />
+    <Content Include="Views\Rates\_RatesWashesList.cshtml" />
+    <Content Include="Views\Rates\_RateTableWash.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

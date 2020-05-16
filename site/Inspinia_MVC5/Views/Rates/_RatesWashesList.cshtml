@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Inspinia_MVC5.Models.Wash>
+
+<div class="sk-spinner sk-spinner-double-bounce">
+    <div class="sk-double-bounce1"></div>
+    <div class="sk-double-bounce2"></div>
+</div>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+    <div class="col-sm-2">
+        <h3>@item.Name - @item.Code</h3>
+    </div>
+    }
+</div>
+<div class="row">
+    @foreach (var item in Model)
+    {
+    <div class="col-sm-2">
+
+        <input id="@item.Code price-1" required type="text" class="form-control my-1" placeholder="текущий тариф" />
+        <br />
+
+        <input id="@item.Code price-2" required type="text" class="form-control my-1" placeholder="текущий тариф" />
+        <br />
+
+        <input id="@item.Code price-3" required type="text" class="form-control my-1" placeholder="текущий тариф" />
+        <br />
+
+        <input id="@item.Code price-4" required type="text" class="form-control my-1" placeholder="текущий тариф" />
+        <br />
+
+        <input id="@item.Code price-5" required type="text" class="form-control my-1" placeholder="текущий тариф" />
+        <br />
+
+        <input id="@item.Code price-6" required type="text" class="form-control my-1" placeholder="текущий тариф" />
+        <br />
+
+        <input id="@item.Code price-7" required type="text" class="form-control my-1" placeholder="текущий тариф" />
+        <br />
+
+        <input id="@item.Code price-8" required type="text" class="form-control my-1" placeholder="текущий тариф" />
+
+    </div>
+    }
+</div>

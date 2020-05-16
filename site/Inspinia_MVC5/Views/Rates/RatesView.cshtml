@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = "Тарифы";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Тарифы</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a>Сводка</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>Тарифы</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="ibox-content m-b-sm border-bottom">
+    <div class="row">
+        <div class="col-sm-3">
+            <label class="col-form-labe">Регион</label>
+            <select id="region" class="form-control">
+                <option value="" selected=""></option>
+                @foreach (var item in ViewBag.Regions)
+                {
+                    <option value="@item.Code">@item.Name</option>
+                }
+            </select>
+        </div>
+    </div>   
+
+    <div class="ibox" id="ibox-load">
+        <div class="ibox-content" id="output">
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/dateRange")
+
+    <script type="text/javascript">
+
+        function selectRegion() {
+
+            var region = $('#region').find(":selected").val();
+
+            $.ajax({
+                type: "POST",
+                cache: true,
+                data: {
+                    region: region,
+                },
+                beforeSend: function () {
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                },
+                complete: function () {
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                },
+                success: function () {
+                },
+                error: function () {
+                    alert('Возникла ошибка!');
+                },
+                url: "@Url.Action("_RateTableWash", "Rates")"
+            }).done(function (result) {
+                $('#output').html(result);
+            });
+        }
+
+        $(document).ready(function () {
+
+            $("#region").on("input", selectRegion);
+        });
+
+    </script>
+}
