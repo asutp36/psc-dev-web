@@ -8,6 +8,6 @@ namespace PostControllingService.Controllers.Supplies
     public class RatesWPostCode
     {
         public string Post { get; set; }
-        public List<FunctionRate> Rates { get; set; }
+        public List<FunctionRate> Prices { get; set; }
     } 
 }
