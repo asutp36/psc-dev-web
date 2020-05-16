@@ -5,10 +5,10 @@ using System.Web;
 
 namespace PostControllingService.Controllers.Supplies
 {
-    public class ChangePricesData
+    public class ChangeRates
     {
         public int[] Posts { get; set; }
-        public Price[] Prices { get; set; }
+        public Price[] Rates { get; set; }
 
     }
 }

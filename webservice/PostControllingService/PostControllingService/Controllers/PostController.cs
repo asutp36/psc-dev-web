@@ -44,8 +44,8 @@ namespace PostControllingService.Controllers
         //}
 
         [HttpPost]
-        [ActionName("price")]
-        public HttpResponseMessage SendPrice([FromBody]ChangePricesData change)
+        [ActionName("rate")]
+        public HttpResponseMessage SendRates([FromBody]ChangeRates change)
         {
             Logger.InitLogger();
 
@@ -54,7 +54,7 @@ namespace PostControllingService.Controllers
                 if (change != null)
                 {
                     Logger.Log.Debug("SendPrice: запуск с параметрами:\n" + JsonConvert.SerializeObject(change));
-                    foreach (Price p in change.Prices)
+                    foreach (Price p in change.Rates)
                     {
                         Logger.Log.Debug("SendPrice: Отправка на пост: " + p);
 
