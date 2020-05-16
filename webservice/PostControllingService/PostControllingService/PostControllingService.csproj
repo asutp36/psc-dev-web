@@ -137,7 +137,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\PostController.cs" />
-    <Compile Include="Controllers\Supplies\GetRatesResponse.cs" />
     <Compile Include="Controllers\Supplies\GetScalarResponse.cs" />
     <Compile Include="Controllers\Supplies\PostFunction.cs" />
     <Compile Include="Controllers\Supplies\FunctionRate.cs" />
@@ -148,7 +147,6 @@
     <Compile Include="Controllers\Supplies\Logger.cs" />
     <Compile Include="Controllers\Supplies\Price.cs" />
     <Compile Include="Controllers\Supplies\ChangeRates.cs" />
-    <Compile Include="Controllers\Supplies\RequestWPostsCodes.cs" />
     <Compile Include="Controllers\Supplies\HttpSenderResponse.cs" />
     <Compile Include="Controllers\Supplies\SetFunction.cs" />
     <Compile Include="Controllers\Supplies\WashRates.cs" />
