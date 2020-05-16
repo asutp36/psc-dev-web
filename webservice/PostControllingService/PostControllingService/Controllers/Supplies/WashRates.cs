@@ -5,10 +5,9 @@ using System.Web;
 
 namespace PostControllingService.Controllers.Supplies
 {
-    public class ChangeRates
+    public class WashRates
     {
-        public string[] Washes { get; set; }
-        public Price[] Rates { get; set; }
-
+        public string Wash { get; set; }
+        public List<RatesWPostCode> Rates { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,34 +15,61 @@ namespace PostControllingService.Controllers
     {
         ModelDb _model = new ModelDb();
 
-        //[HttpPost]
-        //[ActionName("getrate")]
-        //public HttpResponseMessage GetCurrentRate([FromBody]RequestWPostsCodes posts)
-        //{
-        //    Logger.InitLogger();
-        //    try
-        //    {
-        //        if(posts != null)
-        //        {
-        //            Logger.Log.Debug("GetCurrentRate: запуск с параметрами:\n" + JsonConvert.SerializeObject(posts));
+        [HttpPost]
+        [ActionName("getrate")]
+        public HttpResponseMessage GetCurrentRate([FromBody]string[] washes)
+        {
+            Logger.InitLogger();
+            try
+            {
+                if (washes != null && washes.Length > 0)
+                {
+                    Logger.Log.Debug("GetCurrentRate: запуск с параметрами:\n" + JsonConvert.SerializeObject(washes));
 
-        //            foreach(string post in posts.Posts)
-        //            {
+                    List<WashRates> washRates = new List<WashRates>();
+                    foreach (string washCode in washes)
+                    {
+                        List<Posts> posts = _model.Posts.Where(p => p.IDWash == _model.Wash.Where(w => w.Code == washCode).FirstOrDefault().IDWash).ToList();
 
-        //            }
-        //        }
-        //        else
-        //        {
-        //            Logger.Log.Error("GetCurrentRate: posts == null. Ошибка в данных запроса" + Environment.NewLine);
-        //            return Request.CreateResponse(HttpStatusCode.NoContent);
-        //        }
-        //    }
-        //    catch(Exception e)
-        //    {
-        //        Logger.Log.Error("GetCurrentRate: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-        //        return Request.CreateResponse(HttpStatusCode.InternalServerError);
-        //    }
-        //}
+                        List<RatesWPostCode> postsRates = new List<RatesWPostCode>();
+                        foreach (Posts p in posts)
+                        {
+                            HttpSenderResponse response = HttpSender.SendGet("http://" + GetPostIp(p.Code) + "/api/post/rate/get");
+
+                            if (response.StatusCode != HttpStatusCode.OK)
+                            {
+                                Logger.Log.Error("GetCurrentRate: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message) + Environment.NewLine);
+                                continue;
+                            }
+
+                            postsRates.Add(new RatesWPostCode
+                            {
+                                Post = p.Code,
+                                Rates = JsonConvert.DeserializeObject<List<FunctionRate>>(response.Message)
+                            });
+                        }
+
+                        washRates.Add(new WashRates
+                        {
+                            Wash = washCode,
+                            Rates = postsRates
+                        });
+                    }
+
+                    return Request.CreateResponse(HttpStatusCode.OK, JsonConvert.SerializeObject(washRates));
+                }
+                else
+                {
+                    Logger.Log.Error("GetCurrentRate: posts == null. Ошибка в данных запроса" + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log.Error("GetCurrentRate: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
 
         [HttpPost]
         [ActionName("rate")]
@@ -53,31 +81,44 @@ namespace PostControllingService.Controllers
             {
                 if (change != null)
                 {
-                    Logger.Log.Debug("SendPrice: запуск с параметрами:\n" + JsonConvert.SerializeObject(change));
-                    foreach (Price p in change.Rates)
+                    Logger.Log.Debug("SendRates: запуск с параметрами:\n" + JsonConvert.SerializeObject(change));
+
+                    foreach(String washCode in change.Washes)
                     {
-                        Logger.Log.Debug("SendPrice: Отправка на пост: " + p);
+                        List<Posts> posts = _model.Posts.Where(p => p.IDWash == _model.Wash.Where(w => w.Code == washCode).FirstOrDefault().IDWash).ToList();
 
-                        SendPostResponse response = HttpSender.SendPost("http://192.168.93.103:5000/api/post/rate", JsonConvert.SerializeObject(p));
-
-                        if (response.StatusCode != HttpStatusCode.OK)
+                        foreach (Posts p in posts)
                         {
-                            Logger.Log.Error("SendPrice: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message) + Environment.NewLine);
+                            foreach (Price price in change.Rates)
+                            {
+                                Logger.Log.Debug("SendRates: Отправка на пост: " + p.Code);
 
-                            return Request.CreateResponse(HttpStatusCode.Conflict);
+                                HttpSenderResponse response = HttpSender.SendPost("http://" + GetPostIp(p.Code) + "/api/post/rate", JsonConvert.SerializeObject(price));
+
+                                if (response.StatusCode != HttpStatusCode.OK)
+                                {
+                                    Logger.Log.Error("SendRates: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message) + Environment.NewLine);
+
+                                    return Request.CreateResponse(HttpStatusCode.Conflict);
+                                }
+                            }
                         }
                     }
-                    Logger.Log.Debug("SendPrice: " + String.Format("{0} : {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), "Отправлено успешно") + Environment.NewLine);
+
+                    
+
+                    
+                    Logger.Log.Debug("SendRates: " + String.Format("{0} : {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), "Отправлено успешно") + Environment.NewLine);
 
                     return Request.CreateResponse(HttpStatusCode.OK);
                 }
-                Logger.Log.Error("SendPrice: change == null. Ошибка в данных запроса." + Environment.NewLine);
+                Logger.Log.Error("SendRates: change == null. Ошибка в данных запроса." + Environment.NewLine);
                 var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
                 return responseBad;
             }
             catch (Exception e)
             {
-                Logger.Log.Error("SendPrice: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                Logger.Log.Error("SendRates: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
 
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
@@ -99,7 +140,7 @@ namespace PostControllingService.Controllers
 
                     if(address != null || address != "")
                     {
-                        SendPostResponse response = HttpSender.SendPost("http://" + address + "/api/post/balance/increase", JsonConvert.SerializeObject(balance));
+                        HttpSenderResponse response = HttpSender.SendPost("http://" + address + "/api/post/balance/increase", JsonConvert.SerializeObject(balance));
 
                         if (response.StatusCode != HttpStatusCode.OK)
                         {
@@ -243,7 +284,7 @@ namespace PostControllingService.Controllers
                     string address = GetPostIp(func.Post);
                     if (address != null || address != "")
                     {
-                        SendPostResponse response = HttpSender.SendPost("http://"+ address + "/api/post/func/set", JsonConvert.SerializeObject(func));
+                        HttpSenderResponse response = HttpSender.SendPost("http://"+ address + "/api/post/func/set", JsonConvert.SerializeObject(func));
 
                         if (response.StatusCode != HttpStatusCode.OK)
                         {
@@ -333,6 +374,14 @@ namespace PostControllingService.Controllers
             }
 
             return null;
+        }
+
+        private List<string> GetPostsIp(List<string> codes)
+        {
+            List<string> IPs = new List<string>();
+            foreach (string code in codes)
+                IPs.Add(GetPostIp(code));
+            return IPs;
         }
     }
 }

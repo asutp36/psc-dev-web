@@ -10,7 +10,7 @@ namespace PostControllingService.Controllers.Supplies
 {
     public class HttpSender
     {
-        public static SendPostResponse SendPost(string url, string json)
+        public static HttpSenderResponse SendPost(string url, string json)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.KeepAlive = false;
@@ -33,7 +33,7 @@ namespace PostControllingService.Controllers.Supplies
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    return new SendPostResponse(response.StatusCode, response.ToString());
+                    return new HttpSenderResponse(response.StatusCode, response.ToString());
                 }
                 else
                 {
@@ -43,7 +43,7 @@ namespace PostControllingService.Controllers.Supplies
                         result = rdr.ReadToEnd();
                     }
 
-                    return new SendPostResponse(response.StatusCode, result);
+                    return new HttpSenderResponse(response.StatusCode, result);
                 }
             }
             catch (WebException ex)
@@ -55,7 +55,7 @@ namespace PostControllingService.Controllers.Supplies
                 {
                     result = rdr.ReadToEnd();
                 }
-                return new SendPostResponse(webResponse.StatusCode, ex.Message);
+                return new HttpSenderResponse(webResponse.StatusCode, result);
             }
         }
 
@@ -85,7 +85,7 @@ namespace PostControllingService.Controllers.Supplies
             }
         }
 
-        public static string GetString(string url)
+        public static HttpSenderResponse SendGet(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.KeepAlive = false;
@@ -101,13 +101,18 @@ namespace PostControllingService.Controllers.Supplies
                     result = rdr.ReadToEnd();
                 }
 
-                return result;
+                return new HttpSenderResponse(response.StatusCode, result);
             }
             catch (WebException ex)
             {
                 HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
+                string result;
+                using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))
+                {
+                    result = rdr.ReadToEnd();
+                }
 
-                return null;
+                return new HttpSenderResponse(webResponse.StatusCode, result);
             }
         }
 

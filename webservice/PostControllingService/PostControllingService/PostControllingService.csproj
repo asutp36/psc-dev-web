@@ -141,16 +141,17 @@
     <Compile Include="Controllers\Supplies\GetScalarResponse.cs" />
     <Compile Include="Controllers\Supplies\PostFunction.cs" />
     <Compile Include="Controllers\Supplies\FunctionRate.cs" />
-    <Compile Include="Controllers\Supplies\RatesWPostCodes.cs" />
+    <Compile Include="Controllers\Supplies\RatesWPostCode.cs" />
     <Compile Include="Controllers\Supplies\RequestWPostCode.cs" />
     <Compile Include="Controllers\Supplies\HttpSender.cs" />
     <Compile Include="Controllers\Supplies\IncreaseBalance.cs" />
     <Compile Include="Controllers\Supplies\Logger.cs" />
     <Compile Include="Controllers\Supplies\Price.cs" />
-    <Compile Include="Controllers\Supplies\PriceChange.cs" />
+    <Compile Include="Controllers\Supplies\ChangeRates.cs" />
     <Compile Include="Controllers\Supplies\RequestWPostsCodes.cs" />
-    <Compile Include="Controllers\Supplies\SendPostResponse.cs" />
+    <Compile Include="Controllers\Supplies\HttpSenderResponse.cs" />
     <Compile Include="Controllers\Supplies\SetFunction.cs" />
+    <Compile Include="Controllers\Supplies\WashRates.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
