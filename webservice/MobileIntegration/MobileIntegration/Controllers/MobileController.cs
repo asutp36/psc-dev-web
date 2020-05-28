@@ -15,10 +15,10 @@ namespace MobileIntegration.Controllers
         private ModelDb _model = new ModelDb();
 
         [HttpPost]
-        [ActionName("increase")]
+        [ActionName("increase_dev")]
         //где записан баланс?
         //можно просто через операцию
-        public HttpResponseMessage IncreaseBalance([FromBody]IncreaseFromMobile increase)
+        public HttpResponseMessage IncreaseBalanceDev([FromBody]IncreaseFromMobile increase)
         {
             Logger.InitLogger();
             if (increase != null)
@@ -58,6 +58,69 @@ namespace MobileIntegration.Controllers
                         var responseGood = Request.CreateResponse(HttpStatusCode.OK);
                         //responseGood.Headers.Add("ServerID", serverID.ToString());
                         return responseGood;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Log.Error("IncreaseBalance reciever: " + e.Message.ToString());
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                }
+            }
+
+            return Request.CreateResponse(HttpStatusCode.NoContent);
+        }
+
+        [HttpPost]
+        [ActionName("increase")]
+        //где записан баланс?
+        //можно просто через операцию
+        public HttpResponseMessage IncreaseBalance([FromBody]IncreaseFromMobile increase)
+        {
+            Logger.InitLogger();
+            if (increase != null)
+            {
+                try
+                {
+                    Logger.Log.Debug(String.Format("IncreaseBalnce. Запуск с параметрами:\n" +
+                        "time_send: {0}, hash: {1}\ncard: {2}, value: {3}\nfrom: {4}, operation_type: {5}", increase.time_send, increase.hash, increase.card.ToString(),
+                        increase.value, increase.from, increase.operation_type));
+                    if (CryptHash.CheckHashCode(increase.hash, increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")))
+                    {
+                        if (_model.Database.Exists())
+                        {
+                            _model.Database.Connection.Open();
+                            Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
+
+                            DbCommand commandBalance = _model.Database.Connection.CreateCommand();
+                            commandBalance.CommandText = "select Balance " +
+                                "from Operations " +
+                                $"where DTime = (select max(DTime) from Operations where IDCard = (select IDCard from Cards where CardNum = {increase.card})) " +
+                                $"and IDCard = (select IDCard from Cards where CardNum = {increase.card})";
+
+                            DbCommand command = _model.Database.Connection.CreateCommand();
+                            command.CommandText = "INSERT INTO Operations (IDCard, IDPsc, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+                                                    $" VALUES((select IDCard from Cards where CardNum =  {increase.card}), " +
+                                                    $"(select IDPsc from Psces where Name = 'MobileApp'), 2, \'{increase.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {increase.value}," +
+                                                    $" ({commandBalance.CommandText}) + {increase.value}, -1, -1);" +
+                                                    " SELECT SCOPE_IDENTITY()";
+
+                            Logger.Log.Debug("Command is: " + command.CommandText);
+
+                            var id = command.ExecuteScalar();
+                            Int32 serverID = Convert.ToInt32(id.ToString());
+                            Logger.Log.Debug("Operation added serverID:" + serverID);
+
+                            _model.Database.Connection.Close();
+
+                            var responseGood = Request.CreateResponse(HttpStatusCode.OK);
+                            //responseGood.Headers.Add("ServerID", serverID.ToString());
+                            return responseGood;
+                        }
+                    }
+                    else
+                    {
+                        Logger.Log.Error("Unauthorized" + Environment.NewLine);
+                        return Request.CreateResponse(HttpStatusCode.Unauthorized);
                     }
                 }
                 catch (Exception e)
