@@ -7,6 +7,7 @@ using System.Web.Http;
 using MobileIntegration.Models;
 using MobileIntegration.Controllers.Supplies;
 using System.Data.Common;
+using Newtonsoft.Json;
 
 namespace MobileIntegration.Controllers
 {
@@ -125,7 +126,7 @@ namespace MobileIntegration.Controllers
                 }
                 catch (Exception e)
                 {
-                    Logger.Log.Error("IncreaseBalance reciever: " + e.Message.ToString());
+                    Logger.Log.Error("IncreaseBalance reciever: " + e.Message.ToString() + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.InternalServerError);
                 }
             }
@@ -241,6 +242,122 @@ namespace MobileIntegration.Controllers
                 catch (Exception e)
                 {
                     Logger.Log.Error("ChangePhone reciever: " + e.Message.ToString());
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                }
+            }
+
+            return Request.CreateResponse(HttpStatusCode.NoContent);
+        }
+
+        [HttpPost]
+        [ActionName("start_post")]
+        public HttpResponseMessage StartPost([FromBody]StartPostBindingModel model)
+        {
+            Logger.InitLogger();
+
+            if (model != null)
+            {
+                Logger.Log.Debug("StrartPost: Запуск с параметрами:\n" + JsonConvert.SerializeObject(model));
+
+                try
+                {
+                    if (CryptHash.CheckHashCode(model.hash, model.time_send.ToString("yyyy-MM-dd HH:mm:ss")))
+                    {
+                        var card = _model.Cards.Where(c => c.CardNum == model.card).FirstOrDefault();
+                        if (card != null)
+                        {
+                            if (model.balance > 50)
+                            {
+                                var post = _model.Posts.Where(p => p.Code == model.post).FirstOrDefault();
+
+                                if (post != null)
+                                {
+                                    if (post.Code == "М202-2")
+                                    {
+                                        Logger.Log.Error(String.Format("StartPost: Post {0} is busy", post.Code) + Environment.NewLine);
+                                        return Request.CreateResponse((HttpStatusCode)423);
+                                    }
+
+                                    Logger.Log.Debug(String.Format("StartPost: Starting post {0}", post.Code) + Environment.NewLine);
+                                    return Request.CreateResponse(HttpStatusCode.OK);
+                                }
+
+                                Logger.Log.Error("StartPost: Post not found" + Environment.NewLine);
+                                return Request.CreateResponse(HttpStatusCode.NotFound);
+                            }
+
+                            Logger.Log.Error("StartPost: Balance is weak" + Environment.NewLine);
+                            return Request.CreateResponse((HttpStatusCode)422);
+                        }
+
+                        Logger.Log.Error("StartPost: Card not found" + Environment.NewLine);
+                        return Request.CreateResponse(HttpStatusCode.Forbidden);
+                    }
+
+                    Logger.Log.Error("StartPost: Unauthorized" + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.Unauthorized);
+                }
+                catch(Exception e)
+                {
+                    Logger.Log.Error("StartPost: " + e.Message.ToString() + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                }
+            }
+
+            return Request.CreateResponse(HttpStatusCode.NoContent);
+        }
+
+        [HttpPost]
+        [ActionName("start_post-dev")]
+        public HttpResponseMessage StartPostDev([FromBody]StartPostBindingModel model)
+        {
+            Logger.InitLogger();
+
+            if (model != null)
+            {
+                Logger.Log.Debug("StrartPost: Запуск с параметрами:\n" + JsonConvert.SerializeObject(model));
+
+                try
+                {
+                    if (true)
+                    {
+                        var card = _model.Cards.Where(c => c.CardNum == model.card).FirstOrDefault();
+                        if (card != null)
+                        {
+                            if (model.balance > 50)
+                            {
+                                var post = _model.Posts.Where(p => p.Code == model.post).FirstOrDefault();
+
+                                if (post != null)
+                                {
+                                    if (post.Code == "М202-2")
+                                    {
+                                        Logger.Log.Error(String.Format("StartPost: Post {0} is busy", post.Code) + Environment.NewLine);
+                                        return Request.CreateResponse((HttpStatusCode)423);
+                                    }
+
+                                    Logger.Log.Debug(String.Format("StartPost: Starting post {0}", post.Code) + Environment.NewLine);
+                                    return Request.CreateResponse(HttpStatusCode.OK);
+                                }
+
+                                Logger.Log.Error("StartPost: Post not found" + Environment.NewLine);
+                                return Request.CreateResponse(HttpStatusCode.NotFound);
+                            }
+
+                            Logger.Log.Error("StartPost: Balance is weak" + Environment.NewLine);
+                            return Request.CreateResponse((HttpStatusCode)422);
+                        }
+
+                        Logger.Log.Error("StartPost: Card not found" + Environment.NewLine);
+                        return Request.CreateResponse(HttpStatusCode.Forbidden);
+                    }
+
+                    Logger.Log.Error("StartPost: Unauthorized" + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.Unauthorized);
+                }
+                catch (Exception e)
+                {
+                    Logger.Log.Error("StartPost: " + e.Message.ToString() + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.InternalServerError);
                 }
             }

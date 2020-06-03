@@ -152,6 +152,7 @@
     <Compile Include="Controllers\Supplies\Logger.cs" />
     <Compile Include="Controllers\Supplies\NewCard.cs" />
     <Compile Include="Controllers\Supplies\Sender.cs" />
+    <Compile Include="Controllers\Supplies\StartPostBindingModel.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
