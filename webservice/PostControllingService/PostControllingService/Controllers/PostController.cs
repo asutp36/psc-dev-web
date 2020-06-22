@@ -29,12 +29,12 @@ namespace PostControllingService.Controllers
                     List<WashRates> washRates = new List<WashRates>();
                     foreach (string washCode in washes)
                     {
-                        List<Posts> posts = _model.Posts.Where(p => p.IDWash == _model.Wash.Where(w => w.Code == washCode).FirstOrDefault().IDWash).ToList();
+                        List<Posts> posts = _model.Posts.Where(p => p.IDWash == _model.Wash.Where(w => w.Code == washCode).FirstOrDefault().IDWash && !p.Code.Contains('V')).ToList();
 
                         List<RatesWPostCode> postsRates = new List<RatesWPostCode>();
                         foreach (Posts p in posts)
                         {
-                            HttpSenderResponse response = HttpSender.SendGet("http://" + "192.168.201.4:5000"/*GetPostIp(p.Code) */+ "/api/post/rate/get");
+                            HttpSenderResponse response = HttpSender.SendGet("http://" + "192.168.201.15:5000"/*GetPostIp(p.Code) */+ "/api/post/rate/get");
 
                             if (response.StatusCode != HttpStatusCode.OK)
                             {
@@ -89,18 +89,15 @@ namespace PostControllingService.Controllers
 
                         foreach (Posts p in posts)
                         {
-                            foreach (Price price in change.Rates)
+                            Logger.Log.Debug("SendRates: Отправка на пост: " + p.Code);
+
+                            HttpSenderResponse response = HttpSender.SendPost("http://" + "192.168.201.4:5000" + "/api/post/rate", JsonConvert.SerializeObject(change.Rates));
+
+                            if (response.StatusCode != HttpStatusCode.OK)
                             {
-                                Logger.Log.Debug("SendRates: Отправка на пост: " + p.Code);
+                                Logger.Log.Error("SendRates: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message) + Environment.NewLine);
 
-                                HttpSenderResponse response = HttpSender.SendPost("http://" + "192.168.201.4:5000" + "/api/post/rate", JsonConvert.SerializeObject(price));
-
-                                if (response.StatusCode != HttpStatusCode.OK)
-                                {
-                                    Logger.Log.Error("SendRates: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message) + Environment.NewLine);
-
-                                    return Request.CreateResponse(HttpStatusCode.Conflict);
-                                }
+                                return Request.CreateResponse(HttpStatusCode.Conflict);
                             }
                         }
                     }
