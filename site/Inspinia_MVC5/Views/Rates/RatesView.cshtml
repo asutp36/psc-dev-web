@@ -28,9 +28,14 @@
             </select>
         </div>
     </div>   
+    <br />
 
     <div class="ibox" id="ibox-load">
         <div class="ibox-content" id="output">
+            <div class="sk-spinner sk-spinner-double-bounce">
+                <div class="sk-double-bounce1"></div>
+                <div class="sk-double-bounce2"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -51,28 +56,33 @@
         function selectRegion() {
 
             var region = $('#region').find(":selected").val();
+            if (region != "") {
 
-            $.ajax({
-                type: "POST",
-                cache: true,
-                data: {
-                    region: region,
-                },
-                beforeSend: function () {
-                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
-                },
-                complete: function () {
-                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
-                },
-                success: function () {
-                },
-                error: function () {
-                    alert('Возникла ошибка!');
-                },
-                url: "@Url.Action("_RateTableWash", "Rates")"
-            }).done(function (result) {
-                $('#output').html(result);
-            });
+                $.ajax({
+                    type: "POST",
+                    cache: true,
+                    data: {
+                        region: region,
+                    },
+                    beforeSend: function () {
+                        $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                    },
+                    complete: function () {
+                        $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                    },
+                    success: function () {
+                    },
+                    error: function (xhr, httpStatusMessage, customErrorMessage) {
+                        if (xhr.status === 500) {
+                            $('#output').html(xhr.responseText);
+                        }
+                    },
+                    url: "@Url.Action("_RateTableWash", "Rates")"
+                }).done(function (result) {
+                    $('#output').html(result);
+                });
+            }
+
         }
 
         $(document).ready(function () {
