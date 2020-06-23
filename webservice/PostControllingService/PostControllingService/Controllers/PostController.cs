@@ -29,7 +29,7 @@ namespace PostControllingService.Controllers
                     List<WashRates> washRates = new List<WashRates>();
                     foreach (string washCode in washes)
                     {
-                        List<Posts> posts = _model.Posts.Where(p => p.IDWash == _model.Wash.Where(w => w.Code == washCode).FirstOrDefault().IDWash && !p.Code.Contains('V')).ToList();
+                        List<Posts> posts = _model.Posts.Where(p => p.IDWash == _model.Wash.Where(w => w.Code == washCode).FirstOrDefault().IDWash && !p.Code.Contains("V")).ToList();
 
                         List<RatesWPostCode> postsRates = new List<RatesWPostCode>();
                         foreach (Posts p in posts)
@@ -91,7 +91,7 @@ namespace PostControllingService.Controllers
                         {
                             Logger.Log.Debug("SendRates: Отправка на пост: " + p.Code);
 
-                            HttpSenderResponse response = HttpSender.SendPost("http://" + "192.168.201.4:5000" + "/api/post/rate", JsonConvert.SerializeObject(change.Rates));
+                            HttpSenderResponse response = HttpSender.SendPost("http://" + "192.168.201.15:5000" + "/api/post/rate", JsonConvert.SerializeObject(change.Rates));
 
                             if (response.StatusCode != HttpStatusCode.OK)
                             {
