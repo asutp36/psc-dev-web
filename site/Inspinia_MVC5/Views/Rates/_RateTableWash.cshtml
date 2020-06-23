@@ -30,7 +30,7 @@
     </table>
 
     <div class="form-group">
-        <button type="submit" id="btn-save-@wash.IDWash" class="btn btn-outline btn-success font-bold">Сохранить</button>
+        <button type="submit" id="btn-save-@wash.IDWash" class="ladda-button btn btn-outline btn-success font-bold" data-style="expand-right">Сохранить</button>
     </div>
 
     <br />
@@ -61,12 +61,14 @@
                     rates: rates,
                     wash: '@wash.Code'
                 },
-                //beforeSend: function () {
-                //    $('#p rice-wrapper').toggleClass('sk-loading');
-                //},
-                //complete: function () {
-                //    $('#price-wrapper').toggleClass('sk-loading');
-                //},
+                beforeSend: function () {
+                    //$('#p rice-wrapper').toggleClass('sk-loading');
+                    $('#btn-save-@wash.IDWash').ladda('start');
+                },
+                complete: function () {
+                    //$('#price-wrapper').toggleClass('sk-loading');
+                    $('#btn-save-@wash.IDWash').ladda('stop');
+                },
                 //error: function (xhr, ajaxOptions, response) {
                 //    alert(xhr.responseText);
                 //    alert(response);
@@ -74,7 +76,7 @@
                 url: "@Url.Action("SaveNewRates", "Rates")",
             }).done(function (result) {
                 $('#output').html(result);
-            });                
+            });
         });
     });
 
