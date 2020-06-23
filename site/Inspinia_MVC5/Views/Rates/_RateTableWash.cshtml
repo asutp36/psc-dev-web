@@ -33,9 +33,14 @@
         <button type="submit" id="btn-save-@wash.IDWash" class="ladda-button btn btn-outline btn-success font-bold" data-style="expand-right">Сохранить</button>
     </div>
 
+    <div id="error-@wash.IDWash">
+    </div>
+
     <br />
 
     <script type="text/javascript">
+
+    $('#btn-save-@wash.IDWash').ladda();
 
     $(document).ready(function () {
 
@@ -62,17 +67,14 @@
                     wash: '@wash.Code'
                 },
                 beforeSend: function () {
-                    //$('#p rice-wrapper').toggleClass('sk-loading');
                     $('#btn-save-@wash.IDWash').ladda('start');
                 },
                 complete: function () {
-                    //$('#price-wrapper').toggleClass('sk-loading');
                     $('#btn-save-@wash.IDWash').ladda('stop');
                 },
-                //error: function (xhr, ajaxOptions, response) {
-                //    alert(xhr.responseText);
-                //    alert(response);
-                //},
+                error: function (xhr, ajaxOptions, response) {
+                    $('error-@wash.IDWash').html(xhr.responseText);
+                },
                 url: "@Url.Action("SaveNewRates", "Rates")",
             }).done(function (result) {
                 $('#output').html(result);
