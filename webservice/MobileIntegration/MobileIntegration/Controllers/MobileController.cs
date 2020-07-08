@@ -94,14 +94,14 @@ namespace MobileIntegration.Controllers
                             Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
                             DbCommand commandBalance = _model.Database.Connection.CreateCommand();
-                            commandBalance.CommandText = "select Balance " +
+                            commandBalance.CommandText = "select isnull(Balance, 0) " +
                                 "from Operations " +
-                                $"where DTime = (select max(DTime) from Operations where IDCard = (select IDCard from Cards where CardNum = {increase.card})) " +
-                                $"and IDCard = (select IDCard from Cards where CardNum = {increase.card})";
+                                $"where DTime = (select max(DTime) from Operations where IDCard = (select IDCard from Cards where CardNum = '{increase.card}')) " +
+                                $"and IDCard = (select IDCard from Cards where CardNum = '{increase.card}')";
 
                             DbCommand command = _model.Database.Connection.CreateCommand();
                             command.CommandText = "INSERT INTO Operations (IDCard, IDPsc, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
-                                                    $" VALUES((select IDCard from Cards where CardNum =  {increase.card}), " +
+                                                    $" VALUES((select IDCard from Cards where CardNum = '{increase.card}'), " +
                                                     $"(select IDPsc from Psces where Name = 'MobileApp'), 2, \'{increase.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {increase.value}," +
                                                     $" ({commandBalance.CommandText}) + {increase.value}, -1, -1);" +
                                                     " SELECT SCOPE_IDENTITY()";
@@ -388,7 +388,9 @@ namespace MobileIntegration.Controllers
                             List<string> cards = GetCardsByPhone(newCard.phone);
                             if (cards.Count > 0)
                             {
-                                return Request.CreateErrorResponse(HttpStatusCode.Conflict, new Exception("у пользователя уже есть карта"));
+                                _model.Database.Connection.Close();
+                                Logger.Log.Error("NewCard: У пользователя есть карта" + Environment.NewLine);
+                                return Request.CreateErrorResponse(HttpStatusCode.Conflict, new Exception("У пользователя уже есть карта"));
                             }
 
                             DbCommand command = _model.Database.Connection.CreateCommand();
@@ -438,7 +440,7 @@ namespace MobileIntegration.Controllers
                 }
                 catch (Exception e)
                 {
-                    Logger.Log.Error("NewCard: " + e.Message.ToString());
+                    Logger.Log.Error("NewCard: " + e.Message.ToString() + Environment.NewLine + e.StackTrace + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.InternalServerError);
                 }
             }
