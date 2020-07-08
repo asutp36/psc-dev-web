@@ -364,5 +364,61 @@ namespace MobileIntegration.Controllers
 
             return Request.CreateResponse(HttpStatusCode.NoContent);
         }
+
+        [HttpPost]
+        [ActionName("new_card")]
+        public HttpResponseMessage NewCard([FromBody]NewCard newCard)
+        {
+            Logger.InitLogger();
+
+            if (newCard != null)
+            {
+                try
+                {
+                    Logger.Log.Debug(String.Format("Запуск с параметрами: номер телефона: {0}", newCard.phone));
+
+                    if (_model.Database.Exists())
+                    {
+                        _model.Database.Connection.Open();
+                        Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
+
+                        var prmCard = new System.Data.SqlClient.SqlParameter("@CardNum", System.Data.SqlDbType.NVarChar);
+                        prmCard.Value = newCard.card;
+
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+                        command.CommandText = "select " +
+                            "min(v.Num) " +
+                            "from NumsMobileCards v " +
+                            "left join Cards c on c.CardNum = v.Num " +
+                            "where c.CardNum is null";
+
+                        var cardNum = command.ExecuteScalar();
+
+                        var response = Request.CreateResponse();
+
+                        response.StatusCode = HttpStatusCode.OK;
+                        response.Headers.Add("CardNum", cardNum.ToString());
+
+                        _model.Database.Connection.Close();
+
+                        return response;
+                    }
+
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                }
+                catch (Exception e)
+                {
+                    Logger.Log.Error("GetBalance: " + e.Message.ToString());
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                }
+            }
+
+            return Request.CreateResponse(HttpStatusCode.NoContent);
+        }
+
+        private string[] GetCardsByPhone(string phone)
+        {
+
+        }
     }
 }
