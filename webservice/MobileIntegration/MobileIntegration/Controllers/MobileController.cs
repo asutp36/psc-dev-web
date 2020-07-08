@@ -8,6 +8,7 @@ using MobileIntegration.Models;
 using MobileIntegration.Controllers.Supplies;
 using System.Data.Common;
 using Newtonsoft.Json;
+using System.Data.SqlClient;
 
 namespace MobileIntegration.Controllers
 {
@@ -375,40 +376,69 @@ namespace MobileIntegration.Controllers
             {
                 try
                 {
-                    Logger.Log.Debug(String.Format("Запуск с параметрами: номер телефона: {0}", newCard.phone));
+                    Logger.Log.Debug(String.Format("NewCard: Запуск с параметрами: номер телефона: {0}", newCard.phone));
 
-                    if (_model.Database.Exists())
+                    if (CryptHash.CheckHashCode(newCard.hash, newCard.time_send.ToString("yyyy-MM-dd HH:mm:ss")))
                     {
-                        _model.Database.Connection.Open();
-                        Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
+                        if (_model.Database.Exists())
+                        {
+                            _model.Database.Connection.Open();
+                            Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
-                        var prmCard = new System.Data.SqlClient.SqlParameter("@CardNum", System.Data.SqlDbType.NVarChar);
-                        prmCard.Value = newCard.card;
+                            List<string> cards = GetCardsByPhone(newCard.phone);
+                            if (cards.Count > 0)
+                            {
+                                return Request.CreateErrorResponse(HttpStatusCode.Conflict, new Exception("у пользователя уже есть карта"));
+                            }
 
-                        DbCommand command = _model.Database.Connection.CreateCommand();
-                        command.CommandText = "select " +
-                            "min(v.Num) " +
-                            "from NumsMobileCards v " +
-                            "left join Cards c on c.CardNum = v.Num " +
-                            "where c.CardNum is null";
+                            DbCommand command = _model.Database.Connection.CreateCommand();
+                            command.CommandText = "select " +
+                                "min(v.Num) " +
+                                "from NumsMobileCards v " +
+                                "left join Cards c on c.CardNum = v.Num " +
+                                "where c.CardNum is null";
 
-                        var cardNum = command.ExecuteScalar();
+                            var cardNum = command.ExecuteScalar();
 
-                        var response = Request.CreateResponse();
+                            DbTransaction tran = _model.Database.Connection.BeginTransaction();
+                            command.Transaction = tran;
 
-                        response.StatusCode = HttpStatusCode.OK;
-                        response.Headers.Add("CardNum", cardNum.ToString());
+                            try
+                            {
+                                command.CommandText = $"insert into Owners (Phone, LocalizedBy, LocalizedID) values ('{newCard.phone}', 0, 0)";
+                                command.ExecuteNonQuery();
+                                command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) values (scope_identity(), '{cardNum}', 1, 4, 0, 0)";
+                                command.ExecuteNonQuery();
 
-                        _model.Database.Connection.Close();
+                                Logger.Log.Debug($"NewCard: добавлены Owner и Card. CardNum = {cardNum.ToString()}" + Environment.NewLine);
+                                tran.Commit();
+                            }
+                            catch (Exception e)
+                            {
+                                Logger.Log.Error("NewCard: ошибка транзакции.\n" + e.Message + Environment.NewLine);
+                                tran.Rollback();
+                                _model.Database.Connection.Close();
 
-                        return response;
+                                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                            }
+
+                            var response = Request.CreateResponse();
+
+                            response.StatusCode = HttpStatusCode.OK;
+                            response.Headers.Add("CardNum", cardNum.ToString());
+
+                            _model.Database.Connection.Close();
+
+                            return response;
+                        }
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
                     }
 
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    return Request.CreateResponse(HttpStatusCode.Unauthorized);
                 }
                 catch (Exception e)
                 {
-                    Logger.Log.Error("GetBalance: " + e.Message.ToString());
+                    Logger.Log.Error("NewCard: " + e.Message.ToString());
                     return Request.CreateResponse(HttpStatusCode.InternalServerError);
                 }
             }
@@ -416,9 +446,11 @@ namespace MobileIntegration.Controllers
             return Request.CreateResponse(HttpStatusCode.NoContent);
         }
 
-        private string[] GetCardsByPhone(string phone)
+        private List<string> GetCardsByPhone(string phone)
         {
+            List<string> cards = _model.Cards.Where(c => c.IDOwner == _model.Owners.Where(o => o.Phone.Equals(phone)).FirstOrDefault().IDOwner).Select(c => c.CardNum).ToList();
 
+            return cards;
         }
     }
 }
