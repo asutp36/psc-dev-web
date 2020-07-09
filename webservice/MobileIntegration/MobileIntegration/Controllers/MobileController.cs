@@ -94,10 +94,12 @@ namespace MobileIntegration.Controllers
                             Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
                             DbCommand commandBalance = _model.Database.Connection.CreateCommand();
-                            commandBalance.CommandText = "select isnull(Balance, 0) " +
-                                "from Operations " +
-                                $"where DTime = (select max(DTime) from Operations where IDCard = (select IDCard from Cards where CardNum = '{increase.card}')) " +
-                                $"and IDCard = (select IDCard from Cards where CardNum = '{increase.card}')";
+                            commandBalance.CommandText = $"select " +
+                                $"isnull(o.Balance, 0) " +
+                                $"from Cards c " +
+                                $"left join Operations o on o.IDCard = c.IDCard " +
+                                $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
+                                $"where c.CardNum = '{increase.card}'";
 
                             DbCommand command = _model.Database.Connection.CreateCommand();
                             command.CommandText = "INSERT INTO Operations (IDCard, IDPsc, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
