@@ -10,7 +10,7 @@ namespace MobileIntegration.Controllers.Supplies
 {
     public class Sender
     {
-        public static string SendCash(string addres, string json, bool auth = false)
+        public static string SendPost(string addres, string json, bool auth = false)
         {
             #region адреса различные
             // тест

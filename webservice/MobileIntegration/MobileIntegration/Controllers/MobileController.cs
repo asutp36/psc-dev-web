@@ -369,6 +369,21 @@ namespace MobileIntegration.Controllers
         }
 
         [HttpPost]
+        [ActionName("stop_post-dev")]
+        public HttpResponseMessage StopPostDev([FromBody]StartPostBindingModel model)
+        {
+            Logger.InitLogger();
+            Logger.Log.Debug($"StopPost: отправка списания по карте {model.card}");
+
+            string resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), "1", 80)));
+
+            Logger.Log.Debug($"StopPost: Ответ от их сервера: {resp}");
+
+            return Request.CreateErrorResponse(HttpStatusCode.Created, resp);
+        }
+
+
+        [HttpPost]
         [ActionName("new_card")]
         public HttpResponseMessage NewCard([FromBody]NewCard newCard)
         {
