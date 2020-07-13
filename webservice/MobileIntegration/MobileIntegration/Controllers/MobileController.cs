@@ -354,9 +354,6 @@ namespace MobileIntegration.Controllers
                         Logger.Log.Error("StartPost: Card not found" + Environment.NewLine);
                         return Request.CreateResponse(HttpStatusCode.Forbidden);
                     }
-
-                    Logger.Log.Error("StartPost: Unauthorized" + Environment.NewLine);
-                    return Request.CreateResponse(HttpStatusCode.Unauthorized);
                 }
                 catch (Exception e)
                 {
@@ -375,11 +372,11 @@ namespace MobileIntegration.Controllers
             Logger.InitLogger();
             Logger.Log.Debug($"StopPost: отправка списания по карте {model.card}");
 
-            string resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), "1", 80)));
+            HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), "1", 80)));
 
-            Logger.Log.Debug($"StopPost: Ответ от их сервера: {resp}");
+            Logger.Log.Debug("StopPost: Ответ от их сервера: " + resp.ResultMessage);
 
-            return Request.CreateErrorResponse(HttpStatusCode.Created, resp);
+            return Request.CreateErrorResponse(resp.StatusCode, resp.ResultMessage);
         }
 
 
@@ -395,7 +392,7 @@ namespace MobileIntegration.Controllers
                 {
                     Logger.Log.Debug(String.Format("NewCard: Запуск с параметрами: номер телефона: {0}", newCard.phone));
 
-                    if (CryptHash.CheckHashCode(newCard.hash, newCard.time_send.ToString("yyyy-MM-dd HH:mm:ss")))
+                    if (CryptHash.CheckHashCode(newCard.hash, newCard.time_send))
                     {
                         if (_model.Database.Exists())
                         {
@@ -470,6 +467,65 @@ namespace MobileIntegration.Controllers
             List<string> cards = _model.Cards.Where(c => c.IDOwner == _model.Owners.Where(o => o.Phone.Equals(phone)).FirstOrDefault().IDOwner).Select(c => c.CardNum).ToList();
 
             return cards;
+        }
+
+        [HttpPost]
+        [ActionName("send_new_card_dev")]
+        public HttpResponseMessage SendNewCardDev([FromBody]NewCardDev newCard)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if(newCard != null)
+                {
+                    Logger.Log.Debug("SendNewCardDev: запуск с параметрами:\n" + JsonConvert.SerializeObject(newCard));
+
+                    DateTime dtime = DateTime.Now;
+
+                    NewCard card = new NewCard
+                    {
+                        card = newCard.card,
+                        phone = newCard.phone,
+                        time_send = dtime.ToString("yyyy-MM-dd HH:mm:ss"),
+                        hash = CryptHash.GetHashCode(dtime.ToString("yyyy-MM-dd HH:mm:ss"))
+                    };
+
+                    HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/user-create", JsonConvert.SerializeObject(card));
+
+
+                    Logger.Log.Debug("SendNewCardDev: отправлена карта: " + JsonConvert.SerializeObject(card));
+
+                    if (resp.StatusCode != HttpStatusCode.OK)
+                    {
+                        Logger.Log.Debug("SendNewCardDev: отправлена новая карта. Ответ сервера: " + JsonConvert.SerializeObject(resp) + Environment.NewLine);
+                        return Request.CreateResponse(resp.StatusCode);
+                    }
+
+                    Logger.Log.Debug("SendNewCardDev: отправлена новая карта. Ответ сервера: " + JsonConvert.SerializeObject(resp));
+
+                    resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-replenish", JsonConvert.SerializeObject(new Increase
+                    {
+                        time_send = dtime.ToString("yyyy-MM-dd HH:mm:ss"),
+                        hash = CryptHash.GetHashCode(dtime.ToString("yyyy-MM-dd HH:mm:ss")),
+                        card = newCard.card,
+                        value = newCard.value,
+                        wash_id = "1",
+                        operation_time = dtime.ToString("yyyy-MM-dd HH:mm:ss")
+                    }));
+
+                    Logger.Log.Debug("SendNewCardDev: отправлено поплнение. Ответ сервера:" + JsonConvert.SerializeObject(resp) + Environment.NewLine);
+
+                    return Request.CreateResponse(HttpStatusCode.OK);
+                }
+
+                return Request.CreateResponse(HttpStatusCode.NoContent);
+            }
+            catch (Exception e)
+            {
+                Logger.Log.Error("SendNewCardDev: произошла ошибка:\n" + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
         }
     }
 }

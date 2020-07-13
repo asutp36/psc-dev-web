@@ -10,7 +10,7 @@ namespace MobileIntegration.Controllers.Supplies
 {
     public class Sender
     {
-        public static string SendPost(string addres, string json, bool auth = false)
+        public static HttpResponse SendPost(string addres, string json, bool auth = false)
         {
             #region адреса различные
             // тест
@@ -55,7 +55,11 @@ namespace MobileIntegration.Controllers.Supplies
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    return response.ToString();
+                    return new HttpResponse 
+                    { 
+                        StatusCode = response.StatusCode,
+                        ResultMessage = response.ToString() 
+                    };
                 }
                 else
                 {
@@ -65,7 +69,11 @@ namespace MobileIntegration.Controllers.Supplies
                         result = rdr.ReadToEnd();
                     }
 
-                    return String.Format("httpStatusCode: {0}; {1}", response.StatusCode, result);
+                    return new HttpResponse
+                    {
+                        StatusCode = response.StatusCode,
+                        ResultMessage = result
+                    };
                 }
             }
             catch (WebException ex)
@@ -77,7 +85,12 @@ namespace MobileIntegration.Controllers.Supplies
                 {
                     result = rdr.ReadToEnd();
                 }
-                return result + "\nStatusCode: " + webResponse.StatusCode;
+
+                return new HttpResponse
+                {
+                    StatusCode = webResponse.StatusCode,
+                    ResultMessage = result
+                };
             }
         }
     }

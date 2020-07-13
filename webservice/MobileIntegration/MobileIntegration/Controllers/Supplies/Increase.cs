@@ -15,15 +15,15 @@ namespace MobileIntegration.Controllers.Supplies
         public int value { get; set; }
         public string operation_type { get; set; }
 
-        public Increase(string dt, string c, string ot, string w, int val, string t)
-        {
-            this.time_send = dt;
-            this.hash = CryptHash.GetHashCode(dt);
-            this.card = c;
-            this.operation_time = ot;
-            this.wash_id = w;
-            this.value = val;
-            this.operation_type = t;
-        }
+        //public Increase(string dt, string c, string ot, string w, int val, string t)
+        //{
+        //    this.time_send = dt;
+        //    this.hash = CryptHash.GetHashCode(dt);
+        //    this.card = c;
+        //    this.operation_time = ot;
+        //    this.wash_id = w;
+        //    this.value = val;
+        //    this.operation_type = t;
+        //}
     }
 }

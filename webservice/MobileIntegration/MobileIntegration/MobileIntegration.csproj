@@ -147,10 +147,12 @@
     <Compile Include="Controllers\Supplies\Decrease.cs" />
     <Compile Include="Controllers\Supplies\GetBalance.cs" />
     <Compile Include="Controllers\Supplies\GetBalanceFromMobile.cs" />
+    <Compile Include="Controllers\Supplies\HttpResponse.cs" />
     <Compile Include="Controllers\Supplies\Increase.cs" />
     <Compile Include="Controllers\Supplies\IncreaseFromMobile.cs" />
     <Compile Include="Controllers\Supplies\Logger.cs" />
     <Compile Include="Controllers\Supplies\NewCard.cs" />
+    <Compile Include="Controllers\Supplies\NewCardDev.cs" />
     <Compile Include="Controllers\Supplies\Sender.cs" />
     <Compile Include="Controllers\Supplies\StartPostBindingModel.cs" />
     <Compile Include="Global.asax.cs">

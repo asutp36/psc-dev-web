@@ -7,7 +7,7 @@ namespace MobileIntegration.Controllers.Supplies
 {
     public class NewCard
     {
-        public DateTime time_send { get; set; }
+        public string time_send { get; set; }
         public string hash { get; set; }
         public string card { get; set; }
         //public string card_type { get; set; }
