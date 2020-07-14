@@ -273,22 +273,43 @@ namespace MobileIntegration.Controllers
                         {
                             if (model.balance > 50)
                             {
-                                var post = _model.Posts.Where(p => p.Code == model.post).FirstOrDefault();
-
-                                if (post != null)
+                                if (model.post.Equals("ECOcw_m15_1"))
                                 {
-                                    if (post.Code == "М202-2")
+                                    int amount = 0;
+
+                                    if (model.balance > 500)
+                                        amount = 500;
+                                    else
+                                        amount = model.balance;
+
+                                    HttpResponse resp = Sender.SendPost("address", JsonConvert.SerializeObject(new StartPostDevModel
                                     {
-                                        Logger.Log.Error(String.Format("StartPost: Post {0} is busy", post.Code) + Environment.NewLine);
-                                        return Request.CreateResponse((HttpStatusCode)423);
+                                        Amount = amount,
+                                        Dtime = model.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
+                                        CardNum = model.card
+                                    }));
+
+                                    return Request.CreateResponse(resp.StatusCode);
+                                }
+                                else
+                                {
+                                    var post = _model.Posts.Where(p => p.Code == model.post).FirstOrDefault();
+
+                                    if (post != null)
+                                    {
+                                        if (post.Code == "М202-2")
+                                        {
+                                            Logger.Log.Error(String.Format("StartPost: Post {0} is busy", post.Code) + Environment.NewLine);
+                                            return Request.CreateResponse((HttpStatusCode)423);
+                                        }
+
+                                        Logger.Log.Debug(String.Format("StartPost: Starting post {0}", post.Code) + Environment.NewLine);
+                                        return Request.CreateResponse(HttpStatusCode.OK);
                                     }
 
-                                    Logger.Log.Debug(String.Format("StartPost: Starting post {0}", post.Code) + Environment.NewLine);
-                                    return Request.CreateResponse(HttpStatusCode.OK);
+                                    Logger.Log.Error("StartPost: Post not found" + Environment.NewLine);
+                                    return Request.CreateResponse(HttpStatusCode.NotFound);
                                 }
-
-                                Logger.Log.Error("StartPost: Post not found" + Environment.NewLine);
-                                return Request.CreateResponse(HttpStatusCode.NotFound);
                             }
 
                             Logger.Log.Error("StartPost: Balance is weak" + Environment.NewLine);
