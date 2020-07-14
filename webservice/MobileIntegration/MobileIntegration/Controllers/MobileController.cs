@@ -539,17 +539,17 @@ namespace MobileIntegration.Controllers
                     }
 
                     // отправка карты в приложение
-                    HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/user-create", JsonConvert.SerializeObject(card));
+                    //HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/user-create", JsonConvert.SerializeObject(card));
 
                     Logger.Log.Debug("SendNewCardDev: отправлена карта: " + JsonConvert.SerializeObject(card));
 
-                    if (resp.StatusCode != HttpStatusCode.OK)
-                    {
-                        Logger.Log.Debug("SendNewCardDev: отправлена новая карта. Ответ сервера: " + JsonConvert.SerializeObject(resp) + Environment.NewLine);
-                        return Request.CreateResponse(resp.StatusCode);
-                    }
+                    //if (resp.StatusCode != HttpStatusCode.OK)
+                    //{
+                    //    Logger.Log.Debug("SendNewCardDev: отправлена новая карта. Ответ сервера: " + JsonConvert.SerializeObject(resp) + Environment.NewLine);
+                    //    return Request.CreateResponse(resp.StatusCode);
+                    //}
 
-                    Logger.Log.Debug("SendNewCardDev: отправлена новая карта. Ответ сервера: " + JsonConvert.SerializeObject(resp));
+                    //Logger.Log.Debug("SendNewCardDev: отправлена новая карта. Ответ сервера: " + JsonConvert.SerializeObject(resp));
 
                     // запись в нашу базу внесения
                     if (_model.Database.Exists())
@@ -585,17 +585,17 @@ namespace MobileIntegration.Controllers
                     }
 
                     // отправка пополнения на пост
-                    resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-replenish", JsonConvert.SerializeObject(new Increase
-                    {
-                        time_send = dtime.ToString("yyyy-MM-dd HH:mm:ss"),
-                        hash = CryptHash.GetHashCode(dtime.ToString("yyyy-MM-dd HH:mm:ss")),
-                        card = newCard.card,
-                        value = newCard.value,
-                        wash_id = "1",
-                        operation_time = dtime.ToString("yyyy-MM-dd HH:mm:ss")
-                    }));
+                    //HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-replenish", JsonConvert.SerializeObject(new Increase
+                    //{
+                    //    time_send = dtime.ToString("yyyy-MM-dd HH:mm:ss"),
+                    //    hash = CryptHash.GetHashCode(dtime.ToString("yyyy-MM-dd HH:mm:ss")),
+                    //    card = newCard.card,
+                    //    value = newCard.value,
+                    //    wash_id = "1",
+                    //    operation_time = dtime.ToString("yyyy-MM-dd HH:mm:ss")
+                    //}));
 
-                    Logger.Log.Debug("SendNewCardDev: отправлено пополнение. Ответ сервера:" + JsonConvert.SerializeObject(resp) + Environment.NewLine);
+                    Logger.Log.Debug("SendNewCardDev: отправлено пополнение. Ответ сервера:" /*+ JsonConvert.SerializeObject(resp)*/ + Environment.NewLine);
 
                     _model.Database.Connection.Close();
                     return Request.CreateResponse(HttpStatusCode.OK);
