@@ -477,7 +477,7 @@ namespace MobileIntegration.Controllers
 
             try
             {
-                if(newCard != null)
+                if (newCard != null)
                 {
                     Logger.Log.Debug("SendNewCardDev: запуск с параметрами:\n" + JsonConvert.SerializeObject(newCard));
 
@@ -491,8 +491,53 @@ namespace MobileIntegration.Controllers
                         hash = CryptHash.GetHashCode(dtime.ToString("yyyy-MM-dd HH:mm:ss"))
                     };
 
-                    HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/user-create", JsonConvert.SerializeObject(card));
+                    // запись в нашу базу
+                    if (_model.Database.Exists())
+                    {
+                        _model.Database.Connection.Open();
+                        Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
+                        List<string> cards = GetCardsByPhone(newCard.phone);
+                        if (cards.Count > 0)
+                        {
+                            _model.Database.Connection.Close();
+                            Logger.Log.Error("SendNewCardDev: У пользователя есть карта" + Environment.NewLine);
+                            return Request.CreateErrorResponse(HttpStatusCode.Conflict, new Exception("У пользователя уже есть карта"));
+                        }
+
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+
+                        DbTransaction tran = _model.Database.Connection.BeginTransaction();
+                        command.Transaction = tran;
+
+                        try
+                        {
+                            command.CommandText = $"insert into Owners (Phone, LocalizedBy, LocalizedID) values ('{newCard.phone}', 0, 0)";
+                            command.ExecuteNonQuery();
+                            command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) values (scope_identity(), '{newCard.card}', 1, 4, 0, 0)";
+                            command.ExecuteNonQuery();
+
+                            Logger.Log.Debug($"SendNewCardDev: добавлены Owner и Card. CardNum = {newCard.card}" + Environment.NewLine);
+                            tran.Commit();
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Log.Error("SendNewCardDev: ошибка транзакции.\n" + e.Message + Environment.NewLine);
+                            tran.Rollback();
+                            _model.Database.Connection.Close();
+
+                            return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                        }
+                    }
+                    else
+                    {
+                        Logger.Log.Error("SendNewCardDev: базы данных не существует.\n" + Environment.NewLine);
+
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    }
+
+                    // отправка карты в приложение
+                    HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/user-create", JsonConvert.SerializeObject(card));
 
                     Logger.Log.Debug("SendNewCardDev: отправлена карта: " + JsonConvert.SerializeObject(card));
 
