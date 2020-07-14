@@ -135,6 +135,22 @@
 
             var startDate = moment().startOf('day').format('DD.MM.YYYY HH:mm:ss');
             var stopDate = moment().format('DD.MM.YYYY HH:mm:ss');
+
+            $.ajax({
+                type: "GET",
+                cache: false,
+                data: {
+                    begTime: startDate,
+                    endTime: stopDate,
+                },
+                error: function () {
+                    alert('Error occured');
+                },
+                url: "@Url.Action("UpdateFinanceOperationsSummary", "Finance")",
+            }).done(function (result) {
+                $('.finance-operations-summary').find('.ibox-content').html(result);
+            });
+
             var chartdata;
 
             $.ajax({
@@ -166,8 +182,9 @@
                     }]
                 },
                 options: {
+                    cutoutPercentage: 60,
+                    responsive: true,
                     maintainAspectRatio: false,
-                    responsive: false,
                     animation: {
                         animateScale: true
                     },
@@ -179,28 +196,30 @@
                 }
             });
 
-            initDataTable();
+            $.ajax({
+                    type: "GET",
+                    cache: false,
+                    data: {
+                        begTime: startDate,
+                        endTime: stopDate,
+                    },
+                    success: function () {
+                        $('.alert-success').fadeIn('slow');
+                        $('.alert-success').delay(3000).fadeOut('slow');
+                    },
+                    error: function () {
+                        alert('Error occured');
+                    },
+                    url: "@Url.Action("UpdateViewBagFinanceOperations", "Finance")",
+                }).done(function (result) {
+                    $('.table-finance-operations').find('.ibox-content-more').html(result);
 
-            //$(document).on("click", "#clear_drp_op", function () {
-            //    $('#time-operation-filter span').empty();
-            //    $('#filter-timeoperationbeg').val("");
-            //    $('#filter-timeoperationend').val("");
-            //});
+                    initDataTable();
+                });
 
             $(document).on("click", "#btn-for-filter", function () {
                 var startDate = $('#filter-timeoperationbeg').val();
                 var stopDate = $('#filter-timeoperationend').val();
-
-                //var doughnutData = {
-                //    labels: ["50", "100", "200", "500", "1 000"],
-                //    datasets: [{
-                //        data: [25, 104, 45, 10, 60],
-                //        backgroundColor: ["#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba"]
-                //    }]
-                //};
-                //popCanvas.getContext("2d").clearRect(0,0,popCanvas.width, popCanvas.height);
-                //barChart.data = doughnutData;
-                //barChart.update();
 
                 $.ajax({
                     type: "GET",
@@ -230,19 +249,13 @@
                         begTime: startDate,
                         endTime: stopDate,
                     },
-                    //success: function () {
-                    //    $('.alert-success').fadeIn('slow');
-                    //    $('.alert-success').delay(3000).fadeOut('slow');
-                    //},
                     error: function () {
                         alert('Error occured');
                     },
                     url: "@Url.Action("UpdateFinanceOperationsSummary", "Finance")",
                 }).done(function (result) {
                     $('.finance-operations-summary').find('.ibox-content').html(result);
-
                 });
-
 
                 $.ajax({
                     type: "GET",
@@ -251,44 +264,13 @@
                         begTime: startDate,
                         endTime: stopDate,
                     },
-                    //success: function () {
-                    //    $('.alert-success').fadeIn('slow');
-                    //    $('.alert-success').delay(3000).fadeOut('slow');
-                    //},
                     error: function () {
                         alert('Error occured');
                     },
                     url: "@Url.Action("UpdateFinanceOperationsByNominals", "Finance")",
                 }).done(function (result) {
-
                     //вывод количества каждой купюры под пончиком
                     //$('.finance-operations-chart').find('.ibox-content').html(result);
-
-                    //var chartdata = eval(result);
-
-                    //var popCanvas = document.getElementById("popChart");
-                    //var barChart = new Chart(popCanvas, {
-                    //    type: 'doughnut',
-                    //    data: {
-                    //        labels: ["10", "50", "100", "200", "500", "1 000", "2 000"],
-                    //        datasets: [{
-                    //            data: chartdata,
-                    //            backgroundColor: ["#e8ce7c", "#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba", "#8adffc"]
-                    //        }]
-                    //    },
-                    //    options: {
-                    //        maintainAspectRatio: false,
-                    //        responsive: false,
-                    //        animation: {
-                    //            animateScale: true
-                    //        },
-                    //        legend: {
-                    //            position: 'left'
-                    //        },
-                    //        rotation: Math.PI * 1,
-                    //        circumference: Math.PI * 1,
-                    //    }
-                    //});
 
                     var chartdata = eval(result);
                     barChart.data.datasets[0].data = chartdata;
