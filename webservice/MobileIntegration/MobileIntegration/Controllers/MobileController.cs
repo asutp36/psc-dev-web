@@ -37,10 +37,12 @@ namespace MobileIntegration.Controllers
                         Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
                         DbCommand commandBalance = _model.Database.Connection.CreateCommand();
-                        commandBalance.CommandText = "select Balance " +
-                            "from Operations " +
-                            $"where DTime = (select max(DTime) from Operations where IDCard = (select IDCard from Cards where CardNum = {increase.card})) " +
-                            $"and IDCard = (select IDCard from Cards where CardNum = {increase.card})";
+                        commandBalance.CommandText = $"select " +
+                                 $"isnull(o.Balance, 0) " +
+                                 $"from Cards c " +
+                                 $"left join Operations o on o.IDCard = c.IDCard " +
+                                 $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
+                                 $"where c.CardNum = '{increase.card}'";
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "INSERT INTO Operations (IDCard, IDPsc, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
@@ -491,7 +493,7 @@ namespace MobileIntegration.Controllers
                         hash = CryptHash.GetHashCode(dtime.ToString("yyyy-MM-dd HH:mm:ss"))
                     };
 
-                    // запись в нашу базу
+                    // запись в нашу базу новую карту
                     if (_model.Database.Exists())
                     {
                         _model.Database.Connection.Open();
@@ -532,7 +534,7 @@ namespace MobileIntegration.Controllers
                     else
                     {
                         Logger.Log.Error("SendNewCardDev: базы данных не существует.\n" + Environment.NewLine);
-
+                        _model.Database.Connection.Close();
                         return Request.CreateResponse(HttpStatusCode.InternalServerError);
                     }
 
@@ -549,6 +551,40 @@ namespace MobileIntegration.Controllers
 
                     Logger.Log.Debug("SendNewCardDev: отправлена новая карта. Ответ сервера: " + JsonConvert.SerializeObject(resp));
 
+                    // запись в нашу базу внесения
+                    if (_model.Database.Exists())
+                    {
+                        DbCommand commandBalance = _model.Database.Connection.CreateCommand();
+                        commandBalance.CommandText = $"select " +
+                            $"isnull(o.Balance, 0) " +
+                            $"from Cards c " +
+                            $"left join Operations o on o.IDCard = c.IDCard " +
+                            $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
+                            $"where c.CardNum = '{newCard.card}'";
+
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+                        command.CommandText = "INSERT INTO Operations (IDCard, IDPsc, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+                                                $" VALUES((select IDCard from Cards where CardNum = '{newCard.card}'), " +
+                                                $"(select IDPsc from Psces where Name = 'MobileApp'), 2, \'{newCard.time_send}\', {newCard.value}," +
+                                                $" ({commandBalance.CommandText}) + {newCard.value}, -1, -1);" +
+                                                " SELECT SCOPE_IDENTITY()";
+
+                        Logger.Log.Debug("Command is: " + command.CommandText);
+
+                        var id = command.ExecuteScalar();
+                        Int32 serverID = Convert.ToInt32(id.ToString());
+                        Logger.Log.Debug("Operation added serverID:" + serverID);
+
+                        _model.Database.Connection.Close();
+                    }
+                    else
+                    {
+                        Logger.Log.Error("SendNewCardDev: базы данных не существует.\n" + Environment.NewLine);
+                        _model.Database.Connection.Close();
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    }
+
+                    // отправка пополнения на пост
                     resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-replenish", JsonConvert.SerializeObject(new Increase
                     {
                         time_send = dtime.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -559,8 +595,9 @@ namespace MobileIntegration.Controllers
                         operation_time = dtime.ToString("yyyy-MM-dd HH:mm:ss")
                     }));
 
-                    Logger.Log.Debug("SendNewCardDev: отправлено поплнение. Ответ сервера:" + JsonConvert.SerializeObject(resp) + Environment.NewLine);
+                    Logger.Log.Debug("SendNewCardDev: отправлено пополнение. Ответ сервера:" + JsonConvert.SerializeObject(resp) + Environment.NewLine);
 
+                    _model.Database.Connection.Close();
                     return Request.CreateResponse(HttpStatusCode.OK);
                 }
 
