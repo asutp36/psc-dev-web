@@ -909,7 +909,7 @@
           <Parameter Name="p_PostCode" Type="nvarchar" Mode="In" />
           <Parameter Name="p_KindEventCode" Type="nvarchar" Mode="In" />
         </Function>
-        <Function Name="GetFinanceByNominals" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+        <Function Name="GetFinanceByNominal" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
         </Function>
@@ -2266,7 +2266,7 @@
             <Parameter Name="p_PostCode" Mode="In" Type="String" />
             <Parameter Name="p_KindEventCode" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="GetFinanceByNominals" ReturnType="Collection(ModelDb.GetFinanceByNominals_Result)">
+          <FunctionImport Name="GetFinanceByNominal" ReturnType="Collection(ModelDb.GetFinanceByNominal_Result)">
             <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
             <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
           </FunctionImport>
@@ -2523,7 +2523,7 @@
           <Property Type="String" Name="KindEvent" Nullable="false" MaxLength="50" />
           <Property Type="String" Name="DataCommon" Nullable="true" MaxLength="4000" />
         </ComplexType>
-        <ComplexType Name="GetFinanceByNominals_Result">
+        <ComplexType Name="GetFinanceByNominal_Result">
           <Property Type="String" Name="Code" Nullable="false" MaxLength="50" />
           <Property Type="Int32" Name="c" Nullable="true" />
           <Property Type="Int32" Name="s" Nullable="false" />
@@ -3309,9 +3309,9 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="GetFinanceByNominals" FunctionName="Хранилище ModelDb.GetFinanceByNominals">
+          <FunctionImportMapping FunctionImportName="GetFinanceByNominal" FunctionName="Хранилище ModelDb.GetFinanceByNominal">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ModelDb.GetFinanceByNominals_Result">
+              <ComplexTypeMapping TypeName="ModelDb.GetFinanceByNominal_Result">
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="c" ColumnName="c" />
                 <ScalarProperty Name="s" ColumnName="s" />

@@ -494,7 +494,7 @@ namespace Inspinia_MVC5.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEventsByPost_Result>("GetEventsByPost", p_DateBegParameter, p_DateEndParameter, p_PostCodeParameter, p_KindEventCodeParameter);
         }
     
-        public virtual ObjectResult<GetFinanceByNominals_Result> GetFinanceByNominals(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        public virtual ObjectResult<GetFinanceByNominal_Result> GetFinanceByNominal(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
         {
             var p_DateBegParameter = p_DateBeg.HasValue ?
                 new ObjectParameter("p_DateBeg", p_DateBeg) :
@@ -504,7 +504,7 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_DateEnd", p_DateEnd) :
                 new ObjectParameter("p_DateEnd", typeof(System.DateTime));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFinanceByNominals_Result>("GetFinanceByNominals", p_DateBegParameter, p_DateEndParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFinanceByNominal_Result>("GetFinanceByNominal", p_DateBegParameter, p_DateEndParameter);
         }
     
         public virtual ObjectResult<GetFinanceList_Result> GetFinanceList(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
