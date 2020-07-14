@@ -114,11 +114,11 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult UpdateFinanceOperationsByNominals(string begTime, string endTime)
         {
-            List<GetFinanceByNominal_Result> viewList = GetFinanceOperationsByNominals(begTime, endTime);
+            List<GetFinanceByNominals_Result> viewList = GetFinanceOperationsByNominals(begTime, endTime);
 
             String chartdata = "[";
 
-            foreach (GetFinanceByNominal_Result item in viewList)
+            foreach (GetFinanceByNominals_Result item in viewList)
             {
                 if (chartdata == "[")
                     chartdata += item.c;
@@ -131,9 +131,9 @@ namespace Inspinia_MVC5.Controllers
             return PartialView("_FinanceOperationsByNominals", chartdata);
         }
 
-        private List<GetFinanceByNominal_Result> GetFinanceOperationsByNominals(string begTime, string endTime)
+        private List<GetFinanceByNominals_Result> GetFinanceOperationsByNominals(string begTime, string endTime)
         {
-            List<GetFinanceByNominal_Result> resultset = null;
+            List<GetFinanceByNominals_Result> resultset = null;
 
             var prmDateBeg = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
             if (begTime == "")
@@ -156,7 +156,7 @@ namespace Inspinia_MVC5.Controllers
             }
 
             var result = db.Database
-                .SqlQuery<GetFinanceByNominal_Result>("GetFinanceByNominal @p_DateBeg, @p_DateEnd", prmDateBeg, prmDateEnd).ToList();
+                .SqlQuery<GetFinanceByNominals_Result>("GetFinanceByNominals @p_DateBeg, @p_DateEnd", prmDateBeg, prmDateEnd).ToList();
 
             resultset = result;
 

@@ -11,7 +11,7 @@ namespace Inspinia_MVC5.Models
 {
     using System;
     
-    public partial class GetFinanceByNominal_Result
+    public partial class GetFinanceByNominals_Result
     {
         public string Code { get; set; }
         public Nullable<int> c { get; set; }

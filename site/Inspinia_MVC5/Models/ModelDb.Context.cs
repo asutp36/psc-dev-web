@@ -494,19 +494,6 @@ namespace Inspinia_MVC5.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEventsByPost_Result>("GetEventsByPost", p_DateBegParameter, p_DateEndParameter, p_PostCodeParameter, p_KindEventCodeParameter);
         }
     
-        public virtual ObjectResult<GetFinanceByNominal_Result> GetFinanceByNominal(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
-        {
-            var p_DateBegParameter = p_DateBeg.HasValue ?
-                new ObjectParameter("p_DateBeg", p_DateBeg) :
-                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
-    
-            var p_DateEndParameter = p_DateEnd.HasValue ?
-                new ObjectParameter("p_DateEnd", p_DateEnd) :
-                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFinanceByNominal_Result>("GetFinanceByNominal", p_DateBegParameter, p_DateEndParameter);
-        }
-    
         public virtual ObjectResult<GetFinanceList_Result> GetFinanceList(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
         {
             var p_DateBegParameter = p_DateBeg.HasValue ?
@@ -856,6 +843,19 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_PostCode", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<RptWashPrevFunc_Result>("RptWashPrevFunc", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
+        }
+    
+        public virtual ObjectResult<GetFinanceByNominals_Result> GetFinanceByNominals(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFinanceByNominals_Result>("GetFinanceByNominals", p_DateBegParameter, p_DateEndParameter);
         }
     }
 }
