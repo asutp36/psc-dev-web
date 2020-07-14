@@ -374,7 +374,7 @@ namespace MobileIntegration.Controllers
             Logger.InitLogger();
             Logger.Log.Debug($"StopPost: отправка списания по карте {model.card}");
 
-            HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), "1", 80)));
+            HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), "1", model.balance)));
 
             Logger.Log.Debug("StopPost: Ответ от их сервера: " + resp.ResultMessage);
 
