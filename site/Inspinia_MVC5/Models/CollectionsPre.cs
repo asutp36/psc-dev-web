@@ -10,31 +10,20 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class GetIncreaseByPosts_Result
+    public partial class CollectionsPre
     {
-        public short RegionCode { get; set; }
-        public string RegionName { get; set; }
-        public string WashCode { get; set; }
-        public string WashAddress { get; set; }
-        public string PostCode { get; set; }
-        public string PostName { get; set; }
-        public Nullable<int> m10 { get; set; }
-        public int b10 { get; set; }
+        public int IDCollectionsPre { get; set; }
+        public int IDPost { get; set; }
+        public System.DateTime DTime { get; set; }
+        public Nullable<int> b10 { get; set; }
         public Nullable<int> b50 { get; set; }
         public Nullable<int> b100 { get; set; }
-        public Nullable<int> b200 { get; set; }
-        public int sumofm
-        {
-            get { return (int)(m10 * 10); }
-        }
-        public int sumofb
-        {
-            get { return (int)(b10 * 10 + b50 * 50 + b100 * 100 + b200 * 200); }
-        }
-        public int sum
-        {
-            get { return sumofb + sumofm; }
-        }
+        public Nullable<int> b500 { get; set; }
+        public Nullable<int> b1k { get; set; }
+        public Nullable<int> m10 { get; set; }
+    
+        public virtual Post Post { get; set; }
     }
 }

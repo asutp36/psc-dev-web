@@ -12,19 +12,18 @@ namespace Inspinia_MVC5.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Mode
+    public partial class TerminalStateType
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Mode()
+        public TerminalStateType()
         {
-            this.EventModes = new HashSet<EventMode>();
+            this.TerminalStates = new HashSet<TerminalState>();
         }
     
-        public int IDMode { get; set; }
-        public short Code { get; set; }
+        public int IDStateType { get; set; }
         public string Name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EventMode> EventModes { get; set; }
+        public virtual ICollection<TerminalState> TerminalStates { get; set; }
     }
 }

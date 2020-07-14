@@ -10,13 +10,10 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class GetIncreaseOnWashes_Result
+    public partial class NumsMobileCard
     {
-        public string region { get; set; }
-        public int IDWash { get; set; }
-        public string washName { get; set; }
-        public string washAddress { get; set; }
-        public Nullable<int> amount { get; set; }
+        public string Num { get; set; }
     }
 }

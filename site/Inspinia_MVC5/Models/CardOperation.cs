@@ -10,19 +10,16 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class GetIncreaseOnPosts_Result
+    public partial class CardOperation
     {
-        public string region { get; set; }
-        public int IDWash { get; set; }
-        public string washName { get; set; }
-        public string washAddress { get; set; }
-        public string Name { get; set; }
-        public Nullable<int> amount { get; set; }
-        public Nullable<int> m10 { get; set; }
-        public Nullable<int> b10 { get; set; }
-        public Nullable<int> b50 { get; set; }
-        public Nullable<int> b100 { get; set; }
-        public Nullable<int> b200 { get; set; }
+        public int IDCardOpration { get; set; }
+        public int IDState { get; set; }
+        public int IDDevice { get; set; }
+        public string CardNum { get; set; }
+        public System.DateTime DTime { get; set; }
+    
+        public virtual TerminalState TerminalState { get; set; }
     }
 }

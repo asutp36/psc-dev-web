@@ -10,13 +10,20 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class GetEventsByPost_Result
+    public partial class CountersOperating
     {
-        public string PostCode { get; set; }
+        public int IDCountersOperating { get; set; }
+        public int IDPost { get; set; }
         public System.DateTime DTime { get; set; }
-        public string KindEventCode { get; set; }
-        public string KindEvent { get; set; }
-        public string DataCommon { get; set; }
+        public int b10 { get; set; }
+        public int b50 { get; set; }
+        public int b100 { get; set; }
+        public int b500 { get; set; }
+        public int b1k { get; set; }
+        public int m10 { get; set; }
+    
+        public virtual Post Post { get; set; }
     }
 }

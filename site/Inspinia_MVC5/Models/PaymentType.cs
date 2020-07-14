@@ -12,19 +12,18 @@ namespace Inspinia_MVC5.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Mode
+    public partial class PaymentType
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Mode()
+        public PaymentType()
         {
-            this.EventModes = new HashSet<EventMode>();
+            this.TerminalStateInfoes = new HashSet<TerminalStateInfo>();
         }
     
-        public int IDMode { get; set; }
-        public short Code { get; set; }
+        public int IDPaymentType { get; set; }
         public string Name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EventMode> EventModes { get; set; }
+        public virtual ICollection<TerminalStateInfo> TerminalStateInfoes { get; set; }
     }
 }
