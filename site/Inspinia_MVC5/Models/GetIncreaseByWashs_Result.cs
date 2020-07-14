@@ -10,20 +10,17 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class TerminalStateType
+    public partial class GetIncreaseByWashs_Result
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TerminalStateType()
-        {
-            this.TerminalStates = new HashSet<TerminalState>();
-        }
-    
-        public int IDStateType { get; set; }
-        public string Name { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TerminalState> TerminalStates { get; set; }
+        public short RegionCode { get; set; }
+        public string RegionName { get; set; }
+        public string WashCode { get; set; }
+        public string WashAddress { get; set; }
+        public Nullable<int> m10 { get; set; }
+        public int b10 { get; set; }
+        public Nullable<int> b50 { get; set; }
+        public Nullable<int> b100 { get; set; }
+        public Nullable<int> b200 { get; set; }
     }
 }

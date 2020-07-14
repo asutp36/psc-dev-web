@@ -10,16 +10,13 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class CardOperation
+    public partial class GetIncreaseOnWashes_Result
     {
-        public int IDCardOpration { get; set; }
-        public int IDState { get; set; }
-        public int IDDevice { get; set; }
-        public string CardNum { get; set; }
-        public System.DateTime DTime { get; set; }
-    
-        public virtual TerminalState TerminalState { get; set; }
+        public string region { get; set; }
+        public int IDWash { get; set; }
+        public string washName { get; set; }
+        public string washAddress { get; set; }
+        public Nullable<int> amount { get; set; }
     }
 }

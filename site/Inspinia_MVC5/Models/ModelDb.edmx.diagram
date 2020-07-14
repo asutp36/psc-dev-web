@@ -4,46 +4,40 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="e45f112894164c3782638ee0cc9cbdde" Name="Diagram1">
-        <EntityTypeShape EntityType="ModelDb.CardOperation" Width="1.5" PointX="5.25" PointY="3.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.Card" Width="1.5" PointX="7.5" PointY="41.875" IsExpanded="true" />
+      <Diagram DiagramId="e85a9824055746d1be65240fde77985e" Name="Diagram1">
+        <EntityTypeShape EntityType="ModelDb.Card" Width="1.5" PointX="7.5" PointY="41.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ModelDb.CardStatus" Width="1.5" PointX="5.25" PointY="39.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.CardType" Width="1.5" PointX="5.25" PointY="42.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.Collection" Width="1.5" PointX="9.75" PointY="11.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.CardType" Width="1.5" PointX="5.25" PointY="42.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.Collection" Width="1.5" PointX="9.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ModelDb.CollectionsFact" Width="1.5" PointX="9.75" PointY="15.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.CollectionsPre" Width="1.5" PointX="9.75" PointY="19.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.Company" Width="1.5" PointX="0.75" PointY="23.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.CollectionsPre" Width="1.5" PointX="9.75" PointY="19.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.Company" Width="1.5" PointX="0.75" PointY="23" IsExpanded="true" />
         <EntityTypeShape EntityType="ModelDb.CountersOperating" Width="1.5" PointX="9.75" PointY="22.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.CountersTotal" Width="1.5" PointX="9.75" PointY="26.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.CountersTotal" Width="1.5" PointX="9.75" PointY="26.5" IsExpanded="true" />
         <EntityTypeShape EntityType="ModelDb.CountersTotalPre" Width="1.5" PointX="9.75" PointY="31.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.Device" Width="1.5" PointX="5.25" PointY="18.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.DeviceType" Width="1.5" PointX="3" PointY="19" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.Event" Width="1.5" PointX="12.75" PointY="22.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.Device" Width="1.5" PointX="5.25" PointY="18.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.DeviceType" Width="1.5" PointX="3" PointY="18.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.Event" Width="1.5" PointX="12.75" PointY="22.25" IsExpanded="true" />
         <EntityTypeShape EntityType="ModelDb.EventCollect" Width="1.5" PointX="15" PointY="19.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.EventIncrease" Width="1.5" PointX="15" PointY="23" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.EventKind" Width="1.5" PointX="10.5" PointY="9" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.EventMode" Width="1.5" PointX="18" PointY="22.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.EventIncrease" Width="1.5" PointX="15" PointY="22.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.EventKind" Width="1.5" PointX="10.5" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.EventMode" Width="1.5" PointX="18" PointY="22.125" IsExpanded="true" />
         <EntityTypeShape EntityType="ModelDb.EventSimple" Width="1.5" PointX="15" PointY="30.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.Finance" Width="1.5" PointX="7.5" PointY="18.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.Finance" Width="1.5" PointX="7.5" PointY="18.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ModelDb.FinanceType" Width="1.5" PointX="5.25" PointY="14.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.Mode" Width="1.5" PointX="15.75" PointY="27" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.NoticeHistory" Width="1.5" PointX="3" PointY="7" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.NoticeRecipientsGroup" Width="1.5" PointX="0.75" PointY="7.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.NoticeStatu" Width="1.5" PointX="0.75" PointY="10.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.NumsMobileCard" Width="1.5" PointX="0.75" PointY="0.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.Operation" Width="1.5" PointX="9.75" PointY="46.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.OperationType" Width="1.5" PointX="7.5" PointY="51.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.Owner" Width="1.5" PointX="5.25" PointY="45" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.PaymentType" Width="1.5" PointX="6" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.Mode" Width="1.5" PointX="15.75" PointY="26.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.NoticeHistory" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.NoticeRecipientsGroup" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.NoticeStatu" Width="1.5" PointX="0.75" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.NumsMobileCard" Width="1.5" PointX="2.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.Operation" Width="1.5" PointX="9.75" PointY="46.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.OperationType" Width="1.5" PointX="7.5" PointY="51.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.Owner" Width="1.5" PointX="5.25" PointY="44.875" IsExpanded="true" />
         <EntityTypeShape EntityType="ModelDb.Post" Width="1.5" PointX="7.5" PointY="22" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.Psce" Width="1.5" PointX="7.5" PointY="47.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.Psce" Width="1.5" PointX="7.5" PointY="47.625" IsExpanded="true" />
         <EntityTypeShape EntityType="ModelDb.Region" Width="1.5" PointX="3" PointY="22.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.TerminalState" Width="1.5" PointX="3" PointY="3.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.TerminalStateInfo" Width="1.5" PointX="8.25" PointY="2.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.TerminalStateType" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.User" Width="1.5" PointX="5.75" PointY="7.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ModelDb.Wash" Width="1.5" PointX="5.25" PointY="22.625" IsExpanded="true" />
-        <AssociationConnector Association="ModelDb.FK_CardOperations_TerminalState" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ModelDb.User" Width="1.5" PointX="4.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ModelDb.Wash" Width="1.5" PointX="5.25" PointY="22.5" IsExpanded="true" />
         <AssociationConnector Association="ModelDb.FK_Cards_CardStatuses" ManuallyRouted="false" />
         <AssociationConnector Association="ModelDb.FK_Cards_CardTypes" ManuallyRouted="false" />
         <AssociationConnector Association="ModelDb.FK_Cards_Owners" ManuallyRouted="false" />
@@ -70,12 +64,9 @@
         <AssociationConnector Association="ModelDb.FK_NoticeHistory_NoticeStatus" ManuallyRouted="false" />
         <AssociationConnector Association="ModelDb.FK_Operations_OperationTypes" ManuallyRouted="false" />
         <AssociationConnector Association="ModelDb.FK_Operations_Pcses" ManuallyRouted="false" />
-        <AssociationConnector Association="ModelDb.FK_TerminalStateInfo_PaymentTypes" ManuallyRouted="false" />
         <AssociationConnector Association="ModelDb.FK_Posts_Wash" ManuallyRouted="false" />
         <AssociationConnector Association="ModelDb.FK_Pcses_Wash" ManuallyRouted="false" />
         <AssociationConnector Association="ModelDb.FK_Wash_Regions" ManuallyRouted="false" />
-        <AssociationConnector Association="ModelDb.FK_TerminalState_TerminalStateTypes" ManuallyRouted="false" />
-        <AssociationConnector Association="ModelDb.FK_TerminalStateInfo_TerminalState" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

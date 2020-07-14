@@ -10,24 +10,16 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class TerminalStateInfo
+    public partial class GetIncreaseByEvents_Result
     {
-        public int IDStateInfo { get; set; }
-        public int IDState { get; set; }
-        public int IDDevice { get; set; }
-        public int IDPaymentType { get; set; }
+        public short RegionCode { get; set; }
+        public string RegionName { get; set; }
+        public string WashCode { get; set; }
+        public string WashAddress { get; set; }
+        public string PostCode { get; set; }
+        public string PostName { get; set; }
         public System.DateTime DTime { get; set; }
-        public int m10 { get; set; }
-        public int b50 { get; set; }
-        public int b100 { get; set; }
-        public int b200 { get; set; }
-        public int b500 { get; set; }
-        public int b1000 { get; set; }
-        public int b2000 { get; set; }
-    
-        public virtual PaymentType PaymentType { get; set; }
-        public virtual TerminalState TerminalState { get; set; }
+        public Nullable<int> amount { get; set; }
     }
 }

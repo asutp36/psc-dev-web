@@ -10,21 +10,13 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class Mode
+    public partial class GetEventsByPost_Result
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Mode()
-        {
-            this.EventModes = new HashSet<EventMode>();
-        }
-    
-        public int IDMode { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EventMode> EventModes { get; set; }
+        public string PostCode { get; set; }
+        public System.DateTime DTime { get; set; }
+        public string KindEventCode { get; set; }
+        public string KindEvent { get; set; }
+        public string DataCommon { get; set; }
     }
 }

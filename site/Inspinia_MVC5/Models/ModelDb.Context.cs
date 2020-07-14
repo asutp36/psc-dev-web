@@ -27,7 +27,6 @@ namespace Inspinia_MVC5.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<CardOperation> CardOperations { get; set; }
         public virtual DbSet<Card> Cards { get; set; }
         public virtual DbSet<CardStatus> CardStatuses { get; set; }
         public virtual DbSet<CardType> CardTypes { get; set; }
@@ -56,15 +55,101 @@ namespace Inspinia_MVC5.Models
         public virtual DbSet<Operation> Operations { get; set; }
         public virtual DbSet<OperationType> OperationTypes { get; set; }
         public virtual DbSet<Owner> Owners { get; set; }
-        public virtual DbSet<PaymentType> PaymentTypes { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Psce> Psces { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
-        public virtual DbSet<TerminalState> TerminalStates { get; set; }
-        public virtual DbSet<TerminalStateInfo> TerminalStateInfoes { get; set; }
-        public virtual DbSet<TerminalStateType> TerminalStateTypes { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Wash> Washes { get; set; }
+    
+        public virtual int CardDecrease(string p_CardNum, Nullable<int> p_Amount)
+        {
+            var p_CardNumParameter = p_CardNum != null ?
+                new ObjectParameter("p_CardNum", p_CardNum) :
+                new ObjectParameter("p_CardNum", typeof(string));
+    
+            var p_AmountParameter = p_Amount.HasValue ?
+                new ObjectParameter("p_Amount", p_Amount) :
+                new ObjectParameter("p_Amount", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("CardDecrease", p_CardNumParameter, p_AmountParameter);
+        }
+    
+        public virtual int CardIncrease(string p_CardNum, Nullable<int> p_Amount)
+        {
+            var p_CardNumParameter = p_CardNum != null ?
+                new ObjectParameter("p_CardNum", p_CardNum) :
+                new ObjectParameter("p_CardNum", typeof(string));
+    
+            var p_AmountParameter = p_Amount.HasValue ?
+                new ObjectParameter("p_Amount", p_Amount) :
+                new ObjectParameter("p_Amount", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("CardIncrease", p_CardNumParameter, p_AmountParameter);
+        }
+    
+        public virtual int CardIncreaseByPhone(string p_Phone, Nullable<int> p_Amount)
+        {
+            var p_PhoneParameter = p_Phone != null ?
+                new ObjectParameter("p_Phone", p_Phone) :
+                new ObjectParameter("p_Phone", typeof(string));
+    
+            var p_AmountParameter = p_Amount.HasValue ?
+                new ObjectParameter("p_Amount", p_Amount) :
+                new ObjectParameter("p_Amount", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("CardIncreaseByPhone", p_PhoneParameter, p_AmountParameter);
+        }
+    
+        public virtual ObjectResult<GetBoxAndCollect_Result> GetBoxAndCollect(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetBoxAndCollect_Result>("GetBoxAndCollect", p_DateBegParameter, p_DateEndParameter);
+        }
+    
+        public virtual ObjectResult<GetBoxByPosts_Result> GetBoxByPosts(Nullable<System.DateTime> p_ReportDate, Nullable<short> p_RegionCode, string p_WashCode, string p_PostCode)
+        {
+            var p_ReportDateParameter = p_ReportDate.HasValue ?
+                new ObjectParameter("p_ReportDate", p_ReportDate) :
+                new ObjectParameter("p_ReportDate", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetBoxByPosts_Result>("GetBoxByPosts", p_ReportDateParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
+        }
+    
+        public virtual ObjectResult<GetBoxByWashs_Result> GetBoxByWashs(Nullable<System.DateTime> p_ReportDate, Nullable<short> p_RegionCode, string p_WashCode)
+        {
+            var p_ReportDateParameter = p_ReportDate.HasValue ?
+                new ObjectParameter("p_ReportDate", p_ReportDate) :
+                new ObjectParameter("p_ReportDate", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetBoxByWashs_Result>("GetBoxByWashs", p_ReportDateParameter, p_RegionCodeParameter, p_WashCodeParameter);
+        }
     
         public virtual ObjectResult<Nullable<int>> GetCardBalance(string card)
         {
@@ -270,6 +355,73 @@ namespace Inspinia_MVC5.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCardsOperations_Result>("GetCardsOperations", p_PhoneParameter, p_CardnumParameter, p_CardTypeCodeParameter, p_CardStatusNameParameter, p_OperationTypeNameParameter, p_OperationDateBegParameter, p_OperationDateEndParameter, p_LocalizedByParameter, p_LocalizedIDParameter);
         }
     
+        public virtual ObjectResult<GetCollectByDays_Result> GetCollectByDays(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCollectByDays_Result>("GetCollectByDays", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter);
+        }
+    
+        public virtual ObjectResult<GetCollectByPosts_Result> GetCollectByPosts(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode, string p_PostCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCollectByPosts_Result>("GetCollectByPosts", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
+        }
+    
+        public virtual ObjectResult<GetCollectByWashs_Result> GetCollectByWashs(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCollectByWashs_Result>("GetCollectByWashs", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter);
+        }
+    
         public virtual ObjectResult<GetCollectWashList_Result> GetCollectWashList(Nullable<int> p_RegionCode, string p_WashCode, string p_PostCode, Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
         {
             var p_RegionCodeParameter = p_RegionCode.HasValue ?
@@ -295,6 +447,19 @@ namespace Inspinia_MVC5.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCollectWashList_Result>("GetCollectWashList", p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter, p_DateBegParameter, p_DateEndParameter);
         }
     
+        public virtual ObjectResult<GetDayIncrease_Result> GetDayIncrease(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetDayIncrease_Result>("GetDayIncrease", p_DateBegParameter, p_DateEndParameter);
+        }
+    
         public virtual ObjectResult<GetDayReportIncrease_Result> GetDayReportIncrease(string p_WashCode, Nullable<System.DateTime> p_ReportDate)
         {
             var p_WashCodeParameter = p_WashCode != null ?
@@ -306,6 +471,27 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_ReportDate", typeof(System.DateTime));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetDayReportIncrease_Result>("GetDayReportIncrease", p_WashCodeParameter, p_ReportDateParameter);
+        }
+    
+        public virtual ObjectResult<GetEventsByPost_Result> GetEventsByPost(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, string p_PostCode, string p_KindEventCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            var p_KindEventCodeParameter = p_KindEventCode != null ?
+                new ObjectParameter("p_KindEventCode", p_KindEventCode) :
+                new ObjectParameter("p_KindEventCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEventsByPost_Result>("GetEventsByPost", p_DateBegParameter, p_DateEndParameter, p_PostCodeParameter, p_KindEventCodeParameter);
         }
     
         public virtual ObjectResult<GetFinanceByNominals_Result> GetFinanceByNominals(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
@@ -345,6 +531,127 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_DateEnd", typeof(System.DateTime));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFinanceSummary_Result>("GetFinanceSummary", p_DateBegParameter, p_DateEndParameter);
+        }
+    
+        public virtual ObjectResult<GetIncreaseByEvents_Result> GetIncreaseByEvents(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode, string p_PostCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetIncreaseByEvents_Result>("GetIncreaseByEvents", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
+        }
+    
+        public virtual ObjectResult<GetIncreaseByPosts_Result> GetIncreaseByPosts(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode, string p_PostCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetIncreaseByPosts_Result>("GetIncreaseByPosts", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
+        }
+    
+        public virtual ObjectResult<GetIncreaseByWashs_Result> GetIncreaseByWashs(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetIncreaseByWashs_Result>("GetIncreaseByWashs", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter);
+        }
+    
+        public virtual ObjectResult<GetIncreaseOnPosts_Result> GetIncreaseOnPosts(Nullable<int> p_RegionCode, string p_WashCode, string p_PostCode, Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        {
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(int));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetIncreaseOnPosts_Result>("GetIncreaseOnPosts", p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter, p_DateBegParameter, p_DateEndParameter);
+        }
+    
+        public virtual ObjectResult<GetIncreaseOnWashes_Result> GetIncreaseOnWashes(Nullable<int> p_RegionCode, string p_WashCode, string p_PostCode, Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        {
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(int));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetIncreaseOnWashes_Result>("GetIncreaseOnWashes", p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter, p_DateBegParameter, p_DateEndParameter);
         }
     
         public virtual ObjectResult<GetNoticeHistoryList_Result> GetNoticeHistoryList(string p_Sender, Nullable<System.DateTime> p_DateReceiveBeg, Nullable<System.DateTime> p_DateReceiveEnd, string p_RecipientsCode, string p_RecipientsName, Nullable<System.DateTime> p_DateSentBeg, Nullable<System.DateTime> p_DateSentEnd, string p_NoticeStatusCode, string p_NoticeStatusName, string p_Message)
@@ -449,6 +756,106 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_DateEnd", typeof(System.DateTime));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetWashAmounts_Result>("GetWashAmounts", p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter, p_DateBegParameter, p_DateEndParameter);
+        }
+    
+        public virtual ObjectResult<RptIncreaseByPosts_Result> RptIncreaseByPosts(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode, string p_PostCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<RptIncreaseByPosts_Result>("RptIncreaseByPosts", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
+        }
+    
+        public virtual ObjectResult<RptWashPrevBox_Result> RptWashPrevBox(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode, string p_PostCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<RptWashPrevBox_Result>("RptWashPrevBox", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
+        }
+    
+        public virtual ObjectResult<RptWashPrevCash_Result> RptWashPrevCash(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode, string p_PostCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<RptWashPrevCash_Result>("RptWashPrevCash", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
+        }
+    
+        public virtual ObjectResult<RptWashPrevFunc_Result> RptWashPrevFunc(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode, string p_PostCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            var p_PostCodeParameter = p_PostCode != null ?
+                new ObjectParameter("p_PostCode", p_PostCode) :
+                new ObjectParameter("p_PostCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<RptWashPrevFunc_Result>("RptWashPrevFunc", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
         }
     }
 }

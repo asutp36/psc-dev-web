@@ -10,21 +10,18 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class Mode
+    public partial class GetCollectByDays_Result
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Mode()
-        {
-            this.EventModes = new HashSet<EventMode>();
-        }
-    
-        public int IDMode { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EventMode> EventModes { get; set; }
+        public short RegionCode { get; set; }
+        public string RegionName { get; set; }
+        public string WashCode { get; set; }
+        public string WashAddress { get; set; }
+        public Nullable<System.DateTime> CollectDay { get; set; }
+        public Nullable<int> m10 { get; set; }
+        public Nullable<int> b10 { get; set; }
+        public Nullable<int> b50 { get; set; }
+        public Nullable<int> b100 { get; set; }
+        public Nullable<int> b200 { get; set; }
     }
 }

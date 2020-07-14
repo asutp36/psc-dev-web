@@ -10,20 +10,17 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class PaymentType
+    public partial class GetCollectByWashs_Result
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public PaymentType()
-        {
-            this.TerminalStateInfoes = new HashSet<TerminalStateInfo>();
-        }
-    
-        public int IDPaymentType { get; set; }
-        public string Name { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TerminalStateInfo> TerminalStateInfoes { get; set; }
+        public short RegionCode { get; set; }
+        public string RegionName { get; set; }
+        public string WashCode { get; set; }
+        public string WashAddress { get; set; }
+        public Nullable<int> m10 { get; set; }
+        public Nullable<int> b10 { get; set; }
+        public Nullable<int> b50 { get; set; }
+        public Nullable<int> b100 { get; set; }
+        public Nullable<int> b200 { get; set; }
     }
 }

@@ -10,21 +10,19 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class Mode
+    public partial class GetDayIncrease_Result
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Mode()
-        {
-            this.EventModes = new HashSet<EventMode>();
-        }
-    
-        public int IDMode { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EventMode> EventModes { get; set; }
+        public Nullable<System.DateTime> reportdate { get; set; }
+        public int typedata { get; set; }
+        public string Wash { get; set; }
+        public string WashAddress { get; set; }
+        public string data1DataData1datapostname { get; set; }
+        public Nullable<int> data1DataData1datam10 { get; set; }
+        public int data1DataData1datab10 { get; set; }
+        public Nullable<int> data1DataData1datab50 { get; set; }
+        public Nullable<int> data1DataData1datab100 { get; set; }
+        public Nullable<int> data1DataData1datab500 { get; set; }
+        public int data1DataData1datab1k { get; set; }
     }
 }

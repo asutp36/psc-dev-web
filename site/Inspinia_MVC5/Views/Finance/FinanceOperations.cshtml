@@ -48,9 +48,9 @@
                        begTime = ViewBag.timeOperationBeg,
                        endTime = ViewBag.timeOperationEnd})
                 </div>
-                <div class="ibox-content-more">
+                @*<div class="ibox-content-more">
                     <small>@DateTime.Now.ToString("dd MMMM yyyy")</small>
-                </div>
+                </div>*@
             </div>
         </div>
         <div class="col-sm-5 finance-operations-chart">
@@ -59,14 +59,14 @@
                     <span class="label label-success float-right">по номиналу</span>
                     <h5>Количество купюр</h5>
                 </div>
-                <div class="ibox-content-chart">
-                    <canvas id="popChart" height="140" weight="250"></canvas>
-                </div>
                 <div class="ibox-content">
+                    <canvas id="popChart" height="180" weight="250"></canvas>
+                </div>
+                @*<div class="ibox-content">
                     @Html.Action("UpdateFinanceOperationsByNominals", "Finance", new {
                        begTime = ViewBag.timeOperationBeg,
                        endTime = ViewBag.timeOperationEnd})
-                </div>
+                </div>*@
             </div>
         </div>
     </div>
@@ -99,7 +99,7 @@
     @Scripts.Render("~/plugins/select2")
     @Scripts.Render("~/plugins/chartjs")
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
         function initDataTable() {
             $('.table_incashwashes').DataTable({
@@ -133,14 +133,36 @@
 
         $(document).ready(function () {
 
+            var startDate = moment().startOf('day').format('DD.MM.YYYY HH:mm:ss');
+            var stopDate = moment().format('DD.MM.YYYY HH:mm:ss');
+            var chartdata;
+
+            $.ajax({
+                    type: "GET",
+                    cache: false,
+                    data: {
+                        begTime: startDate,
+                        endTime: stopDate,
+                    },
+                    error: function () {
+                        alert('Error occured');
+                    },
+                    url: "@Url.Action("UpdateFinanceOperationsByNominals", "Finance")",
+                }).done(function (result) {
+                    chartdata = eval(result);
+                    barChart.data.datasets[0].data = chartdata;
+                    barChart.update();
+                });
+
+
             var popCanvas = document.getElementById("popChart");
             var barChart = new Chart(popCanvas, {
                 type: 'doughnut',
                 data: {
-                    labels: ["50", "100", "200", "500", "1 000"],
+                    labels: ["10", "50", "100", "200", "500", "1 000", "2 000"],
                     datasets: [{
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: ["#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba"]
+                        data: chartdata,
+                        backgroundColor: ["#e8ce7c", "#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba", "#8adffc"]
                     }]
                 },
                 options: {
@@ -158,27 +180,27 @@
             });
 
             initDataTable();
-            
-            $(document).on("click", "#clear_drp_op", function () {
-                $('#time-operation-filter span').empty();
-                $('#filter-timeoperationbeg').val("");
-                $('#filter-timeoperationend').val("");
-            });
+
+            //$(document).on("click", "#clear_drp_op", function () {
+            //    $('#time-operation-filter span').empty();
+            //    $('#filter-timeoperationbeg').val("");
+            //    $('#filter-timeoperationend').val("");
+            //});
 
             $(document).on("click", "#btn-for-filter", function () {
                 var startDate = $('#filter-timeoperationbeg').val();
                 var stopDate = $('#filter-timeoperationend').val();
 
-                var doughnutData = {
-                    labels: ["50", "100", "200", "500", "1 000"],
-                    datasets: [{
-                        data: [25, 104, 45, 10, 60],
-                        backgroundColor: ["#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba"]
-                    }]
-                };
-                popCanvas.getContext("2d").clearRect(0,0,popCanvas.width, popCanvas.height);
-                barChart.data = doughnutData;
-                barChart.update();
+                //var doughnutData = {
+                //    labels: ["50", "100", "200", "500", "1 000"],
+                //    datasets: [{
+                //        data: [25, 104, 45, 10, 60],
+                //        backgroundColor: ["#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba"]
+                //    }]
+                //};
+                //popCanvas.getContext("2d").clearRect(0,0,popCanvas.width, popCanvas.height);
+                //barChart.data = doughnutData;
+                //barChart.update();
 
                 $.ajax({
                     type: "GET",
@@ -238,36 +260,40 @@
                     },
                     url: "@Url.Action("UpdateFinanceOperationsByNominals", "Finance")",
                 }).done(function (result) {
-                    $('.finance-operations-chart').find('.ibox-content').html(result);
+
+                    //вывод количества каждой купюры под пончиком
+                    //$('.finance-operations-chart').find('.ibox-content').html(result);
+
+                    //var chartdata = eval(result);
+
+                    //var popCanvas = document.getElementById("popChart");
+                    //var barChart = new Chart(popCanvas, {
+                    //    type: 'doughnut',
+                    //    data: {
+                    //        labels: ["10", "50", "100", "200", "500", "1 000", "2 000"],
+                    //        datasets: [{
+                    //            data: chartdata,
+                    //            backgroundColor: ["#e8ce7c", "#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba", "#8adffc"]
+                    //        }]
+                    //    },
+                    //    options: {
+                    //        maintainAspectRatio: false,
+                    //        responsive: false,
+                    //        animation: {
+                    //            animateScale: true
+                    //        },
+                    //        legend: {
+                    //            position: 'left'
+                    //        },
+                    //        rotation: Math.PI * 1,
+                    //        circumference: Math.PI * 1,
+                    //    }
+                    //});
 
                     var chartdata = eval(result);
-
-                    var popCanvas = document.getElementById("popChart");
-                    var barChart = new Chart(popCanvas, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ["50", "100", "200", "500", "1 000"],
-                            datasets: [{
-                                data: chartdata,
-                                backgroundColor: ["#d9e6e6", "#d9d5b0", "#80cb78", "#b8878b", "#6eaeba"]
-                            }]
-                        },
-                        options: {
-                            maintainAspectRatio: false,
-                            responsive: false,
-                            animation: {
-                                animateScale: true
-                            },
-                            legend: {
-                                position: 'left'
-                            },
-                            rotation: Math.PI * 1,
-                            circumference: Math.PI * 1,
-                        }
-                    });
+                    barChart.data.datasets[0].data = chartdata;
+                    barChart.update();
                 });
-
-
             });
         });
 
@@ -333,5 +359,5 @@
             $('#filter-timeoperationbeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
             $('#filter-timeoperationend').val(end.format('DD.MM.YYYY HH:mm:ss'));
         });
-    </script>
+</script>
 }
