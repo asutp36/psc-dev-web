@@ -273,7 +273,7 @@ namespace MobileIntegration.Controllers
                         {
                             if (model.balance > 50)
                             {
-                                if (model.post.Equals("ECOcw_m15_1"))
+                                if (model.post.Equals("m15_1"))
                                 {
                                     int amount = 0;
 
@@ -282,13 +282,15 @@ namespace MobileIntegration.Controllers
                                     else
                                         amount = model.balance;
 
-                                    HttpResponse resp = Sender.SendPost("address", JsonConvert.SerializeObject(new StartPostDevModel
+                                    Logger.Log.Debug("StartPost: запуск настоящего поста");
+                                    HttpResponse resp = Sender.SendPost("http://192.168.202.6:5000/api/post/balance/increase", JsonConvert.SerializeObject(new StartPostDevModel
                                     {
                                         Amount = amount,
                                         Dtime = model.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
                                         CardNum = model.card
                                     }));
 
+                                    Logger.Log.Debug("Результат: " + resp.StatusCode);
                                     return Request.CreateResponse(resp.StatusCode);
                                 }
                                 else
@@ -352,22 +354,45 @@ namespace MobileIntegration.Controllers
                         {
                             if (model.balance > 50)
                             {
-                                var post = _model.Posts.Where(p => p.Code == model.post).FirstOrDefault();
-
-                                if (post != null)
+                                if (model.post.Equals("m15_1"))
                                 {
-                                    if (post.Code == "М202-2")
+                                    int amount = 0;
+
+                                    if (model.balance > 500)
+                                        amount = 500;
+                                    else
+                                        amount = model.balance;
+
+                                    Logger.Log.Debug("StartPost: запуск настоящего поста");
+                                    HttpResponse resp = Sender.SendPost("http://192.168.202.6:5000/api/post/balance/increase", JsonConvert.SerializeObject(new StartPostDevModel
                                     {
-                                        Logger.Log.Error(String.Format("StartPost: Post {0} is busy", post.Code) + Environment.NewLine);
-                                        return Request.CreateResponse((HttpStatusCode)423);
+                                        Amount = amount,
+                                        Dtime = model.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
+                                        CardNum = model.card
+                                    }));
+
+                                    Logger.Log.Debug("Результат: " + resp.StatusCode);
+                                    return Request.CreateResponse(resp.StatusCode);
+                                }
+                                else
+                                {
+                                    var post = _model.Posts.Where(p => p.Code == model.post).FirstOrDefault();
+
+                                    if (post != null)
+                                    {
+                                        if (post.Code == "М202-2")
+                                        {
+                                            Logger.Log.Error(String.Format("StartPost: Post {0} is busy", post.Code) + Environment.NewLine);
+                                            return Request.CreateResponse((HttpStatusCode)423);
+                                        }
+
+                                        Logger.Log.Debug(String.Format("StartPost: Starting post {0}", post.Code) + Environment.NewLine);
+                                        return Request.CreateResponse(HttpStatusCode.OK);
                                     }
 
-                                    Logger.Log.Debug(String.Format("StartPost: Starting post {0}", post.Code) + Environment.NewLine);
-                                    return Request.CreateResponse(HttpStatusCode.OK);
+                                    Logger.Log.Error("StartPost: Post not found" + Environment.NewLine);
+                                    return Request.CreateResponse(HttpStatusCode.NotFound);
                                 }
-
-                                Logger.Log.Error("StartPost: Post not found" + Environment.NewLine);
-                                return Request.CreateResponse(HttpStatusCode.NotFound);
                             }
 
                             Logger.Log.Error("StartPost: Balance is weak" + Environment.NewLine);
@@ -395,7 +420,7 @@ namespace MobileIntegration.Controllers
             Logger.InitLogger();
             Logger.Log.Debug($"StopPost: отправка списания по карте {model.card}");
 
-            HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), "1", model.balance)));
+            HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), "m15_1", model.balance)));
 
             Logger.Log.Debug("StopPost: Ответ от их сервера: " + resp.ResultMessage);
 
@@ -560,17 +585,17 @@ namespace MobileIntegration.Controllers
                     }
 
                     // отправка карты в приложение
-                    //HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/user-create", JsonConvert.SerializeObject(card));
+                    HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/user-create", JsonConvert.SerializeObject(card));
 
                     Logger.Log.Debug("SendNewCardDev: отправлена карта: " + JsonConvert.SerializeObject(card));
 
-                    //if (resp.StatusCode != HttpStatusCode.OK)
-                    //{
-                    //    Logger.Log.Debug("SendNewCardDev: отправлена новая карта. Ответ сервера: " + JsonConvert.SerializeObject(resp) + Environment.NewLine);
-                    //    return Request.CreateResponse(resp.StatusCode);
-                    //}
+                    if (resp.StatusCode != HttpStatusCode.OK)
+                    {
+                        Logger.Log.Debug("SendNewCardDev: отправлена новая карта. Ответ сервера: " + JsonConvert.SerializeObject(resp) + Environment.NewLine);
+                        return Request.CreateResponse(resp.StatusCode);
+                    }
 
-                    //Logger.Log.Debug("SendNewCardDev: отправлена новая карта. Ответ сервера: " + JsonConvert.SerializeObject(resp));
+                    Logger.Log.Debug("SendNewCardDev: отправлена новая карта. Ответ сервера: " + JsonConvert.SerializeObject(resp));
 
                     // запись в нашу базу внесения
                     if (_model.Database.Exists())
@@ -606,17 +631,17 @@ namespace MobileIntegration.Controllers
                     }
 
                     // отправка пополнения на пост
-                    //HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-replenish", JsonConvert.SerializeObject(new Increase
-                    //{
-                    //    time_send = dtime.ToString("yyyy-MM-dd HH:mm:ss"),
-                    //    hash = CryptHash.GetHashCode(dtime.ToString("yyyy-MM-dd HH:mm:ss")),
-                    //    card = newCard.card,
-                    //    value = newCard.value,
-                    //    wash_id = "1",
-                    //    operation_time = dtime.ToString("yyyy-MM-dd HH:mm:ss")
-                    //}));
+                    resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-replenish", JsonConvert.SerializeObject(new Increase
+                    {
+                        time_send = dtime.ToString("yyyy-MM-dd HH:mm:ss"),
+                        hash = CryptHash.GetHashCode(dtime.ToString("yyyy-MM-dd HH:mm:ss")),
+                        card = newCard.card,
+                        value = newCard.value,
+                        wash_id = "1",
+                        operation_time = dtime.ToString("yyyy-MM-dd HH:mm:ss")
+                    }));
 
-                    Logger.Log.Debug("SendNewCardDev: отправлено пополнение. Ответ сервера:" /*+ JsonConvert.SerializeObject(resp)*/ + Environment.NewLine);
+                    Logger.Log.Debug("SendNewCardDev: отправлено пополнение. Ответ сервера:" + JsonConvert.SerializeObject(resp) + Environment.NewLine);
 
                     _model.Database.Connection.Close();
                     return Request.CreateResponse(HttpStatusCode.OK);
