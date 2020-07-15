@@ -446,41 +446,41 @@ namespace MobileIntegration.Controllers
             
             Logger.Log.Debug($"StopPost: отправка списания по карте {model.card}");
 
-            //try
-            //{
+            try
+            {
 
 
-            //    if (_model.Database.Exists())
-            //    {
-            //        _model.Database.Connection.Open();
-            //        Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
+                if (_model.Database.Exists())
+                {
+                    _model.Database.Connection.Open();
+                    Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
-            //        DbCommand commandBalance = _model.Database.Connection.CreateCommand();
-            //        commandBalance.CommandText = $"select " +
-            //            $"isnull(o.Balance, 0) " +
-            //            $"from Cards c " +
-            //            $"left join Operations o on o.IDCard = c.IDCard " +
-            //            $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
-            //            $"where c.CardNum = '{model.card}'";
+                    DbCommand commandBalance = _model.Database.Connection.CreateCommand();
+                    commandBalance.CommandText = $"select " +
+                        $"isnull(o.Balance, 0) " +
+                        $"from Cards c " +
+                        $"left join Operations o on o.IDCard = c.IDCard " +
+                        $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
+                        $"where c.CardNum = '{model.card}'";
 
-            //        DbCommand command = _model.Database.Connection.CreateCommand();
-            //        command.CommandText = "INSERT INTO Operations (IDCard, IDPsc, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
-            //                                $" VALUES((select IDCard from Cards where CardNum = '{model.card}'), " +
-            //                                $"(select IDPsc from Psces where Name = 'MobileApp'), 3, \'{model.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {model.balance}," +
-            //                                $" ({commandBalance.CommandText}) - {model.balance}, -1, -1);" +
-            //                                " SELECT SCOPE_IDENTITY()";
+                    DbCommand command = _model.Database.Connection.CreateCommand();
+                    command.CommandText = "INSERT INTO Operations (IDCard, IDPsc, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+                                            $" VALUES((select IDCard from Cards where CardNum = '{model.card}'), " +
+                                            $"(select IDPsc from Psces where Name = 'MobileApp'), 3, \'{model.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {model.balance}," +
+                                            $" ({commandBalance.CommandText}) - {model.balance}, -1, -1);" +
+                                            " SELECT SCOPE_IDENTITY()";
 
-            //        Logger.Log.Debug("Command is: " + command.CommandText);
+                    Logger.Log.Debug("Command is: " + command.CommandText);
 
-            //        var id = command.ExecuteScalar();
+                    var id = command.ExecuteScalar();
 
-            //        Logger.Log.Debug("StopPostDev: записано списание. IDOperation: " + id.ToString());
-            //    }
-            //}
-            //catch(Exception e)
-            //{
-            //    Logger.Log.Error("StopPostDev: ошибка при записи операции в базу.\n" + e.Message + Environment.NewLine + e.StackTrace);
-            //}
+                    Logger.Log.Debug("StopPostDev: записано списание. IDOperation: " + id.ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log.Error("StopPostDev: ошибка при записи операции в базу.\n" + e.Message + Environment.NewLine + e.StackTrace);
+            }
 
             Logger.Log.Debug("StopPostDev: отправка конца мойки");
 
