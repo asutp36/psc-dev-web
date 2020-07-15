@@ -283,12 +283,25 @@ namespace MobileIntegration.Controllers
                                         amount = model.balance;
 
                                     Logger.Log.Debug("StartPost: запуск настоящего поста");
-                                    HttpResponse resp = Sender.SendPost("http://192.168.202.6:5000/api/post/balance/increase", JsonConvert.SerializeObject(new StartPostDevModel
+                                    // 424 елси не удалось подключиться
+                                    HttpResponse resp = Sender.SendPost("http://192.168.202.6:5000/api/post/balance/increase/card", JsonConvert.SerializeObject(new StartPostDevModel
                                     {
                                         Amount = amount,
                                         Dtime = model.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
                                         CardNum = model.card
                                     }));
+
+                                    if (resp.StatusCode == 0)
+                                    {
+                                        Logger.Log.Error("StartPost: Не удалось подключиться" + Environment.NewLine);
+                                        return Request.CreateResponse((HttpStatusCode)424);
+                                    }
+
+                                    if (resp.StatusCode == (HttpStatusCode)423)
+                                    {
+                                        Logger.Log.Error(String.Format("StartPost: Post {0} is busy", model.post) + Environment.NewLine);
+                                        return Request.CreateResponse((HttpStatusCode)423);
+                                    }
 
                                     Logger.Log.Debug("Результат: " + resp.StatusCode);
                                     return Request.CreateResponse(resp.StatusCode);
@@ -327,7 +340,7 @@ namespace MobileIntegration.Controllers
                 }
                 catch(Exception e)
                 {
-                    Logger.Log.Error("StartPost: " + e.Message.ToString() + Environment.NewLine);
+                    Logger.Log.Error("StartPost: " + e.Message.ToString() + Environment.NewLine + e.StackTrace.ToString() + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.InternalServerError);
                 }
             }
@@ -364,12 +377,24 @@ namespace MobileIntegration.Controllers
                                         amount = model.balance;
 
                                     Logger.Log.Debug("StartPost: запуск настоящего поста");
-                                    HttpResponse resp = Sender.SendPost("http://192.168.202.6:5000/api/post/balance/increase", JsonConvert.SerializeObject(new StartPostDevModel
+                                    HttpResponse resp = Sender.SendPost("http://192.168.202.6:5000/api/post/balance/increase/card", JsonConvert.SerializeObject(new StartPostDevModel
                                     {
                                         Amount = amount,
                                         Dtime = model.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
                                         CardNum = model.card
                                     }));
+
+                                    if (resp.StatusCode == 0)
+                                    {
+                                        Logger.Log.Error("StartPost: Не удалось подключиться" + Environment.NewLine);
+                                        return Request.CreateResponse((HttpStatusCode)424);
+                                    }
+
+                                    if (resp.StatusCode == (HttpStatusCode)423)
+                                    {
+                                        Logger.Log.Error(String.Format("StartPost: Post {0} is busy", model.post) + Environment.NewLine);
+                                        return Request.CreateResponse((HttpStatusCode)423);
+                                    }
 
                                     Logger.Log.Debug("Результат: " + resp.StatusCode);
                                     return Request.CreateResponse(resp.StatusCode);
@@ -405,7 +430,7 @@ namespace MobileIntegration.Controllers
                 }
                 catch (Exception e)
                 {
-                    Logger.Log.Error("StartPost: " + e.Message.ToString() + Environment.NewLine);
+                    Logger.Log.Error("StartPost: " + e.GetType().ToString() + Environment.NewLine + e.Message.ToString() + Environment.NewLine + e.StackTrace.ToString() + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.InternalServerError);
                 }
             }

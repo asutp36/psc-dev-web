@@ -45,20 +45,32 @@ namespace MobileIntegration.Controllers.Supplies
             request.Accept = "application/json";
             request.ContentLength = postBytes.Length;
 
-            Stream requestStream = request.GetRequestStream();
+            try
+            {
 
-            requestStream.Write(postBytes, 0, postBytes.Length);
-            requestStream.Close();
+
+                Stream requestStream = request.GetRequestStream();
+
+                requestStream.Write(postBytes, 0, postBytes.Length);
+                requestStream.Close();
+            }
+            catch(Exception e)
+            {
+                return new HttpResponse
+                {
+                    ResultMessage = e.Message
+                };
+            }
 
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    return new HttpResponse 
-                    { 
+                    return new HttpResponse
+                    {
                         StatusCode = response.StatusCode,
-                        ResultMessage = response.ToString() 
+                        ResultMessage = response.ToString()
                     };
                 }
                 else
