@@ -283,7 +283,7 @@ namespace MobileIntegration.Controllers
                                         amount = model.balance;
 
                                     Logger.Log.Debug("StartPost: запуск настоящего поста");
-                                    // 424 елси не удалось подключиться
+
                                     HttpResponse resp = Sender.SendPost("http://192.168.202.6:5000/api/post/balance/increase/card", JsonConvert.SerializeObject(new StartPostDevModel
                                     {
                                         Amount = amount,
@@ -443,11 +443,50 @@ namespace MobileIntegration.Controllers
         public HttpResponseMessage StopPostDev([FromBody]StartPostBindingModel model)
         {
             Logger.InitLogger();
+            
             Logger.Log.Debug($"StopPost: отправка списания по карте {model.card}");
+
+            //try
+            //{
+
+
+            //    if (_model.Database.Exists())
+            //    {
+            //        _model.Database.Connection.Open();
+            //        Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
+
+            //        DbCommand commandBalance = _model.Database.Connection.CreateCommand();
+            //        commandBalance.CommandText = $"select " +
+            //            $"isnull(o.Balance, 0) " +
+            //            $"from Cards c " +
+            //            $"left join Operations o on o.IDCard = c.IDCard " +
+            //            $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
+            //            $"where c.CardNum = '{model.card}'";
+
+            //        DbCommand command = _model.Database.Connection.CreateCommand();
+            //        command.CommandText = "INSERT INTO Operations (IDCard, IDPsc, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+            //                                $" VALUES((select IDCard from Cards where CardNum = '{model.card}'), " +
+            //                                $"(select IDPsc from Psces where Name = 'MobileApp'), 3, \'{model.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {model.balance}," +
+            //                                $" ({commandBalance.CommandText}) - {model.balance}, -1, -1);" +
+            //                                " SELECT SCOPE_IDENTITY()";
+
+            //        Logger.Log.Debug("Command is: " + command.CommandText);
+
+            //        var id = command.ExecuteScalar();
+
+            //        Logger.Log.Debug("StopPostDev: записано списание. IDOperation: " + id.ToString());
+            //    }
+            //}
+            //catch(Exception e)
+            //{
+            //    Logger.Log.Error("StopPostDev: ошибка при записи операции в базу.\n" + e.Message + Environment.NewLine + e.StackTrace);
+            //}
+
+            Logger.Log.Debug("StopPostDev: отправка конца мойки");
 
             HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), "m15_1", model.balance)));
 
-            Logger.Log.Debug("StopPost: Ответ от их сервера: " + resp.ResultMessage);
+            Logger.Log.Debug("StopPostDev: Ответ от их сервера: " + resp.ResultMessage);
 
             return Request.CreateErrorResponse(resp.StatusCode, resp.ResultMessage);
         }
