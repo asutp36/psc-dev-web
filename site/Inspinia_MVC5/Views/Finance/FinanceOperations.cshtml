@@ -44,13 +44,15 @@
                     <h5>Поступления</h5>
                 </div>
                 <div class="ibox-content">
-                    @Html.Action("UpdateFinanceOperationsSummary", "Finance", new {
+                    @Html.Action("UpdateFinanceOperationsSummary", "Finance", new
+                    {
                        begTime = ViewBag.timeOperationBeg,
-                       endTime = ViewBag.timeOperationEnd})
+                       endTime = ViewBag.timeOperationEnd
+                    })
                 </div>
                 @*<div class="ibox-content-more">
-                    <small>@DateTime.Now.ToString("dd MMMM yyyy")</small>
-                </div>*@
+                        <small>@DateTime.Now.ToString("dd MMMM yyyy")</small>
+                    </div>*@
             </div>
         </div>
         <div class="col-sm-5 finance-operations-chart">
@@ -63,10 +65,10 @@
                     <canvas id="popChart" height="180" weight="250"></canvas>
                 </div>
                 @*<div class="ibox-content">
-                    @Html.Action("UpdateFinanceOperationsByNominals", "Finance", new {
-                       begTime = ViewBag.timeOperationBeg,
-                       endTime = ViewBag.timeOperationEnd})
-                </div>*@
+                        @Html.Action("UpdateFinanceOperationsByNominals", "Finance", new {
+                           begTime = ViewBag.timeOperationBeg,
+                           endTime = ViewBag.timeOperationEnd})
+                    </div>*@
             </div>
         </div>
     </div>
@@ -74,9 +76,11 @@
         <div class="col-lg-12 table-finance-operations">
             <div class="ibox">
                 <div class="ibox-content-more">
-                    @Html.Action("UpdateViewBagFinanceOperations", "Finance", new {
+                    @Html.Action("UpdateViewBagFinanceOperations", "Finance", new
+                    {
                        begTime = ViewBag.timeOperationBeg,
-                       endTime = ViewBag.timeOperationEnd})
+                       endTime = ViewBag.timeOperationEnd
+                    })
                 </div>
             </div>
         </div>
@@ -99,10 +103,10 @@
     @Scripts.Render("~/plugins/select2")
     @Scripts.Render("~/plugins/chartjs")
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
         function initDataTable() {
-            $('.table_incashwashes').DataTable({
+            var t = $('.table_incashwashes').DataTable({
                 "responsive": true,
                 "paging": false,
                 "info": false,
@@ -129,6 +133,12 @@
                     "emptyTable": "Данные по заданному фильтру не найдены"
                 }
             });
+
+            t.on('order.dt search.dt', function () {
+                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
         }
 
         $(document).ready(function () {
@@ -279,7 +289,6 @@
             });
         });
 
-
         $('input[name="daterange"]').daterangepicker();
 
         $('#time-operation-filter span').html(moment().startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
@@ -341,5 +350,5 @@
             $('#filter-timeoperationbeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
             $('#filter-timeoperationend').val(end.format('DD.MM.YYYY HH:mm:ss'));
         });
-</script>
+    </script>
 }

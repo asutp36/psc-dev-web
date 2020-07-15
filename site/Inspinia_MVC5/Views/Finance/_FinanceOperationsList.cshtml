@@ -3,6 +3,7 @@
 <table id="table-finance" class="table table-striped table-bordered table-hover table_incashwashes">
     <thead>
         <tr>
+            <th></th>
             <th>Устройство</th>
             <th>Дата</th>
             <th>Тип операции</th>
@@ -12,12 +13,13 @@
     <tbody>
         @foreach (var m in Model)
         {
-        <tr>
-            <td>Макет</td>
-            <td>@m.DTime</td>
-            <td>@m.Name</td>
-            <td>@m.Amount</td>
-        </tr>
+            <tr>
+                <td></td>
+                <td>Макет</td>
+                <td>@m.DTime</td>
+                <td>@m.Name</td>
+                <td>@m.Amount</td>
+            </tr>
         }
     </tbody>
 </table>
