@@ -34,14 +34,6 @@
           <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
-        <!--Ошибки, обнаруженные при создании:
-предупреждение 6013: Первичный ключ в таблице или представлении "WashCompany.dbo.CashIntegration" не определен, его не удалось вывести. Эта таблица или представление исключены. Чтобы использовать сущность, необходимо проверить схему, добавить правильные ключи и раскомментировать ее.
-        <EntityType Name="CashIntegration">
-          <Property Name="IDEvent" Type="int" />
-          <Property Name="ServerID" Type="int" />
-          <Property Name="ServerStatus" Type="int" />
-          <Property Name="ServerMessage" Type="nvarchar" MaxLength="50" />
-        </EntityType>-->
         <EntityType Name="Collections">
           <Key>
             <PropertyRef Name="IDCollections" />
@@ -2372,6 +2364,22 @@
             <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
             <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
           </FunctionImport>
+          <FunctionImport Name="GetFinanceByNominalsss" ReturnType="Collection(ModelDb.GetFinanceByNominalsss_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="GetFinanceByNominals1" ReturnType="Collection(ModelDb.GetFinanceByNominals1_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="GetFinanceLists" ReturnType="Collection(ModelDb.GetFinanceLists_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="GetFinanceList1" ReturnType="Collection(ModelDb.GetFinanceList1_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetBoxAndCollect_Result">
           <Property Type="DateTime" Name="reportdate" Nullable="true" Precision="23" />
@@ -2705,6 +2713,26 @@
           <Property Type="String" Name="Code" Nullable="false" MaxLength="50" />
           <Property Type="Int32" Name="c" Nullable="true" />
           <Property Type="Int32" Name="s" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="GetFinanceByNominalsss_Result">
+          <Property Type="String" Name="Code" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="c" Nullable="true" />
+          <Property Type="Int32" Name="s" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="GetFinanceByNominals1_Result">
+          <Property Type="String" Name="Code" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="c" Nullable="true" />
+          <Property Type="Int32" Name="s" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="GetFinanceLists_Result">
+          <Property Type="DateTime" Name="DTime" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="Amount" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="GetFinanceList1_Result">
+          <Property Type="DateTime" Name="DTime" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="Amount" Nullable="false" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -3317,15 +3345,6 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="GetFinanceList" FunctionName="Хранилище ModelDb.GetFinanceList">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="ModelDb.GetFinanceList_Result">
-                <ScalarProperty Name="DTime" ColumnName="DTime" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="GetFinanceSummary" FunctionName="Хранилище ModelDb.GetFinanceSummary">
             <ResultMapping>
               <ComplexTypeMapping TypeName="ModelDb.GetFinanceSummary_Result">
@@ -3547,12 +3566,21 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="GetFinanceByNominals" FunctionName="Хранилище ModelDb.GetFinanceByNominals">
+          <FunctionImportMapping FunctionImportName="GetFinanceByNominals1" FunctionName="Хранилище ModelDb.GetFinanceByNominals">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="ModelDb.GetFinanceByNominals_Result">
+              <ComplexTypeMapping TypeName="ModelDb.GetFinanceByNominals1_Result">
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="c" ColumnName="c" />
                 <ScalarProperty Name="s" ColumnName="s" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetFinanceList1" FunctionName="Хранилище ModelDb.GetFinanceList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ModelDb.GetFinanceList1_Result">
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

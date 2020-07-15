@@ -50,17 +50,18 @@
                 <a href="@Url.Action("BoxByWashesView", "Boxes")"><i class="fa fa-coins"></i><span class="nav-label" data-i18n="nav.graphs">Наличие в боксах</span></a>
             </li>
             <li class="@Html.IsSelected(action: "Invoice")">
-                <a href="@Url.Action("EventsByPostsView", "EventsPost", new {
+                @*<a href="@Url.Action("EventsByPostsView", "EventsPost", new {
                         begdate = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss"),
                         enddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"),
                         post = "nenene"
-                    })"><i class="fa fa-bolt"></i><span class="nav-label" data-i18n="nav.graphs">События на постах</span></a>
+                    })"><i class="fa fa-bolt"></i><span class="nav-label" data-i18n="nav.graphs">События на постах</span></a>*@
+                <a><i class="fa fa-bolt"></i><span class="nav-label" data-i18n="nav.graphs">События на постах</span></a>
             </li>
 
 
             <li class="@Html.IsSelected(controller: "Pricing")">
-                <a href="@Url.Action("RatesView","Rates")"><i class="fa fa-tags"></i> <span class="nav-label" data-i18n="nav.graphs">Тарифы</span></a>
-                @*<a><i class="fa fa-tags"></i> <span class="nav-label" data-i18n="nav.graphs">Тарифы</span></a>*@
+                @*<a href="@Url.Action("RatesView","Rates")"><i class="fa fa-tags"></i> <span class="nav-label" data-i18n="nav.graphs">Тарифы</span></a>*@
+                <a><i class="fa fa-tags"></i> <span class="nav-label" data-i18n="nav.graphs">Тарифы</span></a>
             </li>
             <li class="@Html.IsSelected(controller: "Finance")">
                 <a href="@Url.Action("FinanceOperations","Finance")"><i class="fa fa-credit-card"></i> <span class="nav-label" data-i18n="nav.graphs">Платежный аппарат</span></a>
