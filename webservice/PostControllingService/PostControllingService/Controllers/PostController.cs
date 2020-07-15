@@ -137,7 +137,7 @@ namespace PostControllingService.Controllers
 
                     if(address != null || address != "")
                     {
-                        HttpSenderResponse response = HttpSender.SendPost("http://" + address + "/api/post/balance/increase", JsonConvert.SerializeObject(balance));
+                        HttpSenderResponse response = HttpSender.SendPost("http://" + address + "/api/post/balance/increase/site", JsonConvert.SerializeObject(balance));
 
                         if (response.StatusCode != HttpStatusCode.OK)
                         {
