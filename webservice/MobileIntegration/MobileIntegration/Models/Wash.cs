@@ -12,21 +12,24 @@ namespace MobileIntegration.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class FinanceType
+    public partial class Wash
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public FinanceType()
+        public Wash()
         {
-            this.Finance = new HashSet<Finance>();
+            this.Posts = new HashSet<Posts>();
+            this.Psces = new HashSet<Psces>();
         }
     
-        public int IDFinanceType { get; set; }
+        public int IDWash { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        public Nullable<int> ServerID { get; set; }
-        public string ServerMessage { get; set; }
+        public string Address { get; set; }
+        public int IDRegion { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Finance> Finance { get; set; }
+        public virtual ICollection<Posts> Posts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Psces> Psces { get; set; }
     }
 }

@@ -335,58 +335,43 @@ namespace MobileIntegration.Controllers
                         {
                             if (model.balance > 50)
                             {
-                                if (model.post.Equals("m15_1"))
-                                {
-                                    int amount = 0;
+                                int amount = 0;
 
-                                    if (model.balance > 500)
-                                        amount = 500;
-                                    else
-                                        amount = model.balance;
-
-                                    Logger.Log.Debug("StartPost: запуск настоящего поста");
-
-                                    HttpResponse resp = Sender.SendPost("http://192.168.202.6:5000/api/post/balance/increase/card", JsonConvert.SerializeObject(new StartPostDevModel
-                                    {
-                                        Amount = amount,
-                                        Dtime = model.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
-                                        CardNum = model.card
-                                    }));
-
-                                    if (resp.StatusCode == 0)
-                                    {
-                                        Logger.Log.Error("StartPost: Не удалось подключиться" + Environment.NewLine);
-                                        return Request.CreateResponse((HttpStatusCode)424);
-                                    }
-
-                                    if (resp.StatusCode == (HttpStatusCode)423)
-                                    {
-                                        Logger.Log.Error(String.Format("StartPost: Post {0} is busy", model.post) + Environment.NewLine);
-                                        return Request.CreateResponse((HttpStatusCode)423);
-                                    }
-
-                                    Logger.Log.Debug("Результат: " + resp.StatusCode);
-                                    return Request.CreateResponse(resp.StatusCode);
-                                }
+                                if (model.balance > 500)
+                                    amount = 500;
                                 else
+                                    amount = model.balance;
+
+                                string ip = GetPostIp(model.post);
+
+                                if (ip == null || ip.Equals(""))
                                 {
-                                    var post = _model.Posts.Where(p => p.Code == model.post).FirstOrDefault();
-
-                                    if (post != null)
-                                    {
-                                        if (post.Code == "М202-2")
-                                        {
-                                            Logger.Log.Error(String.Format("StartPost: Post {0} is busy", post.Code) + Environment.NewLine);
-                                            return Request.CreateResponse((HttpStatusCode)423);
-                                        }
-
-                                        Logger.Log.Debug(String.Format("StartPost: Starting post {0}", post.Code) + Environment.NewLine);
-                                        return Request.CreateResponse(HttpStatusCode.OK);
-                                    }
-
                                     Logger.Log.Error("StartPost: Post not found" + Environment.NewLine);
                                     return Request.CreateResponse(HttpStatusCode.NotFound);
                                 }
+
+                                Logger.Log.Debug("StartPost: запуск настоящего поста");
+                                HttpResponse resp = Sender.SendPost("http://" + ip + "/api/post/balance/increase/card", JsonConvert.SerializeObject(new StartPostDevModel
+                                {
+                                    Amount = amount,
+                                    Dtime = model.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
+                                    CardNum = model.card
+                                }));
+
+                                if (resp.StatusCode == 0)
+                                {
+                                    Logger.Log.Error("StartPost: Не удалось подключиться" + Environment.NewLine);
+                                    return Request.CreateResponse((HttpStatusCode)424);
+                                }
+
+                                if (resp.StatusCode == (HttpStatusCode)423)
+                                {
+                                    Logger.Log.Error(String.Format("StartPost: Post {0} is busy", model.post) + Environment.NewLine);
+                                    return Request.CreateResponse((HttpStatusCode)423);
+                                }
+
+                                Logger.Log.Debug("Результат: " + resp.StatusCode);
+                                return Request.CreateResponse(resp.StatusCode);
                             }
 
                             Logger.Log.Error("StartPost: Balance is weak" + Environment.NewLine);
@@ -425,61 +410,48 @@ namespace MobileIntegration.Controllers
                     if (true)
                     {
                         var card = _model.Cards.Where(c => c.CardNum == model.card).FirstOrDefault();
+
                         if (card != null)
                         {
                             if (model.balance > 50)
                             {
-                                if (model.post.Equals("m15_1"))
-                                {
-                                    int amount = 0;
+                                int amount = 0;
 
-                                    if (model.balance > 500)
-                                        amount = 500;
-                                    else
-                                        amount = model.balance;
-
-                                    Logger.Log.Debug("StartPost: запуск настоящего поста");
-                                    HttpResponse resp = Sender.SendPost("http://192.168.202.6:5000/api/post/balance/increase/card", JsonConvert.SerializeObject(new StartPostDevModel
-                                    {
-                                        Amount = amount,
-                                        Dtime = model.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
-                                        CardNum = model.card
-                                    }));
-
-                                    if (resp.StatusCode == 0)
-                                    {
-                                        Logger.Log.Error("StartPost: Не удалось подключиться" + Environment.NewLine);
-                                        return Request.CreateResponse((HttpStatusCode)424);
-                                    }
-
-                                    if (resp.StatusCode == (HttpStatusCode)423)
-                                    {
-                                        Logger.Log.Error(String.Format("StartPost: Post {0} is busy", model.post) + Environment.NewLine);
-                                        return Request.CreateResponse((HttpStatusCode)423);
-                                    }
-
-                                    Logger.Log.Debug("Результат: " + resp.StatusCode);
-                                    return Request.CreateResponse(resp.StatusCode);
-                                }
+                                if (model.balance > 500)
+                                    amount = 500;
                                 else
+                                    amount = model.balance;
+
+                                string ip = GetPostIp(model.post);
+
+                                if(ip == null || ip.Equals(""))
                                 {
-                                    var post = _model.Posts.Where(p => p.Code == model.post).FirstOrDefault();
-
-                                    if (post != null)
-                                    {
-                                        if (post.Code == "М202-2")
-                                        {
-                                            Logger.Log.Error(String.Format("StartPost: Post {0} is busy", post.Code) + Environment.NewLine);
-                                            return Request.CreateResponse((HttpStatusCode)423);
-                                        }
-
-                                        Logger.Log.Debug(String.Format("StartPost: Starting post {0}", post.Code) + Environment.NewLine);
-                                        return Request.CreateResponse(HttpStatusCode.OK);
-                                    }
-
                                     Logger.Log.Error("StartPost: Post not found" + Environment.NewLine);
                                     return Request.CreateResponse(HttpStatusCode.NotFound);
                                 }
+
+                                Logger.Log.Debug("StartPost: запуск настоящего поста");
+                                HttpResponse resp = Sender.SendPost("http://" + ip + "/api/post/balance/increase/card", JsonConvert.SerializeObject(new StartPostDevModel
+                                {
+                                    Amount = amount,
+                                    Dtime = model.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
+                                    CardNum = model.card
+                                }));
+
+                                if (resp.StatusCode == 0)
+                                {
+                                    Logger.Log.Error("StartPost: Не удалось подключиться" + Environment.NewLine);
+                                    return Request.CreateResponse((HttpStatusCode)424);
+                                }
+
+                                if (resp.StatusCode == (HttpStatusCode)423)
+                                {
+                                    Logger.Log.Error(String.Format("StartPost: Post {0} is busy", model.post) + Environment.NewLine);
+                                    return Request.CreateResponse((HttpStatusCode)423);
+                                }
+
+                                Logger.Log.Debug("Результат: " + resp.StatusCode);
+                                return Request.CreateResponse(resp.StatusCode);
                             }
 
                             Logger.Log.Error("StartPost: Balance is weak" + Environment.NewLine);
@@ -553,6 +525,20 @@ namespace MobileIntegration.Controllers
             return Request.CreateErrorResponse(resp.StatusCode, resp.ResultMessage);
         }
 
+        private string GetPostIp(string qrCode)
+        {
+            try
+            {
+                Device device = _model.Device.Find(_model.Posts.Where(p => p.QRCode.Equals(qrCode)).FirstOrDefault().IDDevice);
+
+                return device.IpAddress;
+            }
+            catch(NullReferenceException e)
+            {
+                Logger.Log.Error("GetPostIp: не удалось найти ip поста");
+                return "";
+            }
+        }
 
         [HttpPost]
         [ActionName("new_card")]

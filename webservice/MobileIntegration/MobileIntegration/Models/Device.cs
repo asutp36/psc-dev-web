@@ -17,16 +17,18 @@ namespace MobileIntegration.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Device()
         {
-            this.Finance = new HashSet<Finance>();
+            this.Posts = new HashSet<Posts>();
         }
     
         public int IDDevice { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
-        public int IDWash { get; set; }
         public Nullable<int> ServerID { get; set; }
+        public Nullable<int> IDDeviceType { get; set; }
+        public string IpAddress { get; set; }
     
+        public virtual DeviceTypes DeviceTypes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Finance> Finance { get; set; }
+        public virtual ICollection<Posts> Posts { get; set; }
     }
 }

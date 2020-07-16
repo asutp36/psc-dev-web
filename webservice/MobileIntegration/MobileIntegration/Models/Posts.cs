@@ -18,5 +18,10 @@ namespace MobileIntegration.Models
         public string Code { get; set; }
         public string Name { get; set; }
         public int IDWash { get; set; }
+        public Nullable<int> IDDevice { get; set; }
+        public string QRCode { get; set; }
+    
+        public virtual Device Device { get; set; }
+        public virtual Wash Wash { get; set; }
     }
 }

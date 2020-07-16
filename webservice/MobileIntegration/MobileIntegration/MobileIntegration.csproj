@@ -159,6 +159,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\CardOperations.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Cards.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -171,16 +174,7 @@
     <Compile Include="Models\Device.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Finance.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\FinanceType.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\GetCardList_Result.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\GetCardsOperations_Result.cs">
+    <Compile Include="Models\DeviceTypes.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ModelDb.Context.cs">
@@ -198,6 +192,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelDb.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\NumsMobileCards.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Operations.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -210,10 +207,10 @@
     <Compile Include="Models\Posts.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Prices.cs">
+    <Compile Include="Models\Psces.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Psces.cs">
+    <Compile Include="Models\Wash.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -223,8 +220,8 @@
     <Content Include="Global.asax" />
     <Content Include="Models\ModelDb.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ModelDb.Context.cs</LastGenOutput>
       <DependentUpon>ModelDb.edmx</DependentUpon>
+      <LastGenOutput>ModelDb.Context.cs</LastGenOutput>
     </Content>
     <Content Include="Models\ModelDb.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

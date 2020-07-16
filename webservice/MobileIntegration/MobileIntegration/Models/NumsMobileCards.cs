@@ -12,17 +12,8 @@ namespace MobileIntegration.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Finance
+    public partial class NumsMobileCards
     {
-        public int IDFinance { get; set; }
-        public int IDDevice { get; set; }
-        public int IDFinanceType { get; set; }
-        public System.DateTime DTime { get; set; }
-        public int Amount { get; set; }
-        public Nullable<int> ServerID { get; set; }
-        public string ServerMessage { get; set; }
-    
-        public virtual Device Device { get; set; }
-        public virtual FinanceType FinanceType { get; set; }
+        public string Num { get; set; }
     }
 }

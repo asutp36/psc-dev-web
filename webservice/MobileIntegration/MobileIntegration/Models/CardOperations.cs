@@ -12,9 +12,12 @@ namespace MobileIntegration.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Prices
+    public partial class CardOperations
     {
-        public int IDFunction { get; set; }
-        public int Price { get; set; }
+        public int IDCardOpration { get; set; }
+        public int IDState { get; set; }
+        public int IDDevice { get; set; }
+        public string CardNum { get; set; }
+        public System.DateTime DTime { get; set; }
     }
 }

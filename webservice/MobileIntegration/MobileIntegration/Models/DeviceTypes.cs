@@ -12,20 +12,19 @@ namespace MobileIntegration.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Psces
+    public partial class DeviceTypes
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Psces()
+        public DeviceTypes()
         {
-            this.Operations = new HashSet<Operations>();
+            this.Device = new HashSet<Device>();
         }
     
-        public int IDPsc { get; set; }
+        public int IDDeviceType { get; set; }
+        public string Code { get; set; }
         public string Name { get; set; }
-        public Nullable<int> IDWash { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Operations> Operations { get; set; }
-        public virtual Wash Wash { get; set; }
+        public virtual ICollection<Device> Device { get; set; }
     }
 }
