@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using Inspinia_MVC5.Models;
 
 namespace Inspinia_MVC5.Controllers
@@ -114,19 +115,40 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult UpdateFinanceOperationsByNominals(string begTime, string endTime)
         {
-            List<GetFinanceByNominals_Result> viewList = GetFinanceOperationsByNominals(begTime, endTime);
+            int[] data = {0, 0, 0, 0, 0, 0, 0 };
 
-            String chartdata = "[";
+            List<GetFinanceByNominals_Result> viewList = GetFinanceOperationsByNominals(begTime, endTime);
 
             foreach (GetFinanceByNominals_Result item in viewList)
             {
-                if (chartdata == "[")
-                    chartdata += item.c;
-                else
-                    chartdata += ", " + item.c;
+                switch(item.Code)
+                {
+                    case "M10":
+                        data[0] = item.c.GetValueOrDefault();
+                        break;
+                    case "B50":
+                        data[1] = item.c.GetValueOrDefault();
+                        break;
+                    case "B100":
+                        data[2] = item.c.GetValueOrDefault();
+                        break;
+                    case "B200":
+                        data[3] = item.c.GetValueOrDefault();
+                        break;
+                    case "B500":
+                        data[4] = item.c.GetValueOrDefault();
+                        break;
+                    case "B1000":
+                        data[5] = item.c.GetValueOrDefault();
+                        break;
+                    case "B2000":
+                        data[6] = item.c.GetValueOrDefault();
+                        break;
+                }
             }
 
-            chartdata += "]";
+            JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
+            string chartdata = jsSerializer.Serialize(data);
 
             return PartialView("_FinanceOperationsByNominals", chartdata);
         }

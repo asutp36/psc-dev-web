@@ -165,7 +165,7 @@
                     endTime: stopDate,
                 },
                 error: function () {
-                    alert('Error occured');
+                    alert('С отображением поступлений что-то пошло не так!');
                 },
                 url: "@Url.Action("UpdateFinanceOperationsSummary", "Finance")",
             }).done(function (result) {
@@ -175,21 +175,21 @@
             var chartdata;
 
             $.ajax({
-                    type: "GET",
-                    cache: false,
-                    data: {
-                        begTime: startDate,
-                        endTime: stopDate,
-                    },
-                    error: function () {
-                        alert('Error occured');
-                    },
-                    url: "@Url.Action("UpdateFinanceOperationsByNominals", "Finance")",
-                }).done(function (result) {
-                    chartdata = eval(result);
-                    barChart.data.datasets[0].data = chartdata;
-                    barChart.update();
-                });
+                type: "GET",
+                cache: false,
+                data: {
+                    begTime: startDate,
+                    endTime: stopDate,
+                },
+                error: function () {
+                    alert('С отображением количества купюр что-то пошло не так!');
+                },
+                url: "@Url.Action("UpdateFinanceOperationsByNominals", "Finance")",
+            }).done(function (result) {
+                chartdata = eval(result);
+                barChart.data.datasets[0].data = chartdata;
+                barChart.update();
+            });
 
 
             var popCanvas = document.getElementById("popChart");
@@ -218,25 +218,25 @@
             });
 
             $.ajax({
-                    type: "GET",
-                    cache: false,
-                    data: {
-                        begTime: startDate,
-                        endTime: stopDate,
-                    },
-                    success: function () {
-                        $('.alert-success').fadeIn('slow');
-                        $('.alert-success').delay(3000).fadeOut('slow');
-                    },
-                    error: function () {
-                        alert('Error occured');
-                    },
-                    url: "@Url.Action("UpdateViewBagFinanceOperations", "Finance")",
-                }).done(function (result) {
-                    $('.table-finance-operations').find('.ibox-content-more').html(result);
+                type: "GET",
+                cache: false,
+                data: {
+                    begTime: startDate,
+                    endTime: stopDate,
+                },
+                success: function () {
+                    $('.alert-success').fadeIn('slow');
+                    $('.alert-success').delay(3000).fadeOut('slow');
+                },
+                error: function () {
+                    alert('С отображением таблицы что-то пошло не так!');
+                },
+                url: "@Url.Action("UpdateViewBagFinanceOperations", "Finance")",
+            }).done(function (result) {
+                $('.table-finance-operations').find('.ibox-content-more').html(result);
 
-                    initDataTable();
-                });
+                initDataTable();
+            });
 
             $(document).on("click", "#btn-for-filter", function () {
                 var startDate = $('#filter-timeoperationbeg').val();
@@ -254,7 +254,7 @@
                         $('.alert-success').delay(3000).fadeOut('slow');
                     },
                     error: function () {
-                        alert('Error occured');
+                        alert('С отображением таблицы что-то пошло не так!');
                     },
                     url: "@Url.Action("UpdateViewBagFinanceOperations", "Finance")",
                 }).done(function (result) {
@@ -271,7 +271,7 @@
                         endTime: stopDate,
                     },
                     error: function () {
-                        alert('Error occured');
+                        alert('С отображением поступлений что-то пошло не так!');
                     },
                     url: "@Url.Action("UpdateFinanceOperationsSummary", "Finance")",
                 }).done(function (result) {
@@ -286,7 +286,7 @@
                         endTime: stopDate,
                     },
                     error: function () {
-                        alert('Error occured');
+                        alert('С отображением количества купюр что-то пошло не так!');
                     },
                     url: "@Url.Action("UpdateFinanceOperationsByNominals", "Finance")",
                 }).done(function (result) {
