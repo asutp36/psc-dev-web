@@ -11,15 +11,17 @@
         </tr>
     </thead>
     <tbody>
+        @{var counter = 1; }
         @foreach (var m in Model)
         {
             <tr>
-                <td></td>
+                <td>@counter</td>
                 <td>Макет</td>
                 <td>@m.DTime</td>
                 <td>@m.Name</td>
                 <td>@m.Amount</td>
             </tr>
+            counter++;
         }
     </tbody>
 </table>
