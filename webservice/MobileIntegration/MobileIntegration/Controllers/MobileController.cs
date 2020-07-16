@@ -158,8 +158,12 @@ namespace MobileIntegration.Controllers
         /// <summary>
         /// Узнать баланс карты
         /// </summary>
-        /// <param name="getBalance"></param>
-        /// <returns></returns>
+        /// <param name="getBalance">Номер карты(int)</param>
+        /// <returns>Заголовки: Card - номер карты, Balance - её баланс (если удачно отработал метод), Message - сообщение об ошибке (если неудачно)</returns>
+        /// <response code="200">Удачно</response>
+        /// <response code="404">Карта не найдена</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Некорректные входные данные</response>
         [HttpPost]
         [ActionName("get_balance")]
         //как высчитывать баланс карты?
@@ -220,6 +224,15 @@ namespace MobileIntegration.Controllers
             return Request.CreateResponse(HttpStatusCode.NoContent);
         }
 
+        /// <summary>
+        /// Узнать баланс карты
+        /// </summary>
+        /// <param name="getBalance">Номер карты(string)</param>
+        /// <returns>Заголовки: Card - номер карты, Balance - её баланс (если удачно отработал метод), Message - сообщение об ошибке (если неудачно)</returns>
+        /// <response code="200">Удачно</response>
+        /// <response code="404">Карта не найдена</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Некорректные входные данные</response>
         [HttpPost]
         [ActionName("get_balance-dev")]
         //как высчитывать баланс карты?
@@ -298,6 +311,14 @@ namespace MobileIntegration.Controllers
         //    }
         //}
 
+        /// <summary>
+        /// Изменить телефон владельца
+        /// </summary>
+        /// <param name="change">Старый и новый телефон</param>
+        /// <returns></returns>
+        /// <response code="200">Удачно</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Некорректные входные данные</response>
         [HttpPost]
         [ActionName("change_phone")]
         //что делать с localized?
@@ -337,6 +358,20 @@ namespace MobileIntegration.Controllers
             return Request.CreateResponse(HttpStatusCode.NoContent);
         }
 
+        /// <summary>
+        /// Начать мойку
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <response code="200">Удачно</response>
+        /// <response code="404">Пост не найден</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Некорректные входные данные</response>
+        /// <response code="424">Нет связи с постом</response>
+        /// <response code="423">Пост занят</response>
+        /// <response code="422">Меленький баланс</response>
+        /// <response code="403">Карта не найдена</response>
+        /// <response code="401">Хэш не прошёл проверку</response>
         [HttpPost]
         [ActionName("start_post")]
         public HttpResponseMessage StartPost([FromBody]StartPostBindingModel model)
@@ -416,6 +451,19 @@ namespace MobileIntegration.Controllers
             return Request.CreateResponse(HttpStatusCode.NoContent);
         }
 
+        /// <summary>
+        /// Начать мойку (хэш не проверяется)
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <response code="200">Удачно</response>
+        /// <response code="404">Пост не найден</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Некорректные входные данные</response>
+        /// <response code="424">Нет связи с постом</response>
+        /// <response code="423">Пост занят</response>
+        /// <response code="422">Меленький баланс</response>
+        /// <response code="403">Карта не найдена</response>
         [HttpPost]
         [ActionName("start_post-dev")]
         public HttpResponseMessage StartPostDev([FromBody]StartPostBindingModel model)
@@ -493,6 +541,12 @@ namespace MobileIntegration.Controllers
             return Request.CreateResponse(HttpStatusCode.NoContent);
         }
 
+        /// <summary>
+        /// Конец мойки
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Ретранслирую коды ответа от сервера мобильного приложения</returns>
+        /// <response code="200">Удачно</response>
         [HttpPost]
         [ActionName("stop_post-dev")]
         public HttpResponseMessage StopPostDev([FromBody]StartPostBindingModel model)
@@ -503,8 +557,6 @@ namespace MobileIntegration.Controllers
 
             try
             {
-
-
                 if (_model.Database.Exists())
                 {
                     _model.Database.Connection.Open();
@@ -561,6 +613,16 @@ namespace MobileIntegration.Controllers
             }
         }
 
+        /// <summary>
+        /// Выпуск новой карты из мобльного приложения
+        /// </summary>
+        /// <param name="newCard"></param>
+        /// <returns>Заголовок: CardNum - номер выпущенной карты (при удачной работе метода)</returns>
+        /// <response code="200">Удачно</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="409">У пользователя с таким номером уже есть карта</response>
+        /// <response code="401">Хэш не прошёл проверку</response>
+        /// <response code="204">Некорректные входные данные</response>
         [HttpPost]
         [ActionName("new_card")]
         public HttpResponseMessage NewCard([FromBody]NewCard newCard)
@@ -650,6 +712,15 @@ namespace MobileIntegration.Controllers
             return cards;
         }
 
+        /// <summary>
+        /// Отправка выпущенной на разменном аппарате карты с пополнением на сервер мобильного приложения  (хэш не проверяется)
+        /// </summary>
+        /// <param name="newCard"></param>
+        /// <returns>Ретранслирую коды ответов от сервера мобильного приложения</returns>
+        /// <response code="200">Удачно</response>
+        /// <response code="409">У пользователя уже есть карта</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Некорректные входные значения</response>
         [HttpPost]
         [ActionName("send_new_card_dev")]
         public HttpResponseMessage SendNewCardDev([FromBody]NewCardDev newCard)
