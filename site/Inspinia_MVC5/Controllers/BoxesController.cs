@@ -14,6 +14,7 @@ namespace Inspinia_MVC5.Controllers
         List<Region> _regions = null;
         List<Wash> _washes = null;
         List<Post> _posts = null;
+        List<Device> _devices = null;
 
         public BoxesController()
         {
@@ -22,15 +23,41 @@ namespace Inspinia_MVC5.Controllers
             //_posts = db.Posts.ToList();
 
             _washes = db.Washes.Where(w => w.Code == "М13" || w.Code == "М14").ToList();
+            _devices = db.Devices.ToList();
 
             _regions = new List<Region>();
             _posts = new List<Post>();
+
             foreach (Wash w in _washes)
             {
                 if (!_regions.Contains(w.Region))
                     _regions.Add(w.Region);
 
+                for (int i = w.Posts.Count - 1; i >= 0; i--)
+                {
+                    if (_devices.Find(d => d.IDDevice == w.Posts.ElementAt(i).IDDevice).IDDeviceType != 2)
+                    {
+                        w.Posts.Remove(w.Posts.ElementAt(i));
+                    }
+                }
+
                 _posts.AddRange(w.Posts);
+            }
+
+            foreach (var r in _regions)
+            {
+                for (int i = r.Washes.Count - 1; i >= 0; i--)
+                {
+                    string code = r.Washes.ElementAt(i).Code;
+
+                    if (code == "М13" || code == "М14")
+                    {
+                    }
+                    else
+                    {
+                        r.Washes.Remove(r.Washes.ElementAt(i));
+                    }
+                }
             }
 
             ViewBag.Regions = _regions;
