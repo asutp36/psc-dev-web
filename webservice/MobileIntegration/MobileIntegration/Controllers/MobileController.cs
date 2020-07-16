@@ -199,6 +199,68 @@ namespace MobileIntegration.Controllers
             return Request.CreateResponse(HttpStatusCode.NoContent);
         }
 
+        [HttpPost]
+        [ActionName("get_balance-dev")]
+        //как высчитывать баланс карты?
+        public HttpResponseMessage GetBalanceDev([FromBody]GetBalance getBalance)
+        {
+            Logger.InitLogger();
+
+            if (getBalance != null)
+            {
+                try
+                {
+                    Logger.Log.Debug(String.Format("Запуск с параметрами: номер карты: {0}", getBalance.card));
+
+                    if (_model.Database.Exists())
+                    {
+                        _model.Database.Connection.Open();
+                        Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
+
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+                        command.CommandText = $"select " +
+                            $"isnull(o.Balance, 0) " +
+                            $"from Cards c " +
+                            $"left join Operations o on o.IDCard = c.IDCard " +
+                            $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
+                            $"where c.CardNum = '{getBalance.card}'";
+
+
+                        var balance = command.ExecuteScalar();
+
+                        var response = Request.CreateResponse();
+                        response.Headers.Add("Card", getBalance.card);
+
+                        if (balance != null)
+                        {
+                            Logger.Log.Debug("GetBalanceDev: Balance: " + balance.ToString() + Environment.NewLine);
+                            response.StatusCode = HttpStatusCode.OK;
+                            response.Headers.Add("Balance", balance.ToString());
+                        }
+                        else
+                        {
+                            Logger.Log.Error("GetBalance: карта не найдена" + Environment.NewLine);
+                            response.StatusCode = HttpStatusCode.NotFound;
+                            response.Headers.Add("Message", "Card not found");
+                        }
+
+                        _model.Database.Connection.Close();
+
+                        return response;
+                    }
+
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                }
+                catch (Exception e)
+                {
+                    Logger.Log.Error("GetBalance: " + e.Message.ToString());
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                }
+            }
+
+            return Request.CreateResponse(HttpStatusCode.NoContent);
+        }
+
         //[HttpPost]
         //[ActionName("change_cardstate")]
         //public HttpResponseMessage ChangeCardState()
@@ -484,7 +546,7 @@ namespace MobileIntegration.Controllers
 
             Logger.Log.Debug("StopPostDev: отправка конца мойки");
 
-            HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), "m15_1", model.balance)));
+            HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), "m15", model.balance)));
 
             Logger.Log.Debug("StopPostDev: Ответ от их сервера: " + resp.ResultMessage);
 
