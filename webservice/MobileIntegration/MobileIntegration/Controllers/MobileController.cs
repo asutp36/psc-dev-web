@@ -16,6 +16,14 @@ namespace MobileIntegration.Controllers
     {
         private ModelDb _model = new ModelDb();
 
+        /// <summary>
+        /// Пополнить баланс карты (хэш не проверяется)
+        /// </summary>
+        /// <param name="increase">Данные поплнения (хэн не обязательно)</param>
+        /// <returns></returns>
+        /// <response code="200">Баланс пополнен</response>
+        /// <response code="500">Произошла ошибка</response>
+        /// <response code="204">Некорректное входное значение</response>
         [HttpPost]
         [ActionName("increase_dev")]
         //где записан баланс?
@@ -74,6 +82,14 @@ namespace MobileIntegration.Controllers
             return Request.CreateResponse(HttpStatusCode.NoContent);
         }
 
+        /// <summary>
+        /// Пополнить баланс карты
+        /// </summary>
+        /// <param name="increase">Данные поплнения</param>
+        /// <returns></returns>
+        /// <response code="200">Баланс пополнен</response>
+        /// <response code="500">Произошла ошибка</response>
+        /// <response code="204">Некорректное входное значение</response>
         [HttpPost]
         [ActionName("increase")]
         //где записан баланс?
@@ -139,6 +155,11 @@ namespace MobileIntegration.Controllers
             return Request.CreateResponse(HttpStatusCode.NoContent);
         }
 
+        /// <summary>
+        /// Узнать баланс карты
+        /// </summary>
+        /// <param name="getBalance"></param>
+        /// <returns></returns>
         [HttpPost]
         [ActionName("get_balance")]
         //как высчитывать баланс карты?
