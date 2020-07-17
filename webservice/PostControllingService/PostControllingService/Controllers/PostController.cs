@@ -34,7 +34,7 @@ namespace PostControllingService.Controllers
                         List<RatesWPostCode> postsRates = new List<RatesWPostCode>();
                         foreach (Posts p in posts)
                         {
-                            HttpSenderResponse response = HttpSender.SendGet("http://" + "192.168.201.15:5000"/*GetPostIp(p.Code) */+ "/api/post/rate/get");
+                            HttpSenderResponse response = HttpSender.SendGet("http://" + GetPostIp(p.Code) + "/api/post/rate/get");
 
                             if (response.StatusCode != HttpStatusCode.OK)
                             {
@@ -91,7 +91,7 @@ namespace PostControllingService.Controllers
                         {
                             Logger.Log.Debug("SendRates: Отправка на пост: " + p.Code);
 
-                            HttpSenderResponse response = HttpSender.SendPost("http://" + "192.168.201.15:5000" + "/api/post/rate", JsonConvert.SerializeObject(change.Rates));
+                            HttpSenderResponse response = HttpSender.SendPost("http://" + GetPostIp(p.Code) + "/api/post/rate", JsonConvert.SerializeObject(change.Rates));
 
                             if (response.StatusCode != HttpStatusCode.OK)
                             {
@@ -102,9 +102,6 @@ namespace PostControllingService.Controllers
                         }
                     }
 
-                    
-
-                    
                     Logger.Log.Debug("SendRates: " + String.Format("{0} : {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), "Отправлено успешно") + Environment.NewLine);
 
                     return Request.CreateResponse(HttpStatusCode.OK);
