@@ -22,5 +22,10 @@ namespace Inspinia_MVC5.Views.Shared
         {
             return PartialView(_regions);
         }
+
+        public ActionResult _NavigationFull()
+        {
+            return PartialView(_regions);
+        }
     }
 }

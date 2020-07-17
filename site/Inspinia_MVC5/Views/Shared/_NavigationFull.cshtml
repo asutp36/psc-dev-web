@@ -1,0 +1,129 @@
+﻿@model IEnumerable<Inspinia_MVC5.Models.Region>
+
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element">
+                    <img alt="image" src="~/Images/logo-eco.png" />
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                        <span class="block m-t-xs font-bold">eco</span>
+                    </a>
+                </div>
+                <div class="logo-element">
+                    ECO
+                </div>
+            </li>
+            @*<li class="@Html.IsSelected(controller: "Metrics")">
+                    <a href="@Url.Action("Index", "Layouts")"><i class="fa fa-bar-chart-o"></i> <span class="nav-label" data-i18n="nav.layouts">Dashboard</span></a>
+                </li>
+                <li class="@Html.IsSelected(controller: "Metrics")">
+                    <a href="@Url.Action("Index", "Layouts")"><i class="fa fa-laptop"></i> <span class="nav-label" data-i18n="nav.layouts">POS</span></a>
+                    <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Dumb", cssClass: "in")">
+                        <li class="@Html.IsSelected(action: "Dashboard_5")"><a href="@Url.Action("Dashboard_5", "Dumb")">Orders</a></li>
+                    </ul>
+                </li>
+                <li class="@Html.IsSelected(controller: "Metrics")">
+                    <a href="@Url.Action("Index", "Layouts")"><i class="fa  fa-flask"></i> <span class="nav-label" data-i18n="nav.layouts">Factory</span></a>
+                </li>
+                <li class="@Html.IsSelected(controller: "Metrics")">
+                    <a href="@Url.Action("Index", "Layouts")"><i class="fa fa-shopping-cart"></i> <span class="nav-label" data-i18n="nav.layouts">Shipment</span></a>
+                </li>
+                <li class="@Html.IsSelected(controller: "Metrics")">
+                    <a href="@Url.Action("Index", "Layouts")"><i class="fa fa-shopping-basket"></i> <span class="nav-label" data-i18n="nav.layouts">Customers</span></a>
+                </li>*@
+
+
+        <li class="@Html.IsSelected(controller: "Dashboards")">
+            <a href="@Url.Action("Dashboard_2", "Dashboards")"><i class="fa fa-th-large disabled"></i> <span class="nav-label" data-i18n="nav.dashboard">Сводка</span></a>
+            @*<a><i class="fa fa-th-large disabled"></i> <span class="nav-label" data-i18n="nav.dashboard">Сводка</span></a>*@
+        </li>
+
+
+        <li class="@Html.IsSelected(action: "SearchResults")">
+            <a href="@Url.Action("IncreasesByWashesView","Increases")"><i class="fa fa-money-bill-wave"></i><span class="nav-label" data-i18n="nav.graphs">Зачисления</span></a>
+        </li>
+        <li class="@Html.IsSelected(action: "LockScreen")">
+            <a href="@Url.Action("CollectByWashesView","CollectWash")"><i class="fa fa-wallet"></i><span class="nav-label" data-i18n="nav.graphs">Инкассация</span></a>
+        </li>
+        <li class="@Html.IsSelected(action: "Invoice")">
+            <a href="@Url.Action("BoxByWashesView", "Boxes")"><i class="fa fa-coins"></i><span class="nav-label" data-i18n="nav.graphs">Наличие в боксах</span></a>
+        </li>
+        <li class="@Html.IsSelected(action: "Invoice")">
+            <a href="@Url.Action("EventsByPostsView", "EventsPost", new {
+                    begdate = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss"),
+                    enddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"),
+                    post = "none"
+                })"><i class="fa fa-bolt"></i><span class="nav-label" data-i18n="nav.graphs">События на постах</span></a>
+            @*<a><i class="fa fa-bolt"></i><span class="nav-label" data-i18n="nav.graphs">События на постах</span></a>*@
+        </li>
+
+
+        <li class="@Html.IsSelected(controller: "Rates")">
+            <a href="@Url.Action("RatesView","Rates")"><i class="fa fa-tags"></i> <span class="nav-label" data-i18n="nav.graphs">Тарифы</span></a>
+            @*<a><i class="fa fa-tags"></i> <span class="nav-label" data-i18n="nav.graphs">Тарифы</span></a>*@
+        </li>
+        <li class="@Html.IsSelected(controller: "Finance")">
+            <a href="@Url.Action("FinanceOperations","Finance")"><i class="fa fa-credit-card"></i> <span class="nav-label" data-i18n="nav.graphs">Платежный аппарат</span></a>
+            @*<a><i class="fa fa-tags"></i> <span class="nav-label" data-i18n="nav.graphs">Платежный аппарат</span></a>*@
+        </li>
+        <li class="@Html.IsSelected(controller: "Monitoring")">
+            <a href="@Url.Action("MonitoringView","Monitoring")"><i class="fa fa-desktop"></i> <span class="nav-label" data-i18n="nav.mailbox">Мониторинг</span></a>
+            @*<a><i class="fa fa-calculator"></i> <span class="nav-label" data-i18n="nav.mailbox">Мониторинг</span></a>*@
+        </li>
+        <li class="@Html.IsSelected(controller: "Notifications")">
+            <a href="#"><i class="fa fa-bell"></i> <span class="nav-label" data-i18n="nav.widgets">Оповещения</span><span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Notifications", cssClass:"in")">
+                <li class="@Html.IsSelected(action:"NotificationsSendingView")"><a href="@Url.Action("NotificationsSendingView","Notifications")">Отправка</a></li>
+                <li class="@Html.IsSelected(action:"NotificationsHistoryView")"><a href="@Url.Action("NotificationsHistoryView","Notifications")">История</a></li>
+            </ul>
+            @*<a><i class="fa fa-bell"></i> <span class="nav-label" data-i18n="nav.graphs">Оповещения</span></a>*@
+        </li>
+
+        <li class="@Html.IsSelected(controller: "Forms")">
+            <a href="@Url.Action("Cards", "Cards", new {
+                                        begTimeLO = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                                        endTimeLO = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                                        begTimeActivation = DateTime.Today.AddMonths(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                                        endTimeActivation = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")
+                                        })">
+                <i class="fa fa-address-card"></i>
+                <span class="nav-label" data-i18n="nav.forms">Карты</span>
+            </a>
+            @*                <a href="#"><i class="fa fa-edit"></i> <span class="nav-label" data-i18n="nav.forms">Карты</span></a>*@
+            @*<a><i class="fa fa-address-card"></i> <span class="nav-label" data-i18n="nav.forms">Карты</span></a>*@
+        </li>
+            @*<li class="@Html.IsSelected(controller: "AppViews")">
+                    <a href="#"><i class="fa fa-desktop"></i> <span class="nav-label" data-i18n="nav.appviews">Терминалы</span>  <span class="float-right label label-primary">TCP</span></a>
+                </li>*@
+            @*<li class="@Html.IsSelected(controller: "Pages")">
+                    <a href="#"><i class="fa fa-files-o"></i> <span class="nav-label" data-i18n="nav.otherpages">Отчеты</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Pages", cssClass: "in")">
+                        <li class="@Html.IsSelected(action: "SearchResults")"><a href="@Url.Action("SearchResults", "Dumb")">Зачисления</a></li>
+                        <li class="@Html.IsSelected(action: "LockScreen")"><a href="@Url.Action("LockScreen", "Dumb")">Инкассация</a></li>
+                        <li class="@Html.IsSelected(action: "Invoice")"><a href="@Url.Action("Invoice", "Dumb")">Наличие в боксах</a></li>
+                    </ul>
+                </li>
+                <li class="@Html.IsSelected(controller: "Monitoring")">
+                    <a href="#"><i class="fa fa-desktop"></i> <span class="nav-label" data-i18n="nav.widgets">Мониторинг</span><span class="fa arrow"></span></a>
+                    @foreach (var c in Model)
+                    {
+                        <ul class="nav nav-second-level collapse">
+                            <li class="">
+                                <a href="#"><span class="nav-label" data-i18n="nav.widgets">@c.Name</span><span class="fa arrow"></span></a>
+                                @foreach (var m in c.Washes)
+                                {
+                                    <ul class=" nav nav-third-level collapse">
+                                        <li class="">
+                                            <a href="#">@m.Name</a>
+                                        </li>
+                                    </ul>
+                                }
+                            </li>
+                        </ul>
+                    }
+
+                </li>*@
+        </ul>
+    </div>
+</nav>

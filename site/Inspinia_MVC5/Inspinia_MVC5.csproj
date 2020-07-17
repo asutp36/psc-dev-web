@@ -2022,6 +2022,7 @@
     <Content Include="Views\Rates\_RatesWashesList.cshtml" />
     <Content Include="Views\Rates\_RateTableWash.cshtml" />
     <Content Include="Views\Pages\_InternalServerError.cshtml" />
+    <Content Include="Views\Shared\_NavigationFull.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
