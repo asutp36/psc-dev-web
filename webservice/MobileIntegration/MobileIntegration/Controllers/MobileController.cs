@@ -589,6 +589,16 @@ namespace MobileIntegration.Controllers
                 Logger.Log.Error("StopPostDev: ошибка при записи операции в базу.\n" + e.Message + Environment.NewLine + e.StackTrace);
             }
 
+            try 
+            {
+                string qrCode = _model.Posts.Where(p => p.Code.Equals(model.post)).FirstOrDefault().QRCode;
+            }
+            catch(Exception e)
+            {
+                Logger.Log.Error("StopPostDev: не найден пост.\n" + e.Message + Environment.NewLine);
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Post not found");
+            }
+
             Logger.Log.Debug("StopPostDev: отправка конца мойки");
 
             HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), "m15", model.balance)));
