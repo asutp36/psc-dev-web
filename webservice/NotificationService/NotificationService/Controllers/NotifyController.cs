@@ -71,7 +71,7 @@ namespace NotificationService.Controllers
                                 $"WHERE IDNoticeHistory = {id};";
 
                             command.ExecuteNonQuery();
-                            
+
                             Logger.Log.Debug("SendMessage: обновил запись (отправлено). id = " + id + Environment.NewLine);
                             return Request.CreateResponse(HttpStatusCode.OK);
                         }
@@ -91,6 +91,34 @@ namespace NotificationService.Controllers
                 Logger.Log.Error(ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
+        }
+
+        [HttpPost]
+        [ActionName("message")]
+        public HttpResponseMessage SendMessage([FromBody]MessagePhone msg)
+        {
+            Logger.InitLogger();
+
+            Logger.Log.Debug("SendMessage (from post): запуск с параметрами:\n" + JsonConvert.SerializeObject(msg));
+
+            if (!msg.phone.Equals(""))
+            {
+                ResponseSendMessage resp = JsonConvert.DeserializeObject<ResponseSendMessage>(WhattsAppSender.SendMessage(JsonConvert.SerializeObject(msg), "https://eu33.chat-api.com/instance27633/sendMessage?token=0qgid5wjmhb8vw7d"));
+
+                if (resp.sent)
+                {
+                    Logger.Log.Debug("SendMessage (from post): сообщение отправлено");
+                    return Request.CreateResponse(HttpStatusCode.OK);
+                }
+                else
+                {
+                    Logger.Log.Debug("SendMessage (from post): сообщение не отправлено.\n" + resp.message);
+                    return Request.CreateResponse((HttpStatusCode)424);
+                }
+            }
+
+            Logger.Log.Error("SendMessage (from post): телефон пустой");
+            return Request.CreateResponse(HttpStatusCode.NoContent);
         }
     }
 }

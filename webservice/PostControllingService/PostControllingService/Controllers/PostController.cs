@@ -34,7 +34,14 @@ namespace PostControllingService.Controllers
                         List<RatesWPostCode> postsRates = new List<RatesWPostCode>();
                         foreach (Posts p in posts)
                         {
-                            HttpSenderResponse response = HttpSender.SendGet("http://" + GetPostIp(p.Code) + "/api/post/rate/get");
+                            string ip = GetPostIp(p.Code);
+                            if (ip == null || ip.Equals(""))
+                            {
+                                Logger.Log.Error("GetCurrentRate: не найден ip адрес поста " + p.Code);
+                                continue;
+                            }
+                               
+                            HttpSenderResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
 
                             if (response.StatusCode != HttpStatusCode.OK)
                             {
