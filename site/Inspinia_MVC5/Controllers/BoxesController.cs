@@ -33,13 +33,14 @@ namespace Inspinia_MVC5.Controllers
                 if (!_regions.Contains(w.Region))
                     _regions.Add(w.Region);
 
-                for (int i = w.Posts.Count - 1; i >= 0; i--)
-                {
-                    if (_devices.Find(d => d.IDDevice == w.Posts.ElementAt(i).IDDevice).IDDeviceType != 2)
-                    {
-                        w.Posts.Remove(w.Posts.ElementAt(i));
-                    }
-                }
+                //удаляет пылесосы из списка постов
+                //for (int i = w.Posts.Count - 1; i >= 0; i--)
+                //{
+                //    if (_devices.Find(d => d.IDDevice == w.Posts.ElementAt(i).IDDevice).IDDeviceType != 2)
+                //    {
+                //        w.Posts.Remove(w.Posts.ElementAt(i));
+                //    }
+                //}
 
                 _posts.AddRange(w.Posts);
             }

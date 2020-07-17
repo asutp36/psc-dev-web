@@ -2,41 +2,48 @@
 
 @foreach (var wash in ViewBag.Washes)
 {
-    <h2>@wash.Name</h2>
-    <table id="table-wash-@wash.Code" class="display table table-bordered table-hover responsive">
-        <thead>
-            <tr>
-                <th>Тарифы</th>
-                <th>Задать тарифы</th>
-                @foreach (var item in wash.Posts)
-                {
-                    <th>@item.Code</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < 8; i++)
-            {
-            <tr>
-                <td>@Model.ToList().Find(w => w.Wash == wash.Code).Rates[0].Prices[i].Func</td>
-                <td><input name="@Model.ToList().Find(w => w.Wash == wash.Code).Rates[0].Prices[i].Code" id="rate-@(i+1)-@wash.IDWash" /></td>
-                @foreach (var post in Model.ToList().Find(w => w.Wash == wash.Code).Rates)
-                {
-                    <td>@post.Prices[i].Rate</td>
-                }
-            </tr>
-            }
-        </tbody>
-    </table>
+    <div style="margin-bottom : 20px">
+        @if (Model.ToList().Find(w => w.Wash == wash.Code) == null)
+        {
+            <h2>@wash.Name - нет доступа к тарифам</h2>
+        }
+        else
+        {
+            <h2>@wash.Name</h2>
+            <table id="table-wash-@wash.Code" class="display table table-bordered table-hover responsive">
+                <thead>
+                    <tr>
+                        <th>Тарифы</th>
+                        <th>Задать тарифы</th>
+                        @foreach (var item in Model.ToList().Find(w => w.Wash == wash.Code).Rates)
+                        {
+                            <th>@item.Post</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < 8; i++)
+                    {
+                        <tr>
+                            <td>@Model.ToList().Find(w => w.Wash == wash.Code).Rates[0].Prices[i].Func</td>
+                            <td><input name="@Model.ToList().Find(w => w.Wash == wash.Code).Rates[0].Prices[i].Code" id="rate-@(i + 1)-@wash.IDWash" /></td>
+                            @foreach (var post in Model.ToList().Find(w => w.Wash == wash.Code).Rates)
+                            {
+                                <td>@post.Prices[i].Rate</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
 
-    <div class="form-group">
-        <button type="submit" id="btn-save-@wash.IDWash" class="ladda-button btn btn-outline btn-success font-bold" data-style="expand-right">Сохранить</button>
+            <div class="form-group">
+                <button type="submit" id="btn-save-@wash.IDWash" class="ladda-button btn btn-outline btn-success font-bold" data-style="expand-right">Сохранить</button>
+            </div>
+
+            <div id="error-@wash.IDWash">
+            </div>
+        }
     </div>
-
-    <div id="error-@wash.IDWash">
-    </div>
-
-    <br />
 
     <script type="text/javascript">
 

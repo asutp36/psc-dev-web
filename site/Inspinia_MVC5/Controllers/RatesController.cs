@@ -18,10 +18,12 @@ namespace Inspinia_MVC5.Controllers
         private ModelDb db = new ModelDb();
 
         List<Region> _regions = null;
+        List<Device> _devices = null;
 
         public RatesController()
         {
             _regions = db.Regions.ToList();
+            _devices = db.Devices.ToList();
         }
 
         public ActionResult RatesView()
@@ -52,6 +54,20 @@ namespace Inspinia_MVC5.Controllers
             {
                 int code = Convert.ToInt32(region);
                 _washes = db.Regions.ToList().Find(r => r.Code == code).Washes.ToList();
+
+                foreach(var w in _washes)
+                {
+                    for (int i = w.Posts.Count - 1; i >= 0; i--)
+                    {
+                        if (w.Posts.ElementAt(i).IDDevice != null)
+                        {
+                            if (_devices.Find(d => d.IDDevice == w.Posts.ElementAt(i).IDDevice).IDDeviceType != 2)
+                            {
+                                w.Posts.Remove(w.Posts.ElementAt(i));
+                            }
+                        }
+                    }
+                }
             }
 
             ViewBag.Washes = _washes;
@@ -76,7 +92,23 @@ namespace Inspinia_MVC5.Controllers
 
                 _rates = JsonConvert.DeserializeObject<List<RatesWash>>(rates);
 
-                return PartialView("_RateTableWash", _rates);
+                for (int i = _rates.Count - 1; i >= 0; i--)
+                {
+                    if (_rates[i].Rates.Count != 8)
+                    {
+                        _rates.RemoveAt(i);
+                    }
+                }
+                
+                if(_rates.Count > 0)
+                {
+                    return PartialView("_RateTableWash", _rates);
+                }
+                else
+                {
+                    return PartialView("_NoAvailableWash");
+                }
+
             }
             catch(Exception ex)
             {

@@ -20,6 +20,7 @@ namespace Inspinia_MVC5.Controllers
         List<Region> _regions = null;
         List<Wash> _washes = null;
         List<Post> _posts = null;
+        List<Device> _devices = null;
 
         Post post = null;
         Region region = new Region();
@@ -29,9 +30,30 @@ namespace Inspinia_MVC5.Controllers
         public MonitoringController()
         {
             _companies = db.Companies.ToList();
-            _posts = db.Posts.ToList();
             _regions = db.Regions.ToList();
             _washes = db.Washes.ToList();
+            _posts = db.Posts.ToList();
+            _devices = db.Devices.ToList();
+
+            foreach (var c in _companies)
+            {
+                foreach(var r in c.Regions)
+                {
+                    foreach(var w in r.Washes)
+                    {
+                        for (int i = w.Posts.Count - 1; i >= 0; i--)
+                        {
+                            if (w.Posts.ElementAt(i).IDDevice != null)
+                            {
+                                if (_devices.Find(d => d.IDDevice == w.Posts.ElementAt(i).IDDevice).IDDeviceType != 2)
+                                {
+                                    w.Posts.Remove(w.Posts.ElementAt(i));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             ViewBag.Regions = _regions;
             ViewBag.Washes = _washes;
