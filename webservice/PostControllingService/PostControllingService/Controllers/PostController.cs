@@ -245,6 +245,7 @@ namespace PostControllingService.Controllers
                         {
                             PostFunction func = JsonConvert.DeserializeObject<PostFunction>(getFuncResponse.Result);
                             var response = Request.CreateResponse(HttpStatusCode.OK);
+                            Logger.Log.Debug("GetCurrentFunction: на посту функция = " + func.Name + Environment.NewLine);
                             response.Headers.Add("Function", func.Name);
                             return response;
                         }
