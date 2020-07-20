@@ -869,5 +869,32 @@ namespace MobileIntegration.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
+
+        /// <summary>
+        /// Получиьт список карт по номеру телефона
+        /// </summary>
+        /// <param name="id">Номер телефона</param>
+        /// <returns>Список номеров карт</returns>
+        /// <response code="200">Ок</response>
+        [HttpGet]
+        [ActionName("get_cards")]
+        public HttpResponseMessage GetCardsList(string id)
+        {
+            Logger.InitLogger();
+            try
+            {
+                Logger.Log.Debug("GetCardsList: запуск с параметром " + id);
+
+                List<string> cards = GetCardsByPhone(id);
+                Logger.Log.Debug("GetCardsList: список карт:\n" + JsonConvert.SerializeObject(cards));
+
+                return Request.CreateResponse<List<string>>(HttpStatusCode.OK, cards);
+            }
+            catch(Exception e)
+            {
+                Logger.Log.Error("GetCardsList: " + e.Message.ToString() + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
     }
 }

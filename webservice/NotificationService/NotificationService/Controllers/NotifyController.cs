@@ -94,8 +94,8 @@ namespace NotificationService.Controllers
         }
 
         [HttpPost]
-        [ActionName("message")]
-        public HttpResponseMessage SendMessage([FromBody]MessagePhone msg)
+        [ActionName("message-dev")]
+        public HttpResponseMessage SendMessageDev([FromBody]MessagePhone msg)
         {
             Logger.InitLogger();
 
