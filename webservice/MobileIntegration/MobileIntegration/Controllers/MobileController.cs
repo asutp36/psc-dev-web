@@ -391,12 +391,7 @@ namespace MobileIntegration.Controllers
                         {
                             if (model.balance > 50)
                             {
-                                int amount = 0;
-
-                                if (model.balance > 500)
-                                    amount = 500;
-                                else
-                                    amount = model.balance;
+                                int amount = model.balance;
 
                                 string ip = GetPostIp(model.post);
 
@@ -484,12 +479,7 @@ namespace MobileIntegration.Controllers
                         {
                             if (model.balance > 50)
                             {
-                                int amount = 0;
-
-                                if (model.balance > 500)
-                                    amount = 500;
-                                else
-                                    amount = model.balance;
+                                int amount = model.balance;
 
                                 string ip = GetPostIp(model.post);
 
