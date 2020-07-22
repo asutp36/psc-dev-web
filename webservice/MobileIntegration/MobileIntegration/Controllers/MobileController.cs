@@ -813,9 +813,9 @@ namespace MobileIntegration.Controllers
                             $"where c.CardNum = '{newCard.card}'";
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
-                        command.CommandText = "INSERT INTO Operations (IDCard, IDPsc, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+                        command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                 $" VALUES((select IDCard from Cards where CardNum = '{newCard.card}'), " +
-                                                $"(select IDPsc from Psces where Name = 'MobileApp'), 2, \'{newCard.time_send}\', {newCard.value}," +
+                                                $"(select IDChangers from Changers where Name = 'MobileApp'), 2, \'{newCard.time_send}\', {newCard.value}," +
                                                 $" ({commandBalance.CommandText}) + {newCard.value}, -1, -1);" +
                                                 " SELECT SCOPE_IDENTITY()";
 
