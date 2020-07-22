@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ChangerSynchronization.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/sync")]
     [ApiController]
     public class SyncController : ControllerBase
     {
