@@ -12,23 +12,15 @@ namespace Inspinia_MVC5.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Operation
+    public partial class EventChangerOut
     {
-        public int IDOperation { get; set; }
-        public int IDPsc { get; set; }
-        public int IDOperationType { get; set; }
-        public int IDCard { get; set; }
+        public int IDEventChangerOut { get; set; }
+        public int IDEventChanger { get; set; }
         public System.DateTime DTime { get; set; }
-        public int Amount { get; set; }
-        public int Balance { get; set; }
-        public int LocalizedBy { get; set; }
-        public int LocalizedID { get; set; }
-        public string Functions { get; set; }
-        public string Details { get; set; }
-        public int IDChanger { get; set; }
+        public int m10 { get; set; }
+        public int b50 { get; set; }
+        public int b100 { get; set; }
     
-        public virtual Card Card { get; set; }
-        public virtual OperationType OperationType { get; set; }
-        public virtual Changer Changer { get; set; }
+        public virtual EventChanger EventChanger { get; set; }
     }
 }

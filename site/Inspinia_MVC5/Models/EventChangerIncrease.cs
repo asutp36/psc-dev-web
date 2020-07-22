@@ -12,20 +12,19 @@ namespace Inspinia_MVC5.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Psce
+    public partial class EventChangerIncrease
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Psce()
-        {
-            this.Operations = new HashSet<Operation>();
-        }
+        public int IDEventChangerIncrease { get; set; }
+        public int IDEventChanger { get; set; }
+        public System.DateTime DTime { get; set; }
+        public int m10 { get; set; }
+        public int b50 { get; set; }
+        public int b100 { get; set; }
+        public int b200 { get; set; }
+        public int b500 { get; set; }
+        public int b1000 { get; set; }
+        public int b2000 { get; set; }
     
-        public int IDPsc { get; set; }
-        public string Name { get; set; }
-        public Nullable<int> IDWash { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Operation> Operations { get; set; }
-        public virtual Wash Wash { get; set; }
+        public virtual EventChanger EventChanger { get; set; }
     }
 }

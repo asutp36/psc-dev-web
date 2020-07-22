@@ -328,3 +328,14 @@ ASALocalRun/
 *.mdf
 *.ldf
 *.zip
+site/Inspinia_MVC5/Models/GetBoxAndCollect_Result.cs
+site/Inspinia_MVC5/Models/GetBoxAndCollect_Result.cs
+site/Inspinia_MVC5/Models/GetBoxAndCollect_Result.cs
+site/Inspinia_MVC5/Models/GetBoxByPosts_Result.cs
+site/Inspinia_MVC5/Models/GetBoxByWashs_Result.cs
+site/Inspinia_MVC5/Models/GetCollectByDays_Result.cs
+site/Inspinia_MVC5/Models/GetCollectByPosts_Result.cs
+site/Inspinia_MVC5/Models/GetCollectByWashs_Result.cs
+site/Inspinia_MVC5/Models/GetIncreaseByWashs_Result.cs
+site/Inspinia_MVC5/Models/GetIncreaseByPosts_Result.cs
+site/Inspinia_MVC5/Models/GetDayIncrease_Result.cs

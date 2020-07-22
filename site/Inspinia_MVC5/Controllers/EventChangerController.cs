@@ -13,34 +13,26 @@ namespace Inspinia_MVC5.Controllers
 
         List<Region> _regions = null;
         List<Wash> _washes = null;
-        List<Post> _changers = null;
-        List<Device> _devices = null;
-        List<EventKind> _eventKinds = null;
+        List<Changer> _changers = null;
+        //List<Device> _devices = null;
+        List<EventChangerKind> _eventKinds = null;
 
-        public EventsPostController()
+        public EventChangerController()
         {
             _washes = db.Washes.Where(w => w.Code == "М13" || w.Code == "М14").ToList();
-            _devices = db.Devices.ToList();
+            //_devices = db.Devices.ToList();
 
             _regions = new List<Region>();
-            _changers = new List<Post>();
+            _changers = new List<Changer>();
 
-            _eventKinds = db.EventKinds.Where(e => e.Code == "cashincrease" || e.Code == "mode" || e.Code == "collect").ToList();
+            _eventKinds = db.EventChangerKinds.Where(e => e.Code == "exchange" || e.Code == "cardCreate" || e.Code == "cardIncrease").ToList();
 
             foreach (Wash w in _washes)
             {
                 if (!_regions.Contains(w.Region))
                     _regions.Add(w.Region);
 
-                for (int i = w.Posts.Count - 1; i >= 0; i--)
-                {
-                    if (_devices.Find(d => d.IDDevice == w.Posts.ElementAt(i).IDDevice).IDDeviceType != 2)
-                    {
-                        w.Posts.Remove(w.Posts.ElementAt(i));
-                    }
-                }
-
-                _changers.AddRange(w.Posts);
+                _changers.Add(db.Changers.ToList().Find(c => c.IDWash == w.IDWash));
             }
 
             foreach (var r in _regions)
@@ -65,7 +57,7 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.Events = _eventKinds;
         }
 
-        public ActionResult EventsByPostsView(string begdate, string enddate, string post)
+        public ActionResult EventChangerView(string begdate, string enddate, string changer)
         {
             //Post Post = _posts.Find(w => w.Code == post);
 
@@ -86,59 +78,59 @@ namespace Inspinia_MVC5.Controllers
 
             return View("EventChangerView");
         }
-        public ActionResult _EventChangerList(string changer, string begdate, string enddate, string operation)
-        {
-            List<GetEventChanger_Result> view = GetEventChanger(changer, begdate, enddate, operation);
+        //public ActionResult _EventChangerList(string changer, string begdate, string enddate, string operation)
+        //{
+        //    List<GetEventChanger_Result> view = GetEventChanger(changer, begdate, enddate, operation);
 
-            return PartialView("_EventChangerList", view);
-        }
+        //    return PartialView("_EventChangerList", view);
+        //}
 
-        public List<GetEventChanger_Result> GetEventChanger(string changer, string begdate, string enddate, string operation)
-        {
-            List<GetEventChanger_Result> resultlist = null;
+        //public List<GetEventChanger_Result> GetEventChanger(string changer, string begdate, string enddate, string operation)
+        //{
+        //    List<GetEventChanger_Result> resultlist = null;
 
-            DateTime bdate;
-            if (!DateTime.TryParse(begdate, out bdate))
-                bdate = DateTime.Today.AddYears(-10);
+        //    DateTime bdate;
+        //    if (!DateTime.TryParse(begdate, out bdate))
+        //        bdate = DateTime.Today.AddYears(-10);
 
-            DateTime edate;
-            if (!DateTime.TryParse(enddate, out edate))
-                edate = DateTime.Now;
+        //    DateTime edate;
+        //    if (!DateTime.TryParse(enddate, out edate))
+        //        edate = DateTime.Now;
 
-            var prmChanger = new System.Data.SqlClient.SqlParameter("@p_ChangerCode", System.Data.SqlDbType.NVarChar);
-            if (changer == null || changer == "")
-            {
-                changer = "none";
-            }
-            prmChanger.Value = changer;
+        //    var prmChanger = new System.Data.SqlClient.SqlParameter("@p_ChangerCode", System.Data.SqlDbType.NVarChar);
+        //    if (changer == null || changer == "")
+        //    {
+        //        changer = "none";
+        //    }
+        //    prmChanger.Value = changer;
 
-            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
-            prmBegDate.Value = bdate;
+        //    var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+        //    prmBegDate.Value = bdate;
 
-            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
-            prmEndDate.Value = edate;
+        //    var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+        //    prmEndDate.Value = edate;
 
-            var prmOperation = new System.Data.SqlClient.SqlParameter("@p_EventChangerKind", System.Data.SqlDbType.NVarChar);
-            if (operation == null)
-            {
-                operation = "";
-            }
-            prmOperation.Value = operation;
+        //    var prmOperation = new System.Data.SqlClient.SqlParameter("@p_EventChangerKind", System.Data.SqlDbType.NVarChar);
+        //    if (operation == null)
+        //    {
+        //        operation = "";
+        //    }
+        //    prmOperation.Value = operation;
 
-            var result = db.Database.SqlQuery<GetEventsByPost_Result>
-                ("GetEventChanger @p_DateBeg, @p_DateEnd, @p_ChangerCode, @p_EventChangerKind ",
-                prmBegDate, prmEndDate, prmChanger, prmOperation).ToList();
+        //    var result = db.Database.SqlQuery<GetEventChanger_Result>
+        //        ("GetEventChanger @p_DateBeg, @p_DateEnd, @p_ChangerCode, @p_EventChangerKind ",
+        //        prmBegDate, prmEndDate, prmChanger, prmOperation).ToList();
 
-            resultlist = result;
+        //    resultlist = result;
 
-            return resultlist;
-        }
+        //    return resultlist;
+        //}
 
-        public ActionResult EventChangerFilter(string changer, string begdate, string enddate, string operation)
-        {
-            List<GetEventChanger_Result> view = GetEventChanger(changer, begdate, enddate, operation);
+        //public ActionResult EventChangerFilter(string changer, string begdate, string enddate, string operation)
+        //{
+        //    List<GetEventChanger_Result> view = GetEventChanger(changer, begdate, enddate, operation);
 
-            return PartialView("_EventChangerList", view);
-        }
+        //    return PartialView("_EventChangerList", view);
+        //}
     }
 }

@@ -34,6 +34,14 @@
           <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="Changers">
+          <Key>
+            <PropertyRef Name="IDChanger" />
+          </Key>
+          <Property Name="IDChanger" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IDWash" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Collections">
           <Key>
             <PropertyRef Name="IDCollections" />
@@ -168,6 +176,67 @@
           <Property Name="DTime" Type="datetime" Nullable="false" />
           <Property Name="IDEventPost" Type="int" />
         </EntityType>
+        <EntityType Name="EventChanger">
+          <Key>
+            <PropertyRef Name="IDEventChanger" />
+          </Key>
+          <Property Name="IDEventChanger" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDChanger" Type="int" Nullable="false" />
+          <Property Name="IDEventChangerKind" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventChangerAcquiring">
+          <Key>
+            <PropertyRef Name="IDEventChangerAcquiring" />
+          </Key>
+          <Property Name="IDEventChangerAcquiring" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDEventChanger" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime" Nullable="false" />
+          <Property Name="Amount" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventChangerCard">
+          <Key>
+            <PropertyRef Name="IDEventChangerCard" />
+          </Key>
+          <Property Name="IDEventChangerCard" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDEventChanger" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime" Nullable="false" />
+          <Property Name="CardNum" Type="nvarchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventChangerIncrease">
+          <Key>
+            <PropertyRef Name="IDEventChangerIncrease" />
+          </Key>
+          <Property Name="IDEventChangerIncrease" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDEventChanger" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime" Nullable="false" />
+          <Property Name="m10" Type="int" Nullable="false" />
+          <Property Name="b50" Type="int" Nullable="false" />
+          <Property Name="b100" Type="int" Nullable="false" />
+          <Property Name="b200" Type="int" Nullable="false" />
+          <Property Name="b500" Type="int" Nullable="false" />
+          <Property Name="b1000" Type="int" Nullable="false" />
+          <Property Name="b2000" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventChangerKind">
+          <Key>
+            <PropertyRef Name="IDEventChangerKind" />
+          </Key>
+          <Property Name="IDEventChangerKind" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EventChangerOut">
+          <Key>
+            <PropertyRef Name="IDEventChangerOut" />
+          </Key>
+          <Property Name="IDEventChangerOut" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDEventChanger" Type="int" Nullable="false" />
+          <Property Name="DTime" Type="datetime" Nullable="false" />
+          <Property Name="m10" Type="int" Nullable="false" />
+          <Property Name="b50" Type="int" Nullable="false" />
+          <Property Name="b100" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="EventCollect">
           <Key>
             <PropertyRef Name="IDEvent" />
@@ -293,7 +362,7 @@
             <PropertyRef Name="IDOperation" />
           </Key>
           <Property Name="IDOperation" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="IDPsc" Type="int" Nullable="false" />
+          <Property Name="IDChanger" Type="int" Nullable="false" />
           <Property Name="IDOperationType" Type="int" Nullable="false" />
           <Property Name="IDCard" Type="int" Nullable="false" />
           <Property Name="DTime" Type="datetime" Nullable="false" />
@@ -330,14 +399,6 @@
           <Property Name="Name" Type="nvarchar" MaxLength="100" />
           <Property Name="IDWash" Type="int" Nullable="false" />
           <Property Name="IDDevice" Type="int" />
-        </EntityType>
-        <EntityType Name="Psces">
-          <Key>
-            <PropertyRef Name="IDPsc" />
-          </Key>
-          <Property Name="IDPsc" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="IDWash" Type="int" />
         </EntityType>
         <EntityType Name="Regions">
           <Key>
@@ -407,6 +468,20 @@
             </Principal>
             <Dependent Role="Cards">
               <PropertyRef Name="IDOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Changers_Wash">
+          <End Role="Wash" Type="Self.Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Changers" Type="Self.Changers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Changers">
+              <PropertyRef Name="IDWash" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -550,6 +625,90 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_EventChanger_Changers">
+          <End Role="Changers" Type="Self.Changers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventChanger" Type="Self.EventChanger" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Changers">
+              <PropertyRef Name="IDChanger" />
+            </Principal>
+            <Dependent Role="EventChanger">
+              <PropertyRef Name="IDChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventChanger_EventChangerKind">
+          <End Role="EventChangerKind" Type="Self.EventChangerKind" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventChanger" Type="Self.EventChanger" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventChangerKind">
+              <PropertyRef Name="IDEventChangerKind" />
+            </Principal>
+            <Dependent Role="EventChanger">
+              <PropertyRef Name="IDEventChangerKind" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventChangerAcquiring_EventChanger">
+          <End Role="EventChanger" Type="Self.EventChanger" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventChangerAcquiring" Type="Self.EventChangerAcquiring" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventChanger">
+              <PropertyRef Name="IDEventChanger" />
+            </Principal>
+            <Dependent Role="EventChangerAcquiring">
+              <PropertyRef Name="IDEventChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventChangerCard_EventChanger">
+          <End Role="EventChanger" Type="Self.EventChanger" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventChangerCard" Type="Self.EventChangerCard" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventChanger">
+              <PropertyRef Name="IDEventChanger" />
+            </Principal>
+            <Dependent Role="EventChangerCard">
+              <PropertyRef Name="IDEventChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventChangerIncrease_EventChanger">
+          <End Role="EventChanger" Type="Self.EventChanger" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventChangerIncrease" Type="Self.EventChangerIncrease" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventChanger">
+              <PropertyRef Name="IDEventChanger" />
+            </Principal>
+            <Dependent Role="EventChangerIncrease">
+              <PropertyRef Name="IDEventChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventChangerOut_EventChanger">
+          <End Role="EventChanger" Type="Self.EventChanger" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="EventChangerOut" Type="Self.EventChangerOut" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventChanger">
+              <PropertyRef Name="IDEventChanger" />
+            </Principal>
+            <Dependent Role="EventChangerOut">
+              <PropertyRef Name="IDEventChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_EventCollect_Event">
           <End Role="Event" Type="Self.Event" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -676,6 +835,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Operations_Changers">
+          <End Role="Changers" Type="Self.Changers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Changers">
+              <PropertyRef Name="IDChanger" />
+            </Principal>
+            <Dependent Role="Operations">
+              <PropertyRef Name="IDChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Operations_OperationTypes">
           <End Role="OperationTypes" Type="Self.OperationTypes" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -687,34 +860,6 @@
             </Principal>
             <Dependent Role="Operations">
               <PropertyRef Name="IDOperationType" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Operations_Pcses">
-          <End Role="Psces" Type="Self.Psces" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Psces">
-              <PropertyRef Name="IDPsc" />
-            </Principal>
-            <Dependent Role="Operations">
-              <PropertyRef Name="IDPsc" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Pcses_Wash">
-          <End Role="Wash" Type="Self.Wash" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Psces" Type="Self.Psces" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Wash">
-              <PropertyRef Name="IDWash" />
-            </Principal>
-            <Dependent Role="Psces">
-              <PropertyRef Name="IDWash" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1008,6 +1153,7 @@
           <EntitySet Name="Cards" EntityType="Self.Cards" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CardStatuses" EntityType="Self.CardStatuses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CardTypes" EntityType="Self.CardTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Changers" EntityType="Self.Changers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Collections" EntityType="Self.Collections" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CollectionsFact" EntityType="Self.CollectionsFact" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CollectionsPre" EntityType="Self.CollectionsPre" Schema="dbo" store:Type="Tables" />
@@ -1018,6 +1164,12 @@
           <EntitySet Name="Device" EntityType="Self.Device" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DeviceTypes" EntityType="Self.DeviceTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Event" EntityType="Self.Event" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventChanger" EntityType="Self.EventChanger" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventChangerAcquiring" EntityType="Self.EventChangerAcquiring" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventChangerCard" EntityType="Self.EventChangerCard" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventChangerIncrease" EntityType="Self.EventChangerIncrease" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventChangerKind" EntityType="Self.EventChangerKind" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventChangerOut" EntityType="Self.EventChangerOut" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventCollect" EntityType="Self.EventCollect" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventIncrease" EntityType="Self.EventIncrease" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventKind" EntityType="Self.EventKind" Schema="dbo" store:Type="Tables" />
@@ -1034,7 +1186,6 @@
           <EntitySet Name="OperationTypes" EntityType="Self.OperationTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Owners" EntityType="Self.Owners" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Posts" EntityType="Self.Posts" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Psces" EntityType="Self.Psces" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Regions" EntityType="Self.Regions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Wash" EntityType="Self.Wash" Schema="dbo" store:Type="Tables" />
@@ -1049,6 +1200,10 @@
           <AssociationSet Name="FK_Cards_Owners" Association="Self.FK_Cards_Owners">
             <End Role="Owners" EntitySet="Owners" />
             <End Role="Cards" EntitySet="Cards" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Changers_Wash" Association="Self.FK_Changers_Wash">
+            <End Role="Wash" EntitySet="Wash" />
+            <End Role="Changers" EntitySet="Changers" />
           </AssociationSet>
           <AssociationSet Name="FK_Collections_Posts" Association="Self.FK_Collections_Posts">
             <End Role="Posts" EntitySet="Posts" />
@@ -1090,6 +1245,30 @@
             <End Role="Event" EntitySet="Event" />
             <End Role="EventIncrease" EntitySet="EventIncrease" />
           </AssociationSet>
+          <AssociationSet Name="FK_EventChanger_Changers" Association="Self.FK_EventChanger_Changers">
+            <End Role="Changers" EntitySet="Changers" />
+            <End Role="EventChanger" EntitySet="EventChanger" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventChanger_EventChangerKind" Association="Self.FK_EventChanger_EventChangerKind">
+            <End Role="EventChangerKind" EntitySet="EventChangerKind" />
+            <End Role="EventChanger" EntitySet="EventChanger" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventChangerAcquiring_EventChanger" Association="Self.FK_EventChangerAcquiring_EventChanger">
+            <End Role="EventChanger" EntitySet="EventChanger" />
+            <End Role="EventChangerAcquiring" EntitySet="EventChangerAcquiring" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventChangerCard_EventChanger" Association="Self.FK_EventChangerCard_EventChanger">
+            <End Role="EventChanger" EntitySet="EventChanger" />
+            <End Role="EventChangerCard" EntitySet="EventChangerCard" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventChangerIncrease_EventChanger" Association="Self.FK_EventChangerIncrease_EventChanger">
+            <End Role="EventChanger" EntitySet="EventChanger" />
+            <End Role="EventChangerIncrease" EntitySet="EventChangerIncrease" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventChangerOut_EventChanger" Association="Self.FK_EventChangerOut_EventChanger">
+            <End Role="EventChanger" EntitySet="EventChanger" />
+            <End Role="EventChangerOut" EntitySet="EventChangerOut" />
+          </AssociationSet>
           <AssociationSet Name="FK_EventCollect_Event" Association="Self.FK_EventCollect_Event">
             <End Role="Event" EntitySet="Event" />
             <End Role="EventCollect" EntitySet="EventCollect" />
@@ -1126,17 +1305,13 @@
             <End Role="Cards" EntitySet="Cards" />
             <End Role="Operations" EntitySet="Operations" />
           </AssociationSet>
+          <AssociationSet Name="FK_Operations_Changers" Association="Self.FK_Operations_Changers">
+            <End Role="Changers" EntitySet="Changers" />
+            <End Role="Operations" EntitySet="Operations" />
+          </AssociationSet>
           <AssociationSet Name="FK_Operations_OperationTypes" Association="Self.FK_Operations_OperationTypes">
             <End Role="OperationTypes" EntitySet="OperationTypes" />
             <End Role="Operations" EntitySet="Operations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Operations_Pcses" Association="Self.FK_Operations_Pcses">
-            <End Role="Psces" EntitySet="Psces" />
-            <End Role="Operations" EntitySet="Operations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Pcses_Wash" Association="Self.FK_Pcses_Wash">
-            <End Role="Wash" EntitySet="Wash" />
-            <End Role="Psces" EntitySet="Psces" />
           </AssociationSet>
           <AssociationSet Name="FK_Posts_Device" Association="Self.FK_Posts_Device">
             <End Role="Device" EntitySet="Device" />
@@ -1484,7 +1659,6 @@
             <PropertyRef Name="IDOperation" />
           </Key>
           <Property Name="IDOperation" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="IDPsc" Type="Int32" Nullable="false" />
           <Property Name="IDOperationType" Type="Int32" Nullable="false" />
           <Property Name="IDCard" Type="Int32" Nullable="false" />
           <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
@@ -1496,7 +1670,8 @@
           <Property Name="Details" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Card" Relationship="Self.FK_Operations_Cards" FromRole="Operations" ToRole="Cards" />
           <NavigationProperty Name="OperationType" Relationship="Self.FK_Operations_OperationTypes" FromRole="Operations" ToRole="OperationTypes" />
-          <NavigationProperty Name="Psce" Relationship="Self.FK_Operations_Pcses" FromRole="Operations" ToRole="Psces" />
+          <Property Name="IDChanger" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Changer" Relationship="ModelDb.FK_Operations_Changers" FromRole="Operation" ToRole="Changer" />
         </EntityType>
         <EntityType Name="OperationType">
           <Key>
@@ -1536,16 +1711,6 @@
           <NavigationProperty Name="Events" Relationship="Self.FK_Event_Point" FromRole="Posts" ToRole="Event" />
           <NavigationProperty Name="Wash" Relationship="Self.FK_Posts_Wash" FromRole="Posts" ToRole="Wash" />
         </EntityType>
-        <EntityType Name="Psce">
-          <Key>
-            <PropertyRef Name="IDPsc" />
-          </Key>
-          <Property Name="IDPsc" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="IDWash" Type="Int32" />
-          <NavigationProperty Name="Operations" Relationship="Self.FK_Operations_Pcses" FromRole="Psces" ToRole="Operations" />
-          <NavigationProperty Name="Wash" Relationship="Self.FK_Pcses_Wash" FromRole="Psces" ToRole="Wash" />
-        </EntityType>
         <EntityType Name="Region">
           <Key>
             <PropertyRef Name="IDRegion" />
@@ -1577,8 +1742,8 @@
           <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="IDRegion" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Posts" Relationship="Self.FK_Posts_Wash" FromRole="Wash" ToRole="Posts" />
-          <NavigationProperty Name="Psces" Relationship="Self.FK_Pcses_Wash" FromRole="Wash" ToRole="Psces" />
           <NavigationProperty Name="Region" Relationship="Self.FK_Wash_Regions" FromRole="Wash" ToRole="Regions" />
+          <NavigationProperty Name="Changers" Relationship="ModelDb.FK_Changers_Wash" FromRole="Wash" ToRole="Changer" />
         </EntityType>
         <Association Name="FK_Cards_CardStatuses">
           <End Role="CardStatuses" Type="Self.CardStatus" Multiplicity="1">
@@ -1930,20 +2095,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Operations_Pcses">
-          <End Role="Psces" Type="Self.Psce" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Operations" Type="Self.Operation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Psces">
-              <PropertyRef Name="IDPsc" />
-            </Principal>
-            <Dependent Role="Operations">
-              <PropertyRef Name="IDPsc" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Posts_Wash">
           <End Role="Wash" Type="Self.Wash" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -1954,20 +2105,6 @@
               <PropertyRef Name="IDWash" />
             </Principal>
             <Dependent Role="Posts">
-              <PropertyRef Name="IDWash" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Pcses_Wash">
-          <End Role="Wash" Type="Self.Wash" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Psces" Type="Self.Psce" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Wash">
-              <PropertyRef Name="IDWash" />
-            </Principal>
-            <Dependent Role="Psces">
               <PropertyRef Name="IDWash" />
             </Dependent>
           </ReferentialConstraint>
@@ -2016,7 +2153,6 @@
           <EntitySet Name="OperationTypes" EntityType="Self.OperationType" />
           <EntitySet Name="Owners" EntityType="Self.Owner" />
           <EntitySet Name="Posts" EntityType="Self.Post" />
-          <EntitySet Name="Psces" EntityType="Self.Psce" />
           <EntitySet Name="Regions" EntityType="Self.Region" />
           <EntitySet Name="Users" EntityType="Self.User" />
           <EntitySet Name="Washes" EntityType="Self.Wash" />
@@ -2120,17 +2256,9 @@
             <End Role="OperationTypes" EntitySet="OperationTypes" />
             <End Role="Operations" EntitySet="Operations" />
           </AssociationSet>
-          <AssociationSet Name="FK_Operations_Pcses" Association="Self.FK_Operations_Pcses">
-            <End Role="Psces" EntitySet="Psces" />
-            <End Role="Operations" EntitySet="Operations" />
-          </AssociationSet>
           <AssociationSet Name="FK_Posts_Wash" Association="Self.FK_Posts_Wash">
             <End Role="Wash" EntitySet="Washes" />
             <End Role="Posts" EntitySet="Posts" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Pcses_Wash" Association="Self.FK_Pcses_Wash">
-            <End Role="Wash" EntitySet="Washes" />
-            <End Role="Psces" EntitySet="Psces" />
           </AssociationSet>
           <AssociationSet Name="FK_Wash_Regions" Association="Self.FK_Wash_Regions">
             <End Role="Regions" EntitySet="Regions" />
@@ -2380,6 +2508,45 @@
             <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
             <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
           </FunctionImport>
+          <EntitySet Name="Changers" EntityType="ModelDb.Changer" />
+          <EntitySet Name="EventChangers" EntityType="ModelDb.EventChanger" />
+          <EntitySet Name="EventChangerAcquirings" EntityType="ModelDb.EventChangerAcquiring" />
+          <EntitySet Name="EventChangerCards" EntityType="ModelDb.EventChangerCard" />
+          <EntitySet Name="EventChangerIncreases" EntityType="ModelDb.EventChangerIncrease" />
+          <EntitySet Name="EventChangerKinds" EntityType="ModelDb.EventChangerKind" />
+          <EntitySet Name="EventChangerOuts" EntityType="ModelDb.EventChangerOut" />
+          <AssociationSet Name="FK_Changers_Wash" Association="ModelDb.FK_Changers_Wash">
+            <End Role="Wash" EntitySet="Washes" />
+            <End Role="Changer" EntitySet="Changers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventChanger_Changers" Association="ModelDb.FK_EventChanger_Changers">
+            <End Role="Changer" EntitySet="Changers" />
+            <End Role="EventChanger" EntitySet="EventChangers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Operations_Changers" Association="ModelDb.FK_Operations_Changers">
+            <End Role="Changer" EntitySet="Changers" />
+            <End Role="Operation" EntitySet="Operations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventChanger_EventChangerKind" Association="ModelDb.FK_EventChanger_EventChangerKind">
+            <End Role="EventChangerKind" EntitySet="EventChangerKinds" />
+            <End Role="EventChanger" EntitySet="EventChangers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventChangerAcquiring_EventChanger" Association="ModelDb.FK_EventChangerAcquiring_EventChanger">
+            <End Role="EventChanger" EntitySet="EventChangers" />
+            <End Role="EventChangerAcquiring" EntitySet="EventChangerAcquirings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventChangerCard_EventChanger" Association="ModelDb.FK_EventChangerCard_EventChanger">
+            <End Role="EventChanger" EntitySet="EventChangers" />
+            <End Role="EventChangerCard" EntitySet="EventChangerCards" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventChangerIncrease_EventChanger" Association="ModelDb.FK_EventChangerIncrease_EventChanger">
+            <End Role="EventChanger" EntitySet="EventChangers" />
+            <End Role="EventChangerIncrease" EntitySet="EventChangerIncreases" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EventChangerOut_EventChanger" Association="ModelDb.FK_EventChangerOut_EventChanger">
+            <End Role="EventChanger" EntitySet="EventChangers" />
+            <End Role="EventChangerOut" EntitySet="EventChangerOuts" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="GetBoxAndCollect_Result">
           <Property Type="DateTime" Name="reportdate" Nullable="true" Precision="23" />
@@ -2734,6 +2901,201 @@
           <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
           <Property Type="Int32" Name="Amount" Nullable="false" />
         </ComplexType>
+        <EntityType Name="Changer">
+          <Key>
+            <PropertyRef Name="IDChanger" />
+          </Key>
+          <Property Name="IDChanger" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IDWash" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Wash" Relationship="ModelDb.FK_Changers_Wash" FromRole="Changer" ToRole="Wash" />
+          <NavigationProperty Name="EventChangers" Relationship="ModelDb.FK_EventChanger_Changers" FromRole="Changer" ToRole="EventChanger" />
+          <NavigationProperty Name="Operations" Relationship="ModelDb.FK_Operations_Changers" FromRole="Changer" ToRole="Operation" />
+        </EntityType>
+        <EntityType Name="EventChanger">
+          <Key>
+            <PropertyRef Name="IDEventChanger" />
+          </Key>
+          <Property Name="IDEventChanger" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDChanger" Type="Int32" Nullable="false" />
+          <Property Name="IDEventChangerKind" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Changer" Relationship="ModelDb.FK_EventChanger_Changers" FromRole="EventChanger" ToRole="Changer" />
+          <NavigationProperty Name="EventChangerKind" Relationship="ModelDb.FK_EventChanger_EventChangerKind" FromRole="EventChanger" ToRole="EventChangerKind" />
+          <NavigationProperty Name="EventChangerAcquirings" Relationship="ModelDb.FK_EventChangerAcquiring_EventChanger" FromRole="EventChanger" ToRole="EventChangerAcquiring" />
+          <NavigationProperty Name="EventChangerCards" Relationship="ModelDb.FK_EventChangerCard_EventChanger" FromRole="EventChanger" ToRole="EventChangerCard" />
+          <NavigationProperty Name="EventChangerIncreases" Relationship="ModelDb.FK_EventChangerIncrease_EventChanger" FromRole="EventChanger" ToRole="EventChangerIncrease" />
+          <NavigationProperty Name="EventChangerOuts" Relationship="ModelDb.FK_EventChangerOut_EventChanger" FromRole="EventChanger" ToRole="EventChangerOut" />
+        </EntityType>
+        <EntityType Name="EventChangerAcquiring">
+          <Key>
+            <PropertyRef Name="IDEventChangerAcquiring" />
+          </Key>
+          <Property Name="IDEventChangerAcquiring" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDEventChanger" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Amount" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="EventChanger" Relationship="ModelDb.FK_EventChangerAcquiring_EventChanger" FromRole="EventChangerAcquiring" ToRole="EventChanger" />
+        </EntityType>
+        <EntityType Name="EventChangerCard">
+          <Key>
+            <PropertyRef Name="IDEventChangerCard" />
+          </Key>
+          <Property Name="IDEventChangerCard" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDEventChanger" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CardNum" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="EventChanger" Relationship="ModelDb.FK_EventChangerCard_EventChanger" FromRole="EventChangerCard" ToRole="EventChanger" />
+        </EntityType>
+        <EntityType Name="EventChangerIncrease">
+          <Key>
+            <PropertyRef Name="IDEventChangerIncrease" />
+          </Key>
+          <Property Name="IDEventChangerIncrease" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDEventChanger" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="m10" Type="Int32" Nullable="false" />
+          <Property Name="b50" Type="Int32" Nullable="false" />
+          <Property Name="b100" Type="Int32" Nullable="false" />
+          <Property Name="b200" Type="Int32" Nullable="false" />
+          <Property Name="b500" Type="Int32" Nullable="false" />
+          <Property Name="b1000" Type="Int32" Nullable="false" />
+          <Property Name="b2000" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="EventChanger" Relationship="ModelDb.FK_EventChangerIncrease_EventChanger" FromRole="EventChangerIncrease" ToRole="EventChanger" />
+        </EntityType>
+        <EntityType Name="EventChangerKind">
+          <Key>
+            <PropertyRef Name="IDEventChangerKind" />
+          </Key>
+          <Property Name="IDEventChangerKind" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="EventChangers" Relationship="ModelDb.FK_EventChanger_EventChangerKind" FromRole="EventChangerKind" ToRole="EventChanger" />
+        </EntityType>
+        <EntityType Name="EventChangerOut">
+          <Key>
+            <PropertyRef Name="IDEventChangerOut" />
+          </Key>
+          <Property Name="IDEventChangerOut" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDEventChanger" Type="Int32" Nullable="false" />
+          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="m10" Type="Int32" Nullable="false" />
+          <Property Name="b50" Type="Int32" Nullable="false" />
+          <Property Name="b100" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="EventChanger" Relationship="ModelDb.FK_EventChangerOut_EventChanger" FromRole="EventChangerOut" ToRole="EventChanger" />
+        </EntityType>
+        <Association Name="FK_Changers_Wash">
+          <End Type="ModelDb.Wash" Role="Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ModelDb.Changer" Role="Changer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Changer">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventChanger_Changers">
+          <End Type="ModelDb.Changer" Role="Changer" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ModelDb.EventChanger" Role="EventChanger" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Changer">
+              <PropertyRef Name="IDChanger" />
+            </Principal>
+            <Dependent Role="EventChanger">
+              <PropertyRef Name="IDChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Operations_Changers">
+          <End Type="ModelDb.Changer" Role="Changer" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ModelDb.Operation" Role="Operation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Changer">
+              <PropertyRef Name="IDChanger" />
+            </Principal>
+            <Dependent Role="Operation">
+              <PropertyRef Name="IDChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventChanger_EventChangerKind">
+          <End Type="ModelDb.EventChangerKind" Role="EventChangerKind" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ModelDb.EventChanger" Role="EventChanger" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventChangerKind">
+              <PropertyRef Name="IDEventChangerKind" />
+            </Principal>
+            <Dependent Role="EventChanger">
+              <PropertyRef Name="IDEventChangerKind" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventChangerAcquiring_EventChanger">
+          <End Type="ModelDb.EventChanger" Role="EventChanger" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ModelDb.EventChangerAcquiring" Role="EventChangerAcquiring" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventChanger">
+              <PropertyRef Name="IDEventChanger" />
+            </Principal>
+            <Dependent Role="EventChangerAcquiring">
+              <PropertyRef Name="IDEventChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventChangerCard_EventChanger">
+          <End Type="ModelDb.EventChanger" Role="EventChanger" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ModelDb.EventChangerCard" Role="EventChangerCard" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventChanger">
+              <PropertyRef Name="IDEventChanger" />
+            </Principal>
+            <Dependent Role="EventChangerCard">
+              <PropertyRef Name="IDEventChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventChangerIncrease_EventChanger">
+          <End Type="ModelDb.EventChanger" Role="EventChanger" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ModelDb.EventChangerIncrease" Role="EventChangerIncrease" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventChanger">
+              <PropertyRef Name="IDEventChanger" />
+            </Principal>
+            <Dependent Role="EventChangerIncrease">
+              <PropertyRef Name="IDEventChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EventChangerOut_EventChanger">
+          <End Type="ModelDb.EventChanger" Role="EventChanger" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ModelDb.EventChangerOut" Role="EventChangerOut" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EventChanger">
+              <PropertyRef Name="IDEventChanger" />
+            </Principal>
+            <Dependent Role="EventChangerOut">
+              <PropertyRef Name="IDEventChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3051,8 +3413,8 @@
           <EntitySetMapping Name="Operations">
             <EntityTypeMapping TypeName="ModelDb.Operation">
               <MappingFragment StoreEntitySet="Operations">
+                <ScalarProperty Name="IDChanger" ColumnName="IDChanger" />
                 <ScalarProperty Name="IDOperation" ColumnName="IDOperation" />
-                <ScalarProperty Name="IDPsc" ColumnName="IDPsc" />
                 <ScalarProperty Name="IDOperationType" ColumnName="IDOperationType" />
                 <ScalarProperty Name="IDCard" ColumnName="IDCard" />
                 <ScalarProperty Name="DTime" ColumnName="DTime" />
@@ -3092,15 +3454,6 @@
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
                 <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Psces">
-            <EntityTypeMapping TypeName="ModelDb.Psce">
-              <MappingFragment StoreEntitySet="Psces">
-                <ScalarProperty Name="IDPsc" ColumnName="IDPsc" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3584,6 +3937,82 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="Changers">
+            <EntityTypeMapping TypeName="ModelDb.Changer">
+              <MappingFragment StoreEntitySet="Changers">
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="IDChanger" ColumnName="IDChanger" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventChangers">
+            <EntityTypeMapping TypeName="ModelDb.EventChanger">
+              <MappingFragment StoreEntitySet="EventChanger">
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="IDEventChangerKind" ColumnName="IDEventChangerKind" />
+                <ScalarProperty Name="IDChanger" ColumnName="IDChanger" />
+                <ScalarProperty Name="IDEventChanger" ColumnName="IDEventChanger" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventChangerAcquirings">
+            <EntityTypeMapping TypeName="ModelDb.EventChangerAcquiring">
+              <MappingFragment StoreEntitySet="EventChangerAcquiring">
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="IDEventChanger" ColumnName="IDEventChanger" />
+                <ScalarProperty Name="IDEventChangerAcquiring" ColumnName="IDEventChangerAcquiring" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventChangerCards">
+            <EntityTypeMapping TypeName="ModelDb.EventChangerCard">
+              <MappingFragment StoreEntitySet="EventChangerCard">
+                <ScalarProperty Name="CardNum" ColumnName="CardNum" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="IDEventChanger" ColumnName="IDEventChanger" />
+                <ScalarProperty Name="IDEventChangerCard" ColumnName="IDEventChangerCard" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventChangerIncreases">
+            <EntityTypeMapping TypeName="ModelDb.EventChangerIncrease">
+              <MappingFragment StoreEntitySet="EventChangerIncrease">
+                <ScalarProperty Name="b2000" ColumnName="b2000" />
+                <ScalarProperty Name="b1000" ColumnName="b1000" />
+                <ScalarProperty Name="b500" ColumnName="b500" />
+                <ScalarProperty Name="b200" ColumnName="b200" />
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="IDEventChanger" ColumnName="IDEventChanger" />
+                <ScalarProperty Name="IDEventChangerIncrease" ColumnName="IDEventChangerIncrease" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventChangerKinds">
+            <EntityTypeMapping TypeName="ModelDb.EventChangerKind">
+              <MappingFragment StoreEntitySet="EventChangerKind">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="IDEventChangerKind" ColumnName="IDEventChangerKind" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventChangerOuts">
+            <EntityTypeMapping TypeName="ModelDb.EventChangerOut">
+              <MappingFragment StoreEntitySet="EventChangerOut">
+                <ScalarProperty Name="b100" ColumnName="b100" />
+                <ScalarProperty Name="b50" ColumnName="b50" />
+                <ScalarProperty Name="m10" ColumnName="m10" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="IDEventChanger" ColumnName="IDEventChanger" />
+                <ScalarProperty Name="IDEventChangerOut" ColumnName="IDEventChangerOut" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

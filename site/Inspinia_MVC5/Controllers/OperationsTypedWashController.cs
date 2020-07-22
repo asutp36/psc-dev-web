@@ -12,17 +12,17 @@ namespace Inspinia_MVC5.Controllers
         private ModelDb db = new ModelDb();
 
         List<CardType> _cardTypes = null;
-        List<Psce> _psces = null;
+        List<Changer> _changers = null;
         List<CardStatus> _cardStatuses = null;
 
         public OperationsTypedWashController()
         {
             _cardTypes = db.CardTypes.ToList();
-            _psces = db.Psces.ToList();
+            _changers = db.Changers.ToList();
             _cardStatuses = db.CardStatuses.ToList();
 
             ViewBag.CardTypes = _cardTypes;
-            ViewBag.Psces = _psces;
+            ViewBag.Changers = _changers;
             ViewBag.CardStatuses = _cardStatuses;
         }
 
@@ -40,7 +40,7 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.timeOperationEnd = stopDTime.ToString("dd.MM.yyyy HH:mm:ss");
             ViewBag.cardNum = "";
             ViewBag.operation = "";
-            ViewBag.psc = null;
+            ViewBag.changer = null;
             ViewBag.function = "";
             ViewBag.details = "";
 
@@ -48,15 +48,15 @@ namespace Inspinia_MVC5.Controllers
         }
 
         public ActionResult UpdateViewBagOperationsCardsTypedWash(string begTime, string endTime, string cardNum,
-            string operation, string psc, string function, string details)
+            string operation, string changer, string function, string details)
         {
-            List<GetCardList_Result> viewList = GetOperationsCardsTypedWash(begTime,endTime,cardNum,operation,psc,function,details);
+            List<GetCardList_Result> viewList = GetOperationsCardsTypedWash(begTime,endTime,cardNum,operation,changer,function,details);
 
             return PartialView("_OperationsCardsTypedWashList", viewList);
         }
 
         private List<GetCardList_Result> GetOperationsCardsTypedWash(string begTime, string endTime,
-            string cardNum, string operation, string psc, string function, string details)
+            string cardNum, string operation, string changer, string function, string details)
         {
             List<GetCardList_Result> resultset = null;
 
@@ -90,7 +90,7 @@ namespace Inspinia_MVC5.Controllers
             }
 
             var prmActivationBy = new System.Data.SqlClient.SqlParameter("@p_ActivationBy", System.Data.SqlDbType.Int);
-            prmActivationBy.Value = Convert.ToInt32(psc);
+            prmActivationBy.Value = Convert.ToInt32(changer);
 
             var prmPhone = new System.Data.SqlClient.SqlParameter("@p_Phone", System.Data.SqlDbType.NVarChar);
             prmPhone.Value = "";
@@ -141,12 +141,6 @@ namespace Inspinia_MVC5.Controllers
             resultset = result;
 
             return resultset;
-        }
-
-        // GET: OperationsCardsTypedWash
-        public ActionResult Index()
-        {
-            return View();
         }
     }
 }

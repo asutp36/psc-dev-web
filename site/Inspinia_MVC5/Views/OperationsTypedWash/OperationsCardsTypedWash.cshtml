@@ -70,9 +70,9 @@
                 <label class="col-form-labe" for="place-filter">Место</label>
                 <select name="place-filter" id="place-filter" class="form-control">
                     <option value="0" selected=""></option>
-                    @foreach (var item in ViewBag.Psces)
+                    @foreach (var item in ViewBag.Changers)
                     {
-                        <option value="@item.IDPsc">@item.Name</option>
+                        <option value="@item.IDChanger">@item.Name</option>
                     }
                 </select>
             </div>
@@ -124,7 +124,7 @@
                        endTime = ViewBag.timeOperationEnd,
                        cardNum = ViewBag.cardNum,
                        operation = ViewBag.operation,
-                       psc = ViewBag.psc,
+                       changer = ViewBag.changer,
                        function = ViewBag.function,
                        details = ViewBag.details})
                 </div>
@@ -135,7 +135,7 @@
     <input hidden id="filter-timeoperationend" value="@ViewBag.timeOperationEnd" />
     <input hidden id="filter-cardnum" value="@ViewBag.cardNum" />
     <input hidden id="filter-operation" value="@ViewBag.operation" />
-    <input hidden id="filter-place" value="@ViewBag.psc" />
+    <input hidden id="filter-place" value="@ViewBag.changer" />
     <input hidden id="filter-function" value="@ViewBag.function" />
     <input hidden id="filter-details" value="@ViewBag.details" />
 </div>
@@ -235,7 +235,7 @@
                         endTime: stopDate,
                         cardNum: cardNum,
                         operation: operation,
-                        psc: place,
+                        changer: place,
                         function: functionn,
                         details: details
                     },

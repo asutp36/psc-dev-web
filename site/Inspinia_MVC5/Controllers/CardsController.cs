@@ -13,17 +13,17 @@ namespace Inspinia_MVC5.Controllers
 
         List<CardType> _cardTypes = null;
         List<CardStatus> _cardStatuses = null;
-        List<Psce> _psces = null;
+        List<Changer> _changers = null;
 
         public CardsController()
         {
             _cardTypes = db.CardTypes.ToList();
             _cardStatuses = db.CardStatuses.ToList();
-            _psces = db.Psces.ToList();
+            _changers = db.Changers.ToList();
 
             ViewBag.CardTypes = _cardTypes;
             ViewBag.CardStatuses = _cardStatuses;
-            ViewBag.Psces = _psces;
+            ViewBag.Changers = _changers;
         }
 
         public ActionResult Cards(string begTimeLO, string endTimeLO, string begTimeActivation, string endTimeActivation)

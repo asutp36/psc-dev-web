@@ -98,7 +98,7 @@
                 <label class="col-form-labe" for="activation_by_input_filter">Место активации</label>
                 <select name="activation_by_input_filter" id="activation_by_input_filter" class="form-control">
                     <option value="0" selected=""></option>
-                    @foreach (var item in ViewBag.Psces)
+                    @foreach (var item in ViewBag.Changers)
                     {
                         <option value="@item.IDWash">@item.Name</option>
                     }
@@ -110,7 +110,7 @@
                 <label class="col-form-labe" for="last_operation_by_input_filter">Место последней операции</label>
                 <select name="last_operation_by_input_filter" id="last_operation_by_input_filter" class="form-control">
                     <option value="0" selected=""></option>
-                    @foreach (var item in ViewBag.Psces)
+                    @foreach (var item in ViewBag.Changers)
                     {
                         <option value="@item.IDWash">@item.Name</option>
                     }

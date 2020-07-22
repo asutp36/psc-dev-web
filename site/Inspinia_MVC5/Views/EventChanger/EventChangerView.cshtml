@@ -49,7 +49,7 @@
                     <option value="" selected=""></option>
                     @foreach (var item in ViewBag.Changers)
                     {
-                        <option value="@item.Code">@item.Code</option>
+                        <option value="@item.IDChanger">@item.Name</option>
                     }
                 </select>
             </div>
@@ -82,13 +82,13 @@
         <div class="col-lg-12 table-cards">
             <div class="ibox" id="ibox-load">
                 <div class="ibox-content" id="output">
-                    @Html.Action("_EventChangerList", "EventChanger", new
-               {
-                   begdate = ViewBag.BegDate,
-                   enddate = ViewBag.EndDate,
-                   changer = ViewBag.Changer,
-                   operation = ""
-               })
+                    @*    @Html.Action("_EventChangerList", "EventChanger", new
+        {
+            begdate = ViewBag.BegDate,
+            enddate = ViewBag.EndDate,
+            changer = ViewBag.Changer,
+            operation = ""
+        })*@
                 </div>
             </div>
         </div>
@@ -174,16 +174,7 @@
                 {
                     <text>
                 {
-                    value: "@w.Code", text: "@w.Name", changers: [
-                        @foreach(var p in w.changers)
-                        {
-                            <text>
-                        {
-                            value: "@p.Code", text: "@p.Code"
-                        },
-                            </text>
-                        }
-                    ]
+                    value: "@w.IDWash", text: "@w.Name"
                 },
                     </text>
                 }
@@ -193,22 +184,13 @@
 
     @foreach (var item in ViewBag.Washes) {
         <text>
-            washes.push({ value:"@item.Code", text:"@item.Name", changers:[
-                @foreach(var w in item.changers)
-                {
-                    <text>
-                {
-                    value: "@w.Code", text: "@w.Code"
-                },
-                    </text>
-                }
-                ]});
+            washes.push({ value:"@item.IDWash", text:"@item.Name"});
         </text>
     }
 
-    @foreach (var item in ViewBag.changers) {
+    @foreach (var item in ViewBag.Changers) {
         <text>
-            changers.push({ value: "@item.Code", text: "@item.Code" }, );
+            changers.push({ idwash: "@item.IDWash", value: "@item.IDChanger", text: "@item.Name" }, );
         </text>
     }
 
@@ -242,7 +224,13 @@
             $selwash.val(curwashval);
 
             var newchangers = [];
-            newwashes.forEach(element => element.changers.forEach(el => newchangers.push(el)));
+            for (let i = 0; i < changers.length; i++) {
+                for (let j = 0; j < newwashes.length; j++)
+                if (changers[i].idwash == newwashes[j].value) {
+                    newchangers.push(changers[i]);
+                }
+            }
+            //newwashes.forEach(element => element.changers.forEach(el => newchangers.push(el)));
 
             var $selchanger = $('#filter-changer');
 
@@ -275,7 +263,13 @@
                 newwashes = regions.find(reg => reg.value == curreg).washes;
 
                 var newchangers = [];
-                newwashes.forEach(element => element.changers.forEach(el => newchangers.push(el)));
+                for (let i = 0; i < changers.length; i++) {
+                    for (let j = 0; j < newwashes.length; j++)
+                        if (changers[i].idwash == newwashes[j].value) {
+                            newchangers.push(changers[i]);
+                        }
+                }
+                //newwashes.forEach(element => element.changers.forEach(el => newchangers.push(el)));
 
                 var $selchanger = $('#filter-changer');
 
@@ -288,7 +282,12 @@
         }
         else {
             var newchangers = [];
-            newchangers = washes.find(wash => wash.value == curwash).changers;
+            for (let i = 0; i < changers.length; i++) {
+                if (changers[i].idwash == curwash) {
+                    newchangers.push(changers[i]);
+                }
+            }
+            //newchangers = washes.find(wash => wash.value == curwash).changers;
 
             var $selchanger = $('#filter-changer');
 
@@ -323,8 +322,10 @@
                 },
                 success: function () {
                 },
-                error: function () {
-                    alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
+                error: function (error) {
+                    if (error.status == 404) {
+                        $('#output').html("Не удалось выполнить действие. Ошибка 404. " + error.statusText);
+                    }
                 },
                 url: "@Url.Action("EventChangerFilter", "EventChanger")"
             }).done(function (result) {

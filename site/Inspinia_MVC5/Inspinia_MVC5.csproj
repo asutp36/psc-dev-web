@@ -190,6 +190,9 @@
     <Compile Include="Models\CardType.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Changer.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Collection.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -218,6 +221,24 @@
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Event.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventChanger.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventChangerAcquiring.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventChangerCard.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventChangerIncrease.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventChangerKind.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EventChangerOut.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EventCollect.cs">
@@ -356,9 +377,6 @@
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Post.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Psce.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Region.cs">

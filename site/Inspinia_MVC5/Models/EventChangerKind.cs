@@ -12,25 +12,19 @@ namespace Inspinia_MVC5.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Wash
+    public partial class EventChangerKind
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Wash()
+        public EventChangerKind()
         {
-            this.Posts = new HashSet<Post>();
-            this.Changers = new HashSet<Changer>();
+            this.EventChangers = new HashSet<EventChanger>();
         }
     
-        public int IDWash { get; set; }
+        public int IDEventChangerKind { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        public string Address { get; set; }
-        public int IDRegion { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Post> Posts { get; set; }
-        public virtual Region Region { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Changer> Changers { get; set; }
+        public virtual ICollection<EventChanger> EventChangers { get; set; }
     }
 }

@@ -56,10 +56,16 @@ namespace Inspinia_MVC5.Models
         public virtual DbSet<OperationType> OperationTypes { get; set; }
         public virtual DbSet<Owner> Owners { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
-        public virtual DbSet<Psce> Psces { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Wash> Washes { get; set; }
+        public virtual DbSet<Changer> Changers { get; set; }
+        public virtual DbSet<EventChanger> EventChangers { get; set; }
+        public virtual DbSet<EventChangerAcquiring> EventChangerAcquirings { get; set; }
+        public virtual DbSet<EventChangerCard> EventChangerCards { get; set; }
+        public virtual DbSet<EventChangerIncrease> EventChangerIncreases { get; set; }
+        public virtual DbSet<EventChangerKind> EventChangerKinds { get; set; }
+        public virtual DbSet<EventChangerOut> EventChangerOuts { get; set; }
     
         public virtual int CardDecrease(string p_CardNum, Nullable<int> p_Amount)
         {
