@@ -54,7 +54,7 @@ namespace MobileIntegration.Controllers
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
-                                                $" VALUES((select IDCard from Cards where CardNum =  {increase.card}), " +
+                                                $" VALUES((select IDCard from Cards where CardNum =  '{increase.card}'), " +
                                                 $"(select IDChanger from Changers where Name = 'MobileApp'), 2, \'{increase.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {increase.value}," +
                                                 $" ({commandBalance.CommandText}) + {increase.value}, -1, -1);" +
                                                 " SELECT SCOPE_IDENTITY()";
@@ -796,7 +796,7 @@ namespace MobileIntegration.Controllers
                     if (resp.StatusCode != HttpStatusCode.OK)
                     {
                         Logger.Log.Debug("SendNewCardDev: отправлена новая карта. Ответ сервера: " + JsonConvert.SerializeObject(resp) + Environment.NewLine);
-                        return Request.CreateResponse(resp.StatusCode);
+                        //return Request.CreateResponse(resp.StatusCode);
                     }
 
                     Logger.Log.Debug("SendNewCardDev: отправлена новая карта. Ответ сервера: " + JsonConvert.SerializeObject(resp));
@@ -815,7 +815,7 @@ namespace MobileIntegration.Controllers
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                 $" VALUES((select IDCard from Cards where CardNum = '{newCard.card}'), " +
-                                                $"(select IDChangers from Changers where Name = 'MobileApp'), 2, \'{newCard.time_send}\', {newCard.value}," +
+                                                $"(select IDChanger from Changers where Name = 'MobileApp'), 2, \'{newCard.time_send}\', {newCard.value}," +
                                                 $" ({commandBalance.CommandText}) + {newCard.value}, -1, -1);" +
                                                 " SELECT SCOPE_IDENTITY()";
 
