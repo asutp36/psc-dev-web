@@ -159,6 +159,9 @@
     <Compile Include="Models\CardTypes.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Changers.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Device.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -214,9 +217,6 @@
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Posts.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Psces.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Wash.cs">

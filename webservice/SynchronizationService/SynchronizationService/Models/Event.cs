@@ -18,6 +18,7 @@ namespace SynchronizationService.Models
         public int IDPost { get; set; }
         public int IDEventKind { get; set; }
         public System.DateTime DTime { get; set; }
+        public Nullable<int> IDEventPost { get; set; }
     
         public virtual EventKind EventKind { get; set; }
         public virtual Posts Posts { get; set; }

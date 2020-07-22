@@ -42,7 +42,7 @@ namespace SynchronizationService.Models
         public virtual DbSet<OperationTypes> OperationTypes { get; set; }
         public virtual DbSet<Owners> Owners { get; set; }
         public virtual DbSet<Posts> Posts { get; set; }
-        public virtual DbSet<Psces> Psces { get; set; }
         public virtual DbSet<Wash> Wash { get; set; }
+        public virtual DbSet<Changers> Changers { get; set; }
     }
 }

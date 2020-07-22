@@ -15,7 +15,6 @@ namespace SynchronizationService.Models
     public partial class Operations
     {
         public int IDOperation { get; set; }
-        public int IDPsc { get; set; }
         public int IDOperationType { get; set; }
         public int IDCard { get; set; }
         public System.DateTime DTime { get; set; }
@@ -25,9 +24,10 @@ namespace SynchronizationService.Models
         public int LocalizedID { get; set; }
         public string Functions { get; set; }
         public string Details { get; set; }
+        public int IDChanger { get; set; }
     
         public virtual Cards Cards { get; set; }
         public virtual OperationTypes OperationTypes { get; set; }
-        public virtual Psces Psces { get; set; }
+        public virtual Changers Changers { get; set; }
     }
 }

@@ -22,7 +22,6 @@
         <EntityTypeShape EntityType="WashCompany.OperationTypes" Width="1.5" PointX="15" PointY="5.375" IsExpanded="true" />
         <EntityTypeShape EntityType="WashCompany.Owners" Width="1.5" PointX="12.75" PointY="16" IsExpanded="true" />
         <EntityTypeShape EntityType="WashCompany.Posts" Width="1.5" PointX="6" PointY="8.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="WashCompany.Psces" Width="1.5" PointX="15" PointY="13" IsExpanded="true" />
         <EntityTypeShape EntityType="WashCompany.Wash" Width="1.5" PointX="3.75" PointY="4.375" IsExpanded="true" />
         <AssociationConnector Association="WashCompany.FK_Cards_CardStatuses" ManuallyRouted="false" />
         <AssociationConnector Association="WashCompany.FK_Cards_CardTypes" ManuallyRouted="false" />
@@ -39,9 +38,10 @@
         <AssociationConnector Association="WashCompany.FK_EventMode_Mode" ManuallyRouted="false" />
         <AssociationConnector Association="WashCompany.FK_Finance_FinanceType" ManuallyRouted="false" />
         <AssociationConnector Association="WashCompany.FK_Operations_OperationTypes" ManuallyRouted="false" />
-        <AssociationConnector Association="WashCompany.FK_Operations_Pcses" ManuallyRouted="false" />
         <AssociationConnector Association="WashCompany.FK_Posts_Wash" ManuallyRouted="false" />
-        <AssociationConnector Association="WashCompany.FK_Pcses_Wash" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="WashCompany.Changers" Width="1.5" PointX="6" PointY="2.625" />
+        <AssociationConnector Association="WashCompany.FK_Changers_Wash" />
+        <AssociationConnector Association="WashCompany.FK_Operations_Changers" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
