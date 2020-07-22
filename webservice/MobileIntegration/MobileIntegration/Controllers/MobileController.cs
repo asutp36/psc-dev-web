@@ -53,9 +53,9 @@ namespace MobileIntegration.Controllers
                                  $"where c.CardNum = '{increase.card}'";
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
-                        command.CommandText = "INSERT INTO Operations (IDCard, IDPsc, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+                        command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                 $" VALUES((select IDCard from Cards where CardNum =  {increase.card}), " +
-                                                $"(select IDPsc from Psces where Name = 'MobileApp'), 2, \'{increase.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {increase.value}," +
+                                                $"(select IDChanger from Changers where Name = 'MobileApp'), 2, \'{increase.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {increase.value}," +
                                                 $" ({commandBalance.CommandText}) + {increase.value}, -1, -1);" +
                                                 " SELECT SCOPE_IDENTITY()";
 
