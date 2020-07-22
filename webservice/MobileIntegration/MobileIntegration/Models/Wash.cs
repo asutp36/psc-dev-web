@@ -18,7 +18,7 @@ namespace MobileIntegration.Models
         public Wash()
         {
             this.Posts = new HashSet<Posts>();
-            this.Psces = new HashSet<Psces>();
+            this.Changers = new HashSet<Changers>();
         }
     
         public int IDWash { get; set; }
@@ -30,6 +30,6 @@ namespace MobileIntegration.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Posts> Posts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Psces> Psces { get; set; }
+        public virtual ICollection<Changers> Changers { get; set; }
     }
 }

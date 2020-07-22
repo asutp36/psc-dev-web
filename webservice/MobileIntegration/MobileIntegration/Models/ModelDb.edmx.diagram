@@ -5,7 +5,6 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="83caacf3e5c742fa875f2413dd188215" Name="Diagram1">
-        <EntityTypeShape EntityType="WashCompanyModel.CardOperations" Width="1.5" PointX="5.75" PointY="5.75" IsExpanded="true" />
         <EntityTypeShape EntityType="WashCompanyModel.Cards" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
         <EntityTypeShape EntityType="WashCompanyModel.CardStatuses" Width="1.5" PointX="0.75" PointY="2" IsExpanded="true" />
         <EntityTypeShape EntityType="WashCompanyModel.CardTypes" Width="1.5" PointX="0.75" PointY="5.375" IsExpanded="true" />
@@ -16,7 +15,6 @@
         <EntityTypeShape EntityType="WashCompanyModel.OperationTypes" Width="1.5" PointX="3" PointY="5.375" IsExpanded="true" />
         <EntityTypeShape EntityType="WashCompanyModel.Owners" Width="1.5" PointX="0.75" PointY="8" IsExpanded="true" />
         <EntityTypeShape EntityType="WashCompanyModel.Posts" Width="1.5" PointX="3" PointY="13.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="WashCompanyModel.Psces" Width="1.5" PointX="3" PointY="11.125" IsExpanded="true" />
         <EntityTypeShape EntityType="WashCompanyModel.Wash" Width="1.5" PointX="0.75" PointY="11" IsExpanded="true" />
         <AssociationConnector Association="WashCompanyModel.FK_Cards_CardStatuses" ManuallyRouted="false" />
         <AssociationConnector Association="WashCompanyModel.FK_Cards_CardTypes" ManuallyRouted="false" />
@@ -25,9 +23,10 @@
         <AssociationConnector Association="WashCompanyModel.FK_Device_DeviceTypes" ManuallyRouted="false" />
         <AssociationConnector Association="WashCompanyModel.FK_Posts_Device" ManuallyRouted="false" />
         <AssociationConnector Association="WashCompanyModel.FK_Operations_OperationTypes" ManuallyRouted="false" />
-        <AssociationConnector Association="WashCompanyModel.FK_Operations_Pcses" ManuallyRouted="false" />
         <AssociationConnector Association="WashCompanyModel.FK_Posts_Wash" ManuallyRouted="false" />
-        <AssociationConnector Association="WashCompanyModel.FK_Pcses_Wash" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="WashCompanyModel.Changers" Width="1.5" PointX="3" PointY="8.25" />
+        <AssociationConnector Association="WashCompanyModel.FK_Changers_Wash" />
+        <AssociationConnector Association="WashCompanyModel.FK_Operations_Changers" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -4,17 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="WashCompanyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="CardOperations">
-          <Key>
-            <PropertyRef Name="IDCardOpration" />
-          </Key>
-          <Property Name="IDCardOpration" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="IDState" Type="int" Nullable="false" />
-          <Property Name="IDDevice" Type="int" Nullable="false" />
-          <Property Name="CardNum" Type="nvarchar" MaxLength="20" Nullable="false" />
-          <Property Name="DTime" Type="datetime" Nullable="false" />
-        </EntityType>
+    <Schema Namespace="WashCompanyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Cards">
           <Key>
             <PropertyRef Name="IDCard" />
@@ -42,6 +32,14 @@
           <Property Name="IDCardType" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Changers">
+          <Key>
+            <PropertyRef Name="IDChanger" />
+          </Key>
+          <Property Name="IDChanger" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IDWash" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Device">
           <Key>
@@ -73,7 +71,7 @@
             <PropertyRef Name="IDOperation" />
           </Key>
           <Property Name="IDOperation" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="IDPsc" Type="int" Nullable="false" />
+          <Property Name="IDChanger" Type="int" Nullable="false" />
           <Property Name="IDOperationType" Type="int" Nullable="false" />
           <Property Name="IDCard" Type="int" Nullable="false" />
           <Property Name="DTime" Type="datetime" Nullable="false" />
@@ -111,14 +109,6 @@
           <Property Name="IDWash" Type="int" Nullable="false" />
           <Property Name="IDDevice" Type="int" />
           <Property Name="QRCode" Type="nvarchar" MaxLength="20" />
-        </EntityType>
-        <EntityType Name="Psces">
-          <Key>
-            <PropertyRef Name="IDPsc" />
-          </Key>
-          <Property Name="IDPsc" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="IDWash" Type="int" />
         </EntityType>
         <EntityType Name="Wash">
           <Key>
@@ -172,6 +162,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Changers_Wash">
+          <End Role="Wash" Type="Self.Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Changers" Type="Self.Changers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Changers">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Device_DeviceTypes">
           <End Role="DeviceTypes" Type="Self.DeviceTypes" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -200,6 +204,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Operations_Changers">
+          <End Role="Changers" Type="Self.Changers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Changers">
+              <PropertyRef Name="IDChanger" />
+            </Principal>
+            <Dependent Role="Operations">
+              <PropertyRef Name="IDChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Operations_OperationTypes">
           <End Role="OperationTypes" Type="Self.OperationTypes" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -211,34 +229,6 @@
             </Principal>
             <Dependent Role="Operations">
               <PropertyRef Name="IDOperationType" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Operations_Pcses">
-          <End Role="Psces" Type="Self.Psces" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Psces">
-              <PropertyRef Name="IDPsc" />
-            </Principal>
-            <Dependent Role="Operations">
-              <PropertyRef Name="IDPsc" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Pcses_Wash">
-          <End Role="Wash" Type="Self.Wash" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Psces" Type="Self.Psces" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Wash">
-              <PropertyRef Name="IDWash" />
-            </Principal>
-            <Dependent Role="Psces">
-              <PropertyRef Name="IDWash" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -271,10 +261,10 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="WashCompanyModelStoreContainer">
-          <EntitySet Name="CardOperations" EntityType="Self.CardOperations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Cards" EntityType="Self.Cards" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CardStatuses" EntityType="Self.CardStatuses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CardTypes" EntityType="Self.CardTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Changers" EntityType="Self.Changers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Device" EntityType="Self.Device" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DeviceTypes" EntityType="Self.DeviceTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NumsMobileCards" EntityType="Self.NumsMobileCards" Schema="dbo" store:Type="Tables" />
@@ -282,7 +272,6 @@
           <EntitySet Name="OperationTypes" EntityType="Self.OperationTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Owners" EntityType="Self.Owners" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Posts" EntityType="Self.Posts" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Psces" EntityType="Self.Psces" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Wash" EntityType="Self.Wash" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Cards_CardStatuses" Association="Self.FK_Cards_CardStatuses">
             <End Role="CardStatuses" EntitySet="CardStatuses" />
@@ -296,6 +285,10 @@
             <End Role="Owners" EntitySet="Owners" />
             <End Role="Cards" EntitySet="Cards" />
           </AssociationSet>
+          <AssociationSet Name="FK_Changers_Wash" Association="Self.FK_Changers_Wash">
+            <End Role="Wash" EntitySet="Wash" />
+            <End Role="Changers" EntitySet="Changers" />
+          </AssociationSet>
           <AssociationSet Name="FK_Device_DeviceTypes" Association="Self.FK_Device_DeviceTypes">
             <End Role="DeviceTypes" EntitySet="DeviceTypes" />
             <End Role="Device" EntitySet="Device" />
@@ -304,17 +297,13 @@
             <End Role="Cards" EntitySet="Cards" />
             <End Role="Operations" EntitySet="Operations" />
           </AssociationSet>
+          <AssociationSet Name="FK_Operations_Changers" Association="Self.FK_Operations_Changers">
+            <End Role="Changers" EntitySet="Changers" />
+            <End Role="Operations" EntitySet="Operations" />
+          </AssociationSet>
           <AssociationSet Name="FK_Operations_OperationTypes" Association="Self.FK_Operations_OperationTypes">
             <End Role="OperationTypes" EntitySet="OperationTypes" />
             <End Role="Operations" EntitySet="Operations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Operations_Pcses" Association="Self.FK_Operations_Pcses">
-            <End Role="Psces" EntitySet="Psces" />
-            <End Role="Operations" EntitySet="Operations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Pcses_Wash" Association="Self.FK_Pcses_Wash">
-            <End Role="Wash" EntitySet="Wash" />
-            <End Role="Psces" EntitySet="Psces" />
           </AssociationSet>
           <AssociationSet Name="FK_Posts_Device" Association="Self.FK_Posts_Device">
             <End Role="Device" EntitySet="Device" />
@@ -325,21 +314,10 @@
             <End Role="Posts" EntitySet="Posts" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="WashCompanyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="CardOperations">
-          <Key>
-            <PropertyRef Name="IDCardOpration" />
-          </Key>
-          <Property Name="IDCardOpration" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="IDState" Type="Int32" Nullable="false" />
-          <Property Name="IDDevice" Type="Int32" Nullable="false" />
-          <Property Name="CardNum" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
-        </EntityType>
         <EntityType Name="Cards">
           <Key>
             <PropertyRef Name="IDCard" />
@@ -407,7 +385,6 @@
             <PropertyRef Name="IDOperation" />
           </Key>
           <Property Name="IDOperation" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="IDPsc" Type="Int32" Nullable="false" />
           <Property Name="IDOperationType" Type="Int32" Nullable="false" />
           <Property Name="IDCard" Type="Int32" Nullable="false" />
           <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
@@ -419,7 +396,8 @@
           <Property Name="Details" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Cards" Relationship="Self.FK_Operations_Cards" FromRole="Operations" ToRole="Cards" />
           <NavigationProperty Name="OperationTypes" Relationship="Self.FK_Operations_OperationTypes" FromRole="Operations" ToRole="OperationTypes" />
-          <NavigationProperty Name="Psces" Relationship="Self.FK_Operations_Pcses" FromRole="Operations" ToRole="Psces" />
+          <Property Name="IDChanger" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Changers" Relationship="WashCompanyModel.FK_Operations_Changers" FromRole="Operations" ToRole="Changers" />
         </EntityType>
         <EntityType Name="OperationTypes">
           <Key>
@@ -453,16 +431,6 @@
           <NavigationProperty Name="Device" Relationship="Self.FK_Posts_Device" FromRole="Posts" ToRole="Device" />
           <NavigationProperty Name="Wash" Relationship="Self.FK_Posts_Wash" FromRole="Posts" ToRole="Wash" />
         </EntityType>
-        <EntityType Name="Psces">
-          <Key>
-            <PropertyRef Name="IDPsc" />
-          </Key>
-          <Property Name="IDPsc" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="IDWash" Type="Int32" />
-          <NavigationProperty Name="Operations" Relationship="Self.FK_Operations_Pcses" FromRole="Psces" ToRole="Operations" />
-          <NavigationProperty Name="Wash" Relationship="Self.FK_Pcses_Wash" FromRole="Psces" ToRole="Wash" />
-        </EntityType>
         <EntityType Name="Wash">
           <Key>
             <PropertyRef Name="IDWash" />
@@ -473,7 +441,7 @@
           <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="IDRegion" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Posts" Relationship="Self.FK_Posts_Wash" FromRole="Wash" ToRole="Posts" />
-          <NavigationProperty Name="Psces" Relationship="Self.FK_Pcses_Wash" FromRole="Wash" ToRole="Psces" />
+          <NavigationProperty Name="Changers" Relationship="WashCompanyModel.FK_Changers_Wash" FromRole="Wash" ToRole="Changers" />
         </EntityType>
         <Association Name="FK_Cards_CardStatuses">
           <End Role="CardStatuses" Type="Self.CardStatuses" Multiplicity="1">
@@ -573,20 +541,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Operations_Pcses">
-          <End Role="Psces" Type="Self.Psces" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Psces">
-              <PropertyRef Name="IDPsc" />
-            </Principal>
-            <Dependent Role="Operations">
-              <PropertyRef Name="IDPsc" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Posts_Wash">
           <End Role="Wash" Type="Self.Wash" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -601,22 +555,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Pcses_Wash">
-          <End Role="Wash" Type="Self.Wash" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Psces" Type="Self.Psces" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Wash">
-              <PropertyRef Name="IDWash" />
-            </Principal>
-            <Dependent Role="Psces">
-              <PropertyRef Name="IDWash" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="ModelDb" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="CardOperations" EntityType="Self.CardOperations" />
           <EntitySet Name="Cards" EntityType="Self.Cards" />
           <EntitySet Name="CardStatuses" EntityType="Self.CardStatuses" />
           <EntitySet Name="CardTypes" EntityType="Self.CardTypes" />
@@ -627,7 +566,6 @@
           <EntitySet Name="OperationTypes" EntityType="Self.OperationTypes" />
           <EntitySet Name="Owners" EntityType="Self.Owners" />
           <EntitySet Name="Posts" EntityType="Self.Posts" />
-          <EntitySet Name="Psces" EntityType="Self.Psces" />
           <EntitySet Name="Wash" EntityType="Self.Wash" />
           <AssociationSet Name="FK_Cards_CardStatuses" Association="Self.FK_Cards_CardStatuses">
             <End Role="CardStatuses" EntitySet="CardStatuses" />
@@ -657,36 +595,64 @@
             <End Role="OperationTypes" EntitySet="OperationTypes" />
             <End Role="Operations" EntitySet="Operations" />
           </AssociationSet>
-          <AssociationSet Name="FK_Operations_Pcses" Association="Self.FK_Operations_Pcses">
-            <End Role="Psces" EntitySet="Psces" />
-            <End Role="Operations" EntitySet="Operations" />
-          </AssociationSet>
           <AssociationSet Name="FK_Posts_Wash" Association="Self.FK_Posts_Wash">
             <End Role="Wash" EntitySet="Wash" />
             <End Role="Posts" EntitySet="Posts" />
           </AssociationSet>
-          <AssociationSet Name="FK_Pcses_Wash" Association="Self.FK_Pcses_Wash">
+          <EntitySet Name="Changers" EntityType="WashCompanyModel.Changers" />
+          <AssociationSet Name="FK_Changers_Wash" Association="WashCompanyModel.FK_Changers_Wash">
             <End Role="Wash" EntitySet="Wash" />
-            <End Role="Psces" EntitySet="Psces" />
+            <End Role="Changers" EntitySet="Changers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Operations_Changers" Association="WashCompanyModel.FK_Operations_Changers">
+            <End Role="Changers" EntitySet="Changers" />
+            <End Role="Operations" EntitySet="Operations" />
           </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Changers">
+          <Key>
+            <PropertyRef Name="IDChanger" />
+          </Key>
+          <Property Name="IDChanger" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IDWash" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Wash" Relationship="WashCompanyModel.FK_Changers_Wash" FromRole="Changers" ToRole="Wash" />
+          <NavigationProperty Name="Operations" Relationship="WashCompanyModel.FK_Operations_Changers" FromRole="Changers" ToRole="Operations" />
+        </EntityType>
+        <Association Name="FK_Changers_Wash">
+          <End Type="WashCompanyModel.Wash" Role="Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WashCompanyModel.Changers" Role="Changers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Changers">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Operations_Changers">
+          <End Type="WashCompanyModel.Changers" Role="Changers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WashCompanyModel.Operations" Role="Operations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Changers">
+              <PropertyRef Name="IDChanger" />
+            </Principal>
+            <Dependent Role="Operations">
+              <PropertyRef Name="IDChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="WashCompanyModelStoreContainer" CdmEntityContainer="ModelDb">
-          <EntitySetMapping Name="CardOperations">
-            <EntityTypeMapping TypeName="WashCompanyModel.CardOperations">
-              <MappingFragment StoreEntitySet="CardOperations">
-                <ScalarProperty Name="IDCardOpration" ColumnName="IDCardOpration" />
-                <ScalarProperty Name="IDState" ColumnName="IDState" />
-                <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
-                <ScalarProperty Name="CardNum" ColumnName="CardNum" />
-                <ScalarProperty Name="DTime" ColumnName="DTime" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Cards">
             <EntityTypeMapping TypeName="WashCompanyModel.Cards">
               <MappingFragment StoreEntitySet="Cards">
@@ -749,8 +715,8 @@
           <EntitySetMapping Name="Operations">
             <EntityTypeMapping TypeName="WashCompanyModel.Operations">
               <MappingFragment StoreEntitySet="Operations">
+                <ScalarProperty Name="IDChanger" ColumnName="IDChanger" />
                 <ScalarProperty Name="IDOperation" ColumnName="IDOperation" />
-                <ScalarProperty Name="IDPsc" ColumnName="IDPsc" />
                 <ScalarProperty Name="IDOperationType" ColumnName="IDOperationType" />
                 <ScalarProperty Name="IDCard" ColumnName="IDCard" />
                 <ScalarProperty Name="DTime" ColumnName="DTime" />
@@ -794,15 +760,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Psces">
-            <EntityTypeMapping TypeName="WashCompanyModel.Psces">
-              <MappingFragment StoreEntitySet="Psces">
-                <ScalarProperty Name="IDPsc" ColumnName="IDPsc" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Wash">
             <EntityTypeMapping TypeName="WashCompanyModel.Wash">
               <MappingFragment StoreEntitySet="Wash">
@@ -811,6 +768,15 @@
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="IDRegion" ColumnName="IDRegion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Changers">
+            <EntityTypeMapping TypeName="WashCompanyModel.Changers">
+              <MappingFragment StoreEntitySet="Changers">
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="IDChanger" ColumnName="IDChanger" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
