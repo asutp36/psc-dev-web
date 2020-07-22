@@ -9,6 +9,8 @@ namespace ChangerSynchronization.Controllers.Supplies
     public class EventWithNominals : Event
     {
         [Required]
+        public string eventKind { get; set; } // increase or out
+        [Required]
         public int m10 { get; set; }
         [Required]
         public int b50 { get; set; }
