@@ -37,7 +37,7 @@ namespace SynchronizationService.Controllers
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
 
-                        command.CommandText = "INSERT INTO Operations (IDCard, IDPsc, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+                        command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                 $" VALUES((select IDCard from Cards where LocalizedBy =  {operation.LocalizedBy} and LocalizedID = {operation.IDCard}), " +
                                                 $"{operation.LocalizedBy}, {operation.IDOperationType}, \'{operation.DTime.ToString("yyyyMMdd HH:mm:ss")}\', {operation.Amount}, {operation.Balance}, {operation.LocalizedBy}, {operation.IDOperation});" +
                                                 " SELECT SCOPE_IDENTITY()";
