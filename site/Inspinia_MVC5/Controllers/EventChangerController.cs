@@ -78,59 +78,59 @@ namespace Inspinia_MVC5.Controllers
 
             return View("EventChangerView");
         }
-        //public ActionResult _EventChangerList(string changer, string begdate, string enddate, string operation)
-        //{
-        //    List<GetEventChanger_Result> view = GetEventChanger(changer, begdate, enddate, operation);
+        public ActionResult _EventChangerList(string changer, string begdate, string enddate, string operation)
+        {
+            List<GetEventChanger_Result> view = GetEventChanger(changer, begdate, enddate, operation);
 
-        //    return PartialView("_EventChangerList", view);
-        //}
+            return PartialView("_EventChangerList", view);
+        }
 
-        //public List<GetEventChanger_Result> GetEventChanger(string changer, string begdate, string enddate, string operation)
-        //{
-        //    List<GetEventChanger_Result> resultlist = null;
+        public List<GetEventChanger_Result> GetEventChanger(string changer, string begdate, string enddate, string operation)
+        {
+            List<GetEventChanger_Result> resultlist = null;
 
-        //    DateTime bdate;
-        //    if (!DateTime.TryParse(begdate, out bdate))
-        //        bdate = DateTime.Today.AddYears(-10);
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = DateTime.Today.AddYears(-10);
 
-        //    DateTime edate;
-        //    if (!DateTime.TryParse(enddate, out edate))
-        //        edate = DateTime.Now;
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
 
-        //    var prmChanger = new System.Data.SqlClient.SqlParameter("@p_ChangerCode", System.Data.SqlDbType.NVarChar);
-        //    if (changer == null || changer == "")
-        //    {
-        //        changer = "none";
-        //    }
-        //    prmChanger.Value = changer;
+            var prmChanger = new System.Data.SqlClient.SqlParameter("@p_ChangerID", System.Data.SqlDbType.NVarChar);
+            if (changer == null || changer == "")
+            {
+                changer = "none";
+            }
+            prmChanger.Value = changer;
 
-        //    var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
-        //    prmBegDate.Value = bdate;
+            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            prmBegDate.Value = bdate;
 
-        //    var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
-        //    prmEndDate.Value = edate;
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
 
-        //    var prmOperation = new System.Data.SqlClient.SqlParameter("@p_EventChangerKind", System.Data.SqlDbType.NVarChar);
-        //    if (operation == null)
-        //    {
-        //        operation = "";
-        //    }
-        //    prmOperation.Value = operation;
+            var prmOperation = new System.Data.SqlClient.SqlParameter("@p_EventChangerKind", System.Data.SqlDbType.NVarChar);
+            if (operation == null)
+            {
+                operation = "";
+            }
+            prmOperation.Value = operation;
 
-        //    var result = db.Database.SqlQuery<GetEventChanger_Result>
-        //        ("GetEventChanger @p_DateBeg, @p_DateEnd, @p_ChangerCode, @p_EventChangerKind ",
-        //        prmBegDate, prmEndDate, prmChanger, prmOperation).ToList();
+            var result = db.Database.SqlQuery<GetEventChanger_Result>
+                ("GetEventChanger @p_DateBeg, @p_DateEnd, @p_ChangerID, @p_EventChangerKind ",
+                prmBegDate, prmEndDate, prmChanger, prmOperation).ToList();
 
-        //    resultlist = result;
+            resultlist = result;
 
-        //    return resultlist;
-        //}
+            return resultlist;
+        }
 
-        //public ActionResult EventChangerFilter(string changer, string begdate, string enddate, string operation)
-        //{
-        //    List<GetEventChanger_Result> view = GetEventChanger(changer, begdate, enddate, operation);
+        public ActionResult EventChangerFilter(string changer, string begdate, string enddate, string operation)
+        {
+            List<GetEventChanger_Result> view = GetEventChanger(changer, begdate, enddate, operation);
 
-        //    return PartialView("_EventChangerList", view);
-        //}
+            return PartialView("_EventChangerList", view);
+        }
     }
 }
