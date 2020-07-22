@@ -181,6 +181,13 @@ namespace Inspinia_MVC5.Controllers
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
+                    //string s = response.GetResponseHeader("Function");
+
+                    //byte[] bytes = Encoding.GetEncoding(1252).GetBytes(s);
+                    //s = Encoding.GetEncoding(1251).GetString(bytes);
+
+                    //return s;
+
                     return response.GetResponseHeader("Function");
                 }
                 else
