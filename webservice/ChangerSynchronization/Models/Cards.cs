@@ -18,6 +18,8 @@ namespace ChangerSynchronization.Models
         public int LocalizedBy { get; set; }
         public int LocalizedId { get; set; }
 
+        public virtual CardStatuses IdcardStatusNavigation { get; set; }
+        public virtual CardTypes IdcardTypeNavigation { get; set; }
         public virtual Owners IdownerNavigation { get; set; }
         public virtual ICollection<Operations> Operations { get; set; }
     }

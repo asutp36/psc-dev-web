@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChangerSynchronization.Controllers.Supplies
 {
-    public class EventChanger
+    public class EventChangerFull
     {
         [Required]
         public string changer { get; set; }

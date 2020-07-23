@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ChangerSynchronization</name>
+    </assembly>
+    <members>
+        <member name="M:ChangerSynchronization.Controllers.SyncController.PostEvent(ChangerSynchronization.Controllers.Supplies.EventChangerFull)">
+            <summary>
+            Синхронизация события разменника
+            </summary>
+            <param name="model">Всё событие на разменнике целиком</param>
+            <returns></returns>
+            <response code="400">Входные данные некорректны</response>
+            <response code="200">Ок, в теле айдишники</response>
+        </member>
+    </members>
+</doc>

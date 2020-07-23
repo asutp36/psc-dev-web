@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ChangerSynchronization.Controllers.Supplies;
+using ChangerSynchronization.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ChangerSynchronization.Controllers
 {
@@ -15,12 +17,12 @@ namespace ChangerSynchronization.Controllers
         /// <summary>
         /// Синхронизация события разменника
         /// </summary>
-        /// <param name="model">Большое событие на разменнике</param>
+        /// <param name="model">Всё событие на разменнике целиком</param>
         /// <returns></returns>
         /// <response code="400">Входные данные некорректны</response>
         /// <response code="200">Ок, в теле айдишники</response>
         [HttpPost("event")]
-        public IActionResult PostEvent(EventChanger model)
+        public IActionResult PostEvent(EventChangerFull model)
         {
             if(!ModelState.IsValid)
             {
@@ -32,24 +34,28 @@ namespace ChangerSynchronization.Controllers
             return Ok();
         }
 
-        private void WriteEventChanger()
+        private void WriteEventChanger(EventChangerFull model)
         {
+            using ModelDbContext modelDb = new ModelDbContext();
 
+            try
+            {
+                IDbContextTransaction transaction = modelDb.Database.BeginTransaction();
+
+                modelDb.EventChanger.Add(new EventChanger
+                {
+                    Idchanger = modelDb.Changers.Where(c => c.Name.Equals(model.changer)).FirstOrDefault().Idchanger,
+                    IdeventChangerKind = modelDb.EventChangerKind.Where(evk => evk.Code.Equals(model.eventKindCode)).FirstOrDefault().IdeventChangerKind,
+                    Dtime = model.dtime
+                });
+
+                
+            }
+            catch(Exception e)
+            {
+
+            }
         }
 
-        private void WriteEventChangerIncrease()
-        {
-
-        }
-
-        private void WriteEventChangerOut()
-        {
-
-        }
-
-        private void WriteEventChangerAcquiring()
-        {
-
-        }
     }
 }

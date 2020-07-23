@@ -19,5 +19,6 @@ namespace ChangerSynchronization.Models
 
         public virtual Cards IdcardNavigation { get; set; }
         public virtual Changers IdchangerNavigation { get; set; }
+        public virtual OperationTypes IdoperationTypeNavigation { get; set; }
     }
 }
