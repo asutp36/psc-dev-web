@@ -28,7 +28,8 @@
                 <div class="ibox-content">
                     <h1 class="no-margins">378 080</h1>
                     @*<div class="stat-percent font-bold text-info">11% <i class="fa fa-level-up"></i></div>*@
-                    <a href="@Url.Action("IncashWashes", "Incash", new { begTime = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"), endTime =  DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"), region = "0", wash = "0" })">
+                    @*<a href="@Url.Action("IncashWashes", "Incash", new { begTime = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"), endTime =  DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"), region = "0", wash = "0" })">*@
+                    <a href="@Url.Action("IncreasesByWashesView","Increases")">
                         <small>@DateTime.Today.AddDays(-1).ToString("dd MMMM yyyy")</small>
                     </a>
                 </div>
