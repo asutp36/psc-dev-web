@@ -27,12 +27,19 @@ namespace Inspinia_MVC5.Controllers
 
             _eventKinds = db.EventChangerKinds.Where(e => e.Code == "exchange" || e.Code == "cardCreate" || e.Code == "cardIncrease").ToList();
 
+            var chs = db.Changers.ToList();
+
             foreach (Wash w in _washes)
             {
                 if (!_regions.Contains(w.Region))
                     _regions.Add(w.Region);
 
-                _changers.Add(db.Changers.ToList().Find(c => c.IDWash == w.IDWash));
+                var ch = chs.Find(c => c.IDWash == w.IDWash);
+
+                if(chs.Find(c => c.IDWash == w.IDWash) != null)
+                {
+                    _changers.Add(chs.Find(c => c.IDWash == w.IDWash));
+                }
             }
 
             foreach (var r in _regions)
@@ -59,24 +66,25 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult EventChangerView(string begdate, string enddate, string changer)
         {
-            //Post Post = _posts.Find(w => w.Code == post);
+            if (_changers.Count < 1)
+            {
+                return View("_NoAvailableChangers");
+            }
+            else
+            {
+                DateTime bdate;
+                if (!DateTime.TryParse(begdate, out bdate))
+                    bdate = new DateTime(2019, 1, 1);
 
-            //ViewBag.Region = Post.Wash.Region.Code;
-            //ViewBag.Wash = Post.Wash.Code;
-            //ViewBag.Post = Post.Code;
+                DateTime edate;
+                if (!DateTime.TryParse(enddate, out edate))
+                    edate = DateTime.Now;
 
-            DateTime bdate;
-            if (!DateTime.TryParse(begdate, out bdate))
-                bdate = DateTime.Today.AddYears(-10);
+                ViewBag.BegDate = begdate;
+                ViewBag.EndDate = enddate;
 
-            DateTime edate;
-            if (!DateTime.TryParse(enddate, out edate))
-                edate = DateTime.Now;
-
-            ViewBag.BegDate = begdate;
-            ViewBag.EndDate = enddate;
-
-            return View("EventChangerView");
+                return View("EventChangerView");
+            }
         }
         //public ActionResult _EventChangerList(string changer, string begdate, string enddate, string operation)
         //{
@@ -91,7 +99,6 @@ namespace Inspinia_MVC5.Controllers
 
         //    DateTime bdate;
         //    if (!DateTime.TryParse(begdate, out bdate))
-        //        bdate = DateTime.Today.AddYears(-10);
 
         //    DateTime edate;
         //    if (!DateTime.TryParse(enddate, out edate))

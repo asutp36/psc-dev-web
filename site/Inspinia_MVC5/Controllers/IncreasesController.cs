@@ -89,7 +89,7 @@ namespace Inspinia_MVC5.Controllers
 
             DateTime bdate;
             if (!DateTime.TryParse(begdate, out bdate))
-                bdate = DateTime.Today.AddYears(-10);
+                bdate = new DateTime(2019, 1, 1);
 
             DateTime edate;
             if (!DateTime.TryParse(enddate, out edate))
@@ -133,7 +133,7 @@ namespace Inspinia_MVC5.Controllers
 
             DateTime bdate;
             if (!DateTime.TryParse(begdate, out bdate))
-                bdate = DateTime.Today.AddYears(-10);
+                bdate = new DateTime(2019, 1, 1);
 
             DateTime edate;
             if (!DateTime.TryParse(enddate, out edate))
@@ -180,7 +180,7 @@ namespace Inspinia_MVC5.Controllers
 
             DateTime bdate;
             if (!DateTime.TryParse(begdate, out bdate))
-                bdate = DateTime.Today.AddYears(-10);
+                bdate = new DateTime(2019, 1, 1);
 
             DateTime edate;
             if (!DateTime.TryParse(enddate, out edate))
@@ -281,7 +281,7 @@ namespace Inspinia_MVC5.Controllers
 
             DateTime bdate;
             if (!DateTime.TryParse(begdate, out bdate))
-                bdate = DateTime.Today.AddYears(-10);
+                bdate = new DateTime(2019, 1, 1);
 
             DateTime edate;
             if (!DateTime.TryParse(enddate, out edate))
@@ -337,7 +337,7 @@ namespace Inspinia_MVC5.Controllers
 
             DateTime bdate;
             if (!DateTime.TryParse(begdate, out bdate))
-                bdate = DateTime.Today.AddYears(-10);
+                bdate = new DateTime(2019, 1, 1);
 
             DateTime edate;
             if (!DateTime.TryParse(enddate, out edate))
@@ -362,7 +362,7 @@ namespace Inspinia_MVC5.Controllers
 
             DateTime bdate;
             if (!DateTime.TryParse(begdate, out bdate))
-                bdate = DateTime.Today.AddYears(-10);
+                bdate = new DateTime(2019, 1, 1);
 
             DateTime edate;
             if (!DateTime.TryParse(enddate, out edate))
@@ -421,7 +421,7 @@ namespace Inspinia_MVC5.Controllers
 
             DateTime bdate;
             if (!DateTime.TryParse(begdate, out bdate))
-                bdate = DateTime.Today.AddYears(-10);
+                bdate = new DateTime(2019, 1, 1);
 
             DateTime edate;
             if (!DateTime.TryParse(enddate, out edate))
@@ -446,7 +446,7 @@ namespace Inspinia_MVC5.Controllers
 
             DateTime bdate;
             if (!DateTime.TryParse(begdate, out bdate))
-                bdate = DateTime.Today.AddYears(-10);
+                bdate = new DateTime(2019, 1, 1);
 
             DateTime edate;
             if (!DateTime.TryParse(enddate, out edate))
