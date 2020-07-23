@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
+using System.Web.Management;
 using System.Web.Mvc;
 using Inspinia_MVC5.Models;
+using Microsoft.SqlServer.Server;
 
 namespace Inspinia_MVC5.Controllers
 {
@@ -490,6 +493,25 @@ namespace Inspinia_MVC5.Controllers
             List<GetIncreaseByEvents_Result> view = GetIncreasesByEvents(region, wash, post, begdate, enddate);
 
             return PartialView("_IncreasesByEventsList", view);
+        }
+
+        public ActionResult _IncreasesSum(string begdate, string enddate)
+        {
+            int sum = 0;
+
+            List<GetIncreaseByWashs_Result> res = GetIncreasesByWashes("", "", begdate, enddate);
+
+            foreach(var r in res)
+            {
+                sum += r.sum;
+            }
+
+            var nf = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nf.NumberGroupSeparator = " ";
+
+            string result = sum.ToString("#,0", nf);
+
+            return PartialView("_IncreasesSum", result);
         }
     }
 }

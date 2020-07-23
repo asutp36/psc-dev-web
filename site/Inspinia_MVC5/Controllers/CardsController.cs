@@ -294,11 +294,5 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.DiapasonCountOperationMin = result[0].CountOperationMin;
             ViewBag.DiapasonCountOperationMax = result[0].CountOperationMax;
         }
-
-        // GET: Cards
-        public ActionResult Index()
-        {
-            return View();
-        }
     }
 }

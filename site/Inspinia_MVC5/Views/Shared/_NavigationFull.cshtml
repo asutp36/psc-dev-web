@@ -44,7 +44,12 @@
                 <a href="@Url.Action("IncreasesByWashesView","Increases")"><i class="fa fa-money-bill-wave"></i><span class="nav-label" data-i18n="nav.graphs">Зачисления</span></a>
             </li>
             <li class="@Html.IsSelected(action: "LockScreen")">
-                <a href="@Url.Action("CollectByWashesView","CollectWash")"><i class="fa fa-wallet"></i><span class="nav-label" data-i18n="nav.graphs">Инкассация</span></a>
+                <a href="@Url.Action("CollectByWashesView","CollectWash", new
+                    {
+                        begdate = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                        enddate = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
+                    })">
+                <i class="fa fa-wallet"></i><span class="nav-label" data-i18n="nav.graphs">Инкассация</span></a>
             </li>
             <li class="@Html.IsSelected(action: "Invoice")">
                 <a href="@Url.Action("BoxByWashesView", "Boxes")"><i class="fa fa-coins"></i><span class="nav-label" data-i18n="nav.graphs">Наличие в боксах</span></a>

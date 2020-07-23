@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Панель 1";
+    ViewBag.Title = "Сводка";
 }
 <div class="wrapper wrapper-content">
     <div class="row">
@@ -11,11 +11,16 @@
                     <h5>Поступления</h5>
                 </div>
                 @*</a>*@
-                <div class="ibox-content">
-                    <h1 class="no-margins">125 382 200</h1>
-                    @*                    <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>*@
-                    <small>с начала работы</small>
-                </div>
+            <div class="ibox-content">
+                @*@Html.Action("_IncreasesSum", "Increases", new
+           {
+               begdate =  new DateTime(2019, 1, 1).ToString("dd.MM.yyyy HH:mm:ss"),
+               //DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+               enddate = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
+           })*@
+                @*                    <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>*@
+                <small>с начала работы</small>
+            </div>
             </div>
         </div>
         <div class="col-lg-3">
@@ -26,7 +31,11 @@
                     @*                    <span data-diameter="40" class="updating-chart">5,3,9,6,5,9,7,3,5,2,5,3,9,6,5,9,4,7,3,2,9,8,7,4,5,1,2,9,5,4,7,2,7,7,3,5,2</span>*@
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins">378 080</h1>
+                    @Html.Action("_IncreasesSum", "Increases", new
+               {
+                   begdate = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                   enddate = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
+               })
                     @*<div class="stat-percent font-bold text-info">11% <i class="fa fa-level-up"></i></div>*@
                     @*<a href="@Url.Action("IncashWashes", "Incash", new { begTime = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"), endTime =  DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"), region = "0", wash = "0" })">*@
                     <a href="@Url.Action("IncreasesByWashesView","Increases")">
@@ -42,9 +51,17 @@
                     <h5>Инкассировано</h5>
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins">10 350 610</h1>
+                    @Html.Action("_CollectSum", "CollectWash", new
+               {
+                   begdate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                   enddate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
+               })
                     @*<div class="stat-percent font-bold text-danger">38% <i class="fa fa-level-down"></i></div>*@
-                    <a href="@Url.Action("CollectList", "CollectWash", new { begTime = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-1).ToString("dd.MM.yyyy HH:mm:ss"), endTime = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"), region = "0", wash = "0" })">
+                    <a href="@Url.Action("CollectByWashesView","CollectWash", new
+                        { 
+                            begdate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-1).ToString("dd.MM.yyyy HH:mm:ss"), 
+                            enddate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
+                        })">
                         <small>@DateTime.Today.AddMonths(-1).ToString("MMMM yyyy")</small>
                     </a>
                 </div>
@@ -69,7 +86,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-3">
+        @*<div class="col-lg-3">
             <div class="ibox ">
                 <div class="ibox-title">
                     <span class="label label-warning-light float-right">работает</span>
@@ -87,7 +104,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>*@
     </div>
     <div class="row">
         <div class="col-lg-12">

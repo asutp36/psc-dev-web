@@ -67,8 +67,8 @@
                {
                    region = "",
                    wash = "",
-                   begdate = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
-                   enddate = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
+                   begdate = ViewBag.BegDate,
+                   enddate = ViewBag.EndDate
                })
                 </div>
             </div>
@@ -90,7 +90,7 @@
     @Scripts.Render("~/plugins/dataPicker")
     @Scripts.Render("~/plugins/dateRange")
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
         function initDataTable() {
             $('#table-increases').DataTable({
@@ -283,10 +283,10 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#bdate').val(moment().subtract(1, 'days').startOf('day').format('DD.MM.YYYY HH:mm:ss'));
-        $('#edate').val(moment().subtract(1, 'days').endOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        $('#bdate').val('@ViewBag.BegDate');
+        $('#edate').val('@ViewBag.EndDate');
 
-        $('#filter-date span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
+        $('#filter-date span').html('с ' + $('#bdate').val() + ' по ' + $('#edate').val());
 
         $('#filter-date').daterangepicker({
             "timePicker": true,
@@ -334,8 +334,8 @@
             },
             "showCustomRangeLabel": false,
             "alwaysShowCalendars": true,
-            "startDate": moment().subtract(1, 'days').startOf('day'),
-            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "startDate": moment($('#bdate').val(), 'DD.MM.YYYY HH:mm:ss'),
+            "endDate": moment($('#edate').val(), 'DD.MM.YYYY HH:mm:ss'),
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {
@@ -346,7 +346,7 @@
             $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
             filter();
         });
-    </script>
+</script>
 }
 
 

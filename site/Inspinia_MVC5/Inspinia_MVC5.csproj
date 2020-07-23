@@ -2045,6 +2045,8 @@
     <Content Include="Views\Rates\_NoAvailableWash.cshtml" />
     <Content Include="Views\EventChanger\EventChangerView.cshtml" />
     <Content Include="Views\EventChanger\_EventChangerList.cshtml" />
+    <Content Include="Views\Increases\_IncreasesSum.cshtml" />
+    <Content Include="Views\CollectWash\_CollectSum.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

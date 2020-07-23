@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -174,10 +175,10 @@ namespace Inspinia_MVC5.Controllers
             return resultlist;
         }
 
-        public ActionResult CollectByWashesView()
+        public ActionResult CollectByWashesView(string begdate, string enddate)
         {
-            DateTime edate = DateTime.Now;
-            ViewBag.EndDate = edate;
+            ViewBag.BegDate = begdate;
+            ViewBag.EndDate = enddate;
 
             return View("CollectByWashesView");
         }
@@ -406,5 +407,23 @@ namespace Inspinia_MVC5.Controllers
             return PartialView("_CollectByPostsList", view);
         }
 
+        public ActionResult _CollectSum(string begdate, string enddate)
+        {
+            int sum = 0;
+
+            List<GetCollectByWashs_Result> res = GetCollectByWashes("", "", begdate, enddate);
+
+            foreach (var r in res)
+            {
+                sum += r.sum;
+            }
+
+            var nf = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nf.NumberGroupSeparator = " ";
+
+            string result = sum.ToString("#,0", nf);
+
+            return PartialView("_CollectSum", result);
+        }
     }
 }
