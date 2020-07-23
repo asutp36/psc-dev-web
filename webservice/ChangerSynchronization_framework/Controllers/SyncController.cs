@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChangerSynchronization_framework.Controllers.Supplies;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -9,5 +10,14 @@ namespace ChangerSynchronization_framework.Controllers
 {
     public class SyncController : ApiController
     {
+        public HttpResponseMessage PostEventChanger([FromBody]EventChangerFull model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Request.CreateResponse(HttpStatusCode.NoContent);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
     }
 }
