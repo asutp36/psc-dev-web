@@ -94,6 +94,26 @@ namespace ChangerSynchronization_framework.Controllers
 
                 InsertFullEventChangerResult result = new InsertFullEventChangerResult { serverId = int.Parse(id.ToString()) };
 
+                int idEventChanger = int.Parse(id.ToString());
+
+                if (eventFull.eventsAcquiring.Count > 0)
+                {
+                    result.eventsAcquiring = new List<DbInsertResult>();
+                    foreach (EventAcquiring ea in eventFull.eventsAcquiring)
+                    {
+                        result.eventsAcquiring.Add(WriteEventChangerAcquiring(ea, idEventChanger));
+                    }
+                }
+
+                if (eventFull.eventsCard.Count > 0)
+                {
+                    result.eventsCard = new List<DbInsertResult>();
+                    foreach (EventCard ec in eventFull.eventsAcquiring)
+                    {
+                        result.eventsAcquiring.Add(WriteEventChangerAcquiring(eca, idEventChanger));
+                    }
+                }
+
                 return null;
             }
             catch (Exception e)
