@@ -44,19 +44,16 @@ namespace ChangerSynchronization_framework.Controllers
                     return Request.CreateResponse(HttpStatusCode.InternalServerError);
                 }
 
-                DbInsertResult eventChangerResult = WriteEventChanger(model);
+                InsertFullEventChangerResult insertResult = WriteEventChanger(model);
 
-                if (eventChangerResult.serverId != null && eventChangerResult.serverId > 0)
-                {
-
-                }
-                else
+                if (insertResult.serverId == null)
                 {
                     Logger.Log.Error("PostEventChanger: не удалось записать в базу EventChanger." + Environment.NewLine);
-                    return Request.CreateResponse((HttpStatusCode)503, "Не удалось записать в базу EventChanger");
+                    return Request.CreateResponse((HttpStatusCode)503, "Неудалось записть в базу");
                 }
 
-                return Request.CreateResponse(HttpStatusCode.Created);
+
+             return Request.CreateResponse(HttpStatusCode.Created);
             }
             catch (Exception e)
             {
@@ -65,7 +62,7 @@ namespace ChangerSynchronization_framework.Controllers
             }
         }
 
-        private DbInsertResult WriteEventChanger(EventChangerFull eventFull)
+        private InsertFullEventChangerResult WriteEventChanger(EventChangerFull eventFull)
         {
             Logger.InitLogger();
             try
@@ -85,14 +82,62 @@ namespace ChangerSynchronization_framework.Controllers
 
                 var id = command.ExecuteScalar();
 
+                _model.Database.Connection.Close();
+
+                if (id == null || int.Parse(id.ToString()) < 1)
+                {
+                    Logger.Log.Error("WriteEventChanger: ошибка при записи EventChanger.");
+                    return new InsertFullEventChangerResult { serverMessage = "Приём ок. Ошибка записи в базу EventChanger" };
+                }
+
                 Logger.Log.Debug("WriteEventChanger: EventChanger добавлен. id = " + id.ToString());
 
+                InsertFullEventChangerResult result = new InsertFullEventChangerResult { serverId = int.Parse(id.ToString()) };
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                    _model.Database.Connection.Close();
+
+                Logger.Log.Error("WriteEventChanger: ошибка при записи в базу.\n" + e.Message + Environment.NewLine + e.StackTrace);
+                return new InsertFullEventChangerResult { serverMessage = "Приём ок. Ошибка записи в базу" };
+            }
+        }
+
+        private DbInsertResult WriteEventChangerAcquiring(EventAcquiring eventAcquiring, int idEventChanger)
+        {
+            Logger.InitLogger();
+            try
+            {
+                _model.Database.Connection.Open();
+                Logger.Log.Debug("WriteEventChangerAcquiring: connection state: " + _model.Database.Connection.State);
+
+                DbCommand command = _model.Database.Connection.CreateCommand();
+                command.CommandText = $"INSERT INTO EventChangerAcquiring (IDEventChanger, DTime, Amount) " +
+                    $"VALUES ({idEventChanger}, '{eventAcquiring.dtime}', {eventAcquiring.amount}); " +
+                    $"SELECT SCOPE_IDENTITY();";
+
+                Logger.Log.Debug("WriteEventChangerAcquiring: command is:\n" + command.CommandText);
+
+                var id = command.ExecuteScalar();
+
+                if (id == null || int.Parse(id.ToString()) < 1)
+                {
+                    Logger.Log.Error("WriteEventChanger: ошибка при записи EventChangerAcquiring.");
+                    return new DbInsertResult { serverMessage = "Ошибка записи в базу EventChangerAcquiring" };
+                }
+
+                Logger.Log.Debug("WriteEventChanger: eventAcquiring добавлен id = " + id.ToString());
                 return new DbInsertResult { serverId = int.Parse(id.ToString()) };
             }
             catch (Exception e)
             {
-                Logger.Log.Error("WriteEventChanger: ошибка при записи в базу.\n" + e.Message + Environment.NewLine + e.StackTrace);
-                return new DbInsertResult { serverMassege = "Приём ок. Ошибка записи в базу" };
+                if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                    _model.Database.Connection.Close();
+                Logger.Log.Error("WriteEventChangerAcquiring: ошибка при записи в базу. Событие:\n" + JsonConvert.SerializeObject(eventAcquiring) + Environment.NewLine + e.Message);
+                return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу" };
             }
         }
     }

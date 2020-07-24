@@ -142,6 +142,7 @@
     <Compile Include="Controllers\Supplies\EventCard.cs" />
     <Compile Include="Controllers\Supplies\EventChangerFull.cs" />
     <Compile Include="Controllers\Supplies\EventWithNominals.cs" />
+    <Compile Include="Controllers\Supplies\InsertFullEventChangerResult.cs" />
     <Compile Include="Controllers\Supplies\Logger.cs" />
     <Compile Include="Controllers\SyncController.cs" />
     <Compile Include="Global.asax.cs">

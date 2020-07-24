@@ -8,6 +8,6 @@ namespace ChangerSynchronization_framework.Controllers.Supplies
     public class DbInsertResult
     {
         public int? serverId { get; set; }
-        public string serverMassege { get; set; }
+        public string serverMessage { get; set; }
     }
 }
