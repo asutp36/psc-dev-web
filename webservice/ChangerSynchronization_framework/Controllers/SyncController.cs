@@ -211,5 +211,40 @@ namespace ChangerSynchronization_framework.Controllers
                 return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу" };
             }
         }
+
+        private DbInsertResult WriteEventChangerOut(EventWithNominals eventIncrease, int idEventChanger)
+        {
+            Logger.InitLogger();
+            try
+            {
+                _model.Database.Connection.Open();
+                Logger.Log.Debug("WriteEventChangerOut: connection state: " + _model.Database.Connection.State);
+
+                DbCommand command = _model.Database.Connection.CreateCommand();
+                command.CommandText = $"INSERT INTO EventChangerIncrease (IDEventChanger, DTime, m10, b50, b100) " +
+                    $"VALUES ({idEventChanger}, '{eventIncrease.dtime}', {eventIncrease.m10}, {eventIncrease.b50}, {eventIncrease.b100}); " +
+                    $"SELECT SCOPE_IDENTITY();";
+
+                Logger.Log.Debug("WriteEventChangerOut: command is:\n" + command.CommandText);
+
+                var id = command.ExecuteScalar();
+
+                if (id == null || int.Parse(id.ToString()) < 1)
+                {
+                    Logger.Log.Error("WriteEventChangerOut: ошибка при записи EventChangerOut.");
+                    return new DbInsertResult { serverMessage = "Ошибка записи в базу EventChangerOut" };
+                }
+
+                Logger.Log.Debug("WriteEventChangerOut: eventOut добавлен id = " + id.ToString());
+                return new DbInsertResult { serverId = int.Parse(id.ToString()) };
+            }
+            catch (Exception e)
+            {
+                if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                    _model.Database.Connection.Close();
+                Logger.Log.Error("WriteEventChangerOut: ошибка при записи в базу. Событие:\n" + JsonConvert.SerializeObject(eventIncrease) + Environment.NewLine + e.Message);
+                return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу" };
+            }
+        }
     }
 }
