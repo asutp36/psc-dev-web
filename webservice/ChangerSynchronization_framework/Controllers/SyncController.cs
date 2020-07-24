@@ -175,5 +175,41 @@ namespace ChangerSynchronization_framework.Controllers
                 return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу" };
             }
         }
+
+        private DbInsertResult WriteEventChangerIncrease(EventWithNominals eventIncrease, int idEventChanger)
+        {
+            Logger.InitLogger();
+            try
+            {
+                _model.Database.Connection.Open();
+                Logger.Log.Debug("WriteEventChangerIncrease: connection state: " + _model.Database.Connection.State);
+
+                DbCommand command = _model.Database.Connection.CreateCommand();
+                command.CommandText = $"INSERT INTO EventChangerIncrease (IDEventChanger, DTime, m10, b50, b100, b200, b500, b1000, b2000) " +
+                    $"VALUES ({idEventChanger}, '{eventIncrease.dtime}', {eventIncrease.m10}, {eventIncrease.b50}, {eventIncrease.b100}, {eventIncrease.b200}, " +
+                    $"{eventIncrease.b500}, {eventIncrease.b1000}, {eventIncrease.b2000}); " +
+                    $"SELECT SCOPE_IDENTITY();";
+
+                Logger.Log.Debug("WriteEventChangerIncrease: command is:\n" + command.CommandText);
+
+                var id = command.ExecuteScalar();
+
+                if (id == null || int.Parse(id.ToString()) < 1)
+                {
+                    Logger.Log.Error("WriteEventChangerIncrease: ошибка при записи EventChangerIncrease.");
+                    return new DbInsertResult { serverMessage = "Ошибка записи в базу EventChangerIncrease" };
+                }
+
+                Logger.Log.Debug("WriteEventChangerIncrease: eventIncrease добавлен id = " + id.ToString());
+                return new DbInsertResult { serverId = int.Parse(id.ToString()) };
+            }
+            catch (Exception e)
+            {
+                if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                    _model.Database.Connection.Close();
+                Logger.Log.Error("WriteEventChangerIncrease: ошибка при записи в базу. Событие:\n" + JsonConvert.SerializeObject(eventIncrease) + Environment.NewLine + e.Message);
+                return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу" };
+            }
+        }
     }
 }
