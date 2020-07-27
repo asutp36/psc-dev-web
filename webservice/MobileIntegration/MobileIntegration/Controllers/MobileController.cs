@@ -668,6 +668,12 @@ namespace MobileIntegration.Controllers
                                 command.ExecuteNonQuery();
                                 command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) values (scope_identity(), '{cardNum}', 1, 4, 0, 0)";
                                 command.ExecuteNonQuery();
+                                command.CommandText = $"insert into Operations (IDChanger, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
+                                       $"values ((select IDChanger from Changers c where c.Code = 'MOB-EM'), " +
+                                       $"(select IDOperationType from OperationTypes ot where ot.Code = 'activation'), " +
+                                       $"scope_identity(), '{newCard.time_send}', " +
+                                       $"0, 0, 0, 0);";
+                                command.ExecuteNonQuery();
 
                                 Logger.Log.Debug($"NewCard: добавлены Owner и Card. CardNum = {cardNum.ToString()}" + Environment.NewLine);
                                 tran.Commit();
@@ -739,7 +745,7 @@ namespace MobileIntegration.Controllers
                     {
                         card = newCard.card,
                         phone = newCard.phone,
-                        time_send = dtime.ToString("yyyy-MM-dd HH:mm:ss "),
+                        time_send = dtime.ToString("yyyy-MM-dd HH:mm:ss"),
                         hash = CryptHash.GetHashCode(dtime.ToString("yyyy-MM-dd HH:mm:ss"))
                     };
 
@@ -767,6 +773,12 @@ namespace MobileIntegration.Controllers
                             command.CommandText = $"insert into Owners (Phone, LocalizedBy, LocalizedID) values ('{newCard.phone}', 0, 0)";
                             command.ExecuteNonQuery();
                             command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) values (scope_identity(), '{newCard.card}', 1, 4, 0, 0)";
+                            command.ExecuteNonQuery();
+                            command.CommandText = $"insert into Operations (IDChanger, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
+                                $"values ((select IDChanger from Changers c where c.Code = 'MOB-EM'), " +
+                                $"(select IDOperationType from OperationTypes ot where ot.Code = 'activation'), " +
+                                $"scope_identity(), '{newCard.time_send}', " +
+                                $"0, 0, 0, 0);";
                             command.ExecuteNonQuery();
 
                             Logger.Log.Debug($"SendNewCardDev: добавлены Owner и Card. CardNum = {newCard.card}" + Environment.NewLine);
