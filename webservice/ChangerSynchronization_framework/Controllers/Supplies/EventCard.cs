@@ -10,5 +10,6 @@ namespace ChangerSynchronization_framework.Controllers.Supplies
     {
         [Required]
         public string cardNum { get; set; }
+        public string phone { get; set; }
     }
 }

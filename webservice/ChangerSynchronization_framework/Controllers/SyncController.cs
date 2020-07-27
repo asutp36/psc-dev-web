@@ -123,7 +123,28 @@ namespace ChangerSynchronization_framework.Controllers
                     result.eventsCard = new List<DbInsertResult>();
                     foreach (EventCard ec in eventFull.eventsCard)
                     {
-                        result.eventsCard.Add(WriteEventChangerCard(ec, idEventChanger));
+                        DbInsertResult insertRes = new DbInsertResult();
+                        insertRes = WriteEventChangerCard(ec, idEventChanger, eventFull.eventKindCode);
+
+                        string res = "";
+
+                        switch (eventFull.eventKindCode)
+                        {
+                            case "cardCreate":
+                                res += WriteNewCard(eventFull);
+                                break;
+
+                            case "cardIncrease":
+                                if (WriteOperationIncrease(eventFull))
+                                    res += "Операция записана.";
+                                else
+                                    res += "Операция не записана.";
+                                break;
+                        }
+
+                        insertRes.serverMessage += res;
+
+                        result.eventsCard.Add(insertRes);
                     }
                 }
 
@@ -176,7 +197,7 @@ namespace ChangerSynchronization_framework.Controllers
             }
         }
 
-        private DbInsertResult WriteEventChangerCard(EventCard eventCard, int idEventChanger)
+        private DbInsertResult WriteEventChangerCard(EventCard eventCard, int idEventChanger, string eventKindCode)
         {
             Logger.InitLogger();
             try
@@ -198,10 +219,11 @@ namespace ChangerSynchronization_framework.Controllers
                 if (id == null || int.Parse(id.ToString()) < 1)
                 {
                     Logger.Log.Error("WriteEventChangerCard: ошибка при записи EventChangerCard." + Environment.NewLine);
-                    return new DbInsertResult { serverMessage = "Ошибка записи в базу EventChangerCard" };
+                    return new DbInsertResult { serverMessage = "Ошибка записи в базу EventChangerCard. " };
                 }
 
                 Logger.Log.Debug("WriteEventChangerCard: eventCard добавлен id = " + id.ToString() + Environment.NewLine);
+
                 return new DbInsertResult { serverId = int.Parse(id.ToString()) };
             }
             catch (Exception e)
@@ -209,7 +231,7 @@ namespace ChangerSynchronization_framework.Controllers
                 if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
                     _model.Database.Connection.Close();
                 Logger.Log.Error("WriteEventChangerCard: ошибка при записи в базу. Событие:\n" + JsonConvert.SerializeObject(eventCard) + Environment.NewLine + e.Message + Environment.NewLine);
-                return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу" };
+                return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу. " };
             }
         }
 
@@ -288,7 +310,7 @@ namespace ChangerSynchronization_framework.Controllers
             }
         }
 
-        private void WriteNewCard(EventChangerFull eventChanger)
+        private string WriteNewCard(EventChangerFull eventChanger)
         {
             Logger.InitLogger();
             try
@@ -303,13 +325,14 @@ namespace ChangerSynchronization_framework.Controllers
 
                 try
                 {
-                    command.CommandText = $"insert into Owners (Phone, LocalizedBy, LocalizedID) values ('{eventChanger.phone}', 0, 0)";
+                    command.CommandText = $"insert into Owners (Phone, LocalizedBy, LocalizedID) values ('{eventChanger.eventsCard.FirstOrDefault().phone}', 0, 0)";
                     command.ExecuteNonQuery();
-                    command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) values (scope_identity(), '{eventChanger.cardNum}', " +
+                    command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) " +
+                        $"values (scope_identity(), '{eventChanger.eventsCard.FirstOrDefault().cardNum}', " +
                         $"(select IDCardStatus from CardStatuses cs where cs.Code = 'norm'), (select IDCardType from CardTypes ct where ct.Code = 'client'), 0, 0)";
                     command.ExecuteNonQuery();
 
-                    Logger.Log.Debug($"WriteNewCard: добавлены Owner и Card. CardNum = {eventChanger.cardNum}" + Environment.NewLine);
+                    Logger.Log.Debug($"WriteNewCard: добавлены Owner и Card. CardNum = {eventChanger.eventsCard.FirstOrDefault().cardNum}" + Environment.NewLine);
                     tran.Commit();
                 }
                 catch (Exception e)
@@ -318,21 +341,26 @@ namespace ChangerSynchronization_framework.Controllers
                     tran.Rollback();
                     _model.Database.Connection.Close();
 
-                    //return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    return "Записи о новой карте и владельце не добавлены";
                 }
 
                 _model.Database.Connection.Close();
+
+                if (WriteOperationIncrease(eventChanger))
+                    return "Добавлены записи о новой карте и внесении";
+                else
+                    return "Добавлены записи о новой карте без записи о внесении";
             }
             catch(Exception e)
             {
                 if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
                     _model.Database.Connection.Close();
                 Logger.Log.Error("WriteNewCard: ошибка при записи в базу.\n" + e.Message + Environment.NewLine);
-                //return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу" };
+                return "Ошибка при добавлении в таблицы карт.";
             }
         }
 
-        private void WriteOperationIncrease(EventChangerFull eventChanger)
+        private bool WriteOperationIncrease(EventChangerFull eventChanger)
         {
             Logger.InitLogger();
 
@@ -363,10 +391,18 @@ namespace ChangerSynchronization_framework.Controllers
                 }
 
                 DbCommand command = _model.Database.Connection.CreateCommand();
+
+                string selectBalance = $"select " +
+                            $"isnull(o.Balance, 0) " +
+                            $"from Cards c " +
+                            $"left join Operations o on o.IDCard = c.IDCard " +
+                            $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
+                            $"where c.CardNum = '{eventChanger.eventsCard.FirstOrDefault().cardNum}'";
+
                 command.CommandText = $"INSERT INTO Operations (IDChanger, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
-                    $"VALUES ((select IDChanger from Changers c where c.Name = '{eventChanger.changer}'), (select IDOperationType from OpeationTypes ot where ot.Code = 'increase'), " +
+                    $"VALUES ((select IDChanger from Changers c where c.Name = '{eventChanger.changer}'), (select IDOperationType from OperationTypes ot where ot.Code = 'increase'), " +
                     $"(select IDCard from Cards c where c.CardNum = '{eventChanger.eventsCard.FirstOrDefault().cardNum}'), '{eventChanger.eventsCard.FirstOrDefault().dtime.ToString("yyyy-MM-dd HH:mm:ss")}', " +
-                    $"{amount}, 0, 0); " +
+                    $"{amount}, ({selectBalance}) + {amount}, 0, 0); " +
                     $"SELECT SCOPE_IDENTITY();";
 
                 Logger.Log.Info("WriteOperation: command is:\n" + command.CommandText);
@@ -374,13 +410,15 @@ namespace ChangerSynchronization_framework.Controllers
                 var id = command.ExecuteScalar();
 
                 _model.Database.Connection.Close();
+
+                return true;
             }
             catch(Exception e)
             {
                 if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
                     _model.Database.Connection.Close();
                 Logger.Log.Error("WriteEventChangerOut: ошибка при записи в базу.\n" + e.Message + Environment.NewLine);
-                //return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу" };
+                return false;
             }
         }
     }
