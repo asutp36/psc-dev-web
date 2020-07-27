@@ -827,7 +827,7 @@ namespace MobileIntegration.Controllers
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                 $" VALUES((select IDCard from Cards where CardNum = '{newCard.card}'), " +
-                                                $"(select IDChanger from Changers where Name = 'MobileApp'), 2, \'{newCard.time_send}\', {newCard.value}," +
+                                                $"(select IDChanger from Changers where Code = 'MOB-EM'), 2, \'{newCard.time_send}\', {newCard.value}," +
                                                 $" ({commandBalance.CommandText}) + {newCard.value}, -1, -1);" +
                                                 " SELECT SCOPE_IDENTITY()";
 
