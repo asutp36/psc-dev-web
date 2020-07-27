@@ -332,7 +332,14 @@ namespace ChangerSynchronization_framework.Controllers
                         $"(select IDCardStatus from CardStatuses cs where cs.Code = 'norm'), (select IDCardType from CardTypes ct where ct.Code = 'client'), 0, 0)";
                     command.ExecuteNonQuery();
 
-                    Logger.Log.Debug($"WriteNewCard: добавлены Owner и Card. CardNum = {eventChanger.eventsCard.FirstOrDefault().cardNum}" + Environment.NewLine);
+                    command.CommandText = $"insert into Operations (IDChanger, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
+                        $"values ((select IDChanger from Changers c where c.Code = '{eventChanger.changer}'), " +
+                        $"(select IDOperationType from OperationTypes ot where ot.Code = 'activation'), " +
+                        $"scope_identity(), '{eventChanger.eventsCard.FirstOrDefault().dtime.ToString("yyyy-MM-dd HH:mm:ss")}', " +
+                        $"0, 0, 0, 0);";
+                    command.ExecuteNonQuery();
+
+                    Logger.Log.Debug($"WriteNewCard: добавлены Owner, Card и операция activation. CardNum = {eventChanger.eventsCard.FirstOrDefault().cardNum}" + Environment.NewLine);
                     tran.Commit();
                 }
                 catch (Exception e)
