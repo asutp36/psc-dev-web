@@ -40,6 +40,7 @@
           <Property Name="IDChanger" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="IDWash" Type="int" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="20" Nullable="false" />
         </EntityType>
         <EntityType Name="Device">
           <Key>
@@ -618,6 +619,7 @@
           <Property Name="IDWash" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Wash" Relationship="WashCompanyModel.FK_Changers_Wash" FromRole="Changers" ToRole="Wash" />
           <NavigationProperty Name="Operations" Relationship="WashCompanyModel.FK_Operations_Changers" FromRole="Changers" ToRole="Operations" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_Changers_Wash">
           <End Type="WashCompanyModel.Wash" Role="Wash" Multiplicity="1">
@@ -774,6 +776,7 @@
           <EntitySetMapping Name="Changers">
             <EntityTypeMapping TypeName="WashCompanyModel.Changers">
               <MappingFragment StoreEntitySet="Changers">
+                <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="IDChanger" ColumnName="IDChanger" />

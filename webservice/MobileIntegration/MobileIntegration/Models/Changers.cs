@@ -23,6 +23,7 @@ namespace MobileIntegration.Models
         public int IDChanger { get; set; }
         public string Name { get; set; }
         public int IDWash { get; set; }
+        public string Code { get; set; }
     
         public virtual Wash Wash { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
