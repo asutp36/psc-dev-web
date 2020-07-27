@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="WashCompanyEntities.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="WashCompanyEntities.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Cards">
           <Key>
             <PropertyRef Name="IDCard" />
@@ -51,6 +51,7 @@
           <Property Name="IDEventChanger" Type="int" Nullable="false" />
           <Property Name="DTime" Type="datetime" Nullable="false" />
           <Property Name="CardNum" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Phone" Type="nvarchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="EventChangerIncrease">
           <Key>
@@ -204,8 +205,7 @@
             <End Role="EventChangerOut" EntitySet="EventChangerOut" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="WashCompanyEntities" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -264,6 +264,7 @@
           <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CardNum" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="EventChanger" Relationship="Self.FK_EventChangerCard_EventChanger" FromRole="EventChangerCard" ToRole="EventChanger" />
+          <Property Name="Phone" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="EventChangerIncrease">
           <Key>
@@ -471,6 +472,7 @@
           <EntitySetMapping Name="EventChangerCard">
             <EntityTypeMapping TypeName="WashCompanyEntities.EventChangerCard">
               <MappingFragment StoreEntitySet="EventChangerCard">
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
                 <ScalarProperty Name="IDEventChangerCard" ColumnName="IDEventChangerCard" />
                 <ScalarProperty Name="IDEventChanger" ColumnName="IDEventChanger" />
                 <ScalarProperty Name="DTime" ColumnName="DTime" />

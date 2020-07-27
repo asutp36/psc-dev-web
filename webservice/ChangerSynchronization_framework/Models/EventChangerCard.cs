@@ -18,6 +18,7 @@ namespace ChangerSynchronization_framework.Models
         public int IDEventChanger { get; set; }
         public System.DateTime DTime { get; set; }
         public string CardNum { get; set; }
+        public string Phone { get; set; }
     
         public virtual EventChanger EventChanger { get; set; }
     }

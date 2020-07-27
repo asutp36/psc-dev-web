@@ -74,7 +74,7 @@ namespace ChangerSynchronization_framework.Controllers
                 DbCommand command = _model.Database.Connection.CreateCommand();
 
                 command.CommandText = $"INSERT INTO EventChanger (IDChanger, IDEventChangerKind, DTime) " +
-                    $"VALUES ((select IDChanger from Changers c where c.Name = '{eventFull.changer}'), " +
+                    $"VALUES ((select IDChanger from Changers c where c.Code = '{eventFull.changer}'), " +
                     $"(select IDEventChangerKind from EventChangerKind evk where evk.Code = '{eventFull.eventKindCode}')," +
                     $"'{eventFull.dtime.ToString("yyyy-MM-dd HH:mm:ss")}'); " +
                     $"SELECT SCOPE_IDENTITY();";
