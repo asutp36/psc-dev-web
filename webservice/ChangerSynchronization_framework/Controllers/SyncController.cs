@@ -22,6 +22,8 @@ namespace ChangerSynchronization_framework.Controllers
         /// <returns></returns>
         /// <response code="201">Событие записано</response>
         /// <response code="503">Не получилось добавить EventChanger</response>
+        /// <response code="500">Внутренняя ошибка сервера</response>
+        /// <response code="400">Модель не прошла валидацию</response>
         [HttpPost]
         [ActionName("event")]
         public HttpResponseMessage PostEventChanger([FromBody]EventChangerFull model)
@@ -35,7 +37,7 @@ namespace ChangerSynchronization_framework.Controllers
                 if (!ModelState.IsValid)
                 {
                     Logger.Log.Error("PostEventChanger: модель не прошла валидацию." + Environment.NewLine);
-                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
 
                 if (!_model.Database.Exists())
@@ -52,13 +54,12 @@ namespace ChangerSynchronization_framework.Controllers
                     return Request.CreateResponse((HttpStatusCode)503, "Неудалось записть в базу");
                 }
 
-
-                return Request.CreateResponse(HttpStatusCode.Created);
+                return Request.CreateResponse(HttpStatusCode.Created, JsonConvert.SerializeObject(insertResult));
             }
             catch (Exception e)
             {
                 Logger.Log.Error("PostEventChanger: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, e.Message);
             }
         }
 
@@ -73,9 +74,9 @@ namespace ChangerSynchronization_framework.Controllers
                 DbCommand command = _model.Database.Connection.CreateCommand();
 
                 command.CommandText = $"INSERT INTO EventChanger (IDChanger, IDEventChangerKind, DTime) " +
-                    $"VALUES ((select IDChanger from Changers c where c.Code == '{eventFull.changer}'), " +
-                    $"(select IDEventChangerKind from EventChangerKind evk where evk.Code == '{eventFull.eventKindCode}')," +
-                    $"'{eventFull.dtime}'); " +
+                    $"VALUES ((select IDChanger from Changers c where c.Name = '{eventFull.changer}'), " +
+                    $"(select IDEventChangerKind from EventChangerKind evk where evk.Code = '{eventFull.eventKindCode}')," +
+                    $"'{eventFull.dtime.ToString("yyyy-MM-dd HH:mm:ss")}'); " +
                     $"SELECT SCOPE_IDENTITY();";
 
                 Logger.Log.Debug("WriteEventChanger: command is:\n" + command.CommandText);
@@ -105,16 +106,28 @@ namespace ChangerSynchronization_framework.Controllers
                     }
                 }
 
-                if (eventFull.eventsCard.Count > 0)
+                if (eventFull.eventsNominals.Count > 0)
                 {
-                    result.eventsCard = new List<DbInsertResult>();
-                    foreach (EventCard ec in eventFull.eventsAcquiring)
+                    result.eventsNominals = new List<DbInsertResult>();
+                    foreach (EventWithNominals ewn in eventFull.eventsNominals)
                     {
-                        result.eventsAcquiring.Add(WriteEventChangerAcquiring(eca, idEventChanger));
+                        if (ewn.eventKind.Equals("increase"))
+                            result.eventsNominals.Add(WriteEventChangerIncrease(ewn, idEventChanger));
+                        if (ewn.eventKind.Equals("out"))
+                            result.eventsNominals.Add(WriteEventChangerOut(ewn, idEventChanger));
                     }
                 }
 
-                return null;
+                if (eventFull.eventsCard.Count > 0)
+                {
+                    result.eventsCard = new List<DbInsertResult>();
+                    foreach (EventCard ec in eventFull.eventsCard)
+                    {
+                        result.eventsCard.Add(WriteEventChangerCard(ec, idEventChanger));
+                    }
+                }
+
+                return result;
             }
             catch (Exception e)
             {
@@ -136,27 +149,29 @@ namespace ChangerSynchronization_framework.Controllers
 
                 DbCommand command = _model.Database.Connection.CreateCommand();
                 command.CommandText = $"INSERT INTO EventChangerAcquiring (IDEventChanger, DTime, Amount) " +
-                    $"VALUES ({idEventChanger}, '{eventAcquiring.dtime}', {eventAcquiring.amount}); " +
+                    $"VALUES ({idEventChanger}, '{eventAcquiring.dtime.ToString("yyyy-MM-dd HH:mm:ss")}', {eventAcquiring.amount}); " +
                     $"SELECT SCOPE_IDENTITY();";
 
                 Logger.Log.Debug("WriteEventChangerAcquiring: command is:\n" + command.CommandText);
 
                 var id = command.ExecuteScalar();
 
+                _model.Database.Connection.Close();
+
                 if (id == null || int.Parse(id.ToString()) < 1)
                 {
-                    Logger.Log.Error("WriteEventChangerAcquiring: ошибка при записи EventChangerAcquiring.");
+                    Logger.Log.Error("WriteEventChangerAcquiring: ошибка при записи EventChangerAcquiring." + Environment.NewLine);
                     return new DbInsertResult { serverMessage = "Ошибка записи в базу EventChangerAcquiring" };
                 }
 
-                Logger.Log.Debug("WriteEventChangerAcquiring: eventAcquiring добавлен id = " + id.ToString());
+                Logger.Log.Debug("WriteEventChangerAcquiring: eventAcquiring добавлен id = " + id.ToString() + Environment.NewLine);
                 return new DbInsertResult { serverId = int.Parse(id.ToString()) };
             }
             catch (Exception e)
             {
                 if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
                     _model.Database.Connection.Close();
-                Logger.Log.Error("WriteEventChangerAcquiring: ошибка при записи в базу. Событие:\n" + JsonConvert.SerializeObject(eventAcquiring) + Environment.NewLine + e.Message);
+                Logger.Log.Error("WriteEventChangerAcquiring: ошибка при записи в базу. Событие:\n" + JsonConvert.SerializeObject(eventAcquiring) + Environment.NewLine + e.Message + Environment.NewLine);
                 return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу" };
             }
         }
@@ -171,27 +186,29 @@ namespace ChangerSynchronization_framework.Controllers
 
                 DbCommand command = _model.Database.Connection.CreateCommand();
                 command.CommandText = $"INSERT INTO EventChangerCard (IDEventChanger, DTime, CardNum) " +
-                    $"VALUES ({idEventChanger}, '{eventCard.dtime}', '{eventCard.cardNum}'); " +
+                    $"VALUES ({idEventChanger}, '{eventCard.dtime.ToString("yyyy-MM-dd HH:mm:ss")}', '{eventCard.cardNum}'); " +
                     $"SELECT SCOPE_IDENTITY();";
 
                 Logger.Log.Debug("WriteEventChangerCard: command is:\n" + command.CommandText);
 
                 var id = command.ExecuteScalar();
 
+                _model.Database.Connection.Close();
+
                 if (id == null || int.Parse(id.ToString()) < 1)
                 {
-                    Logger.Log.Error("WriteEventChangerCard: ошибка при записи EventChangerCard.");
+                    Logger.Log.Error("WriteEventChangerCard: ошибка при записи EventChangerCard." + Environment.NewLine);
                     return new DbInsertResult { serverMessage = "Ошибка записи в базу EventChangerCard" };
                 }
 
-                Logger.Log.Debug("WriteEventChangerCard: eventCard добавлен id = " + id.ToString());
+                Logger.Log.Debug("WriteEventChangerCard: eventCard добавлен id = " + id.ToString() + Environment.NewLine);
                 return new DbInsertResult { serverId = int.Parse(id.ToString()) };
             }
             catch (Exception e)
             {
                 if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
                     _model.Database.Connection.Close();
-                Logger.Log.Error("WriteEventChangerCard: ошибка при записи в базу. Событие:\n" + JsonConvert.SerializeObject(eventCard) + Environment.NewLine + e.Message);
+                Logger.Log.Error("WriteEventChangerCard: ошибка при записи в базу. Событие:\n" + JsonConvert.SerializeObject(eventCard) + Environment.NewLine + e.Message + Environment.NewLine);
                 return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу" };
             }
         }
@@ -206,7 +223,7 @@ namespace ChangerSynchronization_framework.Controllers
 
                 DbCommand command = _model.Database.Connection.CreateCommand();
                 command.CommandText = $"INSERT INTO EventChangerIncrease (IDEventChanger, DTime, m10, b50, b100, b200, b500, b1000, b2000) " +
-                    $"VALUES ({idEventChanger}, '{eventIncrease.dtime}', {eventIncrease.m10}, {eventIncrease.b50}, {eventIncrease.b100}, {eventIncrease.b200}, " +
+                    $"VALUES ({idEventChanger}, '{eventIncrease.dtime.ToString("yyyy-MM-dd HH:mm:ss")}', {eventIncrease.m10}, {eventIncrease.b50}, {eventIncrease.b100}, {eventIncrease.b200}, " +
                     $"{eventIncrease.b500}, {eventIncrease.b1000}, {eventIncrease.b2000}); " +
                     $"SELECT SCOPE_IDENTITY();";
 
@@ -214,20 +231,22 @@ namespace ChangerSynchronization_framework.Controllers
 
                 var id = command.ExecuteScalar();
 
+                _model.Database.Connection.Close();
+
                 if (id == null || int.Parse(id.ToString()) < 1)
                 {
-                    Logger.Log.Error("WriteEventChangerIncrease: ошибка при записи EventChangerIncrease.");
+                    Logger.Log.Error("WriteEventChangerIncrease: ошибка при записи EventChangerIncrease." + Environment.NewLine);
                     return new DbInsertResult { serverMessage = "Ошибка записи в базу EventChangerIncrease" };
                 }
 
-                Logger.Log.Debug("WriteEventChangerIncrease: eventIncrease добавлен id = " + id.ToString());
+                Logger.Log.Debug("WriteEventChangerIncrease: eventIncrease добавлен id = " + id.ToString() + Environment.NewLine);
                 return new DbInsertResult { serverId = int.Parse(id.ToString()) };
             }
             catch (Exception e)
             {
                 if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
                     _model.Database.Connection.Close();
-                Logger.Log.Error("WriteEventChangerIncrease: ошибка при записи в базу. Событие:\n" + JsonConvert.SerializeObject(eventIncrease) + Environment.NewLine + e.Message);
+                Logger.Log.Error("WriteEventChangerIncrease: ошибка при записи в базу. Событие:\n" + JsonConvert.SerializeObject(eventIncrease) + Environment.NewLine + e.Message + Environment.NewLine);
                 return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу" };
             }
         }
@@ -241,28 +260,30 @@ namespace ChangerSynchronization_framework.Controllers
                 Logger.Log.Debug("WriteEventChangerOut: connection state: " + _model.Database.Connection.State);
 
                 DbCommand command = _model.Database.Connection.CreateCommand();
-                command.CommandText = $"INSERT INTO EventChangerIncrease (IDEventChanger, DTime, m10, b50, b100) " +
-                    $"VALUES ({idEventChanger}, '{eventIncrease.dtime}', {eventIncrease.m10}, {eventIncrease.b50}, {eventIncrease.b100}); " +
+                command.CommandText = $"INSERT INTO EventChangerOut (IDEventChanger, DTime, m10, b50, b100) " +
+                    $"VALUES ({idEventChanger}, '{eventIncrease.dtime.ToString("yyyy-MM-dd HH:mm:ss")}', {eventIncrease.m10}, {eventIncrease.b50}, {eventIncrease.b100}); " +
                     $"SELECT SCOPE_IDENTITY();";
 
                 Logger.Log.Debug("WriteEventChangerOut: command is:\n" + command.CommandText);
 
                 var id = command.ExecuteScalar();
 
+                _model.Database.Connection.Close();
+
                 if (id == null || int.Parse(id.ToString()) < 1)
                 {
-                    Logger.Log.Error("WriteEventChangerOut: ошибка при записи EventChangerOut.");
+                    Logger.Log.Error("WriteEventChangerOut: ошибка при записи EventChangerOut." + Environment.NewLine);
                     return new DbInsertResult { serverMessage = "Ошибка записи в базу EventChangerOut" };
                 }
 
-                Logger.Log.Debug("WriteEventChangerOut: eventOut добавлен id = " + id.ToString());
+                Logger.Log.Debug("WriteEventChangerOut: eventOut добавлен id = " + id.ToString() + Environment.NewLine);
                 return new DbInsertResult { serverId = int.Parse(id.ToString()) };
             }
             catch (Exception e)
             {
                 if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
                     _model.Database.Connection.Close();
-                Logger.Log.Error("WriteEventChangerOut: ошибка при записи в базу. Событие:\n" + JsonConvert.SerializeObject(eventIncrease) + Environment.NewLine + e.Message);
+                Logger.Log.Error("WriteEventChangerOut: ошибка при записи в базу. Событие:\n" + JsonConvert.SerializeObject(eventIncrease) + Environment.NewLine + e.Message + Environment.NewLine);
                 return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу" };
             }
         }
