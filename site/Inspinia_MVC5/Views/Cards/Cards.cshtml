@@ -362,13 +362,13 @@
             });
 
             $(document).on("click", "#clear_drp_activation", function () {
-                $('#date_activation_input_filter span').empty();
+                $('#date_activation_input_filter span').html(" За всё время");
                 $('#filter-activationdatebeg').val("");
                 $('#filter-activationdateend').val("");
             });
 
             $(document).on("click", "#clear_drp_last_op", function () {
-                $('#date_last_operation_input_filter span').empty();
+                $('#date_last_operation_input_filter span').html(" За всё время");
                 $('#filter-lastoperationdatebeg').val("");
                 $('#filter-lastoperationdateend').val("");
             });

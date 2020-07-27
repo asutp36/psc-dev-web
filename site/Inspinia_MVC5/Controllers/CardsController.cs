@@ -19,7 +19,25 @@ namespace Inspinia_MVC5.Controllers
         {
             _cardTypes = db.CardTypes.ToList();
             _cardStatuses = db.CardStatuses.ToList();
-            _changers = db.Changers.ToList();
+            _changers = new List<Changer>();
+
+            var washes = db.Washes.Where(w => w.Code == "М13" || w.Code == "М14").ToList();
+            var changers = db.Changers.ToList();
+
+            foreach (Wash w in washes)
+            {
+                var ch = changers.Find(c => c.IDWash == w.IDWash);
+
+                if (changers.Find(c => c.IDWash == w.IDWash) != null)
+                {
+                    _changers.Add(changers.Find(c => c.IDWash == w.IDWash));
+                }
+            }
+
+            if(_changers.Count < 1)
+            {
+                _changers = changers;
+            }
 
             ViewBag.CardTypes = _cardTypes;
             ViewBag.CardStatuses = _cardStatuses;
@@ -30,7 +48,8 @@ namespace Inspinia_MVC5.Controllers
         {
             DateTime startDTimeLO;
             if (!DateTime.TryParse(begTimeLO, out startDTimeLO))
-                startDTimeLO = DateTime.Today.AddDays(-1);
+                startDTimeLO = new DateTime(2019, 1, 1);
+                //startDTimeLO = DateTime.Today.AddDays(-1);
 
             DateTime stopDTimeLO;
             if (!DateTime.TryParse(endTimeLO, out stopDTimeLO))
@@ -38,7 +57,8 @@ namespace Inspinia_MVC5.Controllers
 
             DateTime startDTimeActivation;
             if (!DateTime.TryParse(begTimeActivation, out startDTimeActivation))
-                startDTimeActivation = DateTime.Today.AddMonths(-3);
+                startDTimeActivation = new DateTime(2019, 1, 1);
+                //startDTimeActivation = DateTime.Today.AddMonths(-3);
 
             DateTime stopDTimeActivation;
             if (!DateTime.TryParse(endTimeActivation, out stopDTimeActivation))
@@ -141,7 +161,7 @@ namespace Inspinia_MVC5.Controllers
             var prmActivationDateBeg = new System.Data.SqlClient.SqlParameter("@p_ActivationDateBeg", System.Data.SqlDbType.DateTime);
             if (activationDateBeg == "")
             {
-                prmActivationDateBeg.Value = new DateTime(2000, 1, 1);
+                prmActivationDateBeg.Value = new DateTime(2019, 1, 1);
             }
             else
             {
@@ -164,7 +184,7 @@ namespace Inspinia_MVC5.Controllers
             var prmLastOperationDateBeg = new System.Data.SqlClient.SqlParameter("@p_LastOperationDateBeg", System.Data.SqlDbType.DateTime);
             if (lastOperationDateBeg == "")
             {
-                prmLastOperationDateBeg.Value = new DateTime(2000, 1, 1);
+                prmLastOperationDateBeg.Value = new DateTime(2019, 1, 1);
             }
             else
             {
@@ -239,7 +259,7 @@ namespace Inspinia_MVC5.Controllers
             prmBalanceMax.Value = 0;
 
             var prmActivationDateBeg = new System.Data.SqlClient.SqlParameter("@p_ActivationDateBeg", System.Data.SqlDbType.DateTime);
-            prmActivationDateBeg.Value = new DateTime(2000, 1, 1);
+            prmActivationDateBeg.Value = new DateTime(2019, 1, 1);
 
             var prmActivationDateEnd = new System.Data.SqlClient.SqlParameter("@p_ActivationDateEnd", System.Data.SqlDbType.DateTime);
             prmActivationDateEnd.Value = DateTime.Now;
@@ -248,7 +268,7 @@ namespace Inspinia_MVC5.Controllers
             prmActivationBy.Value = 0;
 
             var prmLastOperationDateBeg = new System.Data.SqlClient.SqlParameter("@p_LastOperationDateBeg", System.Data.SqlDbType.DateTime);
-            prmLastOperationDateBeg.Value = new DateTime(2000, 1, 1);
+            prmLastOperationDateBeg.Value = new DateTime(2019, 1, 1);
 
             var prmLastOperationDateEnd = new System.Data.SqlClient.SqlParameter("@p_LastOperationDateEnd", System.Data.SqlDbType.DateTime);
             prmLastOperationDateEnd.Value = DateTime.Now;

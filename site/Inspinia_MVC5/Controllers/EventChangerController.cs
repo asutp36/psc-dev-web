@@ -27,18 +27,18 @@ namespace Inspinia_MVC5.Controllers
 
             _eventKinds = db.EventChangerKinds.Where(e => e.Code == "exchange" || e.Code == "cardCreate" || e.Code == "cardIncrease").ToList();
 
-            var chs = db.Changers.ToList();
+            var changers = db.Changers.ToList();
 
             foreach (Wash w in _washes)
             {
                 if (!_regions.Contains(w.Region))
                     _regions.Add(w.Region);
 
-                var ch = chs.Find(c => c.IDWash == w.IDWash);
+                var ch = changers.Find(c => c.IDWash == w.IDWash);
 
-                if(chs.Find(c => c.IDWash == w.IDWash) != null)
+                if(changers.Find(c => c.IDWash == w.IDWash) != null)
                 {
-                    _changers.Add(chs.Find(c => c.IDWash == w.IDWash));
+                    _changers.Add(changers.Find(c => c.IDWash == w.IDWash));
                 }
             }
 
