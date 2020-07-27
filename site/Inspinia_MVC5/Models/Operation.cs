@@ -15,7 +15,6 @@ namespace Inspinia_MVC5.Models
     public partial class Operation
     {
         public int IDOperation { get; set; }
-        public int IDPsc { get; set; }
         public int IDOperationType { get; set; }
         public int IDCard { get; set; }
         public System.DateTime DTime { get; set; }

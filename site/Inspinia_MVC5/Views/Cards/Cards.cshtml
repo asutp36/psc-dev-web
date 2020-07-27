@@ -100,7 +100,7 @@
                     <option value="0" selected=""></option>
                     @foreach (var item in ViewBag.Changers)
                     {
-                        <option value="@item.IDWash">@item.Name</option>
+                        <option value="@item.Code">@item.Name</option>
                     }
                 </select>
             </div>
@@ -112,7 +112,7 @@
                     <option value="0" selected=""></option>
                     @foreach (var item in ViewBag.Changers)
                     {
-                        <option value="@item.IDWash">@item.Name</option>
+                        <option value="@item.Code">@item.Name</option>
                     }
                 </select>
             </div>
@@ -248,7 +248,19 @@
                                 .css('font-size', 'inherit');
                         }
                     }
-                ]
+                ],
+                "language": {
+                    "infoEmpty": "Нет записей",
+                    "info": "Показано с _START_ по _END_ из _TOTAL_ записей",
+                    "paginate": {
+                        "first": "Первая",
+                        "previous": "Предыдущая",
+                        "next": "Следующая",
+                        "last": "Последняя"
+                    },
+                    "zeroRecords": "Данные по заданному фильтру не найдены",
+                    "emptyTable": "Данные по заданному фильтру не найдены"
+                }
             });
 
             $('#balanceslider').ionRangeSlider({
@@ -472,6 +484,14 @@
                             }
                         ],
                         "language": {
+                            "infoEmpty": "Нет записей",
+                            "info": "Показано с _START_ по _END_ из _TOTAL_ записей",
+                            "paginate": {
+                                "first": "Первая",
+                                "previous": "Предыдущая",
+                                "next": "Следующая",
+                                "last": "Последняя"
+                            },
                             "zeroRecords": "Данные по заданному фильтру не найдены",
                             "emptyTable": "Данные по заданному фильтру не найдены"
                         }
