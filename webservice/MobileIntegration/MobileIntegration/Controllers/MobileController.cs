@@ -122,7 +122,7 @@ namespace MobileIntegration.Controllers
                             DbCommand command = _model.Database.Connection.CreateCommand();
                             command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                     $" VALUES((select IDCard from Cards where CardNum = '{increase.card}'), " +
-                                                    $"(select IDChanger from Changers where Name = 'MobileApp'), 2, \'{increase.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {increase.value}," +
+                                                    $"(select IDChanger from Changers where Code = 'MOB-EM'), 2, \'{increase.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {increase.value}," +
                                                     $" ({commandBalance.CommandText}) + {increase.value}, -1, -1);" +
                                                     " SELECT SCOPE_IDENTITY()";
 
@@ -563,7 +563,7 @@ namespace MobileIntegration.Controllers
                     DbCommand command = _model.Database.Connection.CreateCommand();
                     command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                             $" VALUES((select IDCard from Cards where CardNum = '{model.card}'), " +
-                                            $"(select IDChanger from Changers where Name = 'MobileApp'), 3, \'{model.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {model.balance}," +
+                                            $"(select IDChanger from Changers where Code = 'MOB-EM'), 3, \'{model.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {model.balance}," +
                                             $" ({commandBalance.CommandText}) - {model.balance}, -1, -1);" +
                                             " SELECT SCOPE_IDENTITY()";
 
