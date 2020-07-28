@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Web;
 using System.Web.Mvc;
 using Inspinia_MVC5.Models;
@@ -17,6 +18,7 @@ namespace Inspinia_MVC5.Controllers
         List<Post> _posts = null;
         List<Post> _vacs = null;
         List<Device> _devices = null;
+        List<OperationType> _operationTypes = null;
 
         public CardsController()
         {
@@ -26,6 +28,7 @@ namespace Inspinia_MVC5.Controllers
             _changers = new List<Changer>();
             _posts = new List<Post>();
             _vacs = new List<Post>();
+            _operationTypes = db.OperationTypes.ToList();
 
             var washes = db.Washes.Where(w => w.Code == "М13" || w.Code == "М14").ToList();
             var changers = db.Changers.ToList();
@@ -63,6 +66,7 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.Changers = _changers;
             ViewBag.Posts = _posts;
             ViewBag.Vacs = _vacs;
+            ViewBag.OperationTypes = _operationTypes;
         }
 
         public ActionResult Cards(string begTimeLO, string endTimeLO, string begTimeActivation, string endTimeActivation)
@@ -259,9 +263,12 @@ namespace Inspinia_MVC5.Controllers
             return resultset;
         }
 
-        public ActionResult CurrentCardView(string cardNum)
+        public ActionResult CurrentCardView(string phone, string cardNum, string cardTypeCode, string cardStatusName)
         {
+            ViewBag.Phone = phone;
             ViewBag.CardNum = cardNum;
+            ViewBag.CardTypeCode = cardTypeCode;
+            ViewBag.CardStatusName = cardStatusName;
             ViewBag.OperationDateBeg = new DateTime(2019, 1, 1).ToString("dd.MM.yyyy HH:mm:ss");
             ViewBag.OperationDateEnd = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
             ViewBag.OperationTypeName = "";
@@ -272,7 +279,10 @@ namespace Inspinia_MVC5.Controllers
         }
 
         public ActionResult UpdateViewBagOperations(
+            string phone,
             string cardNum,
+            string cardTypeCode,
+            string cardStatusname,
             string operationDateBeg,
             string operationDateEnd,
             string operationTypeName,
@@ -281,13 +291,24 @@ namespace Inspinia_MVC5.Controllers
             )
         {
             List<GetCardsOperations_Result> viewList = GetOperationsFromDB(
-                cardNum, operationDateBeg, operationDateEnd, operationTypeName, codeOperationBy, localizedId);
+                phone,
+                cardNum, 
+                cardTypeCode,
+                cardStatusname,
+                operationDateBeg,
+                operationDateEnd,
+                operationTypeName,
+                codeOperationBy, 
+                localizedId);
 
             return PartialView("_CurrentCardList", viewList);
         }
 
         private List<GetCardsOperations_Result> GetOperationsFromDB(
+            string phone,
             string cardNum,
+            string cardTypeCode,
+            string cardStatusName,
             string operationDateBeg,
             string operationDateEnd,
             string operationTypeName,
@@ -298,16 +319,16 @@ namespace Inspinia_MVC5.Controllers
             List<GetCardsOperations_Result> resultset = null;
 
             var prmPhone = new System.Data.SqlClient.SqlParameter("@p_Phone", System.Data.SqlDbType.NVarChar);
-            prmPhone.Value = "";
+            prmPhone.Value = phone;
 
             var prmCardNum = new System.Data.SqlClient.SqlParameter("@p_CardNum", System.Data.SqlDbType.NVarChar);
             prmCardNum.Value = cardNum;
 
             var prmCardTypeCode = new System.Data.SqlClient.SqlParameter("@p_CardTypeCode", System.Data.SqlDbType.NVarChar);
-            prmCardTypeCode.Value = "";
+            prmCardTypeCode.Value = cardTypeCode;
 
             var prmCardStatusName = new System.Data.SqlClient.SqlParameter("@p_CardStatusName", System.Data.SqlDbType.NVarChar);
-            prmCardStatusName.Value = "";
+            prmCardStatusName.Value = cardStatusName;
 
             var prmOperationTypeName = new System.Data.SqlClient.SqlParameter("@p_OperationTypeName", System.Data.SqlDbType.NVarChar);
             prmOperationTypeName.Value = operationTypeName;
@@ -344,13 +365,12 @@ namespace Inspinia_MVC5.Controllers
                     "@p_OperationTypeName, @p_OperationDateBeg, @p_OperationDateEnd, @p_CodeOperationBy, @p_LocalizedID",
                     prmPhone, prmCardNum, prmCardTypeCode, prmCardStatusName, prmOperationTypeName,
                     prmOperationDateBeg, prmOperationDateEnd, prmCodeOperationBy, prmLocalizedID)
-                .ToList();
+                .ToList();  
 
             resultset = result;
 
             return resultset;
         }
-
 
         private void Diapasons()
         {

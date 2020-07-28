@@ -15,7 +15,7 @@
                                         endTimeLO = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                                         begTimeActivation = DateTime.Today.AddMonths(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                                         endTimeActivation = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")
-                                        })">
+                                        })">Карты
                 </a>
             </li>
             <li class="active breadcrumb-item">
@@ -28,6 +28,90 @@
 </div>
 <div class="ibox-content m-b-sm border-bottom">
     <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe">Телефон</label>
+                <input type="text" id="filter-phone" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe">Номер карты</label>
+                <input type="text" id="filter-card-num" class="form-control" />
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <div class="form-group">
+                    <label class="col-form-labe">Тип карты</label>
+                    <select id="filter-card-type" class="form-control">
+                        <option value="" selected=""></option>
+                        @foreach (var item in ViewBag.CardTypes)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="col-form-labe">Статус карты</label>
+                <select id="filter-card-status" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.CardStatuses)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label class="col-form-labe">Тип операции</label>
+                <select id="filter-operation-type" class="form-control">
+                    <option value="" selected=""></option>
+                    @foreach (var item in ViewBag.OperationTypes)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label class="col-form-labe">Место операции</label>
+                <select id="filter-operation-by" class="form-control">
+                    <option value="" selected=""></option>
+                    <optgroup label="Денежные разменники">
+                        @foreach (var item in ViewBag.Changers)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    </optgroup>
+                    <optgroup label="Моечные посты">
+                        @foreach (var item in ViewBag.Posts)
+                        {
+                            <option value="@item.Code">@item.Code</option>
+                        }
+                    </optgroup>
+                    <optgroup label="Пылесосы">
+                        @foreach (var item in ViewBag.Vacs)
+                        {
+                            <option value="@item.Code">@item.Code</option>
+                        }
+                    </optgroup>
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label class="col-form-labe">LocalizedID</label>
+                <input type="text" id="filter-localized-id" class="form-control" />
+            </div>
+        </div>
         <div class="col-sm-6">
             <div class="form-group">
                 <label class="col-form-labe" for="date_operation_input_filter">Дата операции</label>
@@ -43,12 +127,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-6">
-            <h3>Номер карты @ViewBag.CardNum</h3>
-            <h3>Телефон владельца @ViewBag.CardNum</h3>
-            <h3>Дата активации *дата активации*</h3>
-            <h3>Место активации *место активации*</h3>
         </div>
     </div>
     <div class="row">
@@ -71,7 +149,10 @@
                 <div class="ibox-content-more">
                     @Html.Action("UpdateViewBagOperations", "Cards", new
                {
+                   phone = ViewBag.Phone,
                    cardNum = ViewBag.CardNum,
+                   cardTypeCode = "",
+                   cardStatusName = "",
                    operationDateBeg = ViewBag.OperationDateBeg,
                    operationDateEnd = ViewBag.OperationDateEnd,
                    operationTypeName = ViewBag.OperationTypeName,
@@ -84,11 +165,8 @@
     </div>
 </div>
 
-<input hidden id="filter-operationtypename" value="@ViewBag.OperationTypeName" />
-<input hidden id="filter-operationdatebeg" value="@ViewBag.OperationDateBeg" />
-<input hidden id="filter-operationdateend" value="@ViewBag.OperationDateEnd" />
-<input hidden id="filter-codeoperationby" value="@ViewBag.CodeOperationBy" />
-<input hidden id="filter-localizedid" value="@ViewBag.LocalizedID" />
+<input hidden id="bdate" value="@ViewBag.OperationDateBeg" />
+<input hidden id="edate" value="@ViewBag.OperationDateEnd" />
 
 @section Styles {
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
@@ -104,8 +182,19 @@
     @Scripts.Render("~/plugins/dateRange")
     @Scripts.Render("~/plugins/select2")
 
-    <script type="text/javascript">
+<script type="text/javascript">
         $(document).ready(function () {
+
+            $('#filter-phone').val('@ViewBag.Phone');
+            $('#filter-card-num').val('@ViewBag.CardNum');
+
+            $("#filter-card-type option").filter(function () {
+                return this.text == '@ViewBag.CardTypeCode';
+            }).attr('selected', true);
+
+            $("#filter-card-status option").filter(function () {
+                return this.text == '@ViewBag.CardStatusName';
+            }).attr('selected', true);
 
             $('.table_incashwashes').DataTable({
                 "paging": false,
@@ -141,40 +230,49 @@
                 }
             });
 
-            $('#filter-lastoperationby').val($('#last_operation_by_input_filter').find(":selected").val());
-            $(document).on("change", '#last_operation_by_input_filter', function () {
-                $('#filter-lastoperationby').val($(this).find(":selected").val());
-            });
-
             $(document).on("click", "#clear_drp_op", function () {
                 $('#date_operation_input_filter span').html(" За всё время");
-                $('#filter-operationdatebeg').val("");
-                $('#filter-operationdateend').val("");
+                $('#bdate').val("");
+                $('#edate').val("");
             });
 
             $(document).on("click", "#clear_all_filters", function () {
                 $('#clear_drp_op').click();
 
-                $('#activation_by_input_filter').val("0");
-                $('#operation_by_input_filter').val("0");
-
-                $('#filter-activationby').val(0);
-                $('#filter-lastoperationby').val(0);
+                $('#filter-phone').val("");
+                $('#filter-card-num').val("");
+                $('#filter-card-type').val("");
+                $('#filter-card-status').val("");
+                $('#filter-operation-type').val("");
+                $('#filter-operation-by').val("");
+                $('#filter-localized-id').val("");
             });
 
             $(document).on("click", "#btn-for-filter", function () {
 
-                var operationdatebeg = $('#filter-operationdatebeg').val();
-                var operationdateend = $('#filter-operationdateend').val();
+                var phone = $('#filter-phone').val();
+                var cardNum = $('#filter-card-num').val();
+                var cardTypeCode = $('#filter-card-type').find(":selected").val();
+                var cardStatusName = $('#filter-card-status').find(":selected").val();
+                var operationdatebeg = $('#bdate').val();
+                var operationdateend = $('#edate').val();
+                var operationTypeName = $('#filter-operation-type').find(":selected").val();
+                var codeOperationBy = $('#filter-operation-by').find(":selected").val();
+                var localizedId = $('#filter-localized-id').val();
 
                 $.ajax({
                     type: "GET",
                     cache: false,
                     data: {
-                        activationBy: activationby,
+                        phone: phone,
+                        cardNum: cardNum,
+                        cardTypeCode: cardTypeCode,
+                        cardStatusName: cardStatusName,
                         operationDateBeg: operationdatebeg,
                         operationDateEnd: operationdateend,
-                        lastOperationBy: lastoperationby,
+                        operationTypeName: operationTypeName,
+                        codeOperationBy: codeOperationBy,
+                        localizedId: localizedId
                     },
                     success: function () {
                         $('.alert-success').fadeIn('slow');
@@ -225,11 +323,14 @@
             });
         });
 
-
         $('input[name="daterange"]').daterangepicker();
 
-        $('#date_operation_input_filter span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
-
+        if ($('#bdate').val()) {
+            $('#date_operation_input_filter span').html('с ' + $('#bdate').val() + ' по ' + $('#edate').val());
+        }
+        else {
+            $('#date_operation_input_filter span').html('За всё время');
+        }
         $('#date_operation_input_filter').daterangepicker({
             "timePicker": true,
             "timePicker24Hour": true,
@@ -276,8 +377,8 @@
             },
             "showCustomRangeLabel": false,
             "alwaysShowCalendars": true,
-            "startDate": moment().subtract(1, 'days').startOf('day'),
-            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "startDate": moment($('#bdate').val(), 'DD.MM.YYYY HH:mm:ss'),
+            "endDate": moment($('#edate').val(), 'DD.MM.YYYY HH:mm:ss'),
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {
@@ -288,6 +389,6 @@
             $('#filter-operationdateend').val(end.format('DD.MM.YYYY HH:mm:ss'));
         });
 
-    </script>
+</script>
 }
 

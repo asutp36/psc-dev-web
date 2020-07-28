@@ -242,8 +242,9 @@
 
     <script type="text/javascript">
 
-        function selectCard(cardNum) {
-            window.location.href = "CurrentCardView?&cardNum=" + cardNum;
+        function selectCard(phone, cardNum, cardTypeCode, cardStatusName) {
+
+            window.location.href = "CurrentCardView?&phone=" + phone + "&cardNum=" + cardNum + "&cardTypeCode=" + cardTypeCode + "&cardStatusName=" + cardStatusName;
         }
 
         $(document).ready(function () {
@@ -419,8 +420,8 @@
                 $('#filter-cardNum').val("");
                 $('#filter-cardTypeCode').val("");
                 $('#filter-cardStatusName').val("");
-                $('#filter-activationby').val(0);
-                $('#filter-lastoperationby').val(0);
+                $('#filter-activationby').val("");
+                $('#filter-lastoperationby').val("");
                 $('#balanceslider').data("ionRangeSlider").update({ from: @ViewBag.DiapasonBalanceMin, to: @ViewBag.DiapasonBalanceMax});
                 $('#increasesumslider').data("ionRangeSlider").update({ from: @ViewBag.DiapasonIncreaseSumMin, to: @ViewBag.DiapasonIncreaseSumMax});
                 $('#decreasesumslider').data("ionRangeSlider").update({ from: @ViewBag.DiapasonDecreaseSumMin, to: @ViewBag.DiapasonDecreaseSumMax});
