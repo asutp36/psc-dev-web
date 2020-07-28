@@ -166,7 +166,7 @@ namespace Inspinia_MVC5.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetCardBalance", cardParameter);
         }
     
-        public virtual ObjectResult<GetCardList_Result> GetCardList(string p_Phone, string p_Cardnum, string p_CardTypeCode, string p_CardStatusName, Nullable<int> p_BalanceMin, Nullable<int> p_BalanceMax, Nullable<System.DateTime> p_ActivationDateBeg, Nullable<System.DateTime> p_ActivationDateEnd, Nullable<int> p_ActivationBy, Nullable<System.DateTime> p_LastOperationDateBeg, Nullable<System.DateTime> p_LastOperationDateEnd, Nullable<int> p_LastOperationBy, Nullable<int> p_IncreaseSumMin, Nullable<int> p_IncreaseSumMax, Nullable<int> p_DecreaseSumMin, Nullable<int> p_DEcreaseSumMax, Nullable<int> p_CountOperationMin, Nullable<int> p_CountOperationMax)
+        public virtual ObjectResult<GetCardList_Result> GetCardList(string p_Phone, string p_Cardnum, string p_CardTypeCode, string p_CardStatusName, Nullable<int> p_BalanceMin, Nullable<int> p_BalanceMax, Nullable<System.DateTime> p_ActivationDateBeg, Nullable<System.DateTime> p_ActivationDateEnd, string p_CodeActivationBy, Nullable<System.DateTime> p_LastOperationDateBeg, Nullable<System.DateTime> p_LastOperationDateEnd, string p_CodeLastOperationBy, Nullable<int> p_IncreaseSumMin, Nullable<int> p_IncreaseSumMax, Nullable<int> p_DecreaseSumMin, Nullable<int> p_DEcreaseSumMax, Nullable<int> p_CountOperationMin, Nullable<int> p_CountOperationMax)
         {
             var p_PhoneParameter = p_Phone != null ?
                 new ObjectParameter("p_Phone", p_Phone) :
@@ -200,9 +200,9 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_ActivationDateEnd", p_ActivationDateEnd) :
                 new ObjectParameter("p_ActivationDateEnd", typeof(System.DateTime));
     
-            var p_ActivationByParameter = p_ActivationBy.HasValue ?
-                new ObjectParameter("p_ActivationBy", p_ActivationBy) :
-                new ObjectParameter("p_ActivationBy", typeof(int));
+            var p_CodeActivationByParameter = p_CodeActivationBy != null ?
+                new ObjectParameter("p_CodeActivationBy", p_CodeActivationBy) :
+                new ObjectParameter("p_CodeActivationBy", typeof(string));
     
             var p_LastOperationDateBegParameter = p_LastOperationDateBeg.HasValue ?
                 new ObjectParameter("p_LastOperationDateBeg", p_LastOperationDateBeg) :
@@ -212,9 +212,9 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_LastOperationDateEnd", p_LastOperationDateEnd) :
                 new ObjectParameter("p_LastOperationDateEnd", typeof(System.DateTime));
     
-            var p_LastOperationByParameter = p_LastOperationBy.HasValue ?
-                new ObjectParameter("p_LastOperationBy", p_LastOperationBy) :
-                new ObjectParameter("p_LastOperationBy", typeof(int));
+            var p_CodeLastOperationByParameter = p_CodeLastOperationBy != null ?
+                new ObjectParameter("p_CodeLastOperationBy", p_CodeLastOperationBy) :
+                new ObjectParameter("p_CodeLastOperationBy", typeof(string));
     
             var p_IncreaseSumMinParameter = p_IncreaseSumMin.HasValue ?
                 new ObjectParameter("p_IncreaseSumMin", p_IncreaseSumMin) :
@@ -240,10 +240,10 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_CountOperationMax", p_CountOperationMax) :
                 new ObjectParameter("p_CountOperationMax", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCardList_Result>("GetCardList", p_PhoneParameter, p_CardnumParameter, p_CardTypeCodeParameter, p_CardStatusNameParameter, p_BalanceMinParameter, p_BalanceMaxParameter, p_ActivationDateBegParameter, p_ActivationDateEndParameter, p_ActivationByParameter, p_LastOperationDateBegParameter, p_LastOperationDateEndParameter, p_LastOperationByParameter, p_IncreaseSumMinParameter, p_IncreaseSumMaxParameter, p_DecreaseSumMinParameter, p_DEcreaseSumMaxParameter, p_CountOperationMinParameter, p_CountOperationMaxParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCardList_Result>("GetCardList", p_PhoneParameter, p_CardnumParameter, p_CardTypeCodeParameter, p_CardStatusNameParameter, p_BalanceMinParameter, p_BalanceMaxParameter, p_ActivationDateBegParameter, p_ActivationDateEndParameter, p_CodeActivationByParameter, p_LastOperationDateBegParameter, p_LastOperationDateEndParameter, p_CodeLastOperationByParameter, p_IncreaseSumMinParameter, p_IncreaseSumMaxParameter, p_DecreaseSumMinParameter, p_DEcreaseSumMaxParameter, p_CountOperationMinParameter, p_CountOperationMaxParameter);
         }
     
-        public virtual ObjectResult<GetCardListMinMaxDiapasons_Result> GetCardListMinMaxDiapasons(string p_Phone, string p_Cardnum, string p_CardTypeCode, string p_CardStatusName, Nullable<int> p_BalanceMin, Nullable<int> p_BalanceMax, Nullable<System.DateTime> p_ActivationDateBeg, Nullable<System.DateTime> p_ActivationDateEnd, Nullable<int> p_ActivationBy, Nullable<System.DateTime> p_LastOperationDateBeg, Nullable<System.DateTime> p_LastOperationDateEnd, Nullable<int> p_LastOperationBy, Nullable<int> p_IncreaseSumMin, Nullable<int> p_IncreaseSumMax, Nullable<int> p_DecreaseSumMin, Nullable<int> p_DEcreaseSumMax, Nullable<int> p_CountOperationMin, Nullable<int> p_CountOperationMax)
+        public virtual ObjectResult<GetCardListMinMaxDiapasons_Result> GetCardListMinMaxDiapasons(string p_Phone, string p_Cardnum, string p_CardTypeCode, string p_CardStatusName, Nullable<int> p_BalanceMin, Nullable<int> p_BalanceMax, Nullable<System.DateTime> p_ActivationDateBeg, Nullable<System.DateTime> p_ActivationDateEnd, string p_CodeActivationBy, Nullable<System.DateTime> p_LastOperationDateBeg, Nullable<System.DateTime> p_LastOperationDateEnd, string p_CodeLastOperationBy, Nullable<int> p_IncreaseSumMin, Nullable<int> p_IncreaseSumMax, Nullable<int> p_DecreaseSumMin, Nullable<int> p_DEcreaseSumMax, Nullable<int> p_CountOperationMin, Nullable<int> p_CountOperationMax)
         {
             var p_PhoneParameter = p_Phone != null ?
                 new ObjectParameter("p_Phone", p_Phone) :
@@ -277,9 +277,9 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_ActivationDateEnd", p_ActivationDateEnd) :
                 new ObjectParameter("p_ActivationDateEnd", typeof(System.DateTime));
     
-            var p_ActivationByParameter = p_ActivationBy.HasValue ?
-                new ObjectParameter("p_ActivationBy", p_ActivationBy) :
-                new ObjectParameter("p_ActivationBy", typeof(int));
+            var p_CodeActivationByParameter = p_CodeActivationBy != null ?
+                new ObjectParameter("p_CodeActivationBy", p_CodeActivationBy) :
+                new ObjectParameter("p_CodeActivationBy", typeof(string));
     
             var p_LastOperationDateBegParameter = p_LastOperationDateBeg.HasValue ?
                 new ObjectParameter("p_LastOperationDateBeg", p_LastOperationDateBeg) :
@@ -289,9 +289,9 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_LastOperationDateEnd", p_LastOperationDateEnd) :
                 new ObjectParameter("p_LastOperationDateEnd", typeof(System.DateTime));
     
-            var p_LastOperationByParameter = p_LastOperationBy.HasValue ?
-                new ObjectParameter("p_LastOperationBy", p_LastOperationBy) :
-                new ObjectParameter("p_LastOperationBy", typeof(int));
+            var p_CodeLastOperationByParameter = p_CodeLastOperationBy != null ?
+                new ObjectParameter("p_CodeLastOperationBy", p_CodeLastOperationBy) :
+                new ObjectParameter("p_CodeLastOperationBy", typeof(string));
     
             var p_IncreaseSumMinParameter = p_IncreaseSumMin.HasValue ?
                 new ObjectParameter("p_IncreaseSumMin", p_IncreaseSumMin) :
@@ -317,7 +317,7 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_CountOperationMax", p_CountOperationMax) :
                 new ObjectParameter("p_CountOperationMax", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCardListMinMaxDiapasons_Result>("GetCardListMinMaxDiapasons", p_PhoneParameter, p_CardnumParameter, p_CardTypeCodeParameter, p_CardStatusNameParameter, p_BalanceMinParameter, p_BalanceMaxParameter, p_ActivationDateBegParameter, p_ActivationDateEndParameter, p_ActivationByParameter, p_LastOperationDateBegParameter, p_LastOperationDateEndParameter, p_LastOperationByParameter, p_IncreaseSumMinParameter, p_IncreaseSumMaxParameter, p_DecreaseSumMinParameter, p_DEcreaseSumMaxParameter, p_CountOperationMinParameter, p_CountOperationMaxParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCardListMinMaxDiapasons_Result>("GetCardListMinMaxDiapasons", p_PhoneParameter, p_CardnumParameter, p_CardTypeCodeParameter, p_CardStatusNameParameter, p_BalanceMinParameter, p_BalanceMaxParameter, p_ActivationDateBegParameter, p_ActivationDateEndParameter, p_CodeActivationByParameter, p_LastOperationDateBegParameter, p_LastOperationDateEndParameter, p_CodeLastOperationByParameter, p_IncreaseSumMinParameter, p_IncreaseSumMaxParameter, p_DecreaseSumMinParameter, p_DEcreaseSumMaxParameter, p_CountOperationMinParameter, p_CountOperationMaxParameter);
         }
     
         public virtual ObjectResult<GetCardsOperations_Result> GetCardsOperations(string p_Phone, string p_Cardnum, string p_CardTypeCode, string p_CardStatusName, string p_OperationTypeName, Nullable<System.DateTime> p_OperationDateBeg, Nullable<System.DateTime> p_OperationDateEnd, Nullable<int> p_LocalizedBy, Nullable<int> p_LocalizedID)

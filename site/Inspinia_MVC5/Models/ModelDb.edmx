@@ -965,10 +965,10 @@
           <Parameter Name="p_BalanceMax" Type="int" Mode="In" />
           <Parameter Name="p_ActivationDateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_ActivationDateEnd" Type="datetime" Mode="In" />
-          <Parameter Name="p_ActivationBy" Type="int" Mode="In" />
+          <Parameter Name="p_CodeActivationBy" Type="nvarchar" Mode="In" />
           <Parameter Name="p_LastOperationDateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_LastOperationDateEnd" Type="datetime" Mode="In" />
-          <Parameter Name="p_LastOperationBy" Type="int" Mode="In" />
+          <Parameter Name="p_CodeLastOperationBy" Type="nvarchar" Mode="In" />
           <Parameter Name="p_IncreaseSumMin" Type="int" Mode="In" />
           <Parameter Name="p_IncreaseSumMax" Type="int" Mode="In" />
           <Parameter Name="p_DecreaseSumMin" Type="int" Mode="In" />
@@ -985,10 +985,10 @@
           <Parameter Name="p_BalanceMax" Type="int" Mode="In" />
           <Parameter Name="p_ActivationDateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_ActivationDateEnd" Type="datetime" Mode="In" />
-          <Parameter Name="p_ActivationBy" Type="int" Mode="In" />
+          <Parameter Name="p_CodeActivationBy" Type="nvarchar" Mode="In" />
           <Parameter Name="p_LastOperationDateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_LastOperationDateEnd" Type="datetime" Mode="In" />
-          <Parameter Name="p_LastOperationBy" Type="int" Mode="In" />
+          <Parameter Name="p_CodeLastOperationBy" Type="nvarchar" Mode="In" />
           <Parameter Name="p_IncreaseSumMin" Type="int" Mode="In" />
           <Parameter Name="p_IncreaseSumMax" Type="int" Mode="In" />
           <Parameter Name="p_DecreaseSumMin" Type="int" Mode="In" />
@@ -2304,10 +2304,10 @@
             <Parameter Name="p_BalanceMax" Mode="In" Type="Int32" />
             <Parameter Name="p_ActivationDateBeg" Mode="In" Type="DateTime" />
             <Parameter Name="p_ActivationDateEnd" Mode="In" Type="DateTime" />
-            <Parameter Name="p_ActivationBy" Mode="In" Type="Int32" />
+            <Parameter Name="p_CodeActivationBy" Mode="In" Type="String" />
             <Parameter Name="p_LastOperationDateBeg" Mode="In" Type="DateTime" />
             <Parameter Name="p_LastOperationDateEnd" Mode="In" Type="DateTime" />
-            <Parameter Name="p_LastOperationBy" Mode="In" Type="Int32" />
+            <Parameter Name="p_CodeLastOperationBy" Mode="In" Type="String" />
             <Parameter Name="p_IncreaseSumMin" Mode="In" Type="Int32" />
             <Parameter Name="p_IncreaseSumMax" Mode="In" Type="Int32" />
             <Parameter Name="p_DecreaseSumMin" Mode="In" Type="Int32" />
@@ -2324,10 +2324,10 @@
             <Parameter Name="p_BalanceMax" Mode="In" Type="Int32" />
             <Parameter Name="p_ActivationDateBeg" Mode="In" Type="DateTime" />
             <Parameter Name="p_ActivationDateEnd" Mode="In" Type="DateTime" />
-            <Parameter Name="p_ActivationBy" Mode="In" Type="Int32" />
+            <Parameter Name="p_CodeActivationBy" Mode="In" Type="String" />
             <Parameter Name="p_LastOperationDateBeg" Mode="In" Type="DateTime" />
             <Parameter Name="p_LastOperationDateEnd" Mode="In" Type="DateTime" />
-            <Parameter Name="p_LastOperationBy" Mode="In" Type="Int32" />
+            <Parameter Name="p_CodeLastOperationBy" Mode="In" Type="String" />
             <Parameter Name="p_IncreaseSumMin" Mode="In" Type="Int32" />
             <Parameter Name="p_IncreaseSumMax" Mode="In" Type="Int32" />
             <Parameter Name="p_DecreaseSumMin" Mode="In" Type="Int32" />

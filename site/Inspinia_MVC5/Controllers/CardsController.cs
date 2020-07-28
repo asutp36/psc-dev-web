@@ -14,18 +14,37 @@ namespace Inspinia_MVC5.Controllers
         List<CardType> _cardTypes = null;
         List<CardStatus> _cardStatuses = null;
         List<Changer> _changers = null;
+        List<Post> _posts = null;
+        List<Post> _vacs = null;
+        List<Device> _devices = null;
 
         public CardsController()
         {
             _cardTypes = db.CardTypes.ToList();
             _cardStatuses = db.CardStatuses.ToList();
+            _devices = db.Devices.ToList();
             _changers = new List<Changer>();
+            _posts = new List<Post>();
+            _vacs = new List<Post>();
 
             var washes = db.Washes.Where(w => w.Code == "М13" || w.Code == "М14").ToList();
             var changers = db.Changers.ToList();
 
             foreach (Wash w in washes)
             {
+                foreach (var p in w.Posts)
+                {
+                    var code = _devices.Find(d => d.IDDevice == p.IDDevice).IDDeviceType;
+                    if (code == 2)
+                    {
+                        _posts.Add(p);
+                    }
+                    else if(code == 8)
+                    {
+                        _vacs.Add(p);
+                    }
+                }
+
                 var ch = changers.Find(c => c.IDWash == w.IDWash);
 
                 if (changers.Find(c => c.IDWash == w.IDWash) != null)
@@ -42,6 +61,8 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.CardTypes = _cardTypes;
             ViewBag.CardStatuses = _cardStatuses;
             ViewBag.Changers = _changers;
+            ViewBag.Posts = _posts;
+            ViewBag.Vacs = _vacs;
         }
 
         public ActionResult Cards(string begTimeLO, string endTimeLO, string begTimeActivation, string endTimeActivation)
@@ -72,10 +93,10 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.balanceMax = null;
             ViewBag.activationDateBeg = startDTimeActivation.ToString("dd.MM.yyyy HH:mm:ss");
             ViewBag.activationDateEnd = stopDTimeActivation.ToString("dd.MM.yyyy HH:mm:ss");
-            ViewBag.activationBy = null;
+            ViewBag.activationBy = "";
             ViewBag.lastOperationDateBeg = startDTimeLO.ToString("dd.MM.yyyy HH:mm:ss");
             ViewBag.lastOperationDateEnd = stopDTimeLO.ToString("dd.MM.yyyy HH:mm:ss");
-            ViewBag.lastOperationBy = null;
+            ViewBag.lastOperationBy = "";
             ViewBag.increaseSumMin = null;
             ViewBag.increaseSumMax = null;
             ViewBag.decreaseSumMin = null;
@@ -178,8 +199,8 @@ namespace Inspinia_MVC5.Controllers
                 prmActivationDateEnd.Value = activationDateEnd;
             }
 
-            var prmActivationBy = new System.Data.SqlClient.SqlParameter("@p_ActivationBy", System.Data.SqlDbType.Int);
-            prmActivationBy.Value = Convert.ToInt32(activationBy);
+            var prmCodeActivationBy = new System.Data.SqlClient.SqlParameter("@p_CodeActivationBy", System.Data.SqlDbType.NVarChar);
+            prmCodeActivationBy.Value = activationBy;
 
             var prmLastOperationDateBeg = new System.Data.SqlClient.SqlParameter("@p_LastOperationDateBeg", System.Data.SqlDbType.DateTime);
             if (lastOperationDateBeg == "")
@@ -201,8 +222,8 @@ namespace Inspinia_MVC5.Controllers
                 prmLastOperationDateEnd.Value = lastOperationDateEnd;
             }
            
-            var prmLastOperationBy = new System.Data.SqlClient.SqlParameter("@p_LastOperationBy", System.Data.SqlDbType.Int);
-            prmLastOperationBy.Value = Convert.ToInt32(lastOperationBy);
+            var prmCodeLastOperationBy = new System.Data.SqlClient.SqlParameter("@p_CodeLastOperationBy", System.Data.SqlDbType.NVarChar);
+            prmCodeLastOperationBy.Value = lastOperationBy;
 
             var prmIncreaseSumMin = new System.Data.SqlClient.SqlParameter("@p_IncreaseSumMin", System.Data.SqlDbType.Int);
             prmIncreaseSumMin.Value = Convert.ToInt32(increaseSumMin);
@@ -225,11 +246,11 @@ namespace Inspinia_MVC5.Controllers
             var result = db.Database
                 .SqlQuery<GetCardList_Result>(
                     "GetCardList @p_Phone, @p_CardNum, @p_CardTypeCode, @p_CardStatusName, @p_BalanceMin," +
-                    "@p_BalanceMax, @p_ActivationDateBeg, @p_ActivationDateEnd, @p_ActivationBy, @p_LastOperationDateBeg, " +
-                    "@p_LastOperationDateEnd, @p_LastOperationBy, @p_IncreaseSumMin, @p_IncreaseSumMax, @p_DecreaseSumMin, " +
+                    "@p_BalanceMax, @p_ActivationDateBeg, @p_ActivationDateEnd, @p_CodeActivationBy, @p_LastOperationDateBeg, " +
+                    "@p_LastOperationDateEnd, @p_CodeLastOperationBy, @p_IncreaseSumMin, @p_IncreaseSumMax, @p_DecreaseSumMin, " +
                     "@p_DecreaseSumMax, @p_CountOperationMin, @p_CountOperationMax",
                     prmPhone, prmCardNum, prmCardTypeCode, prmCardStatusName, prmBalanceMin, prmBalanceMax, prmActivationDateBeg, 
-                    prmActivationDateEnd, prmActivationBy, prmLastOperationDateBeg, prmLastOperationDateEnd, prmLastOperationBy, 
+                    prmActivationDateEnd, prmCodeActivationBy, prmLastOperationDateBeg, prmLastOperationDateEnd, prmCodeLastOperationBy, 
                     prmIncreaseSumMin, prmIncreaseSumMax, prmDecreaseSumMin, prmDecreaseSumMax, prmCountOperationMin, prmCountOperationMax)
                 .ToList();
 
@@ -264,8 +285,8 @@ namespace Inspinia_MVC5.Controllers
             var prmActivationDateEnd = new System.Data.SqlClient.SqlParameter("@p_ActivationDateEnd", System.Data.SqlDbType.DateTime);
             prmActivationDateEnd.Value = DateTime.Now;
 
-            var prmActivationBy = new System.Data.SqlClient.SqlParameter("@p_ActivationBy", System.Data.SqlDbType.Int);
-            prmActivationBy.Value = 0;
+            var prmCodeActivationBy = new System.Data.SqlClient.SqlParameter("@p_CodeActivationBy", System.Data.SqlDbType.NVarChar);
+            prmCodeActivationBy.Value = "";
 
             var prmLastOperationDateBeg = new System.Data.SqlClient.SqlParameter("@p_LastOperationDateBeg", System.Data.SqlDbType.DateTime);
             prmLastOperationDateBeg.Value = new DateTime(2019, 1, 1);
@@ -273,8 +294,8 @@ namespace Inspinia_MVC5.Controllers
             var prmLastOperationDateEnd = new System.Data.SqlClient.SqlParameter("@p_LastOperationDateEnd", System.Data.SqlDbType.DateTime);
             prmLastOperationDateEnd.Value = DateTime.Now;
 
-            var prmLastOperationBy = new System.Data.SqlClient.SqlParameter("@p_LastOperationBy", System.Data.SqlDbType.Int);
-            prmLastOperationBy.Value = 0;
+            var prmCodeLastOperationBy = new System.Data.SqlClient.SqlParameter("@p_CodeLastOperationBy", System.Data.SqlDbType.NVarChar);
+            prmCodeLastOperationBy.Value = "";
 
             var prmIncreaseSumMin = new System.Data.SqlClient.SqlParameter("@p_IncreaseSumMin", System.Data.SqlDbType.Int);
             prmIncreaseSumMin.Value = 0;
@@ -297,11 +318,11 @@ namespace Inspinia_MVC5.Controllers
             var result = db.Database
                 .SqlQuery<GetCardListMinMaxDiapasons_Result>(
                     "GetCardListMinMaxDiapasons @p_Phone, @p_CardNum, @p_CardTypeCode, @p_CardStatusName, @p_BalanceMin," +
-                    "@p_BalanceMax, @p_ActivationDateBeg, @p_ActivationDateEnd, @p_ActivationBy, @p_LastOperationDateBeg, " +
-                    "@p_LastOperationDateEnd, @p_LastOperationBy, @p_IncreaseSumMin, @p_IncreaseSumMax, @p_DecreaseSumMin, " +
+                    "@p_BalanceMax, @p_ActivationDateBeg, @p_ActivationDateEnd, @p_CodeActivationBy, @p_LastOperationDateBeg, " +
+                    "@p_LastOperationDateEnd, @p_CodeLastOperationBy, @p_IncreaseSumMin, @p_IncreaseSumMax, @p_DecreaseSumMin, " +
                     "@p_DecreaseSumMax, @p_CountOperationMin, @p_CountOperationMax",
                     prmPhone, prmCardNum, prmCardTypeCode, prmCardStatusName, prmBalanceMin, prmBalanceMax, prmActivationDateBeg,
-                    prmActivationDateEnd, prmActivationBy, prmLastOperationDateBeg, prmLastOperationDateEnd, prmLastOperationBy,
+                    prmActivationDateEnd, prmCodeActivationBy, prmLastOperationDateBeg, prmLastOperationDateEnd, prmCodeLastOperationBy,
                     prmIncreaseSumMin, prmIncreaseSumMax, prmDecreaseSumMin, prmDecreaseSumMax, prmCountOperationMin, prmCountOperationMax)
                 .ToList();
 
