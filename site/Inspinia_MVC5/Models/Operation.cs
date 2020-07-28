@@ -15,6 +15,7 @@ namespace Inspinia_MVC5.Models
     public partial class Operation
     {
         public int IDOperation { get; set; }
+        public int IDChanger { get; set; }
         public int IDOperationType { get; set; }
         public int IDCard { get; set; }
         public System.DateTime DTime { get; set; }
@@ -24,10 +25,9 @@ namespace Inspinia_MVC5.Models
         public int LocalizedID { get; set; }
         public string Functions { get; set; }
         public string Details { get; set; }
-        public int IDChanger { get; set; }
     
         public virtual Card Card { get; set; }
-        public virtual OperationType OperationType { get; set; }
         public virtual Changer Changer { get; set; }
+        public virtual OperationType OperationType { get; set; }
     }
 }

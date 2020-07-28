@@ -30,6 +30,7 @@ namespace Inspinia_MVC5.Models
         public virtual DbSet<Card> Cards { get; set; }
         public virtual DbSet<CardStatus> CardStatuses { get; set; }
         public virtual DbSet<CardType> CardTypes { get; set; }
+        public virtual DbSet<Changer> Changers { get; set; }
         public virtual DbSet<Collection> Collections { get; set; }
         public virtual DbSet<CollectionsFact> CollectionsFacts { get; set; }
         public virtual DbSet<CollectionsPre> CollectionsPres { get; set; }
@@ -40,6 +41,12 @@ namespace Inspinia_MVC5.Models
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<DeviceType> DeviceTypes { get; set; }
         public virtual DbSet<Event> Events { get; set; }
+        public virtual DbSet<EventChanger> EventChangers { get; set; }
+        public virtual DbSet<EventChangerAcquiring> EventChangerAcquirings { get; set; }
+        public virtual DbSet<EventChangerCard> EventChangerCards { get; set; }
+        public virtual DbSet<EventChangerIncrease> EventChangerIncreases { get; set; }
+        public virtual DbSet<EventChangerKind> EventChangerKinds { get; set; }
+        public virtual DbSet<EventChangerOut> EventChangerOuts { get; set; }
         public virtual DbSet<EventCollect> EventCollects { get; set; }
         public virtual DbSet<EventIncrease> EventIncreases { get; set; }
         public virtual DbSet<EventKind> EventKinds { get; set; }
@@ -59,13 +66,6 @@ namespace Inspinia_MVC5.Models
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Wash> Washes { get; set; }
-        public virtual DbSet<Changer> Changers { get; set; }
-        public virtual DbSet<EventChanger> EventChangers { get; set; }
-        public virtual DbSet<EventChangerAcquiring> EventChangerAcquirings { get; set; }
-        public virtual DbSet<EventChangerCard> EventChangerCards { get; set; }
-        public virtual DbSet<EventChangerIncrease> EventChangerIncreases { get; set; }
-        public virtual DbSet<EventChangerKind> EventChangerKinds { get; set; }
-        public virtual DbSet<EventChangerOut> EventChangerOuts { get; set; }
     
         public virtual int CardDecrease(string p_CardNum, Nullable<int> p_Amount)
         {
@@ -320,7 +320,7 @@ namespace Inspinia_MVC5.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCardListMinMaxDiapasons_Result>("GetCardListMinMaxDiapasons", p_PhoneParameter, p_CardnumParameter, p_CardTypeCodeParameter, p_CardStatusNameParameter, p_BalanceMinParameter, p_BalanceMaxParameter, p_ActivationDateBegParameter, p_ActivationDateEndParameter, p_CodeActivationByParameter, p_LastOperationDateBegParameter, p_LastOperationDateEndParameter, p_CodeLastOperationByParameter, p_IncreaseSumMinParameter, p_IncreaseSumMaxParameter, p_DecreaseSumMinParameter, p_DEcreaseSumMaxParameter, p_CountOperationMinParameter, p_CountOperationMaxParameter);
         }
     
-        public virtual ObjectResult<GetCardsOperations_Result> GetCardsOperations(string p_Phone, string p_Cardnum, string p_CardTypeCode, string p_CardStatusName, string p_OperationTypeName, Nullable<System.DateTime> p_OperationDateBeg, Nullable<System.DateTime> p_OperationDateEnd, Nullable<int> p_LocalizedBy, Nullable<int> p_LocalizedID)
+        public virtual ObjectResult<GetCardsOperations_Result> GetCardsOperations(string p_Phone, string p_Cardnum, string p_CardTypeCode, string p_CardStatusName, string p_OperationTypeName, Nullable<System.DateTime> p_OperationDateBeg, Nullable<System.DateTime> p_OperationDateEnd, string p_CodeOperationBy, Nullable<int> p_LocalizedID)
         {
             var p_PhoneParameter = p_Phone != null ?
                 new ObjectParameter("p_Phone", p_Phone) :
@@ -350,15 +350,15 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_OperationDateEnd", p_OperationDateEnd) :
                 new ObjectParameter("p_OperationDateEnd", typeof(System.DateTime));
     
-            var p_LocalizedByParameter = p_LocalizedBy.HasValue ?
-                new ObjectParameter("p_LocalizedBy", p_LocalizedBy) :
-                new ObjectParameter("p_LocalizedBy", typeof(int));
+            var p_CodeOperationByParameter = p_CodeOperationBy != null ?
+                new ObjectParameter("p_CodeOperationBy", p_CodeOperationBy) :
+                new ObjectParameter("p_CodeOperationBy", typeof(string));
     
             var p_LocalizedIDParameter = p_LocalizedID.HasValue ?
                 new ObjectParameter("p_LocalizedID", p_LocalizedID) :
                 new ObjectParameter("p_LocalizedID", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCardsOperations_Result>("GetCardsOperations", p_PhoneParameter, p_CardnumParameter, p_CardTypeCodeParameter, p_CardStatusNameParameter, p_OperationTypeNameParameter, p_OperationDateBegParameter, p_OperationDateEndParameter, p_LocalizedByParameter, p_LocalizedIDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCardsOperations_Result>("GetCardsOperations", p_PhoneParameter, p_CardnumParameter, p_CardTypeCodeParameter, p_CardStatusNameParameter, p_OperationTypeNameParameter, p_OperationDateBegParameter, p_OperationDateEndParameter, p_CodeOperationByParameter, p_LocalizedIDParameter);
         }
     
         public virtual ObjectResult<GetCollectByDays_Result> GetCollectByDays(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_WashCode)
@@ -498,6 +498,19 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_KindEventCode", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEventsByPost_Result>("GetEventsByPost", p_DateBegParameter, p_DateEndParameter, p_PostCodeParameter, p_KindEventCodeParameter);
+        }
+    
+        public virtual ObjectResult<GetFinanceByNominals_Result> GetFinanceByNominals(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFinanceByNominals_Result>("GetFinanceByNominals", p_DateBegParameter, p_DateEndParameter);
         }
     
         public virtual ObjectResult<GetFinanceList_Result> GetFinanceList(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
@@ -849,19 +862,6 @@ namespace Inspinia_MVC5.Models
                 new ObjectParameter("p_PostCode", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<RptWashPrevFunc_Result>("RptWashPrevFunc", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
-        }
-    
-        public virtual ObjectResult<GetFinanceByNominals_Result> GetFinanceByNominals(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd)
-        {
-            var p_DateBegParameter = p_DateBeg.HasValue ?
-                new ObjectParameter("p_DateBeg", p_DateBeg) :
-                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
-    
-            var p_DateEndParameter = p_DateEnd.HasValue ?
-                new ObjectParameter("p_DateEnd", p_DateEnd) :
-                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFinanceByNominals_Result>("GetFinanceByNominals", p_DateBegParameter, p_DateEndParameter);
         }
     }
 }

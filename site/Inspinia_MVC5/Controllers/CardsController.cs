@@ -272,7 +272,7 @@ namespace Inspinia_MVC5.Controllers
         }
 
         public ActionResult UpdateViewBagOperations(
-            string phone,
+            string cardNum,
             string operationDateBeg,
             string operationDateEnd,
             string operationTypeName,
@@ -281,13 +281,13 @@ namespace Inspinia_MVC5.Controllers
             )
         {
             List<GetCardsOperations_Result> viewList = GetOperationsFromDB(
-                phone, operationDateBeg, operationDateEnd, operationTypeName, codeOperationBy, localizedId);
+                cardNum, operationDateBeg, operationDateEnd, operationTypeName, codeOperationBy, localizedId);
 
             return PartialView("_CurrentCardList", viewList);
         }
 
         private List<GetCardsOperations_Result> GetOperationsFromDB(
-            string phone,
+            string cardNum,
             string operationDateBeg,
             string operationDateEnd,
             string operationTypeName,
@@ -298,10 +298,10 @@ namespace Inspinia_MVC5.Controllers
             List<GetCardsOperations_Result> resultset = null;
 
             var prmPhone = new System.Data.SqlClient.SqlParameter("@p_Phone", System.Data.SqlDbType.NVarChar);
-            prmPhone.Value = phone;
+            prmPhone.Value = "";
 
             var prmCardNum = new System.Data.SqlClient.SqlParameter("@p_CardNum", System.Data.SqlDbType.NVarChar);
-            prmCardNum.Value = "";
+            prmCardNum.Value = cardNum;
 
             var prmCardTypeCode = new System.Data.SqlClient.SqlParameter("@p_CardTypeCode", System.Data.SqlDbType.NVarChar);
             prmCardTypeCode.Value = "";

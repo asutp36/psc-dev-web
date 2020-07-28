@@ -17,13 +17,13 @@ namespace Inspinia_MVC5.Models
         public string CardNum { get; set; }
         public string CardTypeName { get; set; }
         public string CardStatusName { get; set; }
-        public int Balance { get; set; }
-        public System.DateTime ActivationDate { get; set; }
+        public Nullable<int> Balance { get; set; }
+        public Nullable<System.DateTime> ActivationDate { get; set; }
         public string ActivationBy { get; set; }
-        public System.DateTime LastOperationDate { get; set; }
+        public Nullable<System.DateTime> LastOperationDate { get; set; }
         public string LastOperationBy { get; set; }
-        public Nullable<int> IncreaseSum { get; set; }
-        public Nullable<int> DecreaseSum { get; set; }
+        public int IncreaseSum { get; set; }
+        public int DecreaseSum { get; set; }
         public Nullable<int> CountOperation { get; set; }
     }
 }
