@@ -241,6 +241,11 @@
     @Scripts.Render("~/plugins/select2")
 
     <script type="text/javascript">
+
+        function selectCard(cardNum) {
+            window.location.href = "CurrentCardView?&cardNum=" + cardNum;
+        }
+
         $(document).ready(function () {
 
             $('.table_incashwashes').DataTable({

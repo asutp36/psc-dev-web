@@ -259,6 +259,99 @@ namespace Inspinia_MVC5.Controllers
             return resultset;
         }
 
+        public ActionResult CurrentCardView(string cardNum)
+        {
+            ViewBag.CardNum = cardNum;
+            ViewBag.OperationDateBeg = new DateTime(2019, 1, 1).ToString("dd.MM.yyyy HH:mm:ss");
+            ViewBag.OperationDateEnd = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
+            ViewBag.OperationTypeName = "";
+            ViewBag.CodeOperationBy = "";
+            ViewBag.LocalizedID = "";
+
+            return View();
+        }
+
+        public ActionResult UpdateViewBagOperations(
+            string phone,
+            string operationDateBeg,
+            string operationDateEnd,
+            string operationTypeName,
+            string codeOperationBy,
+            string localizedId
+            )
+        {
+            List<GetCardsOperations_Result> viewList = GetOperationsFromDB(
+                phone, operationDateBeg, operationDateEnd, operationTypeName, codeOperationBy, localizedId);
+
+            return PartialView("_CurrentCardList", viewList);
+        }
+
+        private List<GetCardsOperations_Result> GetOperationsFromDB(
+            string phone,
+            string operationDateBeg,
+            string operationDateEnd,
+            string operationTypeName,
+            string codeOperationBy,
+            string localizedID
+            )
+        {
+            List<GetCardsOperations_Result> resultset = null;
+
+            var prmPhone = new System.Data.SqlClient.SqlParameter("@p_Phone", System.Data.SqlDbType.NVarChar);
+            prmPhone.Value = phone;
+
+            var prmCardNum = new System.Data.SqlClient.SqlParameter("@p_CardNum", System.Data.SqlDbType.NVarChar);
+            prmCardNum.Value = "";
+
+            var prmCardTypeCode = new System.Data.SqlClient.SqlParameter("@p_CardTypeCode", System.Data.SqlDbType.NVarChar);
+            prmCardTypeCode.Value = "";
+
+            var prmCardStatusName = new System.Data.SqlClient.SqlParameter("@p_CardStatusName", System.Data.SqlDbType.NVarChar);
+            prmCardStatusName.Value = "";
+
+            var prmOperationTypeName = new System.Data.SqlClient.SqlParameter("@p_OperationTypeName", System.Data.SqlDbType.NVarChar);
+            prmOperationTypeName.Value = operationTypeName;
+
+            var prmOperationDateBeg = new System.Data.SqlClient.SqlParameter("@p_OperationDateBeg", System.Data.SqlDbType.DateTime);
+            if (operationDateBeg == "")
+            {
+                prmOperationDateBeg.Value = new DateTime(2019, 1, 1);
+            }
+            else
+            {
+                prmOperationDateBeg.Value = operationDateBeg;
+            }
+
+            var prmOperationDateEnd = new System.Data.SqlClient.SqlParameter("@p_OperationDateEnd", System.Data.SqlDbType.DateTime);
+            if (operationDateEnd == "")
+            {
+                prmOperationDateEnd.Value = DateTime.Now;
+            }
+            else
+            {
+                prmOperationDateEnd.Value = operationDateEnd;
+            }
+
+            var prmCodeOperationBy = new System.Data.SqlClient.SqlParameter("@p_CodeOperationBy", System.Data.SqlDbType.NVarChar);
+            prmCodeOperationBy.Value = codeOperationBy;
+
+            var prmLocalizedID = new System.Data.SqlClient.SqlParameter("@p_LocalizedID", System.Data.SqlDbType.NVarChar);
+            prmLocalizedID.Value = localizedID;
+
+            var result = db.Database
+                .SqlQuery<GetCardsOperations_Result>(
+                    "GetCardsOperations @p_Phone, @p_CardNum, @p_CardTypeCode, @p_CardStatusName, " +
+                    "@p_OperationTypeName, @p_OperationDateBeg, @p_OperationDateEnd, @p_CodeOperationBy, @p_LocalizedID",
+                    prmPhone, prmCardNum, prmCardTypeCode, prmCardStatusName, prmOperationTypeName,
+                    prmOperationDateBeg, prmOperationDateEnd, prmCodeOperationBy, prmLocalizedID)
+                .ToList();
+
+            resultset = result;
+
+            return resultset;
+        }
+
+
         private void Diapasons()
         {
             var prmPhone = new System.Data.SqlClient.SqlParameter("@p_Phone", System.Data.SqlDbType.NVarChar);

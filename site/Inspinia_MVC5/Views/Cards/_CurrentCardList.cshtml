@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetCardsOperations_Result>
+
+<table id="table-crd" class="table table-striped table-bordered table-hover table_incashwashes">
+    <thead>
+        <tr>
+            <th>Тип операции</th>
+            <th>Время операции</th>
+            <th>Сумма</th>
+            <th>Баланс</th>
+            <th>Место операции</th>
+            <th>LocalizedID</th>
+        </tr>
+    </thead>
+    <tbody id="table-c">
+        @foreach (var m in Model)
+        {
+        <tr>
+            <td>@m.OperationTypeName</td>
+            <td>@m.DTime</td>
+            <td>@m.Amount</td>
+            <td>@m.Balance</td>
+            <td>@m.OperationBy</td>
+            <td>@m.LocalizedID</td>
+        </tr>
+        }
+    </tbody>
+</table>

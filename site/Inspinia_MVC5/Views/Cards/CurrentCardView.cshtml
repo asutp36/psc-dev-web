@@ -1,0 +1,293 @@
+﻿@{
+    ViewBag.Title = "Карты";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>@ViewBag.CardNum</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Dashboard_2", "Dashboards")">Сводка</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Cards", "Cards", new {
+                                        begTimeLO = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                                        endTimeLO = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                                        begTimeActivation = DateTime.Today.AddMonths(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+                                        endTimeActivation = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")
+                                        })">
+                </a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>@ViewBag.CardNum</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="ibox-content m-b-sm border-bottom">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-labe" for="date_operation_input_filter">Дата операции</label>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <div id="date_operation_input_filter" class="form-control">
+                            <i class="fa fa-calendar"></i>
+                            <span></span> <b class="caret"></b>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button id="clear_drp_op" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <h3>Номер карты @ViewBag.CardNum</h3>
+            <h3>Телефон владельца @ViewBag.CardNum</h3>
+            <h3>Дата активации *дата активации*</h3>
+            <h3>Место активации *место активации*</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                @*<label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Показать</label>*@
+                <button type="button" id="btn-for-filter" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button id="clear_all_filters" type="button" class="btn btn-outline-danger">
+                Очистить всё
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 table-cards">
+            <div class="ibox">
+                <div class="ibox-content-more">
+                    @Html.Action("UpdateViewBagOperations", "Cards", new
+               {
+                   cardNum = ViewBag.CardNum,
+                   operationDateBeg = ViewBag.OperationDateBeg,
+                   operationDateEnd = ViewBag.OperationDateEnd,
+                   operationTypeName = ViewBag.OperationTypeName,
+                   codeOperationBy = ViewBag.CodeOperationBy,
+                   localizedID = ViewBag.LocalizedID
+                })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input hidden id="filter-operationtypename" value="@ViewBag.OperationTypeName" />
+<input hidden id="filter-operationdatebeg" value="@ViewBag.OperationDateBeg" />
+<input hidden id="filter-operationdateend" value="@ViewBag.OperationDateEnd" />
+<input hidden id="filter-codeoperationby" value="@ViewBag.CodeOperationBy" />
+<input hidden id="filter-localizedid" value="@ViewBag.LocalizedID" />
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/Content/plugins/ionRangeSlider/ionRangeStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/ionRange")
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/dateRange")
+    @Scripts.Render("~/plugins/select2")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.table_incashwashes').DataTable({
+                "paging": false,
+                "info": false,
+                "searching": false,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    { extend: 'excel', title: 'Report' },
+                    { extend: 'pdf', title: 'Report' },
+                    {
+                        extend: 'print',
+                        customize: function (win) {
+                            $(win.document.body).addClass('white-bg');
+                            $(win.document.body).css('font-size', '10px');
+
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
+                        }
+                    }
+                ],
+                "language": {
+                    "infoEmpty": "Нет записей",
+                    "info": "Показано с _START_ по _END_ из _TOTAL_ записей",
+                    "paginate": {
+                        "first": "Первая",
+                        "previous": "Предыдущая",
+                        "next": "Следующая",
+                        "last": "Последняя"
+                    },
+                    "zeroRecords": "Данные по заданному фильтру не найдены",
+                    "emptyTable": "Данные по заданному фильтру не найдены"
+                }
+            });
+
+            $('#filter-lastoperationby').val($('#last_operation_by_input_filter').find(":selected").val());
+            $(document).on("change", '#last_operation_by_input_filter', function () {
+                $('#filter-lastoperationby').val($(this).find(":selected").val());
+            });
+
+            $(document).on("click", "#clear_drp_op", function () {
+                $('#date_operation_input_filter span').html(" За всё время");
+                $('#filter-operationdatebeg').val("");
+                $('#filter-operationdateend').val("");
+            });
+
+            $(document).on("click", "#clear_all_filters", function () {
+                $('#clear_drp_op').click();
+
+                $('#activation_by_input_filter').val("0");
+                $('#operation_by_input_filter').val("0");
+
+                $('#filter-activationby').val(0);
+                $('#filter-lastoperationby').val(0);
+            });
+
+            $(document).on("click", "#btn-for-filter", function () {
+
+                var operationdatebeg = $('#filter-operationdatebeg').val();
+                var operationdateend = $('#filter-operationdateend').val();
+
+                $.ajax({
+                    type: "GET",
+                    cache: false,
+                    data: {
+                        activationBy: activationby,
+                        operationDateBeg: operationdatebeg,
+                        operationDateEnd: operationdateend,
+                        lastOperationBy: lastoperationby,
+                    },
+                    success: function () {
+                        $('.alert-success').fadeIn('slow');
+                        $('.alert-success').delay(3000).fadeOut('slow');
+                    },
+                    error: function () {
+                        alert('Error occured');
+                    },
+                    url: "@Url.Action("UpdateViewBagOperations", "Cards")",
+                }).done(function (result) {
+                    $('.table-cards').find('.ibox-content-more').html(result);
+
+                    $('.table_incashwashes').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "searching": false,
+                        dom: '<"html5buttons"B>lTfgitp',
+                        buttons: [
+                            { extend: 'excel', title: 'Report' },
+                            { extend: 'pdf', title: 'Report' },
+
+                            {
+                                extend: 'print',
+                                customize: function (win) {
+                                    $(win.document.body).addClass('white-bg');
+                                    $(win.document.body).css('font-size', '10px');
+
+                                    $(win.document.body).find('table')
+                                        .addClass('compact')
+                                        .css('font-size', 'inherit');
+                                }
+                            }
+                        ],
+                        "language": {
+                            "infoEmpty": "Нет записей",
+                            "info": "Показано с _START_ по _END_ из _TOTAL_ записей",
+                            "paginate": {
+                                "first": "Первая",
+                                "previous": "Предыдущая",
+                                "next": "Следующая",
+                                "last": "Последняя"
+                            },
+                            "zeroRecords": "Данные по заданному фильтру не найдены",
+                            "emptyTable": "Данные по заданному фильтру не найдены"
+                        }
+                    });
+                });
+            });
+        });
+
+
+        $('input[name="daterange"]').daterangepicker();
+
+        $('#date_operation_input_filter span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
+
+        $('#date_operation_input_filter').daterangepicker({
+            "timePicker": true,
+            "timePicker24Hour": true,
+            "timePickerSeconds": true,
+            "ranges": {
+                'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                'сегодня': [moment().startOf('day'), moment()],
+                'текущий месяц': [moment().startOf('month'), moment()],
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "locale": {
+                "format": "DD.MM.YYYY",
+                "separator": " ",
+                "applyLabel": "Выбрать",
+                "cancelLabel": "Отмена",
+                "fromLabel": "From",
+                "toLabel": "To",
+                "customRangeLabel": "Custom",
+                "weekLabel": "W",
+                "daysOfWeek": [
+                    "Вс",
+                    "Пн",
+                    "Вт",
+                    "Ср",
+                    "Чт",
+                    "Пт",
+                    "Сб"
+                ],
+                "monthNames": [
+                    "Январь",
+                    "Февраль",
+                    "Март",
+                    "Апрель",
+                    "Май",
+                    "Июнь",
+                    "Июль",
+                    "Август",
+                    "Сентябрь",
+                    "Октябрь",
+                    "Ноябрь",
+                    "Декабрь"
+                ],
+                "firstDay": 1
+            },
+            "showCustomRangeLabel": false,
+            "alwaysShowCalendars": true,
+            "startDate": moment().subtract(1, 'days').startOf('day'),
+            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "opens": "right",
+            "drops": "down"
+        }, function (start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            $('#date_operation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+
+            $('#filter-operationdatebeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#filter-operationdateend').val(end.format('DD.MM.YYYY HH:mm:ss'));
+        });
+
+    </script>
+}
+

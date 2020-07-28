@@ -2048,6 +2048,8 @@
     <Content Include="Views\Increases\_IncreasesSum.cshtml" />
     <Content Include="Views\CollectWash\_CollectSum.cshtml" />
     <Content Include="Views\EventChanger\_NoAvailableChangers.cshtml" />
+    <Content Include="Views\Cards\CurrentCard.cshtml" />
+    <Content Include="Views\Cards\_CurrentCardList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

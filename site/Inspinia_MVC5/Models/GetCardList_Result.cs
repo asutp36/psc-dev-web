@@ -19,9 +19,9 @@ namespace Inspinia_MVC5.Models
         public string CardStatusName { get; set; }
         public int Balance { get; set; }
         public System.DateTime ActivationDate { get; set; }
-        public int ActivationBy { get; set; }
+        public string ActivationBy { get; set; }
         public System.DateTime LastOperationDate { get; set; }
-        public int LastOperationBy { get; set; }
+        public string LastOperationBy { get; set; }
         public Nullable<int> IncreaseSum { get; set; }
         public Nullable<int> DecreaseSum { get; set; }
         public Nullable<int> CountOperation { get; set; }
