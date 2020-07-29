@@ -15,7 +15,8 @@
                                         endTimeLO = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                                         begTimeActivation = DateTime.Today.AddMonths(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                                         endTimeActivation = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")
-                                        })">Карты
+                                        })">
+                    Карты
                 </a>
             </li>
             <li class="active breadcrumb-item">
@@ -68,7 +69,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-2">
+        <div class="col-sm-3">
             <div class="form-group">
                 <label class="col-form-labe">Тип операции</label>
                 <select id="filter-operation-type" class="form-control">
@@ -80,7 +81,7 @@
                 </select>
             </div>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-3">
             <div class="form-group">
                 <label class="col-form-labe">Место операции</label>
                 <select id="filter-operation-by" class="form-control">
@@ -97,19 +98,7 @@
                             <option value="@item.Code">@item.Code</option>
                         }
                     </optgroup>
-                    <optgroup label="Пылесосы">
-                        @foreach (var item in ViewBag.Vacs)
-                        {
-                            <option value="@item.Code">@item.Code</option>
-                        }
-                    </optgroup>
                 </select>
-            </div>
-        </div>
-        <div class="col-sm-2">
-            <div class="form-group">
-                <label class="col-form-labe">LocalizedID</label>
-                <input type="text" id="filter-localized-id" class="form-control" />
             </div>
         </div>
         <div class="col-sm-6">
@@ -133,11 +122,11 @@
         <div class="col-sm-4">
             <div class="form-group">
                 @*<label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Показать</label>*@
-                <button type="button" id="btn-for-filter" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
+                <button type="button" id="btn-for-filter" class="ladda-button btn btn-block btn-outline btn-success font-bold">Показать</button>
             </div>
         </div>
         <div class="col-sm-2">
-            <button id="clear_all_filters" type="button" class="btn btn-outline-danger">
+            <button id="clear_all_filters" type="button" class="btn btn-block btn-outline-danger">
                 Очистить всё
             </button>
         </div>
@@ -156,8 +145,7 @@
                    operationDateBeg = ViewBag.OperationDateBeg,
                    operationDateEnd = ViewBag.OperationDateEnd,
                    operationTypeName = ViewBag.OperationTypeName,
-                   codeOperationBy = ViewBag.CodeOperationBy,
-                   localizedID = ViewBag.LocalizedID
+                   codeOperationBy = ViewBag.CodeOperationBy
                 })
                 </div>
             </div>
@@ -173,6 +161,7 @@
     @Styles.Render("~/plugins/dateRangeStyles")
     @Styles.Render("~/plugins/dataPickerStyles")
     @Styles.Render("~/Content/plugins/ionRangeSlider/ionRangeStyles")
+    @Styles.Render("~/plugins/laddaStyles")
 }
 
 @section Scripts {
@@ -181,9 +170,12 @@
     @Scripts.Render("~/plugins/dataPicker")
     @Scripts.Render("~/plugins/dateRange")
     @Scripts.Render("~/plugins/select2")
+    @Scripts.Render("~/plugins/ladda")
 
-<script type="text/javascript">
+    <script type="text/javascript">
         $(document).ready(function () {
+
+            $('#btn-for-filter').ladda();
 
             $('#filter-phone').val('@ViewBag.Phone');
             $('#filter-card-num').val('@ViewBag.CardNum');
@@ -245,7 +237,6 @@
                 $('#filter-card-status').val("");
                 $('#filter-operation-type').val("");
                 $('#filter-operation-by').val("");
-                $('#filter-localized-id').val("");
             });
 
             $(document).on("click", "#btn-for-filter", function () {
@@ -258,7 +249,6 @@
                 var operationdateend = $('#edate').val();
                 var operationTypeName = $('#filter-operation-type').find(":selected").val();
                 var codeOperationBy = $('#filter-operation-by').find(":selected").val();
-                var localizedId = $('#filter-localized-id').val();
 
                 $.ajax({
                     type: "GET",
@@ -272,7 +262,12 @@
                         operationDateEnd: operationdateend,
                         operationTypeName: operationTypeName,
                         codeOperationBy: codeOperationBy,
-                        localizedId: localizedId
+                    },
+                    beforeSend: function () {
+                        $('#btn-for-filter').ladda('start');
+                    },
+                    complete: function () {
+                        $('#btn-for-filter').ladda('stop');
                     },
                     success: function () {
                         $('.alert-success').fadeIn('slow');
@@ -385,10 +380,10 @@
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
             $('#date_operation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
 
-            $('#filter-operationdatebeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
-            $('#filter-operationdateend').val(end.format('DD.MM.YYYY HH:mm:ss'));
+            $('#bdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
+            $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss')); 
         });
 
-</script>
+    </script>
 }
 

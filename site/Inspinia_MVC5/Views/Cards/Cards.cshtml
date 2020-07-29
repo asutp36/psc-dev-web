@@ -122,12 +122,6 @@
                             <option value="@item.Code">@item.Code</option>
                         }
                     </optgroup>
-                    <optgroup label="Пылесосы">
-                        @foreach (var item in ViewBag.Vacs)
-                        {
-                            <option value="@item.Code">@item.Code</option>
-                        }
-                    </optgroup>
                 </select>
             </div>
         </div>
@@ -164,13 +158,13 @@
         <div class="col-sm-4">
             <div class="form-group">
                 @*<label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Показать</label>*@
-                <button type="button" id="btn-for-filter" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
+                <button type="button" id="btn-for-filter" class="ladda-button btn btn-block btn-outline btn-success font-bold" data-style="expand-right">Показать</button>
             </div>
         </div>
         <div class="col-sm-2">
         </div>
         <div class="col-sm-2">
-            <button id="clear_all_filters" type="button" class="btn btn-outline-danger">
+            <button id="clear_all_filters" type="button" class="btn btn-block btn-outline-danger">
                 Очистить всё
             </button>
         </div>
@@ -195,7 +189,7 @@
                    lastOperationDateEnd = ViewBag.lastOperationDateEnd,
                    lastOperationBy = ViewBag.lastOperationBy,
                    increaseSumMin = ViewBag.increaseSumMin,
-                   increaseSumMax= ViewBag.increaseSumMax,
+                   increaseSumMax = ViewBag.increaseSumMax,
                    decreaseSumMin = ViewBag.decreaseSumMin,
                    decreaseSumMax = ViewBag.decreaseSumMax,
                    countOperationMin = ViewBag.countOperaionMin,
@@ -231,6 +225,7 @@
     @Styles.Render("~/plugins/dateRangeStyles")
     @Styles.Render("~/plugins/dataPickerStyles")
     @Styles.Render("~/Content/plugins/ionRangeSlider/ionRangeStyles")
+    @Styles.Render("~/plugins/laddaStyles")
 }
 
 @section Scripts {
@@ -239,6 +234,7 @@
     @Scripts.Render("~/plugins/dataPicker")
     @Scripts.Render("~/plugins/dateRange")
     @Scripts.Render("~/plugins/select2")
+    @Scripts.Render("~/plugins/ladda")
 
     <script type="text/javascript">
 
@@ -248,6 +244,8 @@
         }
 
         $(document).ready(function () {
+
+            $('#btn-for-filter').ladda();
 
             $('.table_incashwashes').DataTable({
                 "paging": false,
@@ -470,6 +468,12 @@
                         decreaseSumMax: decreasesummax,
                         countOperationMin: countoperationmin,
                         countOperationMax: countoperationmax
+                    },
+                    beforeSend: function () {
+                        $('#btn-for-filter').ladda('start');
+                    },
+                    complete: function () {
+                        $('#btn-for-filter').ladda('stop');
                     },
                     success: function () {
                         $('.alert-success').fadeIn('slow');

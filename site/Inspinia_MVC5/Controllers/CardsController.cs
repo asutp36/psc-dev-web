@@ -16,7 +16,6 @@ namespace Inspinia_MVC5.Controllers
         List<CardStatus> _cardStatuses = null;
         List<Changer> _changers = null;
         List<Post> _posts = null;
-        List<Post> _vacs = null;
         List<Device> _devices = null;
         List<OperationType> _operationTypes = null;
 
@@ -27,7 +26,6 @@ namespace Inspinia_MVC5.Controllers
             _devices = db.Devices.ToList();
             _changers = new List<Changer>();
             _posts = new List<Post>();
-            _vacs = new List<Post>();
             _operationTypes = db.OperationTypes.ToList();
 
             var washes = db.Washes.Where(w => w.Code == "М13" || w.Code == "М14").ToList();
@@ -41,10 +39,6 @@ namespace Inspinia_MVC5.Controllers
                     if (code == 2)
                     {
                         _posts.Add(p);
-                    }
-                    else if(code == 8)
-                    {
-                        _vacs.Add(p);
                     }
                 }
 
@@ -65,7 +59,6 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.CardStatuses = _cardStatuses;
             ViewBag.Changers = _changers;
             ViewBag.Posts = _posts;
-            ViewBag.Vacs = _vacs;
             ViewBag.OperationTypes = _operationTypes;
         }
 
@@ -134,10 +127,26 @@ namespace Inspinia_MVC5.Controllers
             string countOperationMax
             )
         {
-
-            List<GetCardList_Result> viewList = GetCardsFromDB(phone, cardNum, cardTypeCode, cardStatusName, balanceMin,
-            balanceMax, activationDateBeg, activationDateEnd, activationBy, lastOperationDateBeg, lastOperationDateEnd,
-            lastOperationBy, increaseSumMin, increaseSumMax, decreaseSumMin, decreaseSumMax, countOperationMin, countOperationMax);
+            List<GetCardList_Result> viewList = GetCardsFromDB(
+                phone, 
+                cardNum, 
+                cardTypeCode, 
+                cardStatusName, 
+                balanceMin,
+                balanceMax, 
+                activationDateBeg, 
+                activationDateEnd, 
+                activationBy, 
+                lastOperationDateBeg, 
+                lastOperationDateEnd,
+                lastOperationBy, 
+                increaseSumMin, 
+                increaseSumMax, 
+                decreaseSumMin, 
+                decreaseSumMax, 
+                countOperationMin, 
+                countOperationMax
+                );
 
             return PartialView("_CardsList", viewList);
         }
@@ -263,7 +272,12 @@ namespace Inspinia_MVC5.Controllers
             return resultset;
         }
 
-        public ActionResult CurrentCardView(string phone, string cardNum, string cardTypeCode, string cardStatusName)
+        public ActionResult CurrentCardView(
+            string phone, 
+            string cardNum, 
+            string cardTypeCode, 
+            string cardStatusName
+            )
         {
             ViewBag.Phone = phone;
             ViewBag.CardNum = cardNum;
@@ -286,8 +300,7 @@ namespace Inspinia_MVC5.Controllers
             string operationDateBeg,
             string operationDateEnd,
             string operationTypeName,
-            string codeOperationBy,
-            string localizedId
+            string codeOperationBy
             )
         {
             List<GetCardsOperations_Result> viewList = GetOperationsFromDB(
@@ -298,8 +311,8 @@ namespace Inspinia_MVC5.Controllers
                 operationDateBeg,
                 operationDateEnd,
                 operationTypeName,
-                codeOperationBy, 
-                localizedId);
+                codeOperationBy
+                );
 
             return PartialView("_CurrentCardList", viewList);
         }
@@ -312,8 +325,7 @@ namespace Inspinia_MVC5.Controllers
             string operationDateBeg,
             string operationDateEnd,
             string operationTypeName,
-            string codeOperationBy,
-            string localizedID
+            string codeOperationBy
             )
         {
             List<GetCardsOperations_Result> resultset = null;
@@ -357,7 +369,7 @@ namespace Inspinia_MVC5.Controllers
             prmCodeOperationBy.Value = codeOperationBy;
 
             var prmLocalizedID = new System.Data.SqlClient.SqlParameter("@p_LocalizedID", System.Data.SqlDbType.NVarChar);
-            prmLocalizedID.Value = localizedID;
+            prmLocalizedID.Value = "";
 
             var result = db.Database
                 .SqlQuery<GetCardsOperations_Result>(
