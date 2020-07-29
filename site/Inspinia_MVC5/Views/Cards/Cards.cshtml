@@ -7,7 +7,8 @@
         <h2>Карты</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action("Dashboard_2", "Dashboards")">Сводка</a>
+                <a>Сводка</a>
+                @*<a href="@Url.Action("Dashboard_2", "Dashboards")">Сводка</a>*@
             </li>
             <li class="active breadcrumb-item">
                 <strong>Карты</strong>
@@ -587,7 +588,7 @@
             $('#filter-activationdateend').val(end.format('DD.MM.YYYY HH:mm:ss'));
         });
 
-        $('#date_last_operation_input_filter span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
+        $('#date_last_operation_input_filter span').html('За всё время');
 
         $('#date_last_operation_input_filter').daterangepicker({
             "timePicker": true,
@@ -635,8 +636,8 @@
             },
             "showCustomRangeLabel": false,
             "alwaysShowCalendars": true,
-            "startDate": moment().subtract(1, 'days').startOf('day'),
-            "endDate": moment().subtract(1, 'days').endOf('day'),
+            "startDate": moment($('#filter-lastoperationdatebeg').val(), 'DD.MM.YYYY HH:mm:ss'),
+            "endDate": moment($('#filter-lastoperationdateend').val(), 'DD.MM.YYYY HH:mm:ss'),
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {
