@@ -770,18 +770,18 @@ namespace MobileIntegration.Controllers
 
                         try
                         {
-                            command.CommandText = $"insert into Owners (Phone, LocalizedBy, LocalizedID) values ('{newCard.phone}', 0, 0)";
+                            command.CommandText = $"insert into Owners (Phone, LocalizedBy, LocalizedID) values ('{newCard.phone}', 1, 0)";
                             command.ExecuteNonQuery();
-                            command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) values (scope_identity(), '{newCard.card}', 1, 4, 0, 0)";
+                            command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) values (scope_identity(), '{newCard.card}', 1, 4, 1, 0)";
                             command.ExecuteNonQuery();
                             command.CommandText = $"insert into Operations (IDChanger, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                                 $"values ((select IDChanger from Changers c where c.Code = 'MOB-EM'), " +
                                 $"(select IDOperationType from OperationTypes ot where ot.Code = 'activation'), " +
                                 $"scope_identity(), '{newCard.time_send}', " +
-                                $"0, 0, 0, 0);";
+                                $"0, 0, 1, 0);";
                             command.ExecuteNonQuery();
 
-                            Logger.Log.Debug($"SendNewCardDev: добавлены Owner и Card. CardNum = {newCard.card}" + Environment.NewLine);
+                            Logger.Log.Debug($"SendNewCardDev: добавлены Owner и Card. CardNum = {newCard.card} DTime = {newCard.time_send}" + Environment.NewLine);
                             tran.Commit();
                         }
                         catch (Exception e)
@@ -828,7 +828,7 @@ namespace MobileIntegration.Controllers
                         command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                 $" VALUES((select IDCard from Cards where CardNum = '{newCard.card}'), " +
                                                 $"(select IDChanger from Changers where Code = 'MOB-EM'), 2, \'{newCard.time_send}\', {newCard.value}," +
-                                                $" ({commandBalance.CommandText}) + {newCard.value}, -1, -1);" +
+                                                $" ({commandBalance.CommandText}) + {newCard.value}, 1, -1);" +
                                                 " SELECT SCOPE_IDENTITY()";
 
                         Logger.Log.Debug("Command is: " + command.CommandText);
