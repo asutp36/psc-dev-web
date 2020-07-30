@@ -12,22 +12,22 @@ namespace ChangerSynchronization_framework.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Changers
+    public partial class Device
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Changers()
+        public Device()
         {
-            this.EventChanger = new HashSet<EventChanger>();
+            this.Changers = new HashSet<Changers>();
         }
     
-        public int IDChanger { get; set; }
+        public int IDDevice { get; set; }
         public string Name { get; set; }
-        public int IDWash { get; set; }
         public string Code { get; set; }
-        public Nullable<int> IDDevice { get; set; }
+        public Nullable<int> ServerID { get; set; }
+        public Nullable<int> IDDeviceType { get; set; }
+        public string IpAddress { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EventChanger> EventChanger { get; set; }
-        public virtual Device Device { get; set; }
+        public virtual ICollection<Changers> Changers { get; set; }
     }
 }

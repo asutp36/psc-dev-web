@@ -33,5 +33,6 @@ namespace ChangerSynchronization_framework.Models
         public virtual DbSet<EventChangerIncrease> EventChangerIncrease { get; set; }
         public virtual DbSet<EventChangerKind> EventChangerKind { get; set; }
         public virtual DbSet<EventChangerOut> EventChangerOut { get; set; }
+        public virtual DbSet<Device> Device { get; set; }
     }
 }

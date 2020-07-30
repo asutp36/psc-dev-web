@@ -162,6 +162,9 @@
     <Compile Include="Models\Changers.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Device.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\EventChanger.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>

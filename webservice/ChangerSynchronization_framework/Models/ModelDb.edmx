@@ -23,8 +23,20 @@
           </Key>
           <Property Name="IDChanger" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IDDevice" Type="int" />
           <Property Name="IDWash" Type="int" Nullable="false" />
           <Property Name="Code" Type="nvarchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Device">
+          <Key>
+            <PropertyRef Name="IDDevice" />
+          </Key>
+          <Property Name="IDDevice" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="ServerID" Type="int" />
+          <Property Name="IDDeviceType" Type="int" />
+          <Property Name="IpAddress" Type="nvarchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="EventChanger">
           <Key>
@@ -88,6 +100,20 @@
           <Property Name="b50" Type="int" Nullable="false" />
           <Property Name="b100" Type="int" Nullable="false" />
         </EntityType>
+        <Association Name="FK_Changers_Device">
+          <End Role="Device" Type="Self.Device" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Changers" Type="Self.Changers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Changers">
+              <PropertyRef Name="IDDevice" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_EventChanger_Changers">
           <End Role="Changers" Type="Self.Changers" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -175,12 +201,17 @@
         <EntityContainer Name="WashCompanyEntitiesStoreContainer">
           <EntitySet Name="Cards" EntityType="Self.Cards" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Changers" EntityType="Self.Changers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Device" EntityType="Self.Device" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventChanger" EntityType="Self.EventChanger" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventChangerAcquiring" EntityType="Self.EventChangerAcquiring" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventChangerCard" EntityType="Self.EventChangerCard" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventChangerIncrease" EntityType="Self.EventChangerIncrease" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventChangerKind" EntityType="Self.EventChangerKind" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EventChangerOut" EntityType="Self.EventChangerOut" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Changers_Device" Association="Self.FK_Changers_Device">
+            <End Role="Device" EntitySet="Device" />
+            <End Role="Changers" EntitySet="Changers" />
+          </AssociationSet>
           <AssociationSet Name="FK_EventChanger_Changers" Association="Self.FK_EventChanger_Changers">
             <End Role="Changers" EntitySet="Changers" />
             <End Role="EventChanger" EntitySet="EventChanger" />
@@ -231,6 +262,8 @@
           <Property Name="IDWash" Type="Int32" Nullable="false" />
           <NavigationProperty Name="EventChanger" Relationship="Self.FK_EventChanger_Changers" FromRole="Changers" ToRole="EventChanger" />
           <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="IDDevice" Type="Int32" />
+          <NavigationProperty Name="Device" Relationship="WashCompanyEntities.FK_Changers_Device" FromRole="Changers" ToRole="Device" />
         </EntityType>
         <EntityType Name="EventChanger">
           <Key>
@@ -422,7 +455,38 @@
             <End Role="EventChanger" EntitySet="EventChanger" />
             <End Role="EventChangerOut" EntitySet="EventChangerOut" />
           </AssociationSet>
+          <EntitySet Name="Device" EntityType="WashCompanyEntities.Device" />
+          <AssociationSet Name="FK_Changers_Device" Association="WashCompanyEntities.FK_Changers_Device">
+            <End Role="Device" EntitySet="Device" />
+            <End Role="Changers" EntitySet="Changers" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Device">
+          <Key>
+            <PropertyRef Name="IDDevice" />
+          </Key>
+          <Property Name="IDDevice" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="ServerID" Type="Int32" />
+          <Property Name="IDDeviceType" Type="Int32" />
+          <Property Name="IpAddress" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Changers" Relationship="WashCompanyEntities.FK_Changers_Device" FromRole="Device" ToRole="Changers" />
+        </EntityType>
+        <Association Name="FK_Changers_Device">
+          <End Type="WashCompanyEntities.Device" Role="Device" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WashCompanyEntities.Changers" Role="Changers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Changers">
+              <PropertyRef Name="IDDevice" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -445,6 +509,7 @@
           <EntitySetMapping Name="Changers">
             <EntityTypeMapping TypeName="WashCompanyEntities.Changers">
               <MappingFragment StoreEntitySet="Changers">
+                <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="IDChanger" ColumnName="IDChanger" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -517,6 +582,18 @@
                 <ScalarProperty Name="m10" ColumnName="m10" />
                 <ScalarProperty Name="b50" ColumnName="b50" />
                 <ScalarProperty Name="b100" ColumnName="b100" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Device">
+            <EntityTypeMapping TypeName="WashCompanyEntities.Device">
+              <MappingFragment StoreEntitySet="Device">
+                <ScalarProperty Name="IpAddress" ColumnName="IpAddress" />
+                <ScalarProperty Name="IDDeviceType" ColumnName="IDDeviceType" />
+                <ScalarProperty Name="ServerID" ColumnName="ServerID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

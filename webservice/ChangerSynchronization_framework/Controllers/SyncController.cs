@@ -325,18 +325,20 @@ namespace ChangerSynchronization_framework.Controllers
 
                 try
                 {
-                    command.CommandText = $"insert into Owners (Phone, LocalizedBy, LocalizedID) values ('{eventChanger.eventsCard.FirstOrDefault().phone}', 0, 0)";
+                    command.CommandText = $"insert into Owners (Phone, LocalizedBy, LocalizedID) values ('{eventChanger.eventsCard.FirstOrDefault().phone}', " +
+                        $"(select IDDevice from Changers c where c.Code = '{eventChanger.changer}'), 0)";
                     command.ExecuteNonQuery();
                     command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) " +
                         $"values (scope_identity(), '{eventChanger.eventsCard.FirstOrDefault().cardNum}', " +
-                        $"(select IDCardStatus from CardStatuses cs where cs.Code = 'norm'), (select IDCardType from CardTypes ct where ct.Code = 'client'), 0, 0)";
+                        $"(select IDCardStatus from CardStatuses cs where cs.Code = 'norm'), (select IDCardType from CardTypes ct where ct.Code = 'client'), " +
+                        $"(select IDDevice from Changers c where c.Code = '{eventChanger.changer}'), 0)";
                     command.ExecuteNonQuery();
 
                     command.CommandText = $"insert into Operations (IDChanger, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                         $"values ((select IDChanger from Changers c where c.Code = '{eventChanger.changer}'), " +
                         $"(select IDOperationType from OperationTypes ot where ot.Code = 'activation'), " +
                         $"scope_identity(), '{eventChanger.eventsCard.FirstOrDefault().dtime.ToString("yyyy-MM-dd HH:mm:ss")}', " +
-                        $"0, 0, 0, 0);";
+                        $"0, 0, (select IDDevice from Changers c where c.Code = '{eventChanger.changer}'), 0);";
                     command.ExecuteNonQuery();
 
                     Logger.Log.Debug($"WriteNewCard: добавлены Owner, Card и операция activation. CardNum = {eventChanger.eventsCard.FirstOrDefault().cardNum}" + Environment.NewLine);
@@ -409,12 +411,15 @@ namespace ChangerSynchronization_framework.Controllers
                 command.CommandText = $"INSERT INTO Operations (IDChanger, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                     $"VALUES ((select IDChanger from Changers c where c.Name = '{eventChanger.changer}'), (select IDOperationType from OperationTypes ot where ot.Code = 'increase'), " +
                     $"(select IDCard from Cards c where c.CardNum = '{eventChanger.eventsCard.FirstOrDefault().cardNum}'), '{eventChanger.eventsCard.FirstOrDefault().dtime.ToString("yyyy-MM-dd HH:mm:ss")}', " +
-                    $"{amount}, ({selectBalance}) + {amount}, 0, 0); " +
+                    $"{amount}, ({selectBalance}) + {amount}, " +
+                    $"(select IDDevice from Changers c where c.Code = '{eventChanger.changer}'), 0); " +
                     $"SELECT SCOPE_IDENTITY();";
 
                 Logger.Log.Info("WriteOperation: command is:\n" + command.CommandText);
 
                 var id = command.ExecuteScalar();
+
+                Logger.Log.Info("WriteOperation: операция добавлена. id = " + id.ToString());
 
                 _model.Database.Connection.Close();
 
