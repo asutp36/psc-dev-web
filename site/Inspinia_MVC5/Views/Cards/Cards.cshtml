@@ -63,32 +63,18 @@
         <div class="col-sm-6">
             <div class="form-group">
                 <label class="col-form-labe" for="date_activation_input_filter">Дата активации</label>
-                <div class="row">
-                    <div class="col-sm-10">
-                        <div id="date_activation_input_filter" class="form-control">
-                            <i class="fa fa-calendar"></i>
-                            <span></span> <b class="caret"></b>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <button id="clear_drp_activation" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
-                    </div>
+                <div id="date_activation_input_filter" class="form-control">
+                    <i class="fa fa-calendar"></i>
+                    <span></span> <b class="caret"></b>
                 </div>
             </div>
         </div>
         <div class="col-sm-6">
             <div class="form-group">
                 <label class="col-form-labe" for="date_last_operation_input_filter">Дата последней операции</label>
-                <div class="row">
-                    <div class="col-sm-10">
-                        <div id="date_last_operation_input_filter" class="form-control">
-                            <i class="fa fa-calendar"></i>
-                            <span></span> <b class="caret"></b>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <button id="clear_drp_last_op" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
-                    </div>
+                <div id="date_last_operation_input_filter" class="form-control">
+                    <i class="fa fa-calendar"></i>
+                    <span></span> <b class="caret"></b>
                 </div>
             </div>
         </div>
@@ -111,7 +97,7 @@
                 <label class="col-form-labe" for="last_operation_by_input_filter">Место последней операции</label>
                 <select name="last_operation_by_input_filter" id="last_operation_by_input_filter" class="form-control">
                     <option value="" selected=""></option>
-                    <optgroup label="Денежные разменники">
+                    <optgroup label="Платежные аппараты">
                         @foreach (var item in ViewBag.Changers)
                         {
                             <option value="@item.Code">@item.Name</option>
@@ -392,21 +378,27 @@
                 $('#filter-lastoperationby').val($(this).find(":selected").val());
             });
 
-            $(document).on("click", "#clear_drp_activation", function () {
-                $('#date_activation_input_filter span').html(" За всё время");
-                $('#filter-activationdatebeg').val("");
-                $('#filter-activationdateend').val("");
-            });
+            //$(document).on("click", "#clear_drp_activation", function () {
+            //    $('#date_activation_input_filter span').html(" За всё время");
+            //    $('#filter-activationdatebeg').val("");
+            //    $('#filter-activationdateend').val("");
+            //});
 
-            $(document).on("click", "#clear_drp_last_op", function () {
-                $('#date_last_operation_input_filter span').html(" За всё время");
-                $('#filter-lastoperationdatebeg').val("");
-                $('#filter-lastoperationdateend').val("");
-            });
+            //$(document).on("click", "#clear_drp_last_op", function () {
+            //    $('#date_last_operation_input_filter span').html(" За всё время");
+            //    $('#filter-lastoperationdatebeg').val("");
+            //    $('#filter-lastoperationdateend').val("");
+            //});
 
             $(document).on("click", "#clear_all_filters", function () {
-                $('#clear_drp_activation').click();
-                $('#clear_drp_last_op').click();
+
+                $('#date_activation_input_filter span').html("С начала работы");
+                $('#filter-activationdatebeg').val("");
+                $('#filter-activationdateend').val("");
+
+                $('#date_last_operation_input_filter span').html("С начала работы");
+                $('#filter-lastoperationdatebeg').val("");
+                $('#filter-lastoperationdateend').val("");
 
                 $('#phone_input_filter').val("");
                 $('#card_num_input_filter').val("");
@@ -538,7 +530,8 @@
                 'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
                 'сегодня': [moment().startOf('day'), moment()],
                 'текущий месяц': [moment().startOf('month'), moment()],
-                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'с начала работы': [moment('1.1.2019'), moment()]
             },
             "locale": {
                 "format": "DD.MM.YYYY",
@@ -582,13 +575,18 @@
             "drops": "down"
         }, function (start, end, label) {
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
-            $('#date_activation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+                if (moment('1.1.2019').isSame(start)) {
+                    $('#date_activation_input_filter span').html('С начала работы');
+                }
+                else {
+                    $('#date_activation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+                }
 
             $('#filter-activationdatebeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
             $('#filter-activationdateend').val(end.format('DD.MM.YYYY HH:mm:ss'));
         });
 
-        $('#date_last_operation_input_filter span').html('За всё время');
+        $('#date_last_operation_input_filter span').html('С начала работы');
 
         $('#date_last_operation_input_filter').daterangepicker({
             "timePicker": true,
@@ -598,7 +596,8 @@
                 'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
                 'сегодня': [moment().startOf('day'), moment()],
                 'текущий месяц': [moment().startOf('month'), moment()],
-                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'с начала работы': [moment('1.1.2019'), moment()]
             },
             "locale": {
                 "format": "DD.MM.YYYY",
@@ -641,8 +640,13 @@
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {
-            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
-            $('#date_last_operation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+                console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+                if (moment('1.1.2019').isSame(start)) {
+                    $('#date_last_operation_input_filter span').html('С начала работы');
+                }
+                else {
+                    $('#date_last_operation_input_filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+                }
 
             $('#filter-lastoperationdatebeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
             $('#filter-lastoperationdateend').val(end.format('DD.MM.YYYY HH:mm:ss'));

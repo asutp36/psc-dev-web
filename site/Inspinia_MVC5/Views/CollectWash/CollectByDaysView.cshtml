@@ -9,7 +9,7 @@
                 <a>Сводка</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="@Url.Action("CollectByWashesView","CollectWash")">Инкассация</a>
+                <a href="@Url.Action("CollectByWashesView","CollectWash", new { begdate = ViewBag.BegDate, enddate = ViewBag.EndDate})">Инкассация</a>
             </li>
             <li class="active breadcrumb-item">
                 <strong>@ViewBag.Wash</strong>
@@ -48,16 +48,9 @@
         <div class="col-sm-6">
             <div class="form-group">
                 <label class="col-form-labe">Период инкассации</label>
-                <div class="row">
-                    <div class="col-sm-10">
-                        <div id="filter-date" class="form-control">
-                            <i class="fa fa-calendar"></i>
-                            <span></span> <b class="caret"></b>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <button id="clear-date" type="button" class="btn btn-outline-danger btn-circle">&#10006;</button>
-                    </div>
+                <div id="filter-date" class="form-control">
+                    <i class="fa fa-calendar"></i>
+                    <span></span> <b class="caret"></b>
                 </div>
             </div>
         </div>
@@ -283,22 +276,15 @@
 
             $("#filter-i").on("input", filter);
             initDataTable();
-
-            $(document).on("click", "#clear-date", function () {
-                $('#filter-date span').html(" За всё время");
-                $('#bdate').val("");
-                $('#edate').val("");
-                filter();
-            });
         });
 
         $('input[name="daterange"]').daterangepicker();
 
-        if ($('#bdate').val()) {
+        if ($('#bdate').val() && !moment('1.1.2019').isSame($('#bdate').val())) {
             $('#filter-date span').html('с ' + $('#bdate').val() + ' по ' + $('#edate').val());
         }
         else {
-            $('#filter-date span').html('За всё время');
+            $('#filter-date span').html('С начала работы');
         }
 
         $('#filter-date').daterangepicker({
@@ -309,7 +295,8 @@
                 'сегодня': [moment().startOf('day'), moment()],
                 'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
                 'текущий месяц': [moment().startOf('month'), moment()],
-                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'с начала работы': [moment('1.1.2019'), moment()]
             },
             "locale": {
                 "format": "DD.MM.YYYY",
@@ -352,12 +339,18 @@
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {
-            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
-            $('#filter-date span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+                console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
 
-            $('#bdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
-            $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
-            filter();
+                if (moment('1.1.2019').isSame(start)) {
+                    $('#filter-date span').html('С начала работы');
+                }
+                else {
+                    $('#filter-date span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+                }
+
+                $('#bdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
+                $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
+                filter();
         });
 
     </script>

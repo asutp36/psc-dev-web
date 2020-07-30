@@ -35,7 +35,7 @@
             </div>
             <div class="form-group">
                 @*<label class="col-form-labe" for="btn_for_filter" style="filter: blur(100px)">Показать</label>*@
-                <button type="button" id="btn-for-filter" class="btn btn-block btn-outline btn-success font-bold">Показать</button>
+                <button type="button" id="btn-for-filter" class="ladda-button btn btn-block btn-outline btn-success font-bold" data-style="expand-right">Показать</button>
             </div>
         </div>
         <div class="col-sm-3 finance-operations-summary">
@@ -95,6 +95,7 @@
     @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
     @Styles.Render("~/plugins/dateRangeStyles")
     @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/laddaStyles")
 }
 
 @section Scripts {
@@ -103,6 +104,7 @@
     @Scripts.Render("~/plugins/dateRange")
     @Scripts.Render("~/plugins/select2")
     @Scripts.Render("~/plugins/chartjs")
+    @Scripts.Render("~/plugins/ladda")
 
     <script type="text/javascript">
 
@@ -155,6 +157,8 @@
 
         $(document).ready(function () {
 
+            $('#btn-for-filter').ladda();
+
             var startDate = moment().startOf('day').format('DD.MM.YYYY HH:mm:ss');
             var stopDate = moment().format('DD.MM.YYYY HH:mm:ss');
 
@@ -165,8 +169,8 @@
                     begTime: startDate,
                     endTime: stopDate,
                 },
-                error: function () {
-                    alert('С отображением поступлений что-то пошло не так!');
+                error: function (err) {
+                    alert(err.statusText);
                 },
                 url: "@Url.Action("UpdateFinanceOperationsSummary", "Finance")",
             }).done(function (result) {
@@ -250,6 +254,12 @@
                         begTime: startDate,
                         endTime: stopDate,
                     },
+                    beforeSend: function () {
+                        $('#btn-for-filter').ladda('start');
+                    },
+                    complete: function () {
+                        $('#btn-for-filter').ladda('stop');
+                    },
                     success: function () {
                         $('.alert-success').fadeIn('slow');
                         $('.alert-success').delay(3000).fadeOut('slow');
@@ -313,7 +323,8 @@
                 'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
                 'сегодня': [moment().startOf('day'), moment()],
                 'текущий месяц': [moment().startOf('month'), moment()],
-                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'с начала работы': [moment('1.1.2019'), moment()]
             },
             "locale": {
                 "format": "DD.MM.YYYY",
@@ -356,11 +367,16 @@
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {
-            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
-            $('#time-operation-filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+                console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+                if (moment('1.1.2019').isSame(start)) {
+                    $('#time-operation-filter span').html('С начала работы');
+                }
+                else {
+                    $('#time-operation-filter span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+                }
 
-            $('#filter-timeoperationbeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
-            $('#filter-timeoperationend').val(end.format('DD.MM.YYYY HH:mm:ss'));
+                $('#filter-timeoperationbeg').val(start.format('DD.MM.YYYY HH:mm:ss'));
+                $('#filter-timeoperationend').val(end.format('DD.MM.YYYY HH:mm:ss'));
         });
     </script>
 }

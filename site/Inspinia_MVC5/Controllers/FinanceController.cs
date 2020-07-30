@@ -46,7 +46,7 @@ namespace Inspinia_MVC5.Controllers
             var prmDateBeg = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
             if (begTime == "")
             {
-                prmDateBeg.Value = new DateTime(2000, 1, 1);
+                prmDateBeg.Value = new DateTime(2019, 1, 1);
             }
             else
             {
