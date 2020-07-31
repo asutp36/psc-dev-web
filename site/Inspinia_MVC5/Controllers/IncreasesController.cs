@@ -413,11 +413,17 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult IncreasesByEventsView(string begdate, string enddate, string post)
         {
-            Post Post = _posts.Find(w => w.Code == post);
+            //Post Post = _posts.Find(w => w.Code == post);
 
-            ViewBag.Region = Post.Wash.Region.Code;
-            ViewBag.Wash = Post.Wash.Code;
-            ViewBag.Post = Post.Code;
+            //ViewBag.Region = Post.Wash.Region.Code;
+            //ViewBag.Wash = Post.Wash.Code;
+            //ViewBag.Post = Post.Code;
+
+            Device device = _devices.Find(d => d.Code == post);
+
+            ViewBag.Region = _posts.Find(p => p.IDDevice == device.IDDevice).Wash.Region.Code;
+            ViewBag.Wash = _posts.Find(p => p.IDDevice == device.IDDevice).Wash.Code;
+            ViewBag.Post = device.Code;
 
             DateTime bdate;
             if (!DateTime.TryParse(begdate, out bdate))

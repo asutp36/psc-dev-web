@@ -23,6 +23,7 @@ namespace Inspinia_MVC5.Controllers
         List<Device> _devices = null;
 
         Post post = null;
+        Device device = null;
         Region region = new Region();
         short sss = new short();
         InfoPost infopost = null;
@@ -204,8 +205,9 @@ namespace Inspinia_MVC5.Controllers
         public ActionResult PostMonitoringView(int IDPost)
         {
             post = _posts.Find(x => x.IDPost == IDPost);
-            
-            string data = $"{{\"Post\":\"{post.Code.ToString()}\"}}";
+            device = _devices.Find(d => d.IDDevice == post.IDDevice);
+
+            string data = $"{{\"Post\":\"{device.Code.ToString()}\"}}";
 
             infopost = new InfoPost(GetBalance(data), GetFunction(data), GetState(data), post);
 
@@ -218,8 +220,9 @@ namespace Inspinia_MVC5.Controllers
             string testlog = ChangeFunctionOnPost(data);
 
             post = _posts.Find(x => x.IDPost == Convert.ToInt32(Post));
+            device = _devices.Find(d => d.IDDevice == post.IDDevice);
 
-            string req = $"{{\"Post\":\"{post.Code.ToString()}\"}}";
+            string req = $"{{\"Post\":\"{device.Code.ToString()}\"}}";
 
             infopost = new InfoPost(GetBalance(req), GetFunction(req), GetState(req), post);
 
@@ -280,12 +283,15 @@ namespace Inspinia_MVC5.Controllers
         {
             if (Post != null && sum != null)
             {
-                string data = JsonConvert.SerializeObject(new IncreaseBalanceOnPostClass(_posts.Find(x => x.IDPost == Convert.ToInt32(Post)).Code, Convert.ToInt32(sum), DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), login));
+                Post p = _posts.Find(x => x.IDPost == Convert.ToInt32(Post));
+                device = _devices.Find(d => d.IDDevice == p.IDDevice);
+
+                string data = JsonConvert.SerializeObject(new IncreaseBalanceOnPostClass(device.Code, Convert.ToInt32(sum), DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), login));
                 string testlog = IncreaseBalanceOnPost(data);
 
                 post = _posts.Find(x => x.IDPost == Convert.ToInt32(Post));
 
-                string req = $"{{\"Post\":\"{post.Code.ToString()}\"}}";
+                string req = $"{{\"Post\":\"{device.Code.ToString()}\"}}";
 
                 infopost = new InfoPost(GetBalance(req), GetFunction(req), GetState(req), post);
             }

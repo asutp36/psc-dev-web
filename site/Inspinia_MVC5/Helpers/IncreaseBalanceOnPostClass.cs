@@ -9,9 +9,7 @@ namespace Inspinia_MVC5.Helpers
     {
         public string Post {get; set;}
         public int Amount { get; set; }
-
         public string DTime { get; set; }
-
         public string Login { get; set; }
 
         public IncreaseBalanceOnPostClass (string Post, int Amount, string DTime, string Login)
