@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Хранилище ModelDb" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Хранилище ModelDb" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Cards">
           <Key>
             <PropertyRef Name="IDCard" />
@@ -34,22 +34,13 @@
           <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
-        <!--Ошибки, обнаруженные при создании:
-предупреждение 6013: Первичный ключ в таблице или представлении "WashCompany.dbo.CashIntegration" не определен, его не удалось вывести. Эта таблица или представление исключены. Чтобы использовать сущность, необходимо проверить схему, добавить правильные ключи и раскомментировать ее.
-        <EntityType Name="CashIntegration">
-          <Property Name="IDEvent" Type="int" />
-          <Property Name="ServerID" Type="int" />
-          <Property Name="ServerStatus" Type="int" />
-          <Property Name="ServerMessage" Type="nvarchar" MaxLength="50" />
-        </EntityType>-->
         <EntityType Name="Changers">
           <Key>
             <PropertyRef Name="IDChanger" />
           </Key>
           <Property Name="IDChanger" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="IDWash" Type="int" Nullable="false" />
-          <Property Name="Code" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="IDDevice" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Collections">
           <Key>
@@ -404,8 +395,6 @@
             <PropertyRef Name="IDPost" />
           </Key>
           <Property Name="IDPost" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Code" Type="nvarchar" MaxLength="10" />
-          <Property Name="Name" Type="nvarchar" MaxLength="100" />
           <Property Name="IDWash" Type="int" Nullable="false" />
           <Property Name="IDDevice" Type="int" />
         </EntityType>
@@ -477,6 +466,20 @@
             </Principal>
             <Dependent Role="Cards">
               <PropertyRef Name="IDOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Changers_Device">
+          <End Role="Device" Type="Self.Device" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Changers" Type="Self.Changers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Changers">
+              <PropertyRef Name="IDDevice" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1210,6 +1213,10 @@
             <End Role="Owners" EntitySet="Owners" />
             <End Role="Cards" EntitySet="Cards" />
           </AssociationSet>
+          <AssociationSet Name="FK_Changers_Device" Association="Self.FK_Changers_Device">
+            <End Role="Device" EntitySet="Device" />
+            <End Role="Changers" EntitySet="Changers" />
+          </AssociationSet>
           <AssociationSet Name="FK_Changers_Wash" Association="Self.FK_Changers_Wash">
             <End Role="Wash" EntitySet="Wash" />
             <End Role="Changers" EntitySet="Changers" />
@@ -1339,8 +1346,7 @@
             <End Role="Wash" EntitySet="Wash" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ModelDb" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1384,12 +1390,12 @@
             <PropertyRef Name="IDChanger" />
           </Key>
           <Property Name="IDChanger" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="IDWash" Type="Int32" Nullable="false" />
-          <Property Name="Code" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Wash" Relationship="Self.FK_Changers_Wash" FromRole="Changers" ToRole="Wash" />
           <NavigationProperty Name="EventChangers" Relationship="Self.FK_EventChanger_Changers" FromRole="Changers" ToRole="EventChanger" />
           <NavigationProperty Name="Operations" Relationship="Self.FK_Operations_Changers" FromRole="Changers" ToRole="Operations" />
+          <Property Name="IDDevice" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Device" Relationship="ModelDb.FK_Changers_Device" FromRole="Changer" ToRole="Device" />
         </EntityType>
         <EntityType Name="Collection">
           <Key>
@@ -1516,6 +1522,7 @@
           <NavigationProperty Name="DeviceType" Relationship="Self.FK_Device_DeviceTypes" FromRole="Device" ToRole="DeviceTypes" />
           <NavigationProperty Name="Finances" Relationship="Self.FK_Finance_Device" FromRole="Device" ToRole="Finance" />
           <NavigationProperty Name="Posts" Relationship="Self.FK_Posts_Device" FromRole="Device" ToRole="Posts" />
+          <NavigationProperty Name="Changers" Relationship="ModelDb.FK_Changers_Device" FromRole="Device" ToRole="Changer" />
         </EntityType>
         <EntityType Name="DeviceType">
           <Key>
@@ -1791,8 +1798,6 @@
             <PropertyRef Name="IDPost" />
           </Key>
           <Property Name="IDPost" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="IDWash" Type="Int32" Nullable="false" />
           <Property Name="IDDevice" Type="Int32" />
           <NavigationProperty Name="Collections" Relationship="Self.FK_Collections_Posts" FromRole="Posts" ToRole="Collections" />
@@ -2537,7 +2542,7 @@
             <Parameter Name="p_WashCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetCardBalance" ReturnType="Collection(Int32)">
-            <Parameter Name="Card" Mode="In" Type="String" />
+          <Parameter Name="Card" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetCardList" ReturnType="Collection(ModelDb.GetCardList_Result)">
             <Parameter Name="p_Phone" Mode="In" Type="String" />
@@ -2689,7 +2694,7 @@
             <Parameter Name="p_Message" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetNoticeRecipient" ReturnType="Collection(ModelDb.GetNoticeRecipient_Result)">
-            <Parameter Name="RecipientCode" Mode="In" Type="String" />
+          <Parameter Name="RecipientCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetPostAmounts" ReturnType="Collection(ModelDb.GetPostAmounts_Result)">
             <Parameter Name="p_RegionCode" Mode="In" Type="Int32" />
@@ -2733,6 +2738,10 @@
             <Parameter Name="p_WashCode" Mode="In" Type="String" />
             <Parameter Name="p_PostCode" Mode="In" Type="String" />
           </FunctionImport>
+          <AssociationSet Name="FK_Changers_Device" Association="ModelDb.FK_Changers_Device">
+            <End Role="Device" EntitySet="Devices" />
+            <End Role="Changer" EntitySet="Changers" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="GetBoxAndCollect_Result">
           <Property Type="DateTime" Name="reportdate" Nullable="true" Precision="23" />
@@ -3062,6 +3071,20 @@
           <Property Type="Int32" Name="data1DataData1datad7" Nullable="true" />
           <Property Type="Int32" Name="data1DataData1datad8" Nullable="true" />
         </ComplexType>
+        <Association Name="FK_Changers_Device">
+          <End Type="ModelDb.Device" Role="Device" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ModelDb.Changer" Role="Changer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Changer">
+              <PropertyRef Name="IDDevice" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3103,10 +3126,9 @@
           <EntitySetMapping Name="Changers">
             <EntityTypeMapping TypeName="ModelDb.Changer">
               <MappingFragment StoreEntitySet="Changers">
+                <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
                 <ScalarProperty Name="IDChanger" ColumnName="IDChanger" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3493,8 +3515,6 @@
             <EntityTypeMapping TypeName="ModelDb.Post">
               <MappingFragment StoreEntitySet="Posts">
                 <ScalarProperty Name="IDPost" ColumnName="IDPost" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
                 <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
               </MappingFragment>
