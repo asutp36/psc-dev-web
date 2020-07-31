@@ -126,23 +126,23 @@ namespace ChangerSynchronization_framework.Controllers
                         DbInsertResult insertRes = new DbInsertResult();
                         insertRes = WriteEventChangerCard(ec, idEventChanger, eventFull.eventKindCode);
 
-                        string res = "";
+                        //string res = "";
 
-                        switch (eventFull.eventKindCode)
-                        {
-                            case "cardCreate":
-                                res += WriteNewCard(eventFull);
-                                break;
+                        //switch (eventFull.eventKindCode)
+                        //{
+                        //    case "cardCreate":
+                        //        res += WriteNewCard(eventFull);
+                        //        break;
 
-                            case "cardIncrease":
-                                if (WriteOperationIncrease(eventFull))
-                                    res += "Операция записана.";
-                                else
-                                    res += "Операция не записана.";
-                                break;
-                        }
+                        //    case "cardIncrease":
+                        //        if (WriteOperationIncrease(eventFull))
+                        //            res += "Операция записана.";
+                        //        else
+                        //            res += "Операция не записана.";
+                        //        break;
+                        //}
 
-                        insertRes.serverMessage += res;
+                        //insertRes.serverMessage += res;
 
                         result.eventsCard.Add(insertRes);
                     }

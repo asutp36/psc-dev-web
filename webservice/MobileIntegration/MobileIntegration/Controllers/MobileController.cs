@@ -45,12 +45,13 @@ namespace MobileIntegration.Controllers
                         Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
                         DbCommand commandBalance = _model.Database.Connection.CreateCommand();
-                        commandBalance.CommandText = $"select " +
-                                 $"isnull(o.Balance, 0) " +
-                                 $"from Cards c " +
-                                 $"left join Operations o on o.IDCard = c.IDCard " +
-                                 $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
-                                 $"where c.CardNum = '{increase.card}'";
+                        commandBalance.CommandText = $"select top 1 " +
+                            $"isnull(o.Balance, 0) " +
+                            $"from Cards c " +
+                            $"left join Operations o on o.IDCard = c.IDCard " +
+                            $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
+                            $"where c.CardNum = '{increase.card}' " +
+                            $"order by o.IDOperation desc";
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
@@ -112,12 +113,13 @@ namespace MobileIntegration.Controllers
                             Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
                             DbCommand commandBalance = _model.Database.Connection.CreateCommand();
-                            commandBalance.CommandText = $"select " +
-                                $"isnull(o.Balance, 0) " +
-                                $"from Cards c " +
-                                $"left join Operations o on o.IDCard = c.IDCard " +
-                                $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
-                                $"where c.CardNum = '{increase.card}'";
+                            commandBalance.CommandText = $"select top 1 " +
+                            $"isnull(o.Balance, 0) " +
+                            $"from Cards c " +
+                            $"left join Operations o on o.IDCard = c.IDCard " +
+                            $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
+                            $"where c.CardNum = '{increase.card}' " +
+                            $"order by o.IDOperation desc";
 
                             DbCommand command = _model.Database.Connection.CreateCommand();
                             command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
@@ -186,10 +188,13 @@ namespace MobileIntegration.Controllers
                         prmCard.Value = getBalance.card;
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
-                        command.CommandText = "select Balance " +
-                            "from Operations " +
-                            $"where DTime = (select max(DTime) from Operations where IDCard = (select IDCard from Cards where CardNum = {getBalance.card})) " +
-                            $"and IDCard = (select IDCard from Cards where CardNum = {getBalance.card})";
+                        command.CommandText = $"select top 1 " +
+                            $"isnull(o.Balance, 0) " +
+                            $"from Cards c " +
+                            $"left join Operations o on o.IDCard = c.IDCard " +
+                            $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
+                            $"where c.CardNum = '{getBalance.card}' " +
+                            $"order by o.IDOperation desc";
 
                         var balance = command.ExecuteScalar();
 
@@ -252,12 +257,13 @@ namespace MobileIntegration.Controllers
                         Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
-                        command.CommandText = $"select " +
+                        command.CommandText = $"select top 1 " +
                             $"isnull(o.Balance, 0) " +
                             $"from Cards c " +
                             $"left join Operations o on o.IDCard = c.IDCard " +
                             $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
-                            $"where c.CardNum = '{getBalance.card}'";
+                            $"where c.CardNum = '{getBalance.card}' " +
+                            $"order by o.IDOperation desc";
 
 
                         var balance = command.ExecuteScalar();
@@ -545,39 +551,41 @@ namespace MobileIntegration.Controllers
             
             Logger.Log.Debug($"StopPost: отправка списания по карте {model.card}");
 
-            try
-            {
-                if (_model.Database.Exists())
+            if (model.balance > 0)
+                try
                 {
-                    _model.Database.Connection.Open();
-                    Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
+                    if (_model.Database.Exists())
+                    {
+                        _model.Database.Connection.Open();
+                        Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
-                    DbCommand commandBalance = _model.Database.Connection.CreateCommand();
-                    commandBalance.CommandText = $"select " +
-                        $"isnull(o.Balance, 0) " +
-                        $"from Cards c " +
-                        $"left join Operations o on o.IDCard = c.IDCard " +
-                        $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
-                        $"where c.CardNum = '{model.card}'";
+                        DbCommand commandBalance = _model.Database.Connection.CreateCommand();
+                        commandBalance.CommandText = $"select top 1 " +
+                            $"isnull(o.Balance, 0) " +
+                            $"from Cards c " +
+                            $"left join Operations o on o.IDCard = c.IDCard " +
+                            $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
+                            $"where c.CardNum = '{model.card}' " +
+                            $"order by o.IDOperation desc";
 
-                    DbCommand command = _model.Database.Connection.CreateCommand();
-                    command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
-                                            $" VALUES((select IDCard from Cards where CardNum = '{model.card}'), " +
-                                            $"(select IDChanger from Changers where Code = 'MOB-EM'), 3, \'{model.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {model.balance}," +
-                                            $" ({commandBalance.CommandText}) - {model.balance}, -1, -1);" +
-                                            " SELECT SCOPE_IDENTITY()";
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+                        command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
+                                                $" VALUES((select IDCard from Cards where CardNum = '{model.card}'), " +
+                                                $"(select IDChanger from Changers where Code = 'MOB-EM'), 3, \'{model.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {model.balance}," +
+                                                $" ({commandBalance.CommandText}) - {model.balance}, -1, -1);" +
+                                                " SELECT SCOPE_IDENTITY()";
 
-                    Logger.Log.Debug("Command is: " + command.CommandText);
+                        Logger.Log.Debug("Command is: " + command.CommandText);
 
-                    var id = command.ExecuteScalar();
+                        var id = command.ExecuteScalar();
 
-                    Logger.Log.Debug("StopPostDev: записано списание. IDOperation: " + id.ToString());
+                        Logger.Log.Debug("StopPostDev: записано списание. IDOperation: " + id.ToString());
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.Log.Error("StopPostDev: ошибка при записи операции в базу.\n" + e.Message + Environment.NewLine + e.StackTrace);
-            }
+                catch (Exception e)
+                {
+                    Logger.Log.Error("StopPostDev: ошибка при записи операции в базу.\n" + e.Message + Environment.NewLine + e.StackTrace);
+                }
 
             try 
             {
@@ -772,13 +780,16 @@ namespace MobileIntegration.Controllers
                         {
                             command.CommandText = $"insert into Owners (Phone, LocalizedBy, LocalizedID) values ('{newCard.phone}', 1, 0)";
                             command.ExecuteNonQuery();
-                            command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) values (scope_identity(), '{newCard.card}', 1, 4, 1, 0)";
+                            command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID, Balance) " +
+                                $"values (scope_identity(), '{newCard.card}', (select IDCardStatus from CardStatuses cs where cs.Code = 'norm'), " +
+                                $"(select IDCardType from CardTypes ct where ct.Code = 'client'), (select IDDevice from Changers c where c.Code = '{newCard.changer}'), 0, " +
+                                $"{newCard.value})";
                             command.ExecuteNonQuery();
                             command.CommandText = $"insert into Operations (IDChanger, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                                 $"values ((select IDChanger from Changers c where c.Code = 'MOB-EM'), " +
                                 $"(select IDOperationType from OperationTypes ot where ot.Code = 'activation'), " +
                                 $"scope_identity(), '{newCard.time_send}', " +
-                                $"0, 0, 1, 0);";
+                                $"0, 0, (select IDDevice from Changers c where c.Code = '{newCard.changer}'), 0);";
                             command.ExecuteNonQuery();
 
                             Logger.Log.Debug($"SendNewCardDev: добавлены Owner и Card. CardNum = {newCard.card} DTime = {newCard.time_send}" + Environment.NewLine);
@@ -817,18 +828,19 @@ namespace MobileIntegration.Controllers
                     if (_model.Database.Exists())
                     {
                         DbCommand commandBalance = _model.Database.Connection.CreateCommand();
-                        commandBalance.CommandText = $"select " +
+                        commandBalance.CommandText = $"select top 1 " +
                             $"isnull(o.Balance, 0) " +
                             $"from Cards c " +
                             $"left join Operations o on o.IDCard = c.IDCard " +
                             $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
-                            $"where c.CardNum = '{newCard.card}'";
+                            $"where c.CardNum = '{newCard.card}' " +
+                            $"order by o.IDOperation desc";
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                 $" VALUES((select IDCard from Cards where CardNum = '{newCard.card}'), " +
                                                 $"(select IDChanger from Changers where Code = 'MOB-EM'), 2, \'{newCard.time_send}\', {newCard.value}," +
-                                                $" ({commandBalance.CommandText}) + {newCard.value}, 1, -1);" +
+                                                $" ({commandBalance.CommandText}) + {newCard.value}, (select IDDevice from Changers c where c.Code = '{newCard.changer}'), -1);" +
                                                 " SELECT SCOPE_IDENTITY()";
 
                         Logger.Log.Debug("Command is: " + command.CommandText);

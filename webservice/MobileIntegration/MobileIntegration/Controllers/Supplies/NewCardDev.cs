@@ -8,5 +8,6 @@ namespace MobileIntegration.Controllers.Supplies
     public class NewCardDev : NewCard
     {
         public int value { get; set; }
+        public string changer { get; set; }
     }
 }
