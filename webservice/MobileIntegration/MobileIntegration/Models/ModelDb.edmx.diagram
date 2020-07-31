@@ -27,6 +27,7 @@
         <EntityTypeShape EntityType="WashCompanyModel.Changers" Width="1.5" PointX="3" PointY="8.25" />
         <AssociationConnector Association="WashCompanyModel.FK_Changers_Wash" />
         <AssociationConnector Association="WashCompanyModel.FK_Operations_Changers" />
+        <AssociationConnector Association="WashCompanyModel.FK_Changers_Device" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

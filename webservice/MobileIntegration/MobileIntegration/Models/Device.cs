@@ -18,6 +18,7 @@ namespace MobileIntegration.Models
         public Device()
         {
             this.Posts = new HashSet<Posts>();
+            this.Changers = new HashSet<Changers>();
         }
     
         public int IDDevice { get; set; }
@@ -30,5 +31,7 @@ namespace MobileIntegration.Models
         public virtual DeviceTypes DeviceTypes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Posts> Posts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Changers> Changers { get; set; }
     }
 }

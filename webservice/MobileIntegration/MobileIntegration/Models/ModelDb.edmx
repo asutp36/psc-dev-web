@@ -39,6 +39,7 @@
           </Key>
           <Property Name="IDChanger" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IDDevice" Type="int" />
           <Property Name="IDWash" Type="int" Nullable="false" />
           <Property Name="Code" Type="nvarchar" MaxLength="20" Nullable="false" />
         </EntityType>
@@ -160,6 +161,20 @@
             </Principal>
             <Dependent Role="Cards">
               <PropertyRef Name="IDOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Changers_Device">
+          <End Role="Device" Type="Self.Device" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Changers" Type="Self.Changers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Changers">
+              <PropertyRef Name="IDDevice" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -286,6 +301,10 @@
             <End Role="Owners" EntitySet="Owners" />
             <End Role="Cards" EntitySet="Cards" />
           </AssociationSet>
+          <AssociationSet Name="FK_Changers_Device" Association="Self.FK_Changers_Device">
+            <End Role="Device" EntitySet="Device" />
+            <End Role="Changers" EntitySet="Changers" />
+          </AssociationSet>
           <AssociationSet Name="FK_Changers_Wash" Association="Self.FK_Changers_Wash">
             <End Role="Wash" EntitySet="Wash" />
             <End Role="Changers" EntitySet="Changers" />
@@ -365,6 +384,7 @@
           <Property Name="IpAddress" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="DeviceTypes" Relationship="Self.FK_Device_DeviceTypes" FromRole="Device" ToRole="DeviceTypes" />
           <NavigationProperty Name="Posts" Relationship="Self.FK_Posts_Device" FromRole="Device" ToRole="Posts" />
+          <NavigationProperty Name="Changers" Relationship="WashCompanyModel.FK_Changers_Device" FromRole="Device" ToRole="Changers" />
         </EntityType>
         <EntityType Name="DeviceTypes">
           <Key>
@@ -609,6 +629,10 @@
             <End Role="Changers" EntitySet="Changers" />
             <End Role="Operations" EntitySet="Operations" />
           </AssociationSet>
+          <AssociationSet Name="FK_Changers_Device" Association="WashCompanyModel.FK_Changers_Device">
+            <End Role="Device" EntitySet="Device" />
+            <End Role="Changers" EntitySet="Changers" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Changers">
           <Key>
@@ -620,6 +644,8 @@
           <NavigationProperty Name="Wash" Relationship="WashCompanyModel.FK_Changers_Wash" FromRole="Changers" ToRole="Wash" />
           <NavigationProperty Name="Operations" Relationship="WashCompanyModel.FK_Operations_Changers" FromRole="Changers" ToRole="Operations" />
           <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="IDDevice" Type="Int32" />
+          <NavigationProperty Name="Device" Relationship="WashCompanyModel.FK_Changers_Device" FromRole="Changers" ToRole="Device" />
         </EntityType>
         <Association Name="FK_Changers_Wash">
           <End Type="WashCompanyModel.Wash" Role="Wash" Multiplicity="1">
@@ -646,6 +672,20 @@
             </Principal>
             <Dependent Role="Operations">
               <PropertyRef Name="IDChanger" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Changers_Device">
+          <End Type="WashCompanyModel.Device" Role="Device" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WashCompanyModel.Changers" Role="Changers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Changers">
+              <PropertyRef Name="IDDevice" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -776,6 +816,7 @@
           <EntitySetMapping Name="Changers">
             <EntityTypeMapping TypeName="WashCompanyModel.Changers">
               <MappingFragment StoreEntitySet="Changers">
+                <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
                 <ScalarProperty Name="Name" ColumnName="Name" />

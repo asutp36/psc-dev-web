@@ -56,7 +56,8 @@ namespace MobileIntegration.Controllers
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                 $" VALUES((select IDCard from Cards where CardNum =  '{increase.card}'), " +
-                                                $"(select IDChanger from Changers where Code = 'MOB-EM'), 2, \'{increase.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {increase.value}," +
+                                                $"(select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = 'MOB-EM'), 2, " +
+                                                $"\'{increase.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {increase.value}," +
                                                 $" ({commandBalance.CommandText}) + {increase.value}, -1, -1);" +
                                                 " SELECT SCOPE_IDENTITY()";
 
@@ -124,7 +125,8 @@ namespace MobileIntegration.Controllers
                             DbCommand command = _model.Database.Connection.CreateCommand();
                             command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                     $" VALUES((select IDCard from Cards where CardNum = '{increase.card}'), " +
-                                                    $"(select IDChanger from Changers where Code = 'MOB-EM'), 2, \'{increase.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {increase.value}," +
+                                                    $"(select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = 'MOB-EM'), 2, " +
+                                                    $"\'{increase.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {increase.value}," +
                                                     $" ({commandBalance.CommandText}) + {increase.value}, -1, -1);" +
                                                     " SELECT SCOPE_IDENTITY()";
 
@@ -571,7 +573,8 @@ namespace MobileIntegration.Controllers
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                 $" VALUES((select IDCard from Cards where CardNum = '{model.card}'), " +
-                                                $"(select IDChanger from Changers where Code = 'MOB-EM'), 3, \'{model.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {model.balance}," +
+                                                $"(select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = 'MOB-EM'), 3, " +
+                                                $"\'{model.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {model.balance}," +
                                                 $" ({commandBalance.CommandText}) - {model.balance}, -1, -1);" +
                                                 " SELECT SCOPE_IDENTITY()";
 
@@ -677,7 +680,7 @@ namespace MobileIntegration.Controllers
                                 command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) values (scope_identity(), '{cardNum}', 1, 4, 0, 0)";
                                 command.ExecuteNonQuery();
                                 command.CommandText = $"insert into Operations (IDChanger, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
-                                       $"values ((select IDChanger from Changers c where c.Code = 'MOB-EM'), " +
+                                       $"values ((select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = 'MOB-EM'), " +
                                        $"(select IDOperationType from OperationTypes ot where ot.Code = 'activation'), " +
                                        $"scope_identity(), '{newCard.time_send}', " +
                                        $"0, 0, 0, 0);";
@@ -786,7 +789,7 @@ namespace MobileIntegration.Controllers
                                 $"{newCard.value})";
                             command.ExecuteNonQuery();
                             command.CommandText = $"insert into Operations (IDChanger, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
-                                $"values ((select IDChanger from Changers c where c.Code = 'MOB-EM'), " +
+                                $"values ((select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = 'MOB-EM'), " +
                                 $"(select IDOperationType from OperationTypes ot where ot.Code = 'activation'), " +
                                 $"scope_identity(), '{newCard.time_send}', " +
                                 $"0, 0, (select IDDevice from Changers c where c.Code = '{newCard.changer}'), 0);";
@@ -839,7 +842,8 @@ namespace MobileIntegration.Controllers
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                 $" VALUES((select IDCard from Cards where CardNum = '{newCard.card}'), " +
-                                                $"(select IDChanger from Changers where Code = 'MOB-EM'), 2, \'{newCard.time_send}\', {newCard.value}," +
+                                                $"(select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = 'MOB-EM'), 2," +
+                                                $" \'{newCard.time_send}\', {newCard.value}," +
                                                 $" ({commandBalance.CommandText}) + {newCard.value}, (select IDDevice from Changers c where c.Code = '{newCard.changer}'), -1);" +
                                                 " SELECT SCOPE_IDENTITY()";
 
