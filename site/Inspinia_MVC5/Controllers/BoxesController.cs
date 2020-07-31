@@ -197,6 +197,5 @@ namespace Inspinia_MVC5.Controllers
 
             return PartialView("_BoxByPostsList", view);
         }
-
     }
 }
