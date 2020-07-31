@@ -51,7 +51,7 @@ namespace ChangerSynchronization_framework.Controllers
                 if (insertResult.serverId == null)
                 {
                     Logger.Log.Error("PostEventChanger: не удалось записать в базу EventChanger." + Environment.NewLine);
-                    return Request.CreateResponse((HttpStatusCode)503, "Неудалось записть в базу");
+                    return Request.CreateResponse((HttpStatusCode)503, "Неудалось записать в базу");
                 }
 
                 return Request.CreateResponse(HttpStatusCode.Created, JsonConvert.SerializeObject(insertResult));
@@ -74,7 +74,7 @@ namespace ChangerSynchronization_framework.Controllers
                 DbCommand command = _model.Database.Connection.CreateCommand();
 
                 command.CommandText = $"INSERT INTO EventChanger (IDChanger, IDEventChangerKind, DTime) " +
-                    $"VALUES ((select IDChanger from Changers c where c.Code = '{eventFull.changer}'), " +
+                    $"VALUES ((select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = '{eventFull.changer}'), " +
                     $"(select IDEventChangerKind from EventChangerKind evk where evk.Code = '{eventFull.eventKindCode}')," +
                     $"'{eventFull.dtime.ToString("yyyy-MM-dd HH:mm:ss")}'); " +
                     $"SELECT SCOPE_IDENTITY();";
