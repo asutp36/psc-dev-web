@@ -14,19 +14,21 @@ namespace Inspinia_MVC5.Controllers
 
         List<CardType> _cardTypes = null;
         List<CardStatus> _cardStatuses = null;
-        List<Changer> _changers = null;
-        List<Post> _posts = null;
         List<Device> _devices = null;
         List<OperationType> _operationTypes = null;
+
+        List<Device> _requiredPosts = null;
+        List<Device> _requiredChangers = null;
 
         public CardsController()
         {
             _cardTypes = db.CardTypes.ToList();
             _cardStatuses = db.CardStatuses.ToList();
             _devices = db.Devices.ToList();
-            _changers = new List<Changer>();
-            _posts = new List<Post>();
             _operationTypes = db.OperationTypes.ToList();
+
+            _requiredPosts = new List<Device>();
+            _requiredChangers = new List<Device>();
 
             var washes = db.Washes.Where(w => w.Code == "М13" || w.Code == "М14").ToList();
             var changers = db.Changers.ToList();
@@ -35,30 +37,34 @@ namespace Inspinia_MVC5.Controllers
             {
                 foreach (var p in w.Posts)
                 {
-                    var code = _devices.Find(d => d.IDDevice == p.IDDevice).IDDeviceType;
-                    if (code == 2)
+                    var dev = _devices.Find(d => d.IDDevice == p.IDDevice);
+                    if (dev.IDDeviceType == 2)
                     {
-                        _posts.Add(p);
+                        _requiredPosts.Add(dev);
                     }
                 }
 
-                var ch = changers.Find(c => c.IDWash == w.IDWash);
-
-                if (changers.Find(c => c.IDWash == w.IDWash) != null)
+                var chs = changers.FindAll(c => c.IDWash == w.IDWash);
+                
+                foreach(var c in chs)
                 {
-                    _changers.Add(changers.Find(c => c.IDWash == w.IDWash));
+                    var device = _devices.Find(d => d.IDDevice == c.IDDevice);
+
+                    if (device != null)
+                    {
+                        _requiredChangers.Add(device);
+                    }
                 }
             }
 
-            if(_changers.Count < 1)
-            {
-                _changers = changers;
-            }
+            var mobileapp = _devices.Find(d => d.Code == "MOB-EM");
+
+            _requiredChangers.Add(mobileapp);
 
             ViewBag.CardTypes = _cardTypes;
             ViewBag.CardStatuses = _cardStatuses;
-            ViewBag.Changers = _changers;
-            ViewBag.Posts = _posts;
+            ViewBag.Changers = _requiredChangers;
+            ViewBag.Posts = _requiredPosts;
             ViewBag.OperationTypes = _operationTypes;
         }
 

@@ -154,13 +154,19 @@
                         <text>
                     {
                         value: "@w.Code", text: "@w.Name", posts: [
-                            @foreach(var p in w.Posts)
+                           @foreach(var p in w.Posts)
                             {
-                                <text>
-                            {
-                                value: "@p.Code", text: "@p.Code"
-                            },
-                                </text>
+                                foreach(var d in ViewBag.Devices)
+                                {
+                                    if(p.IDDevice == d.IDDevice)
+                                    {
+                                        <text>
+                                    {
+                                        value: "@d.Code", text: "@d.Name"
+                                    },
+                                        </text>
+                                    }
+                                }
                             }
                         ]
                     },
@@ -173,13 +179,19 @@
         @foreach (var item in ViewBag.Washes) {
             <text>
                 washes.push({ value:"@item.Code", text:"@item.Name", posts:[
-                    @foreach(var w in item.Posts)
+                    @foreach(var p in item.Posts)
                     {
-                        <text>
-                    {
-                        value: "@w.Code", text: "@w.Code"
-                    },
-                        </text>
+                        foreach(var d in ViewBag.Devices)
+                        {
+                            if(p.IDDevice == d.IDDevice)
+                            {
+                                <text>
+                            {
+                                value: "@d.Code", text: "@d.Name"
+                            },
+                                </text>
+                            }
+                        }
                     }
                     ]});
             </text>
@@ -198,8 +210,6 @@
                 washes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
 
                 $selwash.val(curwashval);
-
-                eventChangeWash();
             }
             else {
                 var newwashes = [];

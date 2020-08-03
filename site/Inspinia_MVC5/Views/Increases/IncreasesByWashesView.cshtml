@@ -153,16 +153,7 @@
                     {
                         <text>
                     {
-                        value: "@w.Code", text: "@w.Name", posts: [
-                            @foreach(var p in w.Posts)
-                            {
-                                <text>
-                            {
-                                value: "@p.Code", text: "@p.Code"
-                            },
-                                </text>
-                            }
-                        ]
+                        value: "@w.Code", text: "@w.Name"
                     },
                         </text>
                     }
@@ -172,16 +163,7 @@
 
         @foreach (var item in ViewBag.Washes) {
             <text>
-                washes.push({ value:"@item.Code", text:"@item.Name", posts:[
-                    @foreach(var w in item.Posts)
-                    {
-                        <text>
-                    {
-                        value: "@w.Code", text: "@w.Code"
-                    },
-                        </text>
-                    }
-                    ]});
+                washes.push({ value:"@item.Code", text:"@item.Name"});
             </text>
         }
 
@@ -198,8 +180,6 @@
                 washes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
 
                 $selwash.val(curwashval);
-
-                eventChangeWash();
             }
             else {
                 var newwashes = [];

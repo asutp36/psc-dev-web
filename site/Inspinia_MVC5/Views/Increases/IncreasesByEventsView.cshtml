@@ -55,7 +55,7 @@
                     <option value="" selected=""></option>
                     @foreach (var item in ViewBag.Posts)
                     {
-                        <option value="@item.Code">@item.Code</option>
+                        <option value="@item.Code">@item.Name</option>
                     }
                 </select>
             </div>
@@ -104,7 +104,7 @@
     @Scripts.Render("~/plugins/dataPicker")
     @Scripts.Render("~/plugins/dateRange")
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
     function initDataTable() {
         $('#table-increases').DataTable({
@@ -161,7 +161,7 @@
                     return intVal(a) + intVal(b);
                 }, 0);
 
-                $(api.column(4).footer()).html(numFormat(total));                
+                $(api.column(4).footer()).html(numFormat(total));
             }
         });
     }
@@ -180,11 +180,17 @@
                     value: "@w.Code", text: "@w.Name", posts: [
                         @foreach(var p in w.Posts)
                         {
-                            <text>
-                        {
-                            value: "@p.Code", text: "@p.Code"
-                        },
-                            </text>
+                            foreach(var d in ViewBag.Devices)
+                            {
+                                if(p.IDDevice == d.IDDevice)
+                                {
+                                    <text>
+                                {
+                                    value: "@d.Code", text: "@d.Name"
+                                },
+                                    </text>
+                                }
+                            }
                         }
                     ]
                 },
@@ -197,13 +203,19 @@
     @foreach (var item in ViewBag.Washes) {
         <text>
             washes.push({ value:"@item.Code", text:"@item.Name", posts:[
-                @foreach(var w in item.Posts)
+               @foreach(var p in item.Posts)
                 {
-                    <text>
-                {
-                    value: "@w.Code", text: "@w.Code"
-                },
-                    </text>
+                    foreach(var d in ViewBag.Devices)
+                    {
+                        if(p.IDDevice == d.IDDevice)
+                        {
+                            <text>
+                        {
+                            value: "@d.Code", text: "@d.Name"
+                        },
+                            </text>
+                        }
+                    }
                 }
                 ]});
         </text>
@@ -211,7 +223,7 @@
 
     @foreach (var item in ViewBag.Posts) {
         <text>
-            posts.push({ value: "@item.Code", text: "@item.Code" }, );
+            posts.push({ value: "@item.Code", text: "@item.Name" }, );
         </text>
     }
 
@@ -439,7 +451,7 @@
                 $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
                 filter();
         });
-    </script>
+</script>
 }
 
 

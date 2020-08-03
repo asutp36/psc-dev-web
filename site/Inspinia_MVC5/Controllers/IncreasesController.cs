@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Management;
 using System.Web.Mvc;
@@ -18,6 +19,7 @@ namespace Inspinia_MVC5.Controllers
         List<Wash> _washes = null;
         List<Post> _posts = null;
         List<Device> _devices = null;
+        List<Device> _requiredPosts = null;
 
         public IncreasesController()
         {
@@ -29,7 +31,8 @@ namespace Inspinia_MVC5.Controllers
             _devices = db.Devices.ToList();
 
             _regions = new List<Region>();
-            _posts = new List<Post>();
+            _posts = db.Posts.ToList();
+            _requiredPosts = new List<Device>();
 
             foreach (Wash w in _washes)
             {
@@ -45,7 +48,15 @@ namespace Inspinia_MVC5.Controllers
                 //    }
                 //}
 
-                _posts.AddRange(w.Posts);
+                foreach(var p in w.Posts)
+                {
+                    Device device = _devices.Find(d => d.IDDevice == p.IDDevice);
+
+                    if(device != null)
+                    {
+                        _requiredPosts.Add(device);
+                    }
+                }
             }
 
             foreach (var r in _regions)
@@ -66,7 +77,8 @@ namespace Inspinia_MVC5.Controllers
 
             ViewBag.Regions = _regions;
             ViewBag.Washes = _washes;
-            ViewBag.Posts = _posts;
+            ViewBag.Posts = _requiredPosts;
+            ViewBag.Devices = _devices;
         }
 
         public ActionResult IncreasesOnPostsFilter(string region, string wash, string post, string begdate, string enddate)
@@ -421,8 +433,19 @@ namespace Inspinia_MVC5.Controllers
 
             Device device = _devices.Find(d => d.Code == post);
 
-            ViewBag.Region = _posts.Find(p => p.IDDevice == device.IDDevice).Wash.Region.Code;
-            ViewBag.Wash = _posts.Find(p => p.IDDevice == device.IDDevice).Wash.Code;
+            var wash = _posts.Find(p => p.IDDevice == device.IDDevice).Wash;
+
+            if (wash != null)
+            {
+                ViewBag.Region = wash.Region.Code;
+                ViewBag.Wash = wash.Code;
+            }
+            else
+            {
+                ViewBag.Region = "";
+                ViewBag.Wash = "";
+            }
+
             ViewBag.Post = device.Code;
 
             DateTime bdate;
