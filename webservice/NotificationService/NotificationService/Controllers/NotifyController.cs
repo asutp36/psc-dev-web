@@ -15,6 +15,14 @@ namespace NotificationService.Controllers
     {
         ModelDb _model = new ModelDb();
 
+        /// <summary>
+        /// Отправка сообщения с сервера
+        /// </summary>
+        /// <param name="msgToSend"></param>
+        /// <returns></returns>
+        /// <response code="200">Ок</response>
+        /// <response code="204">Ошибка во входных данных</response>
+        /// <response code="500">Внутренняя ошибка</response>
         [HttpPost]
         [ActionName("message")]
         public HttpResponseMessage SendMessage([FromBody]MessageToSend msgToSend)
@@ -93,6 +101,14 @@ namespace NotificationService.Controllers
             }
         }
 
+        /// <summary>
+        /// Отправка сообщения с поста
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <returns></returns>
+        /// <response code="200">Ок</response>
+        /// <response code="424">Сообщение не отправлено</response>
+        /// <response code="204">Телефон пустой</response>
         [HttpPost]
         [ActionName("message-dev")]
         public HttpResponseMessage SendMessageDev([FromBody]MessagePhone msg)
