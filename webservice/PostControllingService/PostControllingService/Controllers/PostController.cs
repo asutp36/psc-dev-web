@@ -429,12 +429,10 @@ namespace PostControllingService.Controllers
 
         private string GetPostIp(string code)
         {
-            int? idDevice = _model.Posts.ToList().Find(x => x.Code == code).IDDevice;
+            string ip = _model.Device.Where(d => d.Code.Equals(code)).FirstOrDefault().IpAddress;
 
-            if (idDevice != null)
-            {
-                return _model.Device.ToList().Find(x => x.IDDevice == idDevice).IpAddress;
-            }
+            if (ip.Length > 1)
+                return ip;
 
             return null;
         }
