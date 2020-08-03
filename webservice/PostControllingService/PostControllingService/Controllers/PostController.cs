@@ -15,6 +15,14 @@ namespace PostControllingService.Controllers
     {
         ModelDb _model = new ModelDb();
 
+        /// <summary>
+        /// Запрос текущих тарифов по мойкам
+        /// </summary>
+        /// <param name="washes">Список кодов моек</param>
+        /// <returns>Список режим/тариф</returns>
+        /// <response code="200">Ок</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Ошибка во входных данных</response>
         [HttpPost]
         [ActionName("getrate")]
         public HttpResponseMessage GetCurrentRate([FromBody]string[] washes)
@@ -78,6 +86,15 @@ namespace PostControllingService.Controllers
             }
         }
 
+        /// <summary>
+        /// Отправка новых тарифов на мойки
+        /// </summary>
+        /// <param name="change">Новые тарифы</param>
+        /// <returns></returns>
+        /// <response code="200">Ок</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Ошибка во входных данных</response>
+        /// <response code="409">Код ответа поста был не 200</response>
         [HttpPost]
         [ActionName("rate")]
         public HttpResponseMessage SendRates([FromBody]ChangeRates change)
@@ -125,6 +142,15 @@ namespace PostControllingService.Controllers
             }
         }
 
+        /// <summary>
+        /// Пополнить баланс поста
+        /// </summary>
+        /// <param name="balance"></param>
+        /// <returns></returns>
+        /// <response code="409">Код ответа поста был не 200</response>
+        /// <response code="200">Ок</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Ошибка во входных данных</response>
         [HttpPost]
         [ActionName("incrbalance")]
         public HttpResponseMessage IncreaseBalance([FromBody]IncreaseBalance balance)
@@ -170,6 +196,15 @@ namespace PostControllingService.Controllers
             }
         }
 
+        /// <summary>
+        /// Узнать текущий баланс на посту
+        /// </summary>
+        /// <param name="post">Код поста</param>
+        /// <returns>Balance в заголовке</returns>
+        /// <response code="409">Код ответа поста был не 200</response>
+        /// <response code="200">Ок, в заголовке Balance</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Ошибка во входных данных</response>
         [HttpPost]
         [ActionName("getbalance")]
         public HttpResponseMessage GetCurrentBalance([FromBody]RequestWPostCode post)
@@ -219,6 +254,15 @@ namespace PostControllingService.Controllers
             }
         }
 
+        /// <summary>
+        /// Узнать текущую функцю на посте
+        /// </summary>
+        /// <param name="post">Код поста</param>
+        /// <returns>Function в заголовке</returns>
+        /// <response code="409">Код ответа поста был не 200</response>
+        /// <response code="200">Ок, в заголовке Function</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Ошибка во входных данных</response>
         [HttpPost]
         [ActionName("getfunc")]
         public HttpResponseMessage GetCurrentFunction([FromBody]RequestWPostCode post)
@@ -270,7 +314,15 @@ namespace PostControllingService.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Задать текующую функцию на посту
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        /// <response code="409">Код ответа поста был не 200</response>
+        /// <response code="200">Ок</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Ошибка во входных данных</response>
         [HttpPost]
         [ActionName("setfunc")]
         public HttpResponseMessage SetFunction([FromBody]SetFunction func)
@@ -318,6 +370,15 @@ namespace PostControllingService.Controllers
             }
         }
 
+        /// <summary>
+        /// Проверка связ с постом
+        /// </summary>
+        /// <param name="post">Код поста</param>
+        /// <returns>Heartbeat в заголовках</returns>
+        /// <response code="409">Код ответа поста был не 200</response>
+        /// <response code="200">Ок, в заголовке Heartbeat</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Ошибка во входных данных</response>
         [HttpPost]
         [ActionName("heartbeat")]
         public HttpResponseMessage HeartBeat([FromBody]RequestWPostCode post)
