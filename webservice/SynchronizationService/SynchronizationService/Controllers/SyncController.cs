@@ -17,6 +17,14 @@ namespace SynchronizationService.Controllers
     {
         private ModelDb _model = new ModelDb();
 
+        /// <summary>
+        /// Синхронизация записей таблицы Operations
+        /// </summary>
+        /// <param name="operation">Данные операции</param>
+        /// <returns>ServerID в заголовках при удачной записи</returns>
+        /// <response code="200">ОК, ServerID в заголовке</response>
+        /// <response code="204">Входные данные = null</response>
+        /// <response code="500">Внутренняя ошибка, читать тело ответа</response>
         [HttpPost]
         [ActionName("op")]
         public HttpResponseMessage PostOp([FromBody]Operations operation)
@@ -39,7 +47,8 @@ namespace SynchronizationService.Controllers
 
                         command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
                                                 $" VALUES((select IDCard from Cards where LocalizedBy =  {operation.LocalizedBy} and LocalizedID = {operation.IDCard}), " +
-                                                $"{operation.LocalizedBy}, {operation.IDOperationType}, \'{operation.DTime.ToString("yyyyMMdd HH:mm:ss")}\', {operation.Amount}, {operation.Balance}, {operation.LocalizedBy}, {operation.IDOperation});" +
+                                                $"(select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = '{operation.LocalizedBy}'), {operation.IDOperationType}, " +
+                                                $"\'{operation.DTime.ToString("yyyyMMdd HH:mm:ss")}\', {operation.Amount}, {operation.Balance}, {operation.LocalizedBy}, {operation.IDOperation});" +
                                                 " SELECT SCOPE_IDENTITY()";
 
                         Logger.Log.Debug("Command is: " + command.CommandText);
@@ -70,6 +79,14 @@ namespace SynchronizationService.Controllers
             return responseBad;
         }
 
+        /// <summary>
+        /// Синхронизация записей таблицы Owners
+        /// </summary>
+        /// <param name="owner">Данные владельца</param>
+        /// <returns>ServerID в заголовках при удачной записи</returns>
+        /// <response code="200">ОК, ServerID в заголовке</response>
+        /// <response code="204">Входные данные = null</response>
+        /// <response code="500">Внутренняя ошибка, читать тело ответа</response>
         [HttpPost]
         [ActionName("owner")]
         public HttpResponseMessage PostOw([FromBody]Owners owner)
@@ -118,6 +135,14 @@ namespace SynchronizationService.Controllers
 
         }
 
+        /// <summary>
+        /// Синхронизация таблицы Cards
+        /// </summary>
+        /// <param name="card">Данные карты</param>
+        /// <returns>ServerID в заголовках при удачной записи</returns>
+        /// <response code="200">ОК, ServerID в заголовке</response>
+        /// <response code="204">Входные данные = null</response>
+        /// <response code="500">Внутренняя ошибка, читать тело ответа</response>
         [HttpPost]
         [ActionName("card")]
         public HttpResponseMessage PostCard([FromBody]Cards card)
@@ -166,6 +191,14 @@ namespace SynchronizationService.Controllers
             return responseBad;
         }
 
+        /// <summary>
+        /// Снхронизация таблицы Finance
+        /// </summary>
+        /// <param name="finance"></param>
+        /// <returns>ServerID в заголовках при удачной записи</returns>
+        /// <response code="200">ОК, ServerID в заголовке</response>
+        /// <response code="204">Входные данные = null</response>
+        /// <response code="500">Внутренняя ошибка, читать тело ответа</response>
         [HttpPost]
         [ActionName("finance")]
         public HttpResponseMessage PostFinance([FromBody]FinanceFromRequest finance)
@@ -183,7 +216,8 @@ namespace SynchronizationService.Controllers
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.CommandText = "INSERT INTO Finance (IDDevice, IDFinanceType, DTime, Amount)" +
                                                 $" VALUES((select IDDevice from Device where ServerID = {finance.DeviceServerID}), " +
-                                                $" (select IDFinanceType from FinanceType where ServerID = {finance.FinanceTypeServerID}), \'{finance.DTime.ToString("yyyyMMdd HH:mm:ss")}\'," +
+                                                $" (select IDFinanceType from FinanceType where ServerID = {finance.FinanceTypeServerID}), " +
+                                                $"\'{finance.DTime.ToString("yyyyMMdd HH:mm:ss")}\'," +
                                                 $" {finance.Amount}); SELECT SCOPE_IDENTITY()";
 
                         Logger.Log.Debug("Command is: " + command.CommandText);
@@ -214,6 +248,15 @@ namespace SynchronizationService.Controllers
             return responseBad;
         }
 
+        /// <summary>
+        /// Снхронизация таблицы EventIncrease
+        /// </summary>
+        /// <param name="increase">Данные внесения</param>
+        /// <returns>ServerID в заголовках при удачной записи</returns>
+        /// <response code="200">ОК, ServerID в заголовке</response>
+        /// <response code="204">Входные данные = null</response>
+        /// <response code="500">Внутренняя ошибка, читать тело ответа</response>
+        /// <response code="409">Есть операция с таким же временем</response>
         [HttpPost]
         [ActionName("eincrease")]
         public HttpResponseMessage PostEventIncrease([FromBody]EIncreaseFromRequest increase)
@@ -289,6 +332,15 @@ namespace SynchronizationService.Controllers
             }
         }
 
+        /// <summary>
+        /// Синхронизация таблицы EventMode
+        /// </summary>
+        /// <param name="mode">Данные режима</param>
+        /// <returns>ServerID в заголовках при удачной записи</returns>
+        /// <response code="200">ОК, ServerID в заголовке</response>
+        /// <response code="204">Входные данные = null</response>
+        /// <response code="500">Внутренняя ошибка, читать тело ответа</response>
+        /// <response code="409">Есть операция с таким же временем</response>
         [HttpPost]
         [ActionName("emode")]
         public HttpResponseMessage PostEventMode([FromBody]EModeFromRequest mode)
@@ -369,6 +421,15 @@ namespace SynchronizationService.Controllers
             }
         }
 
+        /// <summary>
+        /// Синхронзация таблицы EventCollect
+        /// </summary>
+        /// <param name="collect">Данные инкассации</param>
+        /// <returns>ServerID в заголовках при удачной записи</returns>
+        /// <response code="200">ОК, ServerID в заголовке</response>
+        /// <response code="204">Входные данные = null</response>
+        /// <response code="500">Внутренняя ошибка, читать тело ответа</response>
+        /// <response code="409">Есть операция с таким же временем</response>
         [HttpPost]
         [ActionName("ecollect")]
         public HttpResponseMessage PostEventCollect([FromBody]ECollectFromRequest collect)
