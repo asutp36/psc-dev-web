@@ -161,6 +161,7 @@
     <Compile Include="Controllers\Supplies\Logger.cs" />
     <Compile Include="Controllers\Supplies\NewCard.cs" />
     <Compile Include="Controllers\Supplies\NewCardDev.cs" />
+    <Compile Include="Controllers\Supplies\PhoneFormatter.cs" />
     <Compile Include="Controllers\Supplies\Sender.cs" />
     <Compile Include="Controllers\Supplies\StartPostBindingModel.cs" />
     <Compile Include="Controllers\Supplies\StartPostDevModel.cs" />

@@ -889,7 +889,7 @@ namespace MobileIntegration.Controllers
         }
 
         /// <summary>
-        /// Получиьт список карт по номеру телефона
+        /// Получить список карт по номеру телефона
         /// </summary>
         /// <param name="id">Номер телефона</param>
         /// <returns>Список номеров карт</returns>
