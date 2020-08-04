@@ -57,9 +57,21 @@ namespace Inspinia_MVC5.Controllers
                 }
             }
 
-            var mobileapp = _devices.Find(d => d.Code == "MOB-EM");
+            if(_requiredChangers.Count < 1)
+            {
+                foreach (var c in changers)
+                {
+                    var changer = _devices.Find(d => d.IDDevice == c.IDDevice);
 
-            _requiredChangers.Add(mobileapp);
+                    _requiredChangers.Add(changer);
+                }
+            }
+            else
+            {
+                var mobileapp = _devices.Find(d => d.Code == "MOB-EM");
+
+                _requiredChangers.Add(mobileapp);
+            }
 
             ViewBag.CardTypes = _cardTypes;
             ViewBag.CardStatuses = _cardStatuses;
