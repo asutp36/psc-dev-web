@@ -22,6 +22,7 @@ namespace MobileIntegration.Models
     
         public int IDOwner { get; set; }
         public string Phone { get; set; }
+        public Nullable<long> PhoneInt { get; set; }
         public int LocalizedBy { get; set; }
         public int LocalizedID { get; set; }
     

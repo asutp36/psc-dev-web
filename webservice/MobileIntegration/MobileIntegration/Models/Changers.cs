@@ -14,21 +14,10 @@ namespace MobileIntegration.Models
     
     public partial class Changers
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Changers()
-        {
-            this.Operations = new HashSet<Operations>();
-        }
-    
         public int IDChanger { get; set; }
-        public string Name { get; set; }
-        public int IDWash { get; set; }
-        public string Code { get; set; }
         public Nullable<int> IDDevice { get; set; }
+        public int IDWash { get; set; }
     
-        public virtual Wash Wash { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Operations> Operations { get; set; }
         public virtual Device Device { get; set; }
     }
 }

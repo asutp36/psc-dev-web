@@ -201,9 +201,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelDb.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Models\NumsMobileCards.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Operations.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
@@ -214,9 +211,6 @@
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Posts.cs">
-      <DependentUpon>ModelDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Wash.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

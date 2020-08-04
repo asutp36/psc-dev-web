@@ -15,6 +15,7 @@ namespace MobileIntegration.Models
     public partial class Operations
     {
         public int IDOperation { get; set; }
+        public Nullable<int> IDDevice { get; set; }
         public int IDOperationType { get; set; }
         public int IDCard { get; set; }
         public System.DateTime DTime { get; set; }
@@ -24,10 +25,9 @@ namespace MobileIntegration.Models
         public int LocalizedID { get; set; }
         public string Functions { get; set; }
         public string Details { get; set; }
-        public int IDChanger { get; set; }
     
         public virtual Cards Cards { get; set; }
+        public virtual Device Device { get; set; }
         public virtual OperationTypes OperationTypes { get; set; }
-        public virtual Changers Changers { get; set; }
     }
 }

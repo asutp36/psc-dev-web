@@ -4,30 +4,26 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="83caacf3e5c742fa875f2413dd188215" Name="Diagram1">
-        <EntityTypeShape EntityType="WashCompanyModel.Cards" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="WashCompanyModel.CardStatuses" Width="1.5" PointX="0.75" PointY="2" IsExpanded="true" />
-        <EntityTypeShape EntityType="WashCompanyModel.CardTypes" Width="1.5" PointX="0.75" PointY="5.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="WashCompanyModel.Device" Width="1.5" PointX="0.75" PointY="14.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="WashCompanyModel.DeviceTypes" Width="1.5" PointX="1.5" PointY="18.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="WashCompanyModel.NumsMobileCards" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="WashCompanyModel.Operations" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
-        <EntityTypeShape EntityType="WashCompanyModel.OperationTypes" Width="1.5" PointX="3" PointY="5.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="WashCompanyModel.Owners" Width="1.5" PointX="0.75" PointY="8" IsExpanded="true" />
-        <EntityTypeShape EntityType="WashCompanyModel.Posts" Width="1.5" PointX="3" PointY="13.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="WashCompanyModel.Wash" Width="1.5" PointX="0.75" PointY="11" IsExpanded="true" />
-        <AssociationConnector Association="WashCompanyModel.FK_Cards_CardStatuses" ManuallyRouted="false" />
-        <AssociationConnector Association="WashCompanyModel.FK_Cards_CardTypes" ManuallyRouted="false" />
-        <AssociationConnector Association="WashCompanyModel.FK_Cards_Owners" ManuallyRouted="false" />
-        <AssociationConnector Association="WashCompanyModel.FK_Operations_Cards" ManuallyRouted="false" />
-        <AssociationConnector Association="WashCompanyModel.FK_Device_DeviceTypes" ManuallyRouted="false" />
-        <AssociationConnector Association="WashCompanyModel.FK_Posts_Device" ManuallyRouted="false" />
-        <AssociationConnector Association="WashCompanyModel.FK_Operations_OperationTypes" ManuallyRouted="false" />
-        <AssociationConnector Association="WashCompanyModel.FK_Posts_Wash" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="WashCompanyModel.Changers" Width="1.5" PointX="3" PointY="8.25" />
-        <AssociationConnector Association="WashCompanyModel.FK_Changers_Wash" />
-        <AssociationConnector Association="WashCompanyModel.FK_Operations_Changers" />
-        <AssociationConnector Association="WashCompanyModel.FK_Changers_Device" />
+      <Diagram DiagramId="f0cd05b9859844e89f9fbfca30374a4a" Name="Diagram1">
+        <EntityTypeShape EntityType="WashCompanyEntities.Cards" Width="1.5" PointX="6" PointY="15.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompanyEntities.CardStatuses" Width="1.5" PointX="3.75" PointY="13.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompanyEntities.CardTypes" Width="1.5" PointX="3.75" PointY="16.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompanyEntities.Changers" Width="1.5" PointX="5.25" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompanyEntities.Device" Width="1.5" PointX="3" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompanyEntities.DeviceTypes" Width="1.5" PointX="0.75" PointY="4.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompanyEntities.Operations" Width="1.5" PointX="8.25" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompanyEntities.OperationTypes" Width="1.5" PointX="6" PointY="7.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompanyEntities.Owners" Width="1.5" PointX="3.75" PointY="19" IsExpanded="true" />
+        <EntityTypeShape EntityType="WashCompanyEntities.Posts" Width="1.5" PointX="5.25" PointY="10.5" IsExpanded="true" />
+        <AssociationConnector Association="WashCompanyEntities.FK_Cards_CardStatuses" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompanyEntities.FK_Cards_CardTypes" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompanyEntities.FK_Cards_Owners" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompanyEntities.FK_Operations_Cards" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompanyEntities.FK_Changers_Device" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompanyEntities.FK_Device_DeviceTypes" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompanyEntities.FK_Operations_Device" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompanyEntities.FK_Posts_Device" ManuallyRouted="false" />
+        <AssociationConnector Association="WashCompanyEntities.FK_Operations_OperationTypes" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

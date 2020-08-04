@@ -28,14 +28,12 @@ namespace MobileIntegration.Models
         public virtual DbSet<Cards> Cards { get; set; }
         public virtual DbSet<CardStatuses> CardStatuses { get; set; }
         public virtual DbSet<CardTypes> CardTypes { get; set; }
+        public virtual DbSet<Changers> Changers { get; set; }
         public virtual DbSet<Device> Device { get; set; }
         public virtual DbSet<DeviceTypes> DeviceTypes { get; set; }
-        public virtual DbSet<NumsMobileCards> NumsMobileCards { get; set; }
         public virtual DbSet<Operations> Operations { get; set; }
         public virtual DbSet<OperationTypes> OperationTypes { get; set; }
         public virtual DbSet<Owners> Owners { get; set; }
         public virtual DbSet<Posts> Posts { get; set; }
-        public virtual DbSet<Wash> Wash { get; set; }
-        public virtual DbSet<Changers> Changers { get; set; }
     }
 }

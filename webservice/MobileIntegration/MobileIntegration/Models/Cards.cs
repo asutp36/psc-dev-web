@@ -25,6 +25,7 @@ namespace MobileIntegration.Models
         public string CardNum { get; set; }
         public int IDCardStatus { get; set; }
         public int IDCardType { get; set; }
+        public Nullable<int> Balance { get; set; }
         public int LocalizedBy { get; set; }
         public int LocalizedID { get; set; }
     

@@ -17,8 +17,9 @@ namespace MobileIntegration.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Device()
         {
-            this.Posts = new HashSet<Posts>();
             this.Changers = new HashSet<Changers>();
+            this.Operations = new HashSet<Operations>();
+            this.Posts = new HashSet<Posts>();
         }
     
         public int IDDevice { get; set; }
@@ -28,10 +29,12 @@ namespace MobileIntegration.Models
         public Nullable<int> IDDeviceType { get; set; }
         public string IpAddress { get; set; }
     
-        public virtual DeviceTypes DeviceTypes { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Posts> Posts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Changers> Changers { get; set; }
+        public virtual DeviceTypes DeviceTypes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Operations> Operations { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Posts> Posts { get; set; }
     }
 }
