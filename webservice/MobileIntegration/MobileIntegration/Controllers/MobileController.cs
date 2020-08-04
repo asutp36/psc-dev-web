@@ -670,12 +670,14 @@ namespace MobileIntegration.Controllers
 
                             var cardNum = command.ExecuteScalar();
 
+                            PhoneFormatter formattedPhone = new PhoneFormatter(newCard.phone);
+
                             DbTransaction tran = _model.Database.Connection.BeginTransaction();
                             command.Transaction = tran;
 
                             try
                             {
-                                command.CommandText = $"insert into Owners (Phone, LocalizedBy, LocalizedID) values ('{newCard.phone}', 0, 0)";
+                                command.CommandText = $"insert into Owners (Phone, PhoneInt, LocalizedBy, LocalizedID) values ('{formattedPhone.phone}', {formattedPhone.phoneInt}, 0, 0)";
                                 command.ExecuteNonQuery();
                                 command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) values (scope_identity(), '{cardNum}', 1, 4, 0, 0)";
                                 command.ExecuteNonQuery();
@@ -683,7 +685,7 @@ namespace MobileIntegration.Controllers
                                        $"values ((select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = 'MOB-EM'), " +
                                        $"(select IDOperationType from OperationTypes ot where ot.Code = 'activation'), " +
                                        $"scope_identity(), '{newCard.time_send}', " +
-                                       $"0, 0, 0, 0);";
+                                       $"0, 0, (select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = 'MOB-EM'), 0);";
                                 command.ExecuteNonQuery();
 
                                 Logger.Log.Debug($"NewCard: добавлены Owner и Card. CardNum = {cardNum.ToString()}" + Environment.NewLine);
@@ -760,6 +762,8 @@ namespace MobileIntegration.Controllers
                         hash = CryptHash.GetHashCode(dtime.ToString("yyyy-MM-dd HH:mm:ss"))
                     };
 
+                    PhoneFormatter formattedPhone = new PhoneFormatter(card.phone);
+
                     // запись в нашу базу новую карту
                     if (_model.Database.Exists())
                     {
@@ -781,18 +785,18 @@ namespace MobileIntegration.Controllers
 
                         try
                         {
-                            command.CommandText = $"insert into Owners (Phone, LocalizedBy, LocalizedID) values ('{newCard.phone}', 1, 0)";
+                            command.CommandText = $"insert into Owners (Phone, PhoneInt, LocalizedBy, LocalizedID) values ('{formattedPhone.phone}', {formattedPhone.phoneInt}, 1, 0)";
                             command.ExecuteNonQuery();
                             command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID, Balance) " +
                                 $"values (scope_identity(), '{newCard.card}', (select IDCardStatus from CardStatuses cs where cs.Code = 'norm'), " +
-                                $"(select IDCardType from CardTypes ct where ct.Code = 'client'), (select IDDevice from Changers c where c.Code = '{newCard.changer}'), 0, " +
+                                $"(select IDCardType from CardTypes ct where ct.Code = 'client'), (select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = '{newCard.changer}'), 0, " +
                                 $"{newCard.value})";
                             command.ExecuteNonQuery();
                             command.CommandText = $"insert into Operations (IDChanger, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
-                                $"values ((select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = 'MOB-EM'), " +
+                                $"values ((select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = '{newCard.changer}'), " +
                                 $"(select IDOperationType from OperationTypes ot where ot.Code = 'activation'), " +
                                 $"scope_identity(), '{newCard.time_send}', " +
-                                $"0, 0, (select IDDevice from Changers c where c.Code = '{newCard.changer}'), 0);";
+                                $"0, 0, (select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = '{newCard.changer}'), 0);";
                             command.ExecuteNonQuery();
 
                             Logger.Log.Debug($"SendNewCardDev: добавлены Owner и Card. CardNum = {newCard.card} DTime = {newCard.time_send}" + Environment.NewLine);
