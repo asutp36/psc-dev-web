@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Inspinia_MVC5.Models;
+using Inspinia_MVC5.ViewModels;
 
 namespace Inspinia_MVC5.Controllers
 {
@@ -78,14 +79,14 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult _EventChangerList(string begdate, string enddate, string changerCode, string kindEventCode)
         {
-            List<GetEventsByChanger_Result> view = GetEventChanger(begdate, enddate, changerCode, kindEventCode);
+            List<EventChangerWithDetails> view = GetEventChanger(begdate, enddate, changerCode, kindEventCode);
 
             return PartialView("_EventChangerList", view);
         }
 
-        public List<GetEventsByChanger_Result> GetEventChanger(string begdate, string enddate, string changerCode, string kindEventCode)
+        public List<EventChangerWithDetails> GetEventChanger(string begdate, string enddate, string changerCode, string kindEventCode)
         {
-            List<GetEventsByChanger_Result> resultlist = null;
+            List<EventChangerWithDetails> resultlist = new List<EventChangerWithDetails>();
 
             DateTime bdate;
             if (!DateTime.TryParse(begdate, out bdate))
@@ -119,16 +120,71 @@ namespace Inspinia_MVC5.Controllers
                 ("GetEventsByChanger @p_DateBeg, @p_DateEnd, @p_ChangerCode, @p_KindEventCode ",
                 prmBegDate, prmEndDate, prmChangerCode, prmKindEventCode).ToList();
 
-            resultlist = result;
+            foreach(var r in result)
+            {
+                List<GetDataEventsByChanger_Result> details = GetDetailsEventChanger(begdate, enddate, changerCode, kindEventCode, "10");
+
+                var e = new EventChangerWithDetails(r.ChangerCode, r.DTime, r.KindEventCode, r.KindEvent, details);
+
+                resultlist.Add(e);
+            }
 
             return resultlist;
         }
 
         public ActionResult EventChangerFilter(string begdate, string enddate, string changerCode, string kindEventCode)
         {
-            List<GetEventsByChanger_Result> view = GetEventChanger(begdate, enddate, changerCode, kindEventCode);
+            List<EventChangerWithDetails> view = GetEventChanger(begdate, enddate, changerCode, kindEventCode);
 
             return PartialView("_EventChangerList", view);
+        }
+
+        public List<GetDataEventsByChanger_Result> GetDetailsEventChanger(string begdate, string enddate, string changerCode, string kindEventCode, string idEventChanger)
+        {
+            List<GetDataEventsByChanger_Result> resultlist = null;
+
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = new DateTime(2019, 1, 1);
+
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
+
+            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            prmBegDate.Value = bdate;
+
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
+
+            var prmChangerCode = new System.Data.SqlClient.SqlParameter("@p_ChangerCode", System.Data.SqlDbType.NVarChar);
+            if (changerCode == null)
+            {
+                changerCode = "";
+            }
+            prmChangerCode.Value = changerCode;
+
+            var prmKindEventCode = new System.Data.SqlClient.SqlParameter("@p_KindEventCode", System.Data.SqlDbType.NVarChar);
+            if (kindEventCode == null)
+            {
+                kindEventCode = "";
+            }
+            prmKindEventCode.Value = kindEventCode;
+
+            var prmIDEventChanger = new System.Data.SqlClient.SqlParameter("@IDEventChanger", System.Data.SqlDbType.Int);
+            if (idEventChanger == null || idEventChanger == "0" || idEventChanger == "")
+            {
+                idEventChanger = "1";
+            }
+            prmIDEventChanger.Value = Convert.ToInt32(idEventChanger);
+
+            var result = db.Database.SqlQuery<GetDataEventsByChanger_Result>
+                ("GetDataEventsByChanger @p_DateBeg, @p_DateEnd, @p_ChangerCode, @p_KindEventCode, @IDEventChanger ",
+                prmBegDate, prmEndDate, prmChangerCode, prmKindEventCode, prmIDEventChanger).ToList();
+
+            resultlist = result;
+
+            return resultlist;
         }
     }
 }

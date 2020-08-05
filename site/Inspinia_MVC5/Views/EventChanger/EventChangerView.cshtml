@@ -121,26 +121,35 @@
         });
         }
 
-        function format() {
+        function format(d) {
             // `d` is the original data object for the row
-            return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
-                '<tr>' +
-                '<td>Full name:</td>' +
-                '<td>' + 'qwe' + '</td>' +
-                '</tr>' +
-                '<tr>' +
-                '<td>Extension number:</td>' +
-                '<td>' + 'qwe' + '</td>' +
-                '</tr>' +
-                '<tr>' +
-                '<td>Extra info:</td>' +
-                '<td>And any further details here (images etc)...</td>' +
-                '</tr>' +
-                '</table>';
-        }
-
-        function format(value) {
-            return '<div>Hidden Value: ' + value + '</div>';
+            let ads = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;" class="display table table-striped table-bordered table-hover responsive">'; 
+                //'<thead>' +
+                //    '<tr>' +
+                //        '<th></th>' +
+                //        '<th>Тип операции</th>' +
+                //        '<th>Время операции</th>' +
+                //        '<th>Детали операции</th>' +
+                //    '</tr>' +
+                //'</thead>';
+            for (let i = 0; i < d.length; i++) {
+                ads = ads +
+                    '<tr>' +
+                        '<td>' + (i + 1) + '</td>' +
+                        //'<td>' + d[i].KindEvent + '</td>' +
+                        '<td>' + moment(d[i].DTimeEvent, "x").format('DD.MM.YYYY HH:mm:ss') + '</td>' +
+                        '<td>' + d[i].DataEvent + '</td>' +
+                    '</tr>';
+            }
+            //d.forEach(element => (ads = ads +
+            //    '<tr>' +
+            //        '<td>' + element.KindEvent + '</td>' +
+            //        '<td>' + new Date(element.DTimeEvent).toString() + '</td>' +
+            //        '<td>' + element.DataEvent + '</td>' +
+            //    '</tr>'
+            //));
+            ads = ads + '</table>';
+            return ads;
         }
 
         function filter() {
@@ -186,7 +195,16 @@
 
         $(document).ready(function () {
 
-            $('#table-events tbody').on('click', 'td.details-control', function () {
+            $("#filter-changer").on("input", filter);
+            $("#filter-operation").on("input", filter);
+
+            $("#filter-i").on("input", filter);
+
+            initDataTable();
+
+            $(document).on('click', 'td.details-control', function () {
+
+                var table = $('#table-events').DataTable();
                 var tr = $(this).closest('tr');
                 var row = table.row(tr);
 
@@ -196,17 +214,10 @@
                     tr.removeClass('shown');
                 } else {
                     // Open this row
-                    row.child(format(tr.data('child-value'))).show();
+                    row.child(format(tr.data('details'))).show();
                     tr.addClass('shown');
                 }
             });
-
-            $("#filter-changer").on("input", filter);
-            $("#filter-operation").on("input", filter);
-
-            $("#filter-i").on("input", filter);
-
-            initDataTable();
         });
 
         $('input[name="daterange"]').daterangepicker();

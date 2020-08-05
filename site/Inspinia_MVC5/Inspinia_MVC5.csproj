@@ -418,6 +418,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.en.resx</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\EventChangerWithDetails.cs" />
     <Compile Include="ViewModels\LoginModel.cs" />
     <Compile Include="Controllers\SharedController.cs" />
   </ItemGroup>

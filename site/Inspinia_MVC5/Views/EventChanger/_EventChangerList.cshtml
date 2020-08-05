@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Inspinia_MVC5.Models.GetEventsByChanger_Result>
+﻿@model IEnumerable<Inspinia_MVC5.ViewModels.EventChangerWithDetails>
 
 <div class="sk-spinner sk-spinner-double-bounce">
     <div class="sk-double-bounce1"></div>
@@ -17,8 +17,8 @@
     <tbody>
         @foreach (var m in Model)
         {
-        <tr>
-            <td data-child-value="hidden 1"></td>
+        <tr data-details='@Html.Raw(Json.Encode(m.Details))'>
+            <td></td>
             <td>@m.ChangerCode</td>
             <td>@m.KindEvent</td>
             <td>@m.DTime</td>
