@@ -29,6 +29,7 @@ namespace Inspinia_MVC5.Models
         public int IDPost { get; set; }
         public int IDWash { get; set; }
         public Nullable<int> IDDevice { get; set; }
+        public string QRCode { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Collection> Collections { get; set; }

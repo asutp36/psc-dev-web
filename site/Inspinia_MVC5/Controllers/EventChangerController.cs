@@ -11,134 +11,125 @@ namespace Inspinia_MVC5.Controllers
     {
         private ModelDb db = new ModelDb();
 
-        List<Region> _regions = null;
-        List<Wash> _washes = null;
-        List<Changer> _changers = null;
-        //List<Device> _devices = null;
+        List<Device> _devices = null;
+        List<Device> _requiredChangers = null;
         List<EventChangerKind> _eventKinds = null;
 
         public EventChangerController()
         {
-            _washes = db.Washes.Where(w => w.Code == "М13" || w.Code == "М14").ToList();
-            //_devices = db.Devices.ToList();
-
-            _regions = new List<Region>();
-            _changers = new List<Changer>();
-
+            _devices = db.Devices.ToList();
             _eventKinds = db.EventChangerKinds.Where(e => e.Code == "exchange" || e.Code == "cardCreate" || e.Code == "cardIncrease").ToList();
 
+            _requiredChangers = new List<Device>();
+
+            var washes = db.Washes.Where(w => w.Code == "М13" || w.Code == "М14").ToList();
             var changers = db.Changers.ToList();
 
-            foreach (Wash w in _washes)
+            foreach (Wash w in washes)
             {
-                if (!_regions.Contains(w.Region))
-                    _regions.Add(w.Region);
+                var chs = changers.FindAll(c => c.IDWash == w.IDWash);
 
-                var ch = changers.Find(c => c.IDWash == w.IDWash);
-
-                if(changers.Find(c => c.IDWash == w.IDWash) != null)
+                foreach (var c in chs)
                 {
-                    _changers.Add(changers.Find(c => c.IDWash == w.IDWash));
-                }
-            }
+                    var device = _devices.Find(d => d.IDDevice == c.IDDevice);
 
-            foreach (var r in _regions)
-            {
-                for (int i = r.Washes.Count - 1; i >= 0; i--)
-                {
-                    string code = r.Washes.ElementAt(i).Code;
-
-                    if (code == "М13" || code == "М14")
+                    if (device != null)
                     {
-                    }
-                    else
-                    {
-                        r.Washes.Remove(r.Washes.ElementAt(i));
+                        _requiredChangers.Add(device);
                     }
                 }
             }
 
-            ViewBag.Regions = _regions;
-            ViewBag.Washes = _washes;
-            ViewBag.Changers = _changers;
-            ViewBag.Events = _eventKinds;
-        }
-
-        public ActionResult EventChangerView(string begdate, string enddate, string changer)
-        {
-            if (_changers.Count < 1)
+            if (_requiredChangers.Count < 1)
             {
-                return View("_NoAvailableChangers");
+                foreach (var c in changers)
+                {
+                    var changer = _devices.Find(d => d.IDDevice == c.IDDevice);
+
+                    _requiredChangers.Add(changer);
+                }
             }
             else
             {
-                DateTime bdate;
-                if (!DateTime.TryParse(begdate, out bdate))
-                    bdate = new DateTime(2019, 1, 1);
+                var mobileapp = _devices.Find(d => d.Code == "MOB-EM");
 
-                DateTime edate;
-                if (!DateTime.TryParse(enddate, out edate))
-                    edate = DateTime.Now;
-
-                ViewBag.BegDate = begdate;
-                ViewBag.EndDate = enddate;
-
-                return View("EventChangerView");
+                _requiredChangers.Add(mobileapp);
             }
+
+            ViewBag.Changers = _requiredChangers;
+            ViewBag.Events = _eventKinds;
         }
-        //public ActionResult _EventChangerList(string changer, string begdate, string enddate, string operation)
-        //{
-        //    List<GetEventChanger_Result> view = GetEventChanger(changer, begdate, enddate, operation);
 
-        //    return PartialView("_EventChangerList", view);
-        //}
+        public ActionResult EventChangerView(string begdate, string enddate)
+        {
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = new DateTime(2019, 1, 1);
 
-        //public List<GetEventChanger_Result> GetEventChanger(string changer, string begdate, string enddate, string operation)
-        //{
-        //    List<GetEventChanger_Result> resultlist = null;
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
 
-        //    DateTime bdate;
-        //    if (!DateTime.TryParse(begdate, out bdate))
+            ViewBag.BegDate = begdate;
+            ViewBag.EndDate = enddate;
 
-        //    DateTime edate;
-        //    if (!DateTime.TryParse(enddate, out edate))
-        //        edate = DateTime.Now;
+            return View("EventChangerView");
+        }
 
-        //    var prmChanger = new System.Data.SqlClient.SqlParameter("@p_ChangerID", System.Data.SqlDbType.NVarChar);
-        //    if (changer == null || changer == "")
-        //    {
-        //        changer = "none";
-        //    }
-        //    prmChanger.Value = changer;
+        public ActionResult _EventChangerList(string changer, string begdate, string enddate, string operation)
+        {
+            List<GetEventsByChanger_Result> view = GetEventChanger(changer, begdate, enddate, operation);
 
-        //    var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
-        //    prmBegDate.Value = bdate;
+            return PartialView("_EventChangerList", view);
+        }
 
-        //    var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
-        //    prmEndDate.Value = edate;
+        public List<GetEventsByChanger_Result> GetEventChanger(string begdate, string enddate, string changerCode, string kindEventCode)
+        {
+            List<GetEventsByChanger_Result> resultlist = null;
 
-        //    var prmOperation = new System.Data.SqlClient.SqlParameter("@p_EventChangerKind", System.Data.SqlDbType.NVarChar);
-        //    if (operation == null)
-        //    {
-        //        operation = "";
-        //    }
-        //    prmOperation.Value = operatsql
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = new DateTime(2019, 1, 1);
+
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
+
+            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            prmBegDate.Value = bdate;
+
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
+
+            var prmChangerCode = new System.Data.SqlClient.SqlParameter("@p_ChangerCode", System.Data.SqlDbType.NVarChar);
+            if (changerCode == null || changerCode == "")
+            {
+                changerCode = "none";
+            }
+            prmChangerCode.Value = changerCode;
+
+            var prmKindEventCode = new System.Data.SqlClient.SqlParameter("@p_KindEventCode", System.Data.SqlDbType.NVarChar);
+            if (kindEventCode == null)
+            {
+                kindEventCode = "";
+            }
+            prmKindEventCode.Value = kindEventCode;
 
 
-        //    var result = db.Database.SqlQuery<GetEventChanger_Result>
-        //        ("GetEventChanger @p_DateBeg, @p_DateEnd, @p_ChangerID, @p_EventChangerKind ",
-        //        prmBegDate, prmEndDate, prmChanger, prmOperation).ToList();
+            var result = db.Database.SqlQuery<GetEventsByChanger_Result>
+                ("GetEventsByChanger @p_DateBeg, @p_DateEnd, @p_ChangerCode, @p_KindEventCode ",
+                prmBegDate, prmEndDate, prmChangerCode, prmKindEventCode).ToList();
 
-        //    resultlist = result;
+            resultlist = result;
 
-        //    return resultlist;
-        //}
+            return resultlist;
+        }
 
-        //public ActionResult EventChangerFilter(string changer, string begdate, string enddate, string operation)
-        //{
-        //    List<GetEventChanger_Result> view = GetEventChanger(changer, begdate, enddate, operation);
+        public ActionResult EventChangerFilter(string begdate, string enddate, string changerCode, string kindEventCode)
+        {
+            List<GetEventsByChanger_Result> view = GetEventChanger(begdate, enddate, changerCode, kindEventCode);
 
-        //    return PartialView("_EventChangerList", view);
-        //}
+            return PartialView("_EventChangerList", view);
+        }
     }
 }

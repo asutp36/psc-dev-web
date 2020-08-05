@@ -10,16 +10,14 @@
 namespace Inspinia_MVC5.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class EventChangerCard
+    public partial class GetDataEventsByChanger_Result
     {
-        public int IDEventChangerCard { get; set; }
         public int IDEventChanger { get; set; }
-        public System.DateTime DTime { get; set; }
-        public string CardNum { get; set; }
-        public string Phone { get; set; }
-    
-        public virtual EventChanger EventChanger { get; set; }
+        public string ChangerCode { get; set; }
+        public string KindEventCode { get; set; }
+        public string KindEvent { get; set; }
+        public System.DateTime DTimeEvent { get; set; }
+        public string DataEvent { get; set; }
     }
 }

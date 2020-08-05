@@ -88,14 +88,13 @@
                 @*<a><i class="fa fa-address-card"></i> <span class="nav-label" data-i18n="nav.forms">Карты</span></a>*@
             </li>
 
-            @*<li class="@Html.IsSelected(controller: "EventChanger")">
+            <li class="@Html.IsSelected(controller: "EventChanger")">
                 <a href="@Url.Action("EventChangerView", "EventChanger", new {
-                begdate = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss"),
-                enddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"),
-                changer = "none"
-            })"><i class="fa fa-exchange-alt"></i><span class="nav-label" data-i18n="nav.graphs">События на разменниках</span></a>
-                <a><i class="fa fa-exchange-alt"></i><span class="nav-label" data-i18n="nav.graphs">События на разменниках</span></a>
-            </li>*@
+                    begdate = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss"),
+                    enddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"),
+                })"><i class="fa fa-exchange-alt"></i><span class="nav-label" data-i18n="nav.graphs">События на разменниках</span></a>
+                @*<a><i class="fa fa-exchange-alt"></i><span class="nav-label" data-i18n="nav.graphs">События на разменниках</span></a>*@
+            </li>
 
             <li class="@Html.IsSelected(controller: "Monitoring")">
                 @*<a href="@Url.Action("MonitoringView","Monitoring")"><i class="fa fa-desktop"></i> <span class="nav-label" data-i18n="nav.mailbox">Мониторинг</span></a>*@

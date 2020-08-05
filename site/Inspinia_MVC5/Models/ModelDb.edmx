@@ -39,8 +39,8 @@
             <PropertyRef Name="IDChanger" />
           </Key>
           <Property Name="IDChanger" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="IDWash" Type="int" Nullable="false" />
           <Property Name="IDDevice" Type="int" Nullable="false" />
+          <Property Name="IDWash" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Collections">
           <Key>
@@ -202,6 +202,7 @@
           <Property Name="IDEventChanger" Type="int" Nullable="false" />
           <Property Name="DTime" Type="datetime" Nullable="false" />
           <Property Name="CardNum" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Phone" Type="nvarchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="EventChangerIncrease">
           <Key>
@@ -397,6 +398,7 @@
           <Property Name="IDPost" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IDWash" Type="int" Nullable="false" />
           <Property Name="IDDevice" Type="int" />
+          <Property Name="QRCode" Type="nvarchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="Regions">
           <Key>
@@ -1044,6 +1046,13 @@
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="GetDataEventsByChanger" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_ChangerCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_KindEventCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="IDEventChanger" Type="int" Mode="In" />
+        </Function>
         <Function Name="GetDayIncrease" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
@@ -1051,6 +1060,12 @@
         <Function Name="GetDayReportIncrease" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
           <Parameter Name="p_ReportDate" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="GetEventsByChanger" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_ChangerCode" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_KindEventCode" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="GetEventsByPost" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
@@ -1396,6 +1411,8 @@
           <NavigationProperty Name="Operations" Relationship="Self.FK_Operations_Changers" FromRole="Changers" ToRole="Operations" />
           <Property Name="IDDevice" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Device" Relationship="ModelDb.FK_Changers_Device" FromRole="Changer" ToRole="Device" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Collection">
           <Key>
@@ -1583,6 +1600,7 @@
           <Property Name="DTime" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CardNum" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="EventChanger" Relationship="Self.FK_EventChangerCard_EventChanger" FromRole="EventChangerCard" ToRole="EventChanger" />
+          <Property Name="Phone" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="EventChangerIncrease">
           <Key>
@@ -1809,6 +1827,9 @@
           <NavigationProperty Name="Device" Relationship="Self.FK_Posts_Device" FromRole="Posts" ToRole="Device" />
           <NavigationProperty Name="Events" Relationship="Self.FK_Event_Point" FromRole="Posts" ToRole="Event" />
           <NavigationProperty Name="Wash" Relationship="Self.FK_Posts_Wash" FromRole="Posts" ToRole="Wash" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="QRCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Region">
           <Key>
@@ -2742,6 +2763,19 @@
             <End Role="Device" EntitySet="Devices" />
             <End Role="Changer" EntitySet="Changers" />
           </AssociationSet>
+          <FunctionImport Name="GetDataEventsByChanger" ReturnType="Collection(ModelDb.GetDataEventsByChanger_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_ChangerCode" Mode="In" Type="String" />
+            <Parameter Name="p_KindEventCode" Mode="In" Type="String" />
+            <Parameter Name="IDEventChanger" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetEventsByChanger" ReturnType="Collection(ModelDb.GetEventsByChanger_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_ChangerCode" Mode="In" Type="String" />
+            <Parameter Name="p_KindEventCode" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetBoxAndCollect_Result">
           <Property Type="DateTime" Name="reportdate" Nullable="true" Precision="23" />
@@ -3085,6 +3119,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="GetDataEventsByChanger_Result">
+          <Property Type="Int32" Name="IDEventChanger" Nullable="false" />
+          <Property Type="String" Name="ChangerCode" Nullable="false" MaxLength="10" />
+          <Property Type="String" Name="KindEventCode" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="KindEvent" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="DTimeEvent" Nullable="false" Precision="23" />
+          <Property Type="String" Name="DataEvent" Nullable="true" MaxLength="4000" />
+        </ComplexType>
+        <ComplexType Name="GetEventsByChanger_Result">
+          <Property Type="String" Name="ChangerCode" Nullable="false" MaxLength="10" />
+          <Property Type="DateTime" Name="DTime" Nullable="false" Precision="23" />
+          <Property Type="String" Name="KindEventCode" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="KindEvent" Nullable="false" MaxLength="50" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3126,6 +3174,8 @@
           <EntitySetMapping Name="Changers">
             <EntityTypeMapping TypeName="ModelDb.Changer">
               <MappingFragment StoreEntitySet="Changers">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
                 <ScalarProperty Name="IDChanger" ColumnName="IDChanger" />
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
@@ -3299,6 +3349,7 @@
           <EntitySetMapping Name="EventChangerCards">
             <EntityTypeMapping TypeName="ModelDb.EventChangerCard">
               <MappingFragment StoreEntitySet="EventChangerCard">
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
                 <ScalarProperty Name="IDEventChangerCard" ColumnName="IDEventChangerCard" />
                 <ScalarProperty Name="IDEventChanger" ColumnName="IDEventChanger" />
                 <ScalarProperty Name="DTime" ColumnName="DTime" />
@@ -3514,6 +3565,9 @@
           <EntitySetMapping Name="Posts">
             <EntityTypeMapping TypeName="ModelDb.Post">
               <MappingFragment StoreEntitySet="Posts">
+                <ScalarProperty Name="QRCode" ColumnName="QRCode" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="IDPost" ColumnName="IDPost" />
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
                 <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
@@ -3997,6 +4051,28 @@
                 <ScalarProperty Name="data1DataData1datad6" ColumnName="data1DataData1datad6" />
                 <ScalarProperty Name="data1DataData1datad7" ColumnName="data1DataData1datad7" />
                 <ScalarProperty Name="data1DataData1datad8" ColumnName="data1DataData1datad8" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetDataEventsByChanger" FunctionName="Хранилище ModelDb.GetDataEventsByChanger">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ModelDb.GetDataEventsByChanger_Result">
+                <ScalarProperty Name="IDEventChanger" ColumnName="IDEventChanger" />
+                <ScalarProperty Name="ChangerCode" ColumnName="ChangerCode" />
+                <ScalarProperty Name="KindEventCode" ColumnName="KindEventCode" />
+                <ScalarProperty Name="KindEvent" ColumnName="KindEvent" />
+                <ScalarProperty Name="DTimeEvent" ColumnName="DTimeEvent" />
+                <ScalarProperty Name="DataEvent" ColumnName="DataEvent" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetEventsByChanger" FunctionName="Хранилище ModelDb.GetEventsByChanger">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ModelDb.GetEventsByChanger_Result">
+                <ScalarProperty Name="ChangerCode" ColumnName="ChangerCode" />
+                <ScalarProperty Name="DTime" ColumnName="DTime" />
+                <ScalarProperty Name="KindEventCode" ColumnName="KindEventCode" />
+                <ScalarProperty Name="KindEvent" ColumnName="KindEvent" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

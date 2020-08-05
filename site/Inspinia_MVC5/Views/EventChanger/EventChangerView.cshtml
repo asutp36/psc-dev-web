@@ -20,26 +20,11 @@
     <div class="row">
         <div class="col-sm-4">
             <div class="form-group">
-                <label class="col-form-labe">Регион</label>
-                <select id="filter-region" class="form-control">
-                    <option value="" selected=""></option>
-                    @foreach (var item in ViewBag.Regions)
-                    {
-                        <option value="@item.Code">@item.Name</option>
-                    }
-                </select>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                <label class="col-form-labe">Мойка</label>
-                <select id="filter-wash" class="form-control">
-                    <option value="" selected=""></option>
-                    @foreach (var item in ViewBag.Washes)
-                    {
-                        <option value="@item.Code">@item.Name</option>
-                    }
-                </select>
+                <label class="col-form-labe">Период зачислений</label>
+                <div id="filter-date" class="form-control">
+                    <i class="fa fa-calendar"></i>
+                    <span></span> <b class="caret"></b>
+                </div>
             </div>
         </div>
         <div class="col-sm-4">
@@ -49,20 +34,9 @@
                     <option value="" selected=""></option>
                     @foreach (var item in ViewBag.Changers)
                     {
-                        <option value="@item.IDChanger">@item.Name</option>
+                        <option value="@item.Code">@item.Name</option>
                     }
                 </select>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-4">
-            <div class="form-group">
-                <label class="col-form-labe">Период зачислений</label>
-                <div id="filter-date" class="form-control">
-                    <i class="fa fa-calendar"></i>
-                    <span></span> <b class="caret"></b>
-                </div>
             </div>
         </div>
         <div class="col-sm-4">
@@ -82,13 +56,13 @@
         <div class="col-lg-12 table-cards">
             <div class="ibox" id="ibox-load">
                 <div class="ibox-content" id="output">
-                    @*    @Html.Action("_EventChangerList", "EventChanger", new
-        {
-            begdate = ViewBag.BegDate,
-            enddate = ViewBag.EndDate,
-            changer = ViewBag.Changer,
-            operation = ""
-        })*@
+                    @Html.Action("_EventChangerList", "EventChanger", new
+                   {
+                       begdate = ViewBag.BegDate,
+                       enddate = ViewBag.EndDate,
+                       changerCode = "",
+                       kindEventCode = ""
+                   })
                 </div>
             </div>
         </div>
@@ -163,7 +137,7 @@
         });
     }
 
-    var regions = [];
+    @*var regions = [];
     var washes = [];
     var changers = [];
 
@@ -297,7 +271,7 @@
 
             $selchanger.val(curchangerval);
         }
-    }
+    }*@
 
         function filter() {
             var bdate = $('#bdate').val();
@@ -311,8 +285,8 @@
                 data: {
                     begdate: bdate,
                     enddate: edate,
-                    changer: changer,
-                    operation: operation
+                    changerCode: changer,
+                    kindEventCode: operation
                 },
                 beforeSend: function () {
                     $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
@@ -335,12 +309,6 @@
             });
         }
 
-        $('#filter-region').val('@ViewBag.Region');
-        eventChangeRegion();
-
-        $('#filter-wash').val('@ViewBag.Wash');
-        eventChangeWash();
-
         $('#filter-changer').val('@ViewBag.Changer');
 
         $('#bdate').val('@ViewBag.BegDate');
@@ -348,20 +316,12 @@
 
         $(document).ready(function () {
 
-            $('#filter-region').change(eventChangeRegion);
-            $('#filter-wash').change(eventChangeWash);
-
             $("#filter-changer").on("input", filter);
             $("#filter-operation").on("input", filter);
 
-            initDataTable();
+            $("#filter-i").on("input", filter);
 
-            $(document).on("click", "#clear-date", function () {
-                $('#filter-date span').html(" За всё время");
-                $('#bdate').val("");
-                $('#edate').val("");
-                filter();
-            });
+            initDataTable();
         });
 
         $('input[name="daterange"]').daterangepicker();
@@ -371,11 +331,11 @@
 
         //$('#filter-date span').html(moment().startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().format('по DD.MM.YYYY HH:mm:ss'));
 
-        if ($('#bdate').val()) {
+        if ($('#bdate').val() && !moment('1.1.2019').isSame($('#bdate').val())) {
             $('#filter-date span').html('с ' + $('#bdate').val() + ' по ' + $('#edate').val());
         }
         else {
-            $('#filter-date span').html('За всё время');
+            $('#filter-date span').html('С начала работы');
         }
 
         $('#filter-date').daterangepicker({
@@ -386,7 +346,8 @@
                 'сегодня': [moment().startOf('day'), moment()],
                 'вчера': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
                 'текущий месяц': [moment().startOf('month'), moment()],
-                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                'прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'с начала работы': [moment('1.1.2019'), moment()]
             },
             "locale": {
                 "format": "DD.MM.YYYY",
@@ -430,11 +391,17 @@
             "drops": "down"
         }, function (start, end, label) {
             console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
-            $('#filter-date span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+                if (moment('1.1.2019').isSame(start)) {
+                    $('#filter-date span').html('С начала работы');
+                }
+                else {
+                    $('#filter-date span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
+                }
 
-            $('#bdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
-            $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
-            filter();
+                $('#bdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
+                $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
+
+                filter();
         });
     </script>
 }

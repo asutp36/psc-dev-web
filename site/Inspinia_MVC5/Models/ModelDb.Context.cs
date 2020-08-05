@@ -863,5 +863,51 @@ namespace Inspinia_MVC5.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<RptWashPrevFunc_Result>("RptWashPrevFunc", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
         }
+    
+        public virtual ObjectResult<GetDataEventsByChanger_Result> GetDataEventsByChanger(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, string p_ChangerCode, string p_KindEventCode, Nullable<int> iDEventChanger)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_ChangerCodeParameter = p_ChangerCode != null ?
+                new ObjectParameter("p_ChangerCode", p_ChangerCode) :
+                new ObjectParameter("p_ChangerCode", typeof(string));
+    
+            var p_KindEventCodeParameter = p_KindEventCode != null ?
+                new ObjectParameter("p_KindEventCode", p_KindEventCode) :
+                new ObjectParameter("p_KindEventCode", typeof(string));
+    
+            var iDEventChangerParameter = iDEventChanger.HasValue ?
+                new ObjectParameter("IDEventChanger", iDEventChanger) :
+                new ObjectParameter("IDEventChanger", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetDataEventsByChanger_Result>("GetDataEventsByChanger", p_DateBegParameter, p_DateEndParameter, p_ChangerCodeParameter, p_KindEventCodeParameter, iDEventChangerParameter);
+        }
+    
+        public virtual ObjectResult<GetEventsByChanger_Result> GetEventsByChanger(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, string p_ChangerCode, string p_KindEventCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_ChangerCodeParameter = p_ChangerCode != null ?
+                new ObjectParameter("p_ChangerCode", p_ChangerCode) :
+                new ObjectParameter("p_ChangerCode", typeof(string));
+    
+            var p_KindEventCodeParameter = p_KindEventCode != null ?
+                new ObjectParameter("p_KindEventCode", p_KindEventCode) :
+                new ObjectParameter("p_KindEventCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEventsByChanger_Result>("GetEventsByChanger", p_DateBegParameter, p_DateEndParameter, p_ChangerCodeParameter, p_KindEventCodeParameter);
+        }
     }
 }
