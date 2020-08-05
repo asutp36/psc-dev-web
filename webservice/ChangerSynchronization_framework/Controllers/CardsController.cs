@@ -59,11 +59,13 @@ namespace ChangerSynchronization_framework.Controllers
                 {
                     command.CommandText = $"insert into Owners (Phone, PhoneInt, LocalizedBy, LocalizedID) values ('{formattedPhone.phone}', {formattedPhone.phoneInt}, " +
                         $"(select IDDevice from Device where Code = '{model.changer}'), {model.localizedID})";
+                    Logger.Log.Debug("CardsPost: command is: " + command.CommandText);
                     command.ExecuteNonQuery();
-
+                    
                     command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) " +
                         $"values (scope_identity(), '{model.cardNum}', (select IDCardStatus from CardStatuses where Code = 'norm'), " +
                         $"(select IDCardType from CardTypes where Code = 'client'), (select IDDevice from Device where Code = '{model.changer}'), {model.localizedID})";
+                    Logger.Log.Debug("CardsPost: command is: " + command.CommandText);
                     command.ExecuteNonQuery();
 
                     //command.CommandText = $"insert into Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
