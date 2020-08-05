@@ -85,7 +85,7 @@ namespace ChangerSynchronization_framework.Controllers
                     return Request.CreateResponse(HttpStatusCode.InternalServerError, "Ошибка при записи в базу");
                 }
 
-                command.CommandText = "SELECT SCOPE_IDENTIY();";
+                command.CommandText = "SELECT SCOPE_IDENTITY();";
                 var serverID = command.ExecuteScalar();
                 
                 var response = Request.CreateResponse(HttpStatusCode.Created);
