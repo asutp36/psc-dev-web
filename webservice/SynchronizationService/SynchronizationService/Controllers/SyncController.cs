@@ -39,10 +39,6 @@ namespace SynchronizationService.Controllers
                         _model.Database.Connection.Open();
                         Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
-                        //string query = "INSERT INTO Operations (IDPsc, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
-                        //                        $" VALUES({operation.IDPsc}, {operation.IDOperationType}, {operation.IDCard}, \'{operation.DTime.ToString("yyyyMMdd HH:mm:ss")}\', {operation.Amount}, {operation.Balance}, {operation.IDPsc}, {operation.IDOperation});" +
-                        //                        " SELECT SCOPE_IDENTITY()";
-
                         DbCommand command = _model.Database.Connection.CreateCommand();
 
                         command.CommandText = "INSERT INTO Operations (IDCard, IDChanger, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
