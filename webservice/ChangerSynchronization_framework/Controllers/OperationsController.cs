@@ -25,6 +25,7 @@ namespace ChangerSynchronization_framework.Controllers
         /// <response code="201">Запись создана</response>
         /// <response code="500">Внутренняя ошибка</response>
         /// <response code="400">Модель не прошла влидацию</response>
+        /// <response code="409">Карты с таким номером не свществует</response>
         [HttpPost]
         public HttpResponseMessage Post([FromBody]OperationFromRequest model)
         {
@@ -42,6 +43,12 @@ namespace ChangerSynchronization_framework.Controllers
                 {
                     Logger.Log.Error("OperationsPost: база данных не найдена!" + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.InternalServerError, "База данных не найдена");
+                }
+
+                if (CountCardsByNum(model.cardNum) < 1)
+                {
+                    Logger.Log.Error($"OperationsPost: карты {model.cardNum} не найдено" + Environment.NewLine);
+                    return Request.CreateErrorResponse(HttpStatusCode.Conflict, "Не найдена карта");
                 }
 
                 _model.Database.Connection.Open();
@@ -95,6 +102,11 @@ namespace ChangerSynchronization_framework.Controllers
                 Logger.Log.Error("OperationsPost: произошла внутренняя ошибка\n" + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
+        }
+
+        private int CountCardsByNum(string num)
+        {
+            return _model.Cards.Where(c => c.CardNum.Equals(num)).ToList().Count;
         }
     }
 }
