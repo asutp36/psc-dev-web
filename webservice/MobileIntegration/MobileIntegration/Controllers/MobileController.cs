@@ -54,20 +54,43 @@ namespace MobileIntegration.Controllers
                             $"order by o.IDOperation desc";
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
-                        command.CommandText = "INSERT INTO Operations (IDCard, IDDevice, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
-                                                $" VALUES((select IDCard from Cards where CardNum =  '{increase.card}'), " +
-                                                $"(select IDDevice from Device where Code = 'MOB-EM'), 2, " +
-                                                $"\'{increase.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {increase.value}," +
-                                                $" ({commandBalance.CommandText}) + {increase.value}, -1, -1);" +
-                                                " SELECT SCOPE_IDENTITY()";
+                        DbTransaction tran = _model.Database.Connection.BeginTransaction();
+                        command.Transaction = tran;
 
-                        Logger.Log.Debug("Command is: " + command.CommandText);
+                        try
+                        {
+                            command.CommandText = $"UPDATE Cards SET Balance = {commandBalance.CommandText} + {increase.value} WHERE CardNum = '{increase.card}'";
+                            Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
+                            command.ExecuteNonQuery();
 
-                        var id = command.ExecuteScalar();
-                        Int32 serverID = Convert.ToInt32(id.ToString());
-                        Logger.Log.Debug("Operation added serverID:" + serverID);
+                            command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
+                            $"VALUES ((select IDDevice from Device where Code = 'MOB-EM'), (select IDOperationType from OperationTypes where Code = 'increase'), " +
+                            $"(select IDCard from Cards where CardNum = '{increase.card}'), '{increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {increase.value}, {commandBalance.CommandText} + {increase.value}, " +
+                            $"(select IDDevice from Device where Code = 'MOB-EM'), 0);";
+                            Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
+                            command.ExecuteNonQuery();
 
-                        _model.Database.Connection.Close();
+                            tran.Commit();
+
+                            command.CommandText = "SELECT SCOPE_IDENTITY();";
+
+                            var serverID = command.ExecuteScalar();
+                            Logger.Log.Debug("IncreaseBalance: операция добавлена. id = " + serverID.ToString() + Environment.NewLine);
+                            _model.Database.Connection.Close();
+
+                            _model.Database.Connection.Close();
+                        }
+                        catch (Exception e)
+                        {
+                            if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                            {
+                                tran.Rollback();
+                                _model.Database.Connection.Close();
+                            }
+
+                            Logger.Log.Error("IncreaseBalance: ошибка записи в базу\n" + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Ошибка при записи в базу");
+                        }
 
                         var responseGood = Request.CreateResponse(HttpStatusCode.OK);
                         //responseGood.Headers.Add("ServerID", serverID.ToString());
@@ -123,21 +146,43 @@ namespace MobileIntegration.Controllers
                             $"order by o.IDOperation desc";
 
                             DbCommand command = _model.Database.Connection.CreateCommand();
-                            command.CommandText = "INSERT INTO Operations (IDCard, IDDevice, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
-                                                    $" VALUES((select IDCard from Cards where CardNum = '{increase.card}'), " +
-                                                    $"(select IDDevice from Device where Code = 'MOB-EM'), 2, " +
-                                                    $"\'{increase.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {increase.value}," +
-                                                    $" ({commandBalance.CommandText}) + {increase.value}, -1, -1);" +
-                                                    " SELECT SCOPE_IDENTITY()";
+                            DbTransaction tran = _model.Database.Connection.BeginTransaction();
+                            command.Transaction = tran;
 
-                            Logger.Log.Debug("Command is: " + command.CommandText);
+                            try
+                            {
+                                command.CommandText = $"UPDATE Cards SET Balance = {commandBalance.CommandText} + {increase.value} WHERE CardNum = '{increase.card}'";
+                                Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
+                                command.ExecuteNonQuery();
 
-                            var id = command.ExecuteScalar();
-                            Int32 serverID = Convert.ToInt32(id.ToString());
-                            Logger.Log.Debug("Operation added serverID:" + serverID);
+                                command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
+                                $"VALUES ((select IDDevice from Device where Code = 'MOB-EM'), (select IDOperationType from OperationTypes where Code = 'increase'), " +
+                                $"(select IDCard from Cards where CardNum = '{increase.card}'), '{increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {increase.value}, {commandBalance.CommandText} + {increase.value}, " +
+                                $"(select IDDevice from Device where Code = 'MOB-EM'), 0);";
+                                Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
+                                command.ExecuteNonQuery();
 
-                            _model.Database.Connection.Close();
+                                tran.Commit();
 
+                                command.CommandText = "SELECT SCOPE_IDENTITY();";
+
+                                var serverID = command.ExecuteScalar();
+                                Logger.Log.Debug("IncreaseBalance: операция добавлена. id = " + serverID.ToString() + Environment.NewLine);
+                                _model.Database.Connection.Close();
+
+                                _model.Database.Connection.Close();
+                            }
+                            catch (Exception e)
+                            {
+                                if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                                {
+                                    tran.Rollback();
+                                    _model.Database.Connection.Close();
+                                }
+
+                                Logger.Log.Error("IncreaseBalance: ошибка записи в базу\n" + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Ошибка при записи в базу");
+                            }
                             var responseGood = Request.CreateResponse(HttpStatusCode.OK);
                             //responseGood.Headers.Add("ServerID", serverID.ToString());
                             return responseGood;
@@ -571,18 +616,43 @@ namespace MobileIntegration.Controllers
                             $"order by o.IDOperation desc";
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
-                        command.CommandText = "INSERT INTO Operations (IDCard, IDDevice, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
-                                                $" VALUES((select IDCard from Cards where CardNum = '{model.card}'), " +
-                                                $"(select IDDevice from Device where Code = 'MOB-EM'), 3, " +
-                                                $"\'{model.time_send.ToString("yyyyMMdd HH:mm:ss")}\', {model.balance}," +
-                                                $" ({commandBalance.CommandText}) - {model.balance}, -1, -1);" +
-                                                " SELECT SCOPE_IDENTITY()";
+                        DbTransaction tran = _model.Database.Connection.BeginTransaction();
+                        command.Transaction = tran;
 
-                        Logger.Log.Debug("Command is: " + command.CommandText);
+                        try
+                        {
+                            command.CommandText = $"UPDATE Cards SET Balance = {commandBalance.CommandText} - {model.balance} WHERE CardNum = '{model.card}'";
+                            Logger.Log.Debug("StopPost: command is: " + command.CommandText);
+                            command.ExecuteNonQuery();
 
-                        var id = command.ExecuteScalar();
+                            command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
+                            $"VALUES ((select IDDevice from Device where Code = '{model.post}'), (select IDOperationType from OperationTypes where Code = 'decrease'), " +
+                            $"(select IDCard from Cards where CardNum = '{model.card}'), '{model.time_send}', {model.balance}, {commandBalance.CommandText} - {model.balance}, " +
+                            $"(select IDDevice from Device where Code = '{model.post}'), 0);";
+                            Logger.Log.Debug("StopPost: command is: " + command.CommandText);
+                            command.ExecuteNonQuery();
 
-                        Logger.Log.Debug("StopPostDev: записано списание. IDOperation: " + id.ToString());
+                            tran.Commit();
+
+                            command.CommandText = "SELECT SCOPE_IDENTITY();";
+
+                            var serverID = command.ExecuteScalar();
+                            Logger.Log.Debug("StopPost: операция добавлена. id = " + serverID.ToString() + Environment.NewLine);
+                            _model.Database.Connection.Close();
+
+                            _model.Database.Connection.Close();
+                        }
+                        catch (Exception e)
+                        {
+                            if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                            {
+                                tran.Rollback();
+                                _model.Database.Connection.Close();
+                            }
+
+                            Logger.Log.Error("StopPost: ошибка записи в базу\n" + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Ошибка при записи в базу");
+                        }
                     }
                 }
                 catch (Exception e)
@@ -846,20 +916,43 @@ namespace MobileIntegration.Controllers
                             $"order by o.IDOperation desc";
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
-                        command.CommandText = "INSERT INTO Operations (IDCard, IDDevice, IDOperationType, DTime, Amount, Balance, LocalizedBy, LocalizedID)" +
-                                                $" VALUES((select IDCard from Cards where CardNum = '{newCard.card}'), " +
-                                                $"(select IDDevice from Device where Code = '{newCard.changer}'), 2," +
-                                                $" \'{newCard.time_send}\', {newCard.value}," +
-                                                $" ({commandBalance.CommandText}) + {newCard.value}, (select IDDevice from Device where Code = '{newCard.changer}'), -1);" +
-                                                " SELECT SCOPE_IDENTITY()";
+                        DbTransaction tran = _model.Database.Connection.BeginTransaction();
+                        command.Transaction = tran;
 
-                        Logger.Log.Debug("Command is: " + command.CommandText);
+                        try
+                        {
+                            command.CommandText = $"UPDATE Cards SET Balance = {commandBalance.CommandText} + {newCard.value} WHERE CardNum = '{newCard.card}'";
+                            Logger.Log.Debug("SendNewCardDev: command is: " + command.CommandText);
+                            command.ExecuteNonQuery();
 
-                        var id = command.ExecuteScalar();
-                        Int32 serverID = Convert.ToInt32(id.ToString());
-                        Logger.Log.Debug("Operation added serverID:" + serverID);
+                            command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
+                            $"VALUES ((select IDDevice from Device where Code = '{newCard.changer}'), (select IDOperationType from OperationTypes where Code = 'increase'), " +
+                            $"(select IDCard from Cards where CardNum = '{newCard.card}'), '{newCard.time_send}', {newCard.value}, {newCard.value}, " +
+                            $"(select IDDevice from Device where Code = '{newCard.changer}'), 0);";
+                            Logger.Log.Debug("SendNewCardDev: command is: " + command.CommandText);
+                            command.ExecuteNonQuery();
 
-                        _model.Database.Connection.Close();
+                            tran.Commit();
+
+                            command.CommandText = "SELECT SCOPE_IDENTITY();";
+
+                            var serverID = command.ExecuteScalar();
+                            Logger.Log.Debug("SendNewCardDev: операция добавлена. id = " + serverID.ToString() + Environment.NewLine);
+                            _model.Database.Connection.Close();
+
+                            _model.Database.Connection.Close();
+                        }
+                        catch (Exception e)
+                        {
+                            if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                            {
+                                tran.Rollback();
+                                _model.Database.Connection.Close();
+                            }
+
+                            Logger.Log.Error("SendNewCardDev: ошибка записи в базу\n" + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Ошибка при записи в базу");
+                        }
                     }
                     else
                     {
