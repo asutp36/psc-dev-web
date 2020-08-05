@@ -1,1 +1,31 @@
-﻿
+﻿@model IEnumerable<Inspinia_MVC5.Models.GetEventsByChanger_Result>
+
+<div class="sk-spinner sk-spinner-double-bounce">
+    <div class="sk-double-bounce1"></div>
+    <div class="sk-double-bounce2"></div>
+</div>
+
+<table id="table-events" class="display table table-striped table-bordered table-hover responsive">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Разменник</th>
+            <th>Операция</th>
+            <th>Время операции</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+        <tr>
+            <td data-child-value="hidden 1"></td>
+            <td>@m.ChangerCode</td>
+            <td>@m.KindEvent</td>
+            <td>@m.DTime</td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+
+

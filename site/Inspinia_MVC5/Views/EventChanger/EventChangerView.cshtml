@@ -1,15 +1,15 @@
 ﻿@{
-    ViewBag.Title = "События на разменнике";
+    ViewBag.Title = "События на разменниках";
 }
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>События на разменнике</h2>
+        <h2>События на разменниках</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a>Сводка</a>
             </li>
             <li class="active breadcrumb-item">
-                <strong>События на разменнике</strong>
+                <strong>События на разменниках</strong>
             </li>
         </ol>
     </div>
@@ -92,36 +92,20 @@
             "pageLength": 100,
             "lengthChange": false,
             "pagingType": "full_numbers",
-            //"createdRow": function (row, data, dataIndex) {
-            //    if (data[1] == "инкассация") {
-            //        $(row).addClass('right-blue-bg');
-            //    }
-            //    if (data[1] == "пополнение наличными") {
-            //        $(row).addClass('green-bg');
-            //    }
-            //    if (data[1] == "режим") {
-            //        $(row).addClass('right-yellow-bg');
-            //    }
-            //},
+
+            "columns": [
+                {
+                    "className": 'details-control',
+                    "orderable": false,
+                    "data": null,
+                    "defaultContent": ''
+                }, null, null, null
+            ],
+            "order": [[1, 'asc']],
+
             "bSortClasses": false,
             dom: '<"html5buttons"B>lTfgitp',
             buttons: [],
-            //buttons: [
-            //    { extend: 'excel', title: 'Report' },
-            //    { extend: 'pdf', title: 'Report' },
-
-            //    {
-            //        extend: 'print',
-            //        customize: function (win) {
-            //            $(win.document.body).addClass('white-bg');
-            //            $(win.document.body).css('font-size', '10px');
-
-            //            $(win.document.body).find('table')
-            //                .addClass('compact')
-            //                .css('font-size', 'inherit');
-            //        }
-            //    }
-            //],
             "language": {
                 "infoEmpty": "Нет записей",
                 "info": "Показано с _START_ по _END_ из _TOTAL_ записей",
@@ -135,143 +119,29 @@
                 "emptyTable": "Данные по заданному фильтру не найдены"
             }
         });
-    }
-
-    @*var regions = [];
-    var washes = [];
-    var changers = [];
-
-    @foreach (var item in ViewBag.Regions) {
-        <text>
-            regions.push({ value:"@item.Code", text:"@item.Name", washes:[
-                @foreach(var w in item.Washes)
-                {
-                    <text>
-                {
-                    value: "@w.IDWash", text: "@w.Name"
-                },
-                    </text>
-                }
-                ]});
-        </text>
-    }
-
-    @foreach (var item in ViewBag.Washes) {
-        <text>
-            washes.push({ value:"@item.IDWash", text:"@item.Name"});
-        </text>
-    }
-
-    @foreach (var item in ViewBag.Changers) {
-        <text>
-            changers.push({ idwash: "@item.IDWash", value: "@item.IDChanger", text: "@item.Name" }, );
-        </text>
-    }
-
-    function eventChangeRegion () {
-
-        var curreg = $('#filter-region').find(":selected").val();
-        var curwashval = $('#filter-wash').find(":selected").val();
-        var curchangerval = $('#filter-changer').find(":selected").val();
-
-        if (curreg == "") {
-            var $selwash = $('#filter-wash');
-
-            $selwash.empty();
-            $selwash.append($("<option></option>", { value: "", text: "" }));
-            washes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
-
-            $selwash.val(curwashval);
-
-            eventChangeWash();
         }
-        else {
-            var newwashes = [];
-            newwashes = regions.find(reg => reg.value == curreg).washes;
 
-            var $selwash = $('#filter-wash');
-
-            $selwash.empty();
-            $selwash.append($("<option></option>", { value: "", text: "" }));
-            newwashes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
-
-            $selwash.val(curwashval);
-
-            var newchangers = [];
-            for (let i = 0; i < changers.length; i++) {
-                for (let j = 0; j < newwashes.length; j++)
-                if (changers[i].idwash == newwashes[j].value) {
-                    newchangers.push(changers[i]);
-                }
-            }
-            //newwashes.forEach(element => element.changers.forEach(el => newchangers.push(el)));
-
-            var $selchanger = $('#filter-changer');
-
-            $selchanger.empty();
-            $selchanger.append($("<option></option>", { value: "", text: "" }));
-            newchangers.forEach(element => $selchanger.append($("<option></option>", { value: element.value, text: element.text })));
-
-            $selchanger.val(curchangerval);
+        function format() {
+            // `d` is the original data object for the row
+            return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+                '<tr>' +
+                '<td>Full name:</td>' +
+                '<td>' + 'qwe' + '</td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Extension number:</td>' +
+                '<td>' + 'qwe' + '</td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Extra info:</td>' +
+                '<td>And any further details here (images etc)...</td>' +
+                '</tr>' +
+                '</table>';
         }
-    }
 
-    function eventChangeWash() {
-
-        var curchangerval = $('#filter-changer').find(":selected").val();
-        var curreg = $('#filter-region').find(":selected").val();
-        var curwash = $('#filter-wash').find(":selected").val();
-
-        if (curwash == "") {
-            if (curreg == "") {
-                var $selchanger = $('#filter-changer');
-
-                $selchanger.empty();
-                $selchanger.append($("<option></option>", { value: "", text: "" }));
-                changers.forEach(element => $selchanger.append($("<option></option>", { value: element.value, text: element.text })));
-
-                $selchanger.val(curchangerval);
-            }
-            else {
-                var newwashes = [];
-                newwashes = regions.find(reg => reg.value == curreg).washes;
-
-                var newchangers = [];
-                for (let i = 0; i < changers.length; i++) {
-                    for (let j = 0; j < newwashes.length; j++)
-                        if (changers[i].idwash == newwashes[j].value) {
-                            newchangers.push(changers[i]);
-                        }
-                }
-                //newwashes.forEach(element => element.changers.forEach(el => newchangers.push(el)));
-
-                var $selchanger = $('#filter-changer');
-
-                $selchanger.empty();
-                $selchanger.append($("<option></option>", { value: "", text: "" }));
-                newchangers.forEach(element => $selchanger.append($("<option></option>", { value: element.value, text: element.text })));
-
-                $selchanger.val(curchangerval);
-            }
+        function format(value) {
+            return '<div>Hidden Value: ' + value + '</div>';
         }
-        else {
-            var newchangers = [];
-            for (let i = 0; i < changers.length; i++) {
-                if (changers[i].idwash == curwash) {
-                    newchangers.push(changers[i]);
-                }
-            }
-            //newchangers = washes.find(wash => wash.value == curwash).changers;
-
-            var $selchanger = $('#filter-changer');
-
-            $selchanger.empty();
-            $selchanger.append($("<option></option>", { value: "", text: "" }));
-            newchangers.forEach(element => $selchanger.append($("<option></option>", { value: element.value, text: element.text })));
-
-            $selchanger.val(curchangerval);
-        }
-    }*@
 
         function filter() {
             var bdate = $('#bdate').val();
@@ -315,6 +185,21 @@
         $('#edate').val('@ViewBag.EndDate');
 
         $(document).ready(function () {
+
+            $('#table-events tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row(tr);
+
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    // Open this row
+                    row.child(format(tr.data('child-value'))).show();
+                    tr.addClass('shown');
+                }
+            });
 
             $("#filter-changer").on("input", filter);
             $("#filter-operation").on("input", filter);

@@ -76,9 +76,9 @@ namespace Inspinia_MVC5.Controllers
             return View("EventChangerView");
         }
 
-        public ActionResult _EventChangerList(string changer, string begdate, string enddate, string operation)
+        public ActionResult _EventChangerList(string begdate, string enddate, string changerCode, string kindEventCode)
         {
-            List<GetEventsByChanger_Result> view = GetEventChanger(changer, begdate, enddate, operation);
+            List<GetEventsByChanger_Result> view = GetEventChanger(begdate, enddate, changerCode, kindEventCode);
 
             return PartialView("_EventChangerList", view);
         }
@@ -102,9 +102,9 @@ namespace Inspinia_MVC5.Controllers
             prmEndDate.Value = edate;
 
             var prmChangerCode = new System.Data.SqlClient.SqlParameter("@p_ChangerCode", System.Data.SqlDbType.NVarChar);
-            if (changerCode == null || changerCode == "")
+            if (changerCode == null)
             {
-                changerCode = "none";
+                changerCode = "";
             }
             prmChangerCode.Value = changerCode;
 
@@ -114,7 +114,6 @@ namespace Inspinia_MVC5.Controllers
                 kindEventCode = "";
             }
             prmKindEventCode.Value = kindEventCode;
-
 
             var result = db.Database.SqlQuery<GetEventsByChanger_Result>
                 ("GetEventsByChanger @p_DateBeg, @p_DateEnd, @p_ChangerCode, @p_KindEventCode ",

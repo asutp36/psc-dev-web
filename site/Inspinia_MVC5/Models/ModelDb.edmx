@@ -1411,8 +1411,6 @@
           <NavigationProperty Name="Operations" Relationship="Self.FK_Operations_Changers" FromRole="Changers" ToRole="Operations" />
           <Property Name="IDDevice" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Device" Relationship="ModelDb.FK_Changers_Device" FromRole="Changer" ToRole="Device" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Collection">
           <Key>
@@ -1827,8 +1825,6 @@
           <NavigationProperty Name="Device" Relationship="Self.FK_Posts_Device" FromRole="Posts" ToRole="Device" />
           <NavigationProperty Name="Events" Relationship="Self.FK_Event_Point" FromRole="Posts" ToRole="Event" />
           <NavigationProperty Name="Wash" Relationship="Self.FK_Posts_Wash" FromRole="Posts" ToRole="Wash" />
-          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="QRCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Region">
@@ -3174,8 +3170,6 @@
           <EntitySetMapping Name="Changers">
             <EntityTypeMapping TypeName="ModelDb.Changer">
               <MappingFragment StoreEntitySet="Changers">
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
                 <ScalarProperty Name="IDChanger" ColumnName="IDChanger" />
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
@@ -3566,8 +3560,6 @@
             <EntityTypeMapping TypeName="ModelDb.Post">
               <MappingFragment StoreEntitySet="Posts">
                 <ScalarProperty Name="QRCode" ColumnName="QRCode" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="IDPost" ColumnName="IDPost" />
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
                 <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
