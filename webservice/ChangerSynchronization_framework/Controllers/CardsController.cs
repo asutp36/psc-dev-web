@@ -69,19 +69,23 @@ namespace ChangerSynchronization_framework.Controllers
                     command.ExecuteNonQuery();
 
                     //command.CommandText = $"insert into Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
-                    //       $"values ((select IDDevice from Device where Code = 'MOB-EM'), " +
+                    //       $"values ((select IDDevice from Device where Code = '{model.changer}'), " +
                     //       $"(select IDOperationType from OperationTypes ot where ot.Code = 'activation'), " +
-                    //       $"scope_identity(), '{newCard.time_send}', " +
+                    //       $"scope_identity(), '{model.}', " +
                     //       $"0, 0, (select IDDevice from Device where Code = 'MOB-EM'), 0);";
                     //command.ExecuteNonQuery();
-                    
+
                     Logger.Log.Debug($"CadsPost: добавлены Owner и Card. CardNum = {model.cardNum}" + Environment.NewLine);
                     tran.Commit();
                 }
                 catch (Exception e)
                 {
                     if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                    {
+                        tran.Rollback();
                         _model.Database.Connection.Close();
+                    }
+                      
 
                     Logger.Log.Error("CardsPost: ошибка транзакции\n" + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.InternalServerError, "Ошибка при записи в базу");
@@ -89,7 +93,8 @@ namespace ChangerSynchronization_framework.Controllers
 
                 command.CommandText = "SELECT SCOPE_IDENTITY();";
                 var serverID = command.ExecuteScalar();
-                
+                _model.Database.Connection.Close();
+
                 var response = Request.CreateResponse(HttpStatusCode.Created);
                 response.Headers.Add("ServerID", serverID.ToString());
 
