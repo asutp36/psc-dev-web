@@ -144,6 +144,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\CardsController.cs" />
     <Compile Include="Controllers\Supplies\DbInsertResult.cs" />
     <Compile Include="Controllers\Supplies\Event.cs" />
     <Compile Include="Controllers\Supplies\EventAcquiring.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Controllers\Supplies\EventWithNominals.cs" />
     <Compile Include="Controllers\Supplies\InsertFullEventChangerResult.cs" />
     <Compile Include="Controllers\Supplies\Logger.cs" />
+    <Compile Include="Controllers\Supplies\NewCard.cs" />
     <Compile Include="Controllers\SyncController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
