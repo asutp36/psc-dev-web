@@ -13,13 +13,13 @@ namespace Inspinia_MVC5.Models
     
     public partial class GetCardListMinMaxDiapasons_Result
     {
-        public Nullable<int> BalanceMin { get; set; }
+        public int BalanceMin { get; set; }
         public Nullable<int> BalanceMax { get; set; }
-        public Nullable<int> IncreaseSumMin { get; set; }
+        public int IncreaseSumMin { get; set; }
         public Nullable<int> IncreaseSumMax { get; set; }
-        public Nullable<int> DecreaseSumMin { get; set; }
+        public int DecreaseSumMin { get; set; }
         public Nullable<int> DecreaseSumMax { get; set; }
-        public Nullable<int> CountOperationMin { get; set; }
+        public int CountOperationMin { get; set; }
         public Nullable<int> CountOperationMax { get; set; }
     }
 }

@@ -22,14 +22,14 @@ namespace Inspinia_MVC5.Models
         }
     
         public int IDChanger { get; set; }
-        public int IDWash { get; set; }
         public int IDDevice { get; set; }
+        public int IDWash { get; set; }
     
+        public virtual Device Device { get; set; }
         public virtual Wash Wash { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EventChanger> EventChangers { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Operation> Operations { get; set; }
-        public virtual Device Device { get; set; }
     }
 }

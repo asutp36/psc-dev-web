@@ -14,6 +14,8 @@ namespace Inspinia_MVC5.Models
     public partial class GetEventsByChanger_Result
     {
         public string ChangerCode { get; set; }
+        public string ChangerName { get; set; }
+        public int IDEventChanger { get; set; }
         public System.DateTime DTime { get; set; }
         public string KindEventCode { get; set; }
         public string KindEvent { get; set; }

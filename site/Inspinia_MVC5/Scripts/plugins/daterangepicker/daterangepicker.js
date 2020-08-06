@@ -483,10 +483,10 @@
 
         setEndDate: function(endDate) {
             if (typeof endDate === 'string')
-                this.endDate = moment(endDate, this.locale.format);
+                this.endDate = moment(endDate, this.locale.format).endOf('day');
 
             if (typeof endDate === 'object')
-                this.endDate = moment(endDate);
+                this.endDate = moment(endDate).endOf('day');
 
             if (!this.timePicker)
                 this.endDate = this.endDate.endOf('day');

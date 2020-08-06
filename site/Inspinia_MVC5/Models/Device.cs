@@ -17,9 +17,9 @@ namespace Inspinia_MVC5.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Device()
         {
+            this.Changers = new HashSet<Changer>();
             this.Finances = new HashSet<Finance>();
             this.Posts = new HashSet<Post>();
-            this.Changers = new HashSet<Changer>();
         }
     
         public int IDDevice { get; set; }
@@ -29,12 +29,12 @@ namespace Inspinia_MVC5.Models
         public Nullable<int> IDDeviceType { get; set; }
         public string IpAddress { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Changer> Changers { get; set; }
         public virtual DeviceType DeviceType { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Finance> Finances { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Post> Posts { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Changer> Changers { get; set; }
     }
 }

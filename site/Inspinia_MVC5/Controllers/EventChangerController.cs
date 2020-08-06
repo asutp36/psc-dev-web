@@ -41,22 +41,6 @@ namespace Inspinia_MVC5.Controllers
                 }
             }
 
-            if (_requiredChangers.Count < 1)
-            {
-                foreach (var c in changers)
-                {
-                    var changer = _devices.Find(d => d.IDDevice == c.IDDevice);
-
-                    _requiredChangers.Add(changer);
-                }
-            }
-            else
-            {
-                var mobileapp = _devices.Find(d => d.Code == "MOB-EM");
-
-                _requiredChangers.Add(mobileapp);
-            }
-
             ViewBag.Changers = _requiredChangers;
             ViewBag.Events = _eventKinds;
         }
@@ -122,9 +106,9 @@ namespace Inspinia_MVC5.Controllers
 
             foreach(var r in result)
             {
-                List<GetDataEventsByChanger_Result> details = GetDetailsEventChanger(begdate, enddate, changerCode, kindEventCode, "10");
+                List<GetDataEventsByChanger_Result> details = GetDetailsEventChanger(begdate, enddate, r.IDEventChanger);
 
-                var e = new EventChangerWithDetails(r.ChangerCode, r.DTime, r.KindEventCode, r.KindEvent, details);
+                var e = new EventChangerWithDetails(r.ChangerName, r.DTime, r.KindEvent, details);
 
                 resultlist.Add(e);
             }
@@ -139,7 +123,7 @@ namespace Inspinia_MVC5.Controllers
             return PartialView("_EventChangerList", view);
         }
 
-        public List<GetDataEventsByChanger_Result> GetDetailsEventChanger(string begdate, string enddate, string changerCode, string kindEventCode, string idEventChanger)
+        public List<GetDataEventsByChanger_Result> GetDetailsEventChanger(string begdate, string enddate, int idEventChanger)
         {
             List<GetDataEventsByChanger_Result> resultlist = null;
 
@@ -158,25 +142,13 @@ namespace Inspinia_MVC5.Controllers
             prmEndDate.Value = edate;
 
             var prmChangerCode = new System.Data.SqlClient.SqlParameter("@p_ChangerCode", System.Data.SqlDbType.NVarChar);
-            if (changerCode == null)
-            {
-                changerCode = "";
-            }
-            prmChangerCode.Value = changerCode;
+            prmChangerCode.Value = "";
 
             var prmKindEventCode = new System.Data.SqlClient.SqlParameter("@p_KindEventCode", System.Data.SqlDbType.NVarChar);
-            if (kindEventCode == null)
-            {
-                kindEventCode = "";
-            }
-            prmKindEventCode.Value = kindEventCode;
+            prmKindEventCode.Value = "";
 
             var prmIDEventChanger = new System.Data.SqlClient.SqlParameter("@IDEventChanger", System.Data.SqlDbType.Int);
-            if (idEventChanger == null || idEventChanger == "0" || idEventChanger == "")
-            {
-                idEventChanger = "1";
-            }
-            prmIDEventChanger.Value = Convert.ToInt32(idEventChanger);
+            prmIDEventChanger.Value = idEventChanger;
 
             var result = db.Database.SqlQuery<GetDataEventsByChanger_Result>
                 ("GetDataEventsByChanger @p_DateBeg, @p_DateEnd, @p_ChangerCode, @p_KindEventCode, @IDEventChanger ",
