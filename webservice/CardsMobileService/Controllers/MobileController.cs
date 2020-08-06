@@ -11,5 +11,34 @@ namespace CardsMobileService.Controllers
     [ApiController]
     public class MobileController : ControllerBase
     {
+        public IActionResult PostIncrease()
+        {
+            return Ok();
+        }
+
+        public IActionResult GetBalance()
+        {
+            return Ok();
+        }
+
+        public IActionResult GetCards()
+        {
+            return Ok();
+        }
+
+        public IActionResult UpdatePhone()
+        {
+            return Ok();
+        }
+
+        public IActionResult StartPost()
+        {
+            return Ok();
+        }
+
+        public IActionResult PostCard()
+        {
+            return Ok();
+        }
     }
 }
