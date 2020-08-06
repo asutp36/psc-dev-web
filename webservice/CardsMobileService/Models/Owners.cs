@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MobileIntegration_v2.Models
+namespace CardsMobileService.Models
 {
     public partial class Owners
     {
@@ -12,6 +12,7 @@ namespace MobileIntegration_v2.Models
 
         public int Idowner { get; set; }
         public string Phone { get; set; }
+        public long? PhoneInt { get; set; }
         public int LocalizedBy { get; set; }
         public int LocalizedId { get; set; }
 

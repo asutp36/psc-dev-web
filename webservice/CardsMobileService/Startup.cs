@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,7 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
-namespace MobileIntegration_v2
+namespace CardsMobileService
 {
     public class Startup
     {
@@ -35,8 +37,13 @@ namespace MobileIntegration_v2
                 {
                     Version = "v1",
                     Title = "Mobile Integration",
-                    Description = "Интеграция с мобильным приложением и работа с картами"
+                    Description = "Интеграция с мобильным приложением и работа с картами",
                 });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
         }
 
@@ -50,7 +57,7 @@ namespace MobileIntegration_v2
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("./swagger/v1/swagger.json", "mobile-int");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "mobile-int");
                 c.RoutePrefix = string.Empty;
             });
 

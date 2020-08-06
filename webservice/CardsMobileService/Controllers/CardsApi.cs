@@ -1,10 +1,10 @@
-﻿using MobileIntegration_v2.Models;
+﻿using CardsMobileService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MobileIntegration_v2.Controllers
+namespace CardsMobileService.Controllers
 {
     public class CardsApi
     {

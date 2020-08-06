@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace MobileIntegration_v2
+namespace CardsMobileService
 {
     public class Program
     {

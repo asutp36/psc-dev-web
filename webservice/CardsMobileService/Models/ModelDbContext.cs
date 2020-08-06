@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace MobileIntegration_v2.Models
+namespace CardsMobileService.Models
 {
     public partial class ModelDbContext : DbContext
     {
@@ -15,10 +15,10 @@ namespace MobileIntegration_v2.Models
         {
         }
 
-        public virtual DbSet<CardOperations> CardOperations { get; set; }
         public virtual DbSet<CardStatuses> CardStatuses { get; set; }
         public virtual DbSet<CardTypes> CardTypes { get; set; }
         public virtual DbSet<Cards> Cards { get; set; }
+        public virtual DbSet<Changers> Changers { get; set; }
         public virtual DbSet<Device> Device { get; set; }
         public virtual DbSet<DeviceTypes> DeviceTypes { get; set; }
         public virtual DbSet<OperationTypes> OperationTypes { get; set; }
@@ -37,25 +37,6 @@ namespace MobileIntegration_v2.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CardOperations>(entity =>
-            {
-                entity.HasKey(e => e.IdcardOpration);
-
-                entity.Property(e => e.IdcardOpration).HasColumnName("IDCardOpration");
-
-                entity.Property(e => e.CardNum)
-                    .IsRequired()
-                    .HasMaxLength(20);
-
-                entity.Property(e => e.Dtime)
-                    .HasColumnName("DTime")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
-
-                entity.Property(e => e.Idstate).HasColumnName("IDState");
-            });
-
             modelBuilder.Entity<CardStatuses>(entity =>
             {
                 entity.HasKey(e => e.IdcardStatus);
@@ -118,6 +99,23 @@ namespace MobileIntegration_v2.Models
                     .WithMany(p => p.Cards)
                     .HasForeignKey(d => d.Idowner)
                     .HasConstraintName("FK_Cards_Owners");
+            });
+
+            modelBuilder.Entity<Changers>(entity =>
+            {
+                entity.HasKey(e => e.Idchanger);
+
+                entity.Property(e => e.Idchanger).HasColumnName("IDChanger");
+
+                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.HasOne(d => d.IddeviceNavigation)
+                    .WithMany(p => p.Changers)
+                    .HasForeignKey(d => d.Iddevice)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_Changers_Device");
             });
 
             modelBuilder.Entity<Device>(entity =>
@@ -193,9 +191,9 @@ namespace MobileIntegration_v2.Models
 
                 entity.Property(e => e.Idcard).HasColumnName("IDCard");
 
-                entity.Property(e => e.IdoperationType).HasColumnName("IDOperationType");
+                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 
-                entity.Property(e => e.Idpsc).HasColumnName("IDPsc");
+                entity.Property(e => e.IdoperationType).HasColumnName("IDOperationType");
 
                 entity.Property(e => e.LocalizedId).HasColumnName("LocalizedID");
 
@@ -203,6 +201,12 @@ namespace MobileIntegration_v2.Models
                     .WithMany(p => p.Operations)
                     .HasForeignKey(d => d.Idcard)
                     .HasConstraintName("FK_Operations_Cards");
+
+                entity.HasOne(d => d.IddeviceNavigation)
+                    .WithMany(p => p.Operations)
+                    .HasForeignKey(d => d.Iddevice)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_Operations_Device");
 
                 entity.HasOne(d => d.IdoperationTypeNavigation)
                     .WithMany(p => p.Operations)
@@ -230,13 +234,9 @@ namespace MobileIntegration_v2.Models
 
                 entity.Property(e => e.Idpost).HasColumnName("IDPost");
 
-                entity.Property(e => e.Code).HasMaxLength(10);
-
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 
                 entity.Property(e => e.Idwash).HasColumnName("IDWash");
-
-                entity.Property(e => e.Name).HasMaxLength(100);
 
                 entity.Property(e => e.Qrcode)
                     .HasColumnName("QRCode")

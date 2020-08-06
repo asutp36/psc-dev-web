@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MobileIntegration_v2.Models
+namespace CardsMobileService.Models
 {
     public partial class Cards
     {
@@ -15,6 +15,7 @@ namespace MobileIntegration_v2.Models
         public string CardNum { get; set; }
         public int IdcardStatus { get; set; }
         public int IdcardType { get; set; }
+        public int? Balance { get; set; }
         public int LocalizedBy { get; set; }
         public int LocalizedId { get; set; }
 

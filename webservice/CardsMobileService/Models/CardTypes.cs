@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MobileIntegration_v2.Models
+namespace CardsMobileService.Models
 {
     public partial class CardTypes
     {

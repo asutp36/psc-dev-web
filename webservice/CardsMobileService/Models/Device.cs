@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MobileIntegration_v2.Models
+namespace CardsMobileService.Models
 {
     public partial class Device
     {
         public Device()
         {
+            Changers = new HashSet<Changers>();
+            Operations = new HashSet<Operations>();
             Posts = new HashSet<Posts>();
         }
 
@@ -18,6 +20,8 @@ namespace MobileIntegration_v2.Models
         public string IpAddress { get; set; }
 
         public virtual DeviceTypes IddeviceTypeNavigation { get; set; }
+        public virtual ICollection<Changers> Changers { get; set; }
+        public virtual ICollection<Operations> Operations { get; set; }
         public virtual ICollection<Posts> Posts { get; set; }
     }
 }
