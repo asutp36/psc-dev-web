@@ -410,11 +410,11 @@ table.dataTable,table.dataTable th,table.dataTable td{
 }
 
 td.details-control {
-    background: url('/Images/details_open.png') no-repeat center center;
+    background: url('../images/details_open.png') no-repeat center center;
     cursor: pointer;
 }
 
 tr.shown td.details-control {
-    background: url('/Images/details_close.png') no-repeat center center;
+    background: url('../images/details_close.png') no-repeat center center;
 }
 
