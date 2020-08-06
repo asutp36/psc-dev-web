@@ -1,4 +1,5 @@
-﻿using CardsMobileService.Models;
+﻿using CardsMobileService.Controllers.Supplies;
+using CardsMobileService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +11,17 @@ namespace CardsMobileService.Controllers
     {
         private ModelDbContext _model = new ModelDbContext();
 
-        public void WriteIncrease() { }
+        public void WriteIncrease(IncreaseFromChanger model) 
+        {
+            
+        }
 
-        public void GetBalance() { }
+        public void GetBalance(string cardNum) { }
 
         public void UpdatePhone() { }
 
         public void WriteNewCard() { }
 
-        public void GetCardsByPhone() { }
+        public void GetCardsByPhone(string phone) { }
     }
 }
