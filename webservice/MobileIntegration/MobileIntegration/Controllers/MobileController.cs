@@ -117,8 +117,6 @@ namespace MobileIntegration.Controllers
         /// <response code="204">Некорректное входное значение</response>
         [HttpPost]
         [ActionName("increase")]
-        //где записан баланс?
-        //можно просто через операцию
         public HttpResponseMessage IncreaseBalance([FromBody]IncreaseFromMobile increase)
         {
             Logger.InitLogger();
@@ -215,7 +213,6 @@ namespace MobileIntegration.Controllers
         /// <response code="204">Некорректные входные данные</response>
         [HttpPost]
         [ActionName("get_balance")]
-        //как высчитывать баланс карты?
         public HttpResponseMessage GetBalance([FromBody]GetBalanceFromMobile getBalance)
         {
             Logger.InitLogger();
@@ -287,7 +284,6 @@ namespace MobileIntegration.Controllers
         /// <response code="204">Некорректные входные данные</response>
         [HttpPost]
         [ActionName("get_balance-dev")]
-        //как высчитывать баланс карты?
         public HttpResponseMessage GetBalanceDev([FromBody]GetBalance getBalance)
         {
             Logger.InitLogger();
@@ -319,14 +315,14 @@ namespace MobileIntegration.Controllers
                         response.Headers.Add("Card", getBalance.card);
 
                         command.CommandText = $"select MAX(DTime) from Operations o join Cards c on c.IDCard = o.IDCard where c.CardNum = '{getBalance.card}'";
-                        var lastOperation = command.ExecuteScalar();
+                        DateTime lastOperation = (DateTime)command.ExecuteScalar();
 
                         if (balance != null)
                         {
                             Logger.Log.Debug("GetBalanceDev: Balance: " + balance.ToString() + Environment.NewLine);
                             response.StatusCode = HttpStatusCode.OK;
                             response.Headers.Add("Balance", balance.ToString());
-                            response.Headers.Add("LastOperation", lastOperation.ToString());
+                            response.Headers.Add("LastOperation", lastOperation.ToString("yyyy-MM-dd HH:mm:ss"));
                         }
                         else
                         {
