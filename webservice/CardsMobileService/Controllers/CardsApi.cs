@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace CardsMobileService.Controllers
@@ -64,5 +65,10 @@ namespace CardsMobileService.Controllers
         public void WriteNewCard() { }
 
         public void GetCardsByPhone(string phone) { }
+
+        public bool IsExsisting(string cardNum)
+        {
+            return _model.Cards.Where(c => c.CardNum.Equals(cardNum)).ToList().Count > 0;
+        }
     }
 }

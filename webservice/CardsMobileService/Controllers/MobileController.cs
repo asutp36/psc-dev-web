@@ -13,6 +13,13 @@ namespace CardsMobileService.Controllers
     [ApiController]
     public class MobileController : ControllerBase
     {
+        /// <summary>
+        /// Пополнение с мобильного приложения
+        /// </summary>
+        /// <response code="201">Успешно записано</response>
+        /// <response code="400">Некорректные входные данные</response>
+        /// <response code="401">Хэш не прошёл проверку</response>
+        /// <response code="404">Карты с таким номером не существует</response>
         [HttpPost("increase")]
         public IActionResult PostIncrease(IncreaseFromMobile model)
         {
@@ -28,6 +35,11 @@ namespace CardsMobileService.Controllers
 
             CardsApi cardsApi = new CardsApi();
 
+            if (!cardsApi.IsExsisting(model.cardNum))
+            {
+                return NotFound();
+            }
+
             cardsApi.WriteIncrease(new IncreaseFromChanger
             {
                 cardNum = model.cardNum,
@@ -38,7 +50,7 @@ namespace CardsMobileService.Controllers
                 localizedID = 0
             });
 
-            return Ok();
+            return Created("/mobile/increase", 203);
         }
 
         [HttpGet("balance")]
