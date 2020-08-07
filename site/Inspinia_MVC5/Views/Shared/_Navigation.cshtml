@@ -97,15 +97,15 @@
             </li>
 
             <li class="@Html.IsSelected(controller: "Monitoring")">
-                @*<a href="@Url.Action("MonitoringView","Monitoring")"><i class="fa fa-desktop"></i> <span class="nav-label" data-i18n="nav.mailbox">Мониторинг</span></a>*@
-                <a><i class="fa fa-calculator"></i> <span class="nav-label" data-i18n="nav.mailbox">Мониторинг</span></a>
+                <a href="@Url.Action("MonitoringView","Monitoring")"><i class="fa fa-desktop"></i> <span class="nav-label" data-i18n="nav.mailbox">Мониторинг</span></a>
+                @*<a><i class="fa fa-calculator"></i> <span class="nav-label" data-i18n="nav.mailbox">Мониторинг</span></a>*@
             </li>
-            <li class="@Html.IsSelected(controller: "Notifications")">
-                @*<a href="#"><i class="fa fa-bell"></i> <span class="nav-label" data-i18n="nav.widgets">Оповещения</span><span class="fa arrow"></span></a>
-            <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Notifications", cssClass:"in")">
-                <li class="@Html.IsSelected(action:"NotificationsSendingView")"><a href="@Url.Action("NotificationsSendingView","Notifications")">Отправка</a></li>
-                <li class="@Html.IsSelected(action:"NotificationsHistoryView")"><a href="@Url.Action("NotificationsHistoryView","Notifications")">История</a></li>
-            </ul>*@
+        <li class="@Html.IsSelected(controller: "Notifications")">
+            @*<a href="#"><i class="fa fa-bell"></i> <span class="nav-label" data-i18n="nav.widgets">Оповещения</span><span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level collapse @Html.IsSelected(controller: "Notifications", cssClass:"in")">
+            <li class="@Html.IsSelected(action:"NotificationsSendingView")"><a href="@Url.Action("NotificationsSendingView","Notifications")">Отправка</a></li>
+            <li class="@Html.IsSelected(action:"NotificationsHistoryView")"><a href="@Url.Action("NotificationsHistoryView","Notifications")">История</a></li>
+        </ul>*@
                 <a><i class="fa fa-bell"></i> <span class="nav-label" data-i18n="nav.graphs">Оповещения</span></a>
             </li>
 

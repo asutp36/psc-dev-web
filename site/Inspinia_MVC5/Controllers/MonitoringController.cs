@@ -21,46 +21,61 @@ namespace Inspinia_MVC5.Controllers
         List<Wash> _washes = null;
         List<Post> _posts = null;
         List<Device> _devices = null;
+        List<Device> _requiredPosts = null;
 
-        Post post = null;
-        Device device = null;
-        Region region = new Region();
-        short sss = new short();
         InfoPost infopost = null;
 
         public MonitoringController()
         {
             _companies = db.Companies.ToList();
-            _regions = db.Regions.ToList();
-            _washes = db.Washes.ToList();
+            _regions = new List<Region>();
+            _washes = new List<Wash>();
             _posts = db.Posts.ToList();
             _devices = db.Devices.ToList();
+            _requiredPosts = new List<Device>();
 
-            foreach (var c in _companies)
+            _washes = db.Washes.Where(w => w.Code == "М13" || w.Code == "М14").ToList();
+
+            foreach (Wash w in _washes)
             {
-                foreach(var r in c.Regions)
+                if (!_regions.Contains(w.Region))
+                    _regions.Add(w.Region);
+
+                foreach (var p in w.Posts)
                 {
-                    foreach(var w in r.Washes)
+                    Device device = _devices.Find(d => d.IDDevice == p.IDDevice && d.IDDeviceType == 2);
+
+                    if (device != null)
                     {
-                        for (int i = w.Posts.Count - 1; i >= 0; i--)
-                        {
-                            if (w.Posts.ElementAt(i).IDDevice != null)
-                            {
-                                if (_devices.Find(d => d.IDDevice == w.Posts.ElementAt(i).IDDevice).IDDeviceType != 2)
-                                {
-                                    w.Posts.Remove(w.Posts.ElementAt(i));
-                                }
-                            }
-                        }
+                        _requiredPosts.Add(device);
                     }
                 }
             }
 
+            //foreach (var c in _companies)
+            //{
+            //    foreach(var r in c.Regions)
+            //    {
+            //        foreach(var w in r.Washes)
+            //        {
+            //            for (int i = w.Posts.Count - 1; i >= 0; i--)
+            //            {
+            //                if (w.Posts.ElementAt(i).IDDevice != null)
+            //                {
+            //                    if (_devices.Find(d => d.IDDevice == w.Posts.ElementAt(i).IDDevice).IDDeviceType != 2)
+            //                    {
+            //                        w.Posts.Remove(w.Posts.ElementAt(i));
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
             ViewBag.Regions = _regions;
             ViewBag.Washes = _washes;
-            ViewBag.Posts = _posts;
-            ViewBag.Temp = region;
-            ViewBag.X = sss;
+            ViewBag.Posts = _requiredPosts;
+            ViewBag.Devices = _devices;
         }
 
         public ActionResult MonitoringHistoryWashesView()
@@ -75,7 +90,7 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult MonitoringView()
         {
-            return View(_companies);
+            return View(_regions);
         }
 
         public string GetState(string json)
@@ -182,14 +197,14 @@ namespace Inspinia_MVC5.Controllers
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    //string s = response.GetResponseHeader("Function");
+                    string s = response.GetResponseHeader("Function");
 
-                    //byte[] bytes = Encoding.GetEncoding(1252).GetBytes(s);
-                    //s = Encoding.GetEncoding(1251).GetString(bytes);
+                    byte[] bytes = Encoding.GetEncoding(1252).GetBytes(s);
+                    s = Encoding.GetEncoding("utf-8").GetString(bytes);
 
-                    //return s;
+                    return s;
 
-                    return response.GetResponseHeader("Function");
+                    //return response.GetResponseHeader("Function");
                 }
                 else
                 {
@@ -202,12 +217,15 @@ namespace Inspinia_MVC5.Controllers
             }
         }
 
-        public ActionResult PostMonitoringView(int IDPost)
+        public ActionResult PostMonitoringView(string codePost)
         {
-            post = _posts.Find(x => x.IDPost == IDPost);
-            device = _devices.Find(d => d.IDDevice == post.IDDevice);
+            //post = _posts.Find(x => x.IDPost == IDPost);
+            Device post = _devices.Find(d => d.Code == codePost);
+            //device = _devices.Find(d => d.IDDevice == post.IDDevice);
 
-            string data = $"{{\"Post\":\"{device.Code.ToString()}\"}}";
+            //string data = $"{{\"Post\":\"{device.Code.ToString()}\"}}";
+
+            string data = $"{{\"Post\":\"{post.Code}\"}}";
 
             infopost = new InfoPost(GetBalance(data), GetFunction(data), GetState(data), post);
 
@@ -219,10 +237,12 @@ namespace Inspinia_MVC5.Controllers
             string data = JsonConvert.SerializeObject(new ChangeFunctionOnPost(Post, Function, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), login));
             string testlog = ChangeFunctionOnPost(data);
 
-            post = _posts.Find(x => x.IDPost == Convert.ToInt32(Post));
-            device = _devices.Find(d => d.IDDevice == post.IDDevice);
+            Device post = _devices.Find(d => d.Code == Post);
 
-            string req = $"{{\"Post\":\"{device.Code.ToString()}\"}}";
+            //post = _posts.Find(x => x.IDPost == Convert.ToInt32(Post));
+            //device = _devices.Find(d => d.IDDevice == post.IDDevice);
+
+            string req = $"{{\"Post\":\"{post.Code.ToString()}\"}}";
 
             infopost = new InfoPost(GetBalance(req), GetFunction(req), GetState(req), post);
 
@@ -283,15 +303,15 @@ namespace Inspinia_MVC5.Controllers
         {
             if (Post != null && sum != null)
             {
-                Post p = _posts.Find(x => x.IDPost == Convert.ToInt32(Post));
-                device = _devices.Find(d => d.IDDevice == p.IDDevice);
+                //Post p = _posts.Find(x => x.IDPost == Convert.ToInt32(Post));
+                //device = _devices.Find(d => d.IDDevice == p.IDDevice);
 
-                string data = JsonConvert.SerializeObject(new IncreaseBalanceOnPostClass(device.Code, Convert.ToInt32(sum), DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), login));
+                Device post = _devices.Find(d => d.Code == Post);
+
+                string data = JsonConvert.SerializeObject(new IncreaseBalanceOnPostClass(post.Code, Convert.ToInt32(sum), DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), login));
                 string testlog = IncreaseBalanceOnPost(data);
 
-                post = _posts.Find(x => x.IDPost == Convert.ToInt32(Post));
-
-                string req = $"{{\"Post\":\"{device.Code.ToString()}\"}}";
+                string req = $"{{\"Post\":\"{post.Code.ToString()}\"}}";
 
                 infopost = new InfoPost(GetBalance(req), GetFunction(req), GetState(req), post);
             }

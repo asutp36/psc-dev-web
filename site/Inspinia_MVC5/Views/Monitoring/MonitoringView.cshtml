@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Inspinia_MVC5.Models.Company>
+﻿@model IEnumerable<Inspinia_MVC5.Models.Region>
 
 @{
     ViewBag.Title = "Мониторинг";
@@ -36,36 +36,42 @@
 
                     <div id="jstree1">
                         <ul>
-                            @foreach (var c in Model)
-                            {
-                                <li class="jstree">
-                                    @c.Name
-                                    <ul>
-                                        @foreach (var m in c.Regions)
-                                        {
-                                            <li>
-                                                @m.Name
-                                                <ul>
-                                                    @foreach (var n in m.Washes)
+                            <li class="jstree jstree-open">
+                                @Model.ElementAt(0).Company.Name
+                                <ul>
+                                    @foreach (var region in Model)
+                                    {
+                                        <li>
+                                            @region.Name
+                                            <ul>
+                                                @foreach (var wash in ViewBag.Washes)
+                                                {
+                                                    if (wash.IDRegion == region.IDRegion)
                                                     {
                                                         <li>
-                                                            @n.Name
+                                                            @wash.Name
                                                             <ul>
-                                                                @foreach (var k in n.Posts)
+                                                                @foreach (var post in wash.Posts)
                                                                 {
-                                                                    <li class="my-1" onclick="select_post(@k.IDPost)" id="@k.IDPost">
-                                                                        @k.Code
-                                                                    </li>
+                                                                    foreach (var d in ViewBag.Devices)
+                                                                    {
+                                                                        if (post.IDDevice == d.IDDevice && d.IDDeviceType == 2)
+                                                                        {
+                                                                            <li class="my-1" onclick="select_post('@d.Code')" id="@d.Code">
+                                                                                @d.Name
+                                                                            </li>
+                                                                        }
+                                                                    }
                                                                 }
                                                             </ul>
                                                         </li>
                                                     }
-                                                </ul>
-                                            </li>
-                                        }
-                                    </ul>
-                                </li>
-                            }
+                                                }
+                                            </ul>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>                            
                         </ul>
                     </div>
                 </div>
@@ -115,7 +121,7 @@
     </div>
 </div>
 
-<input hidden id="cur_idpost" />
+<input hidden id="cur_post" />
 
 @section Styles {
     @Styles.Render("~/Content/plugins/jsTree")
@@ -170,12 +176,12 @@
         }
 
         function show() {
-            let id = $('#cur_idpost').val()
+            let code = $('#cur_post').val()
         $.ajax({
             type: "GET",
             cache: false,
             data: {
-                IDPost: id
+                codePost: code
             },
             success: function () {
                 check_state()
@@ -189,7 +195,7 @@
         });
         }
 
-        function select_post(IDPost) {
+        function select_post(code) {
             hideall();
 
             if (timeid != -1) {
@@ -197,12 +203,12 @@
                 timeid = -1;
             }
 
-            $('#cur_idpost').val(IDPost);
+            $('#cur_post').val(code);
             $.ajax({
                 type: "GET",
                 cache: false,
                 data: {
-                    IDPost: IDPost
+                    codePost: code
                 },
                 beforeSend: function () {
                     $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
@@ -258,7 +264,7 @@
                         type: "POST",
                         cache: false,
                         data: {
-                            Post: $('#cur_idpost').val(),
+                            Post: $('#cur_post').val(),
                             sum: $('#input-balance').val(),
                             login: "@User.Identity.Name.ToString()"
                         },
@@ -296,7 +302,7 @@
                         type: "POST",
                         cache: false,
                         data: {
-                            Post: $('#cur_idpost').val(),
+                            Post: $('#cur_post').val(),
                             Function: $('#input-function').val(),
                             login: "@User.Identity.Name.ToString()"
                         },

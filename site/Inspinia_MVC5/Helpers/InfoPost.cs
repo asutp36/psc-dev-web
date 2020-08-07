@@ -14,9 +14,9 @@ namespace Inspinia_MVC5.Helpers
 
         public string State { get; set; }
 
-        public Post Post { get; set; }
+        public Device Post { get; set; }
 
-        public InfoPost(string Balance, string Function, string State, Post Post)
+        public InfoPost(string Balance, string Function, string State, Device Post)
         {
             this.Balance = Balance;
             this.Function = Function;
