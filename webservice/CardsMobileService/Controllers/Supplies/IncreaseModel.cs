@@ -9,7 +9,7 @@ namespace CardsMobileService.Controllers.Supplies
     public class IncreaseModel
     {
         [Required]
-        public DateTime dtime { get; set; }
+        public string dtime { get; set; }
         [Required]
         public string cardNum { get; set; }
         [Required]
