@@ -280,8 +280,8 @@ namespace MobileIntegration.Controllers
         /// Узнать баланс карты
         /// </summary>
         /// <param name="getBalance">Номер карты(string)</param>
-        /// <returns>Заголовки: Card - номер карты, Balance - её баланс (если удачно отработал метод), Message - сообщение об ошибке (если неудачно)</returns>
-        /// <response code="200">Удачно</response>
+        /// <returns>Заголовки: Card - номер карты, Balance - её баланс (если удачно отработал метод), LastOperation - время посленй операции, Message - сообщение об ошибке (если неудачно)</returns>
+        /// <response code="200"">Удачно</response>
         /// <response code="404">Карта не найдена</response>
         /// <response code="500">Внутренняя ошибка</response>
         /// <response code="204">Некорректные входные данные</response>
@@ -318,11 +318,15 @@ namespace MobileIntegration.Controllers
                         var response = Request.CreateResponse();
                         response.Headers.Add("Card", getBalance.card);
 
+                        command.CommandText = $"select MAX(DTime) from Operations o join Cards c on c.IDCard = o.IDCard where c.CardNum = '{getBalance.card}'";
+                        var lastOperation = command.ExecuteScalar();
+
                         if (balance != null)
                         {
                             Logger.Log.Debug("GetBalanceDev: Balance: " + balance.ToString() + Environment.NewLine);
                             response.StatusCode = HttpStatusCode.OK;
                             response.Headers.Add("Balance", balance.ToString());
+                            response.Headers.Add("LastOperation", lastOperation.ToString());
                         }
                         else
                         {
@@ -921,7 +925,7 @@ namespace MobileIntegration.Controllers
 
                         try
                         {
-                            command.CommandText = $"UPDATE Cards SET Balance = {commandBalance.CommandText} + {newCard.value} WHERE CardNum = '{newCard.card}'";
+                            command.CommandText = $"UPDATE Cards SET Balance = ({commandBalance.CommandText}) + {newCard.value} WHERE CardNum = '{newCard.card}'";
                             Logger.Log.Debug("SendNewCardDev: command is: " + command.CommandText);
                             command.ExecuteNonQuery();
 
