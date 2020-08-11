@@ -138,7 +138,13 @@ namespace PostControllingService.Controllers.Supplies
             {
                 HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
 
-                return new GetScalarResponse(webResponse.StatusCode, ex.Message);
+                string result;
+                using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))
+                {
+                    result = rdr.ReadToEnd();
+                }
+
+                return new GetScalarResponse(webResponse.StatusCode, result);
             }
         }
     }

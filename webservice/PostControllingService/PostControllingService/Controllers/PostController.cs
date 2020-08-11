@@ -4,6 +4,7 @@ using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 using Newtonsoft.Json;
 using PostControllingService.Controllers.Supplies;
@@ -279,16 +280,26 @@ namespace PostControllingService.Controllers
                     if (address != null || address != "")
                     {
                         GetScalarResponse getFuncResponse = HttpSender.GetScalar("http://" + address + "/api/post/func/get");
-
-                        if (getFuncResponse.StatusCode != HttpStatusCode.OK)
+                        if (getFuncResponse.StatusCode != HttpStatusCode.OK && getFuncResponse.StatusCode != (HttpStatusCode)228)
                         {
                             Logger.Log.Error("GetCurrentFunction: Ошибка при запросе на пост: \n" + getFuncResponse.Result + Environment.NewLine);
                             return Request.CreateResponse(HttpStatusCode.Conflict, "Не удалось установить связь с постом");
                         }
                         else
                         {
+                            if (getFuncResponse.StatusCode == (HttpStatusCode)228)
+                            {
+                                Logger.Log.Debug("GetCurrentFunction: на посту функция = никакая" + Environment.NewLine);
+                                return Request.CreateResponse(HttpStatusCode.OK, "");
+                            }
+
                             PostFunction func = JsonConvert.DeserializeObject<PostFunction>(getFuncResponse.Result);
-                            var response = Request.CreateResponse(HttpStatusCode.OK);
+                            HttpResponseMessage response;
+                            if (func.Name.Equals(""))
+                                response = Request.CreateResponse(HttpStatusCode.OK, "");
+                            else
+                                response = Request.CreateResponse(HttpStatusCode.OK, func.Name);
+
                             Logger.Log.Debug("GetCurrentFunction: на посту функция = " + func.Name + Environment.NewLine);
                             response.Headers.Add("Function", func.Name);
                             return response;
@@ -299,7 +310,7 @@ namespace PostControllingService.Controllers
                         Logger.Log.Error("GetCurrentFunction: не найден ip адрес поста" + Environment.NewLine);
                         return Request.CreateResponse(HttpStatusCode.InternalServerError, "Не найден ip адрес поста");
                     }
-                    
+
                 }
                 else
                 {
