@@ -1013,5 +1013,40 @@ namespace MobileIntegration.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
+
+        /// <summary>
+        /// Получить номер телефона владельца карты
+        /// </summary>
+        /// <param name="id">Номер карты</param>
+        /// <returns>Номер телефона владельца</returns>
+        /// <response code="200">Ок</response>
+        /// <response code="404">Не найден номер</response>
+        /// <response code="500">Внуренняя ошибка сервера</response>
+        [HttpGet]
+        [ActionName("get_phone")]
+        public HttpResponseMessage GetPhone(string id)
+        {
+            Logger.InitLogger();
+            try
+            {
+                Logger.Log.Debug("GetPhone: запуск с параметром " + id);
+
+                Cards card = _model.Cards.Where(c => c.CardNum.Equals(id)).FirstOrDefault();
+
+                if (card == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound);
+                }
+
+                string phone = _model.Owners.Find(card.IDOwner).Phone;
+
+                return Request.CreateResponse(HttpStatusCode.OK, phone);
+            }
+            catch (Exception e)
+            {
+                Logger.Log.Error("GetPhone: " + e.Message.ToString() + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
     }
 }
