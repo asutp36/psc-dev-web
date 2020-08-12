@@ -20,6 +20,7 @@ namespace CardsMobileService.Controllers
         /// <response code="400">Некорректные входные данные</response>
         /// <response code="401">Хэш не прошёл проверку</response>
         /// <response code="404">Карты с таким номером не существует</response>
+        /// <response code="503">ошибка записи в базу</response>
         [HttpPost("increase")]
         public IActionResult PostIncrease(IncreaseFromMobile model)
         {
@@ -40,17 +41,24 @@ namespace CardsMobileService.Controllers
                 return NotFound();
             }
 
-            cardsApi.WriteIncrease(new IncreaseFromChanger
+            try
             {
-                cardNum = model.cardNum,
-                changer = "MOB-EM",
-                dtime = model.dtime,
-                amount = model.amount,
-                operationType = model.operationType,
-                localizedID = 0
-            });
-
-            return Created("/mobile/increase", 203);
+                int serverID = cardsApi.WriteIncrease(new IncreaseFromChanger
+                {
+                    cardNum = model.cardNum,
+                    changer = "MOB-EM",
+                    dtime = model.dtime,
+                    amount = model.amount,
+                    operationType = model.operationType,
+                    localizedID = 0
+                });
+                //return Created("/mobile/increase", serverID);
+                return StatusCode(201);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(503, "Ошибка записи в базу");
+            }
         }
 
         [HttpGet("balance")]

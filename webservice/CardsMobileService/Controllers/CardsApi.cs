@@ -13,7 +13,7 @@ namespace CardsMobileService.Controllers
     {
         private ModelDbContext _model = new ModelDbContext();
 
-        public void WriteIncrease(IncreaseFromChanger model) 
+        public int WriteIncrease(IncreaseFromChanger model) 
         {
             if (_model.Database.CanConnect())
             {
@@ -53,9 +53,12 @@ namespace CardsMobileService.Controllers
                     _model.Database.RollbackTransaction();
                 }
 
-                int id = _model.Database.ExecuteSqlRaw($"SELECT MAX(IDOperation) from Operations o join Cards c on c.IDCard = o.IDCard where c.CardNum = '{model.cardNum}'");
-                int i = _model.Operations.Where(o => o.IdcardNavigation.CardNum.Equals(model.cardNum)).Max(o => o.Idoperation);
+                int id = _model.Operations.Where(o => o.IdcardNavigation.CardNum.Equals(model.cardNum)).Max(o => o.Idoperation);
+
+                return id;
             }
+
+            throw new Exception("База данных не найдена");
         }
 
         public void GetBalance(string cardNum) { }
