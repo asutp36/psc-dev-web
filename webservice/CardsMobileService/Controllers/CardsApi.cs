@@ -1,6 +1,7 @@
 ﻿using CardsMobileService.Controllers.Supplies;
 using CardsMobileService.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,12 @@ namespace CardsMobileService.Controllers
     public class CardsApi
     {
         private ModelDbContext _model = new ModelDbContext();
+        private ILogger<CardsApi> _logger;
+
+        public CardsApi(ILogger<CardsApi> logger)
+        {
+            _logger = logger;
+        }
 
         public int WriteIncrease(IncreaseFromChanger model) 
         {
@@ -38,6 +45,7 @@ namespace CardsMobileService.Controllers
                         $"VALUES ((select IDDevice from Device where Code = '{model.changer}'), (select IDOperationType from OperationTypes where Code = 'increase'), " +
                         $"(select IDCard from Cards where CardNum = '{model.cardNum}'), '{model.dtime}', {model.amount}, " +
                         $"({commandBalance}) + {model.amount}, (select IDDevice from Device where Code = '{model.changer}'), {model.localizedID})";
+                    _logger.LogInformation("command is: " + command);
                     _model.Database.ExecuteSqlRaw(command);
 
                     _model.Database.CommitTransaction();

@@ -6,6 +6,8 @@ using CardsMobileService.Controllers.Supplies;
 using CardsMobileService.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace CardsMobileService.Controllers
 {
@@ -13,6 +15,15 @@ namespace CardsMobileService.Controllers
     [ApiController]
     public class MobileController : ControllerBase
     {
+        ILogger<MobileController> _logger;
+        CardsApi _cardsApi;
+
+        public MobileController(ILogger<MobileController> logger, CardsApi cardsApi)
+        {
+            _logger = logger;
+            _cardsApi = cardsApi;
+        }
+
         /// <summary>
         /// Пополнение с мобильного приложения
         /// </summary>
@@ -34,16 +45,16 @@ namespace CardsMobileService.Controllers
                 return BadRequest();
             }
 
-            CardsApi cardsApi = new CardsApi();
+            _logger.LogInformation("запуск с параметром: " + JsonConvert.SerializeObject(model));
 
-            if (!cardsApi.IsExsisting(model.cardNum))
+            if (!_cardsApi.IsExsisting(model.cardNum))
             {
                 return NotFound();
             }
 
             try
             {
-                int serverID = cardsApi.WriteIncrease(new IncreaseFromChanger
+                int serverID = _cardsApi.WriteIncrease(new IncreaseFromChanger
                 {
                     cardNum = model.cardNum,
                     changer = "MOB-EM",
