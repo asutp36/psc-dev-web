@@ -31,24 +31,28 @@ namespace CardsMobileService.Controllers
         /// <response code="400">Некорректные входные данные</response>
         /// <response code="401">Хэш не прошёл проверку</response>
         /// <response code="404">Карты с таким номером не существует</response>
-        /// <response code="503">ошибка записи в базу</response>
+        /// <response code="500">Внутренняя ошибка сервера</response>
+        /// <response code="503">Ошибка записи в базу</response>
         [HttpPost("increase")]
         public IActionResult PostIncrease(IncreaseFromMobile model)
         {
-            if (!CryptHash.CheckHashCode(model.hash, model.dtime))
-            {
-                return Unauthorized();
-            }
+            _logger.LogDebug("PostIncrease: запуск с параметром: " + JsonConvert.SerializeObject(model));
 
             if (!ModelState.IsValid)
             {
+                _logger.LogError("PostIncrease: модель не прошла валидацию" + Environment.NewLine);
                 return BadRequest();
             }
 
-            _logger.LogInformation("запуск с параметром: " + JsonConvert.SerializeObject(model));
+            if (!CryptHash.CheckHashCode(model.hash, model.dtime))
+            {
+                _logger.LogError("PostIncrease: хэш не прошёл проверку" + Environment.NewLine);
+                return Unauthorized();
+            }
 
             if (!_cardsApi.IsExsisting(model.cardNum))
             {
+                _logger.LogError("PostIncrease: карта не найдена" + Environment.NewLine);
                 return NotFound();
             }
 
@@ -63,12 +67,22 @@ namespace CardsMobileService.Controllers
                     operationType = model.operationType,
                     localizedID = 0
                 });
+                
+                if (serverID == -1)
+                {
+                    _logger.LogError("PostIncrease: транзакция не прошла" + Environment.NewLine);
+                    return StatusCode(503, "Ошибка записи в базу");
+                }
+
+                _logger.LogDebug("PostIncrease: пополнение записано id = " + serverID + Environment.NewLine);
+
                 //return Created("/mobile/increase", serverID);
                 return StatusCode(201);
             }
             catch (Exception e)
             {
-                return StatusCode(503, "Ошибка записи в базу");
+                _logger.LogCritical("PostIncrease: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500);
             }
         }
 

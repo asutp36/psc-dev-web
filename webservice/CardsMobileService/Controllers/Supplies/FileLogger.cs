@@ -34,7 +34,8 @@ namespace CardsMobileService.Controllers.Supplies
             {
                 lock (_lock)
                 {
-                    File.AppendAllText(filePath, formatter(state, exception) + Environment.NewLine);
+                    string message = String.Format("{0} {1}: {2}", DateTime.Now.ToString(), logLevel.ToString().ToUpper(), state);
+                    File.AppendAllText(filePath, message/*formatter(state, exception)*/ + Environment.NewLine);
                 }
             }
         }

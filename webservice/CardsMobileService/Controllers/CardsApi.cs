@@ -42,10 +42,12 @@ namespace CardsMobileService.Controllers
                     _model.Database.ExecuteSqlRaw(command);
 
                     command = "INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
-                        $"VALUES ((select IDDevice from Device where Code = '{model.changer}'), (select IDOperationType from OperationTypes where Code = 'increase'), " +
+                        $"VALUES ((select IDDevice from Device where Code = '{model.changer}'), (select IDOperationType from OperationTypes where Code = '{model.operationType}'), " +
                         $"(select IDCard from Cards where CardNum = '{model.cardNum}'), '{model.dtime}', {model.amount}, " +
                         $"({commandBalance}) + {model.amount}, (select IDDevice from Device where Code = '{model.changer}'), {model.localizedID})";
-                    _logger.LogInformation("command is: " + command);
+                    
+                    _logger.LogDebug("WriteIncrease: command is: " + command);
+
                     _model.Database.ExecuteSqlRaw(command);
 
                     _model.Database.CommitTransaction();
@@ -59,6 +61,10 @@ namespace CardsMobileService.Controllers
                     }
 
                     _model.Database.RollbackTransaction();
+
+                    _logger.LogError("WriteIncrease: ошибка записи. " + e.Message + Environment.NewLine + e.StackTrace);
+
+                    return -1;
                 }
 
                 int id = _model.Operations.Where(o => o.IdcardNavigation.CardNum.Equals(model.cardNum)).Max(o => o.Idoperation);
