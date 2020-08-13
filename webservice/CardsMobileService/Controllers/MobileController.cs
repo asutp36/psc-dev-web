@@ -36,7 +36,7 @@ namespace CardsMobileService.Controllers
         [HttpPost("increase")]
         public IActionResult PostIncrease(IncreaseFromMobile model)
         {
-            _logger.LogDebug("PostIncrease: запуск с параметром: " + JsonConvert.SerializeObject(model));
+            _logger.LogDebug("PostIncrease: запуск с параметрами\n" + JsonConvert.SerializeObject(model));
 
             if (!ModelState.IsValid)
             {
@@ -50,7 +50,7 @@ namespace CardsMobileService.Controllers
                 return Unauthorized();
             }
 
-            if (!_cardsApi.IsExsisting(model.cardNum))
+            if (!_cardsApi.IsExist(model.cardNum))
             {
                 _logger.LogError("PostIncrease: карта не найдена" + Environment.NewLine);
                 return NotFound();

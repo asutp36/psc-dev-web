@@ -83,7 +83,7 @@ namespace CardsMobileService.Controllers
 
         public void GetCardsByPhone(string phone) { }
 
-        public bool IsExsisting(string cardNum)
+        public bool IsExist(string cardNum)
         {
             return _model.Cards.Where(c => c.CardNum.Equals(cardNum)).ToList().Count > 0;
         }
