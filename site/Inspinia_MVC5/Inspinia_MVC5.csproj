@@ -177,6 +177,7 @@
     <Compile Include="Helpers\ChangeRatesData.cs" />
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />
     <Compile Include="Helpers\IncreaseBalanceOnPostClass.cs" />
+    <Compile Include="Helpers\InfoChanger.cs" />
     <Compile Include="Helpers\InfoPost.cs" />
     <Compile Include="Helpers\NotificationClass.cs" />
     <Compile Include="Helpers\RatesWash.cs" />
@@ -2043,8 +2044,8 @@
     <Content Include="Views\CollectWash\CollectList.cshtml" />
     <Content Include="Views\CollectWash\_CollectList.cshtml" />
     <Content Include="Views\Pricing\NewPricesView.cshtml" />
-    <Content Include="Views\Monitoring\MonitoringView.cshtml" />
-    <Content Include="Views\Monitoring\PostMonitoringView.cshtml" />
+    <Content Include="Views\Monitoring\MonitoringPostView.cshtml" />
+    <Content Include="Views\Monitoring\_MonitoringPostView.cshtml" />
     <Content Include="Views\Notifications\NotificationsHistoryView.cshtml" />
     <Content Include="Views\Notifications\_NotificationsHistoryList.cshtml" />
     <Content Include="Views\Notifications\NotificationsSendingView.cshtml" />
@@ -2088,6 +2089,8 @@
     <Content Include="Views\CollectWash\_CollectSum.cshtml" />
     <Content Include="Views\Cards\CurrentCardView.cshtml" />
     <Content Include="Views\Cards\_CurrentCardList.cshtml" />
+    <Content Include="Views\Monitoring\MonitoringChangerView.cshtml" />
+    <Content Include="Views\Monitoring\_MonitoringChangerView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

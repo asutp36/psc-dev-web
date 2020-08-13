@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -22,8 +23,10 @@ namespace Inspinia_MVC5.Controllers
         List<Post> _posts = null;
         List<Device> _devices = null;
         List<Device> _requiredPosts = null;
+        List<Device> _requiredChangers = null;
 
         InfoPost infopost = null;
+        InfoChanger infoChanger = null;
 
         public MonitoringController()
         {
@@ -33,8 +36,10 @@ namespace Inspinia_MVC5.Controllers
             _posts = db.Posts.ToList();
             _devices = db.Devices.ToList();
             _requiredPosts = new List<Device>();
+            _requiredChangers = new List<Device>();
 
             _washes = db.Washes.Where(w => w.Code == "М13" || w.Code == "М14").ToList();
+            var changers = db.Changers.ToList();
 
             foreach (Wash w in _washes)
             {
@@ -50,45 +55,136 @@ namespace Inspinia_MVC5.Controllers
                         _requiredPosts.Add(device);
                     }
                 }
-            }
 
-            //foreach (var c in _companies)
-            //{
-            //    foreach(var r in c.Regions)
-            //    {
-            //        foreach(var w in r.Washes)
-            //        {
-            //            for (int i = w.Posts.Count - 1; i >= 0; i--)
-            //            {
-            //                if (w.Posts.ElementAt(i).IDDevice != null)
-            //                {
-            //                    if (_devices.Find(d => d.IDDevice == w.Posts.ElementAt(i).IDDevice).IDDeviceType != 2)
-            //                    {
-            //                        w.Posts.Remove(w.Posts.ElementAt(i));
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
+                var chs = changers.FindAll(c => c.IDWash == w.IDWash);
+
+                foreach (var c in chs)
+                {
+                    var device = _devices.Find(d => d.IDDevice == c.IDDevice);
+
+                    if (device != null)
+                    {
+                        _requiredChangers.Add(device);
+                    }
+                }
+            }
 
             ViewBag.Regions = _regions;
             ViewBag.Washes = _washes;
             ViewBag.Posts = _requiredPosts;
+            ViewBag.Changers = _requiredChangers;
             ViewBag.Devices = _devices;
         }
-
-        public ActionResult MonitoringHistoryWashesView()
+        public ActionResult MonitoringChangerView()
         {
-            return View();
+            return View(_regions);
         }
 
-        public ActionResult _MonitoringHistoryList()
+        public ActionResult _MonitoringChangerView(string codePost)
         {
-            return PartialView("_MonitoringHistoryWashesList");
+            byte[] bytes = Encoding.GetEncoding(1251).GetBytes(codePost);
+            var code = Encoding.GetEncoding("utf-8").GetString(bytes);
+
+            Device changer = _devices.Find(d => d.Code == code);
+
+            string data = $"{{\"Changer\":\"{changer.Code}\"}}";
+
+            infoChanger = GetInfoChanger(data, changer);
+
+            return PartialView("_MonitoringChangerView", infoChanger);
         }
 
-        public ActionResult MonitoringView()
+        public InfoChanger GetInfoChanger(string json, Device changer)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/heartbeat");
+
+            request.Timeout = 5000;
+
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Method = "POST";
+
+            byte[] postBytes = Encoding.UTF8.GetBytes(json);
+
+            request.ContentType = "application/json";
+            request.Accept = "application/json";
+            request.ContentLength = postBytes.Length;
+
+            Stream requestStream = request.GetRequestStream();
+
+            requestStream.Write(postBytes, 0, postBytes.Length);
+            requestStream.Close();
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    int m10 = Convert.ToInt32(response.GetResponseHeader("m10"));
+                    int b50 = Convert.ToInt32(response.GetResponseHeader("b50"));
+                    int b100 = Convert.ToInt32(response.GetResponseHeader("b100"));
+                    int b200 = Convert.ToInt32(response.GetResponseHeader("b200"));
+                    int b500 = Convert.ToInt32(response.GetResponseHeader("b500"));
+                    int b1000 = Convert.ToInt32(response.GetResponseHeader("b1000"));
+                    int b2000 = Convert.ToInt32(response.GetResponseHeader("b2000"));
+                    int box1_50 = Convert.ToInt32(response.GetResponseHeader("box1_50"));
+                    int box2_100 = Convert.ToInt32(response.GetResponseHeader("box2_100"));
+                    int box3_50 = Convert.ToInt32(response.GetResponseHeader("box3_50"));
+                    int box4_100 = Convert.ToInt32(response.GetResponseHeader("box4_100"));
+                    int badCards = Convert.ToInt32(response.GetResponseHeader("badCards"));
+                    int availableCards = Convert.ToInt32(response.GetResponseHeader("avaiableCards"));
+                    string bill = response.GetResponseHeader("bill");
+                    string coiner = response.GetResponseHeader("coiner");
+                    string bank = response.GetResponseHeader("bank");
+                    string oddMoney = response.GetResponseHeader("oddMoney");
+                    string hopper = response.GetResponseHeader("hopper");
+                    string cards = response.GetResponseHeader("cards");
+                    string issueCards = response.GetResponseHeader("issueCards");
+                    string fr = response.GetResponseHeader("fr");
+                    string printCheck = response.GetResponseHeader("printCheck");
+
+                    InfoChanger infoChanger = new InfoChanger(
+                        m10,
+                        b50,
+                        b100,
+                        b200,
+                        b500,
+                        b1000,
+                        b2000,
+                        box1_50,
+                        box2_100,
+                        box3_50,    
+                        box4_100,
+                        badCards,
+                        availableCards,
+                        bill,
+                        coiner,
+                        bank,
+                        oddMoney,
+                        hopper,
+                        cards,
+                        issueCards,
+                        fr,
+                        printCheck,
+                        changer
+                        );
+
+                    return infoChanger;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (WebException ex)
+            {
+                return null;
+            }
+        }
+
+
+        #region Мониторинг за моечными постами
+        public ActionResult MonitoringPostView()
         {
             return View(_regions);
         }
@@ -183,7 +279,7 @@ namespace Inspinia_MVC5.Controllers
 
             byte[] postBytes = Encoding.UTF8.GetBytes(json);
 
-            request.ContentType = "application/json";
+            request.ContentType = "application/json; charset=utf-8";
             request.Accept = "application/json";
             request.ContentLength = postBytes.Length;
 
@@ -197,14 +293,16 @@ namespace Inspinia_MVC5.Controllers
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    string s = response.GetResponseHeader("Function");
+                    StreamReader s = new StreamReader(response.GetResponseStream());
 
-                    byte[] bytes = Encoding.GetEncoding(1252).GetBytes(s);
-                    s = Encoding.GetEncoding("utf-8").GetString(bytes);
+                    string res = s.ReadToEnd();
 
-                    return s;
+                    if(res.Length > 2)
+                    {
+                        res = res.Substring(1, res.Length - 2);
+                    }
 
-                    //return response.GetResponseHeader("Function");
+                    return res;
                 }
                 else
                 {
@@ -217,10 +315,13 @@ namespace Inspinia_MVC5.Controllers
             }
         }
 
-        public ActionResult PostMonitoringView(string codePost)
+        public ActionResult _MonitoringPostView(string codePost)
         {
+            byte[] bytes = Encoding.GetEncoding(1251).GetBytes(codePost);
+            var code = Encoding.GetEncoding("utf-8").GetString(bytes);
+
             //post = _posts.Find(x => x.IDPost == IDPost);
-            Device post = _devices.Find(d => d.Code == codePost);
+            Device post = _devices.Find(d => d.Code == code);
             //device = _devices.Find(d => d.IDDevice == post.IDDevice);
 
             //string data = $"{{\"Post\":\"{device.Code.ToString()}\"}}";
@@ -229,7 +330,7 @@ namespace Inspinia_MVC5.Controllers
 
             infopost = new InfoPost(GetBalance(data), GetFunction(data), GetState(data), post);
 
-            return PartialView("PostMonitoringView", infopost);
+            return PartialView("_MonitoringPostView", infopost);
         }
 
         public ActionResult ChangeFunction(string Post, string Function, string login)
@@ -246,7 +347,7 @@ namespace Inspinia_MVC5.Controllers
 
             infopost = new InfoPost(GetBalance(req), GetFunction(req), GetState(req), post);
 
-            return PartialView("PostMonitoringView", infopost);
+            return PartialView("_MonitoringPostView", infopost);
         }
 
         public string ChangeFunctionOnPost(string json)
@@ -315,7 +416,7 @@ namespace Inspinia_MVC5.Controllers
 
                 infopost = new InfoPost(GetBalance(req), GetFunction(req), GetState(req), post);
             }
-            return PartialView("PostMonitoringView", infopost);
+            return PartialView("_MonitoringPostView", infopost);
         }
 
         public string IncreaseBalanceOnPost(string json)
@@ -367,5 +468,6 @@ namespace Inspinia_MVC5.Controllers
                 return result + "\nStatusCode: " + webResponse.StatusCode;
             }
         }
+        #endregion
     }
 }

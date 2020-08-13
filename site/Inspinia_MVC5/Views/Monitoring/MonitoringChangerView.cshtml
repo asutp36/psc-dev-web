@@ -1,18 +1,23 @@
-﻿@model IEnumerable<Inspinia_MVC5.Models.Region>
+﻿
+@model IEnumerable<Inspinia_MVC5.Models.Region>
 
 @{
-    ViewBag.Title = "Мониторинг";
+    ViewBag.Title = "Мониторинг платежных аппаратов";
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Мониторинг</h2>
+        <h2>Мониторинг платежных аппаратов</h2>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="@Url.Action("Dashboard_2", "Dashboards")">Сводка</a>
+                <a>Сводка</a>
+                @*<a href="@Url.Action("Dashboard_2", "Dashboards")">Сводка</a>*@
+            </li>
+            <li class="breadcrumb-item">
+                <a>Платежные аппараты</a>
             </li>
             <li class="active breadcrumb-item">
-                <strong>Мониторинг</strong>
+                <strong>Мониторинг платежных аппаратов</strong>
             </li>
         </ol>
     </div>
@@ -25,7 +30,7 @@
         <div class="col-lg-5">
             <div class="ibox" id="ibox-load">
                 <div class="ibox-title">
-                    <h2>Выберите пост  <small>за которым хотите наблюдать</small></h2>
+                    <h2>Платежные аппараты</h2>
                 </div>
                 <div class="ibox-content">
 
@@ -41,23 +46,23 @@
                                 <ul>
                                     @foreach (var region in Model)
                                     {
-                                        <li>
+                                        <li class="jstree-node jstree-open">
                                             @region.Name
                                             <ul>
                                                 @foreach (var wash in ViewBag.Washes)
                                                 {
                                                     if (wash.IDRegion == region.IDRegion)
                                                     {
-                                                        <li>
+                                                        <li class="jstree-node jstree-open">
                                                             @wash.Name
                                                             <ul>
-                                                                @foreach (var post in wash.Posts)
+                                                                @foreach (var changer in wash.Changers)
                                                                 {
                                                                     foreach (var d in ViewBag.Devices)
                                                                     {
-                                                                        if (post.IDDevice == d.IDDevice && d.IDDeviceType == 2)
+                                                                        if (changer.IDDevice == d.IDDevice && d.IDDeviceType == 3)
                                                                         {
-                                                                            <li class="my-1" onclick="select_post('@d.Code')" id="@d.Code">
+                                                                            <li class="my-1" onclick="select_changer('@d.Code')" id="@d.Code">
                                                                                 @d.Name
                                                                             </li>
                                                                         }
@@ -71,18 +76,23 @@
                                         </li>
                                     }
                                 </ul>
-                            </li>                            
+                            </li>
                         </ul>
                     </div>
                 </div>
                 <div class="ibox-content-more">
-                    <a style="margin-left:15px" id="btn-history" class="btn btn-secondary btn-sm" href="@Url.Action("IncreasesOnWashesView","Increases")"><i class="fa fa-history"></i> История пополнений на мойках</a>
+                    <a style="margin-left:15px" id="btn-history" class="btn btn-secondary btn-sm" 
+                       href="@Url.Action("EventChangerView", "EventChanger", new {
+                            begdate = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss"),
+                            enddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"),
+                            })">
+                    <i class="fa fa-history"></i> История событий на платежных аппаратах</a>
                 </div>
             </div>
         </div>
         <div class="col-lg-7">
-            <div id="post" class="ibox ">
-                <div id="cur_post" class="ibox-content">
+            <div id="changer" class="ibox ">
+                <div id="cur_changer" class="ibox-content">
                 </div>
                 <div class="ibox-content-more">
                     <div class="row" style="margin-left:2px">
@@ -121,7 +131,7 @@
     </div>
 </div>
 
-<input hidden id="cur_post" />
+<input hidden id="current_changer" />
 
 @section Styles {
     @Styles.Render("~/Content/plugins/jsTree")
@@ -148,7 +158,7 @@
         }
 
         var timeid = -1;
-        $('#post').hide();
+        $('#changer').hide();
 
         function validate(evt) {
             var theEvent = evt || window.event;
@@ -176,26 +186,25 @@
         }
 
         function show() {
-            let code = $('#cur_post').val()
+            let code = $('#current_changer').val()
         $.ajax({
             type: "GET",
             cache: false,
             data: {
-                codePost: code
+                codeChanger: code
             },
             success: function () {
-                check_state()
             },
             error: function () {
                 alert("error-show");
             },
-            url: "@Url.Action("PostMonitoringView", "Monitoring")",
+            url: "@Url.Action("_MonitoringChangerView", "Monitoring")",
         }).done(function (result) {
-            $('#cur_post').html(result);
+            $('#cur_changer').html(result);
         });
         }
 
-        function select_post(code) {
+        function select_changer(code) {
             hideall();
 
             if (timeid != -1) {
@@ -203,12 +212,12 @@
                 timeid = -1;
             }
 
-            $('#cur_post').val(code);
+            $('#current_changer').val(code);
             $.ajax({
                 type: "GET",
                 cache: false,
                 data: {
-                    codePost: code
+                    codeChanger: code
                 },
                 beforeSend: function () {
                     $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
@@ -223,11 +232,11 @@
                     if (timeid == -1) {
                         timeid = setInterval(show, 1500);
                     }
-                    $('#post').show('fade')
+                    $('#changer').show('fade')
                 },
-                url: "@Url.Action("PostMonitoringView", "Monitoring")",
+                url: "@Url.Action("_MonitoringChangerView", "Monitoring")",
             }).done(function (result) {
-                $('#cur_post').html(result);
+                $('#cur_changer').html(result);
                 });
         }
 
@@ -264,7 +273,7 @@
                         type: "POST",
                         cache: false,
                         data: {
-                            Post: $('#cur_post').val(),
+                            Post: $('#current_post').val(),
                             sum: $('#input-balance').val(),
                             login: "@User.Identity.Name.ToString()"
                         },
@@ -302,7 +311,7 @@
                         type: "POST",
                         cache: false,
                         data: {
-                            Post: $('#cur_post').val(),
+                            Post: $('#current_post').val(),
                             Function: $('#input-function').val(),
                             login: "@User.Identity.Name.ToString()"
                         },
