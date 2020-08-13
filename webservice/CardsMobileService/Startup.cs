@@ -49,6 +49,7 @@ namespace CardsMobileService
             });
 
             services.AddTransient<CardsApi>();
+            services.AddTransient<PostApi>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

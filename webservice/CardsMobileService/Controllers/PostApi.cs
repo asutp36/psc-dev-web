@@ -1,8 +1,11 @@
-﻿using CardsMobileService.Models;
+﻿using CardsMobileService.Controllers.Supplies;
+using CardsMobileService.Models;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace CardsMobileService.Controllers
@@ -17,13 +20,49 @@ namespace CardsMobileService.Controllers
             _logger = logger;
         }
 
-        public void Start() { }
+        public string Start(StartPostModel model) 
+        {
+            if(model.amount < 50)
+            {
+                return "weak";
+            }
+
+            HttpResponse response = HttpSender.SendPost("http://" + GetIp(model.post) + "/api/post/balance/increase/card", 
+                JsonConvert.SerializeObject(new StartModel
+            {
+                cardNum = model.cardNum,
+                amount = model.amount
+            }));
+
+            if(response.StatusCode == 0)
+            {
+                return "unavailible";
+            }
+
+            if(response.StatusCode == (HttpStatusCode)423)
+            {
+                return "busy";
+            }
+
+            if(response.StatusCode == HttpStatusCode.OK)
+            {
+                return "ok";
+            }
+
+            return JsonConvert.SerializeObject(response);
+
+        }
 
         public void Stop() { }
 
+        public string GetIp(string post) 
+        {
+            return _model.Device.Where(d => d.Code.Equals(post)).FirstOrDefault().IpAddress;
+        }
+
         public bool IsExist(string post)
         {
-            return true;
+            return _model.Device.Where(d => d.Code.Equals(post)).ToList().Count > 0;
         }
     }
 }

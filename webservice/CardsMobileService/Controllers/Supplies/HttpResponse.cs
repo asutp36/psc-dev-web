@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace CardsMobileService.Controllers.Supplies
 {
-    public class StartPostModel : StartModel
+    public class HttpResponse
     {
-        [Required]
-        public string post { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
+        public string ResultMessage { get; set; }
     }
 }

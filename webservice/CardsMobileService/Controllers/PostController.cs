@@ -26,6 +26,19 @@ namespace CardsMobileService.Controllers
             _postApi = postApi;
         }
 
+        /// <summary>
+        /// Запуск поста
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <response code="200">Успешно</response>
+        /// <response code="400">Модель не прошла валидацию</response>
+        /// <response code="404">Карта не найдена</response>
+        /// <response code="405">Пост не найден</response>
+        /// <response code="417">Неудачный ответ поста</response>
+        /// <response code="422">Сумма недостаточна для включения</response>
+        /// <response code="423">Пост занят</response>
+        /// <response code="424">Нет связи с постом</response>
         [HttpPost("start")]
         public IActionResult Start(StartPostModel model)
         {
@@ -49,6 +62,34 @@ namespace CardsMobileService.Controllers
                 return StatusCode(405);
             }
 
+            string result = _postApi.Start(model);
+
+            switch (result)
+            {
+                case "weak":
+                    _logger.LogError("StartPost: сумма недостаточна для включения" + Environment.NewLine);
+                    return StatusCode(422);
+
+                case "unavailible":
+                    _logger.LogError("StartPost: не удалось установить связь с постом" + Environment.NewLine);
+                    return StatusCode(424);
+
+                case "busy":
+                    _logger.LogError("StartPost: пост занят" + Environment.NewLine);
+                    return StatusCode(423);
+                case "ok":
+                    _logger.LogError("StartPost: мойка начата" + Environment.NewLine);
+                    return Ok();
+
+                default:
+                    _logger.LogError("StartPost: " + result + Environment.NewLine);
+                    return StatusCode(417);
+            }
+        }
+
+        [HttpPost("stop")]
+        public IActionResult Stop()
+        {
             return Ok();
         }
     }
