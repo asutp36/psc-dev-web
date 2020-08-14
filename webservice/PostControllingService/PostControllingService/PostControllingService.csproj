@@ -144,7 +144,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\ChangerController.cs" />
     <Compile Include="Controllers\PostController.cs" />
+    <Compile Include="Controllers\Supplies\ChangerCounters.cs" />
     <Compile Include="Controllers\Supplies\GetScalarResponse.cs" />
     <Compile Include="Controllers\Supplies\PostFunction.cs" />
     <Compile Include="Controllers\Supplies\FunctionRate.cs" />
