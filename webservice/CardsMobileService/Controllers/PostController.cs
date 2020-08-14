@@ -134,7 +134,7 @@ namespace CardsMobileService.Controllers
 
             Supplies.HttpResponse response = HttpSender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new DecreaseToMobile(dtime, model.cardNum, dtime, model.post, model.amount)));
 
-            _logger.LogInformation("StopPost: ответ сервера мобильного приложения:\n" + JsonConvert.SerializeObject(response));
+            _logger.LogInformation("StopPost: ответ сервера мобильного приложения:\n" + JsonConvert.SerializeObject(response) + Environment.NewLine);
 
             return StatusCode((int)response.StatusCode, response.ResultMessage);
         }
