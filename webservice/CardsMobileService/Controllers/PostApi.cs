@@ -20,7 +20,7 @@ namespace CardsMobileService.Controllers
             _logger = logger;
         }
 
-        public string Start(StartPostModel model) 
+        public string Start(PostActionModel model) 
         {
             if(model.amount < 50)
             {
@@ -63,6 +63,15 @@ namespace CardsMobileService.Controllers
         public bool IsExist(string post)
         {
             return _model.Device.Where(d => d.Code.Equals(post)).ToList().Count > 0;
+        }
+
+        public string GetWashCode(string post)
+        {
+            int idDevice = _model.Device.Where(d => d.Code.Equals(post)).FirstOrDefault().Iddevice;
+
+            int idWash = _model.Posts.Where(p => p.Iddevice == idDevice).FirstOrDefault().Idwash;
+
+            return _model.Wash.Find(idWash).Code;
         }
     }
 }

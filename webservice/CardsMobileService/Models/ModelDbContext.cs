@@ -25,6 +25,7 @@ namespace CardsMobileService.Models
         public virtual DbSet<Operations> Operations { get; set; }
         public virtual DbSet<Owners> Owners { get; set; }
         public virtual DbSet<Posts> Posts { get; set; }
+        public virtual DbSet<Wash> Wash { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -116,6 +117,11 @@ namespace CardsMobileService.Models
                     .HasForeignKey(d => d.Iddevice)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Changers_Device");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany(p => p.Changers)
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_Changers_Wash");
             });
 
             modelBuilder.Entity<Device>(entity =>
@@ -247,6 +253,28 @@ namespace CardsMobileService.Models
                     .HasForeignKey(d => d.Iddevice)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Posts_Device");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany(p => p.Posts)
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_Posts_Wash");
+            });
+
+            modelBuilder.Entity<Wash>(entity =>
+            {
+                entity.HasKey(e => e.Idwash);
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.Property(e => e.Address).HasMaxLength(100);
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.Idregion).HasColumnName("IDRegion");
+
+                entity.Property(e => e.Name).HasMaxLength(100);
             });
 
             OnModelCreatingPartial(modelBuilder);

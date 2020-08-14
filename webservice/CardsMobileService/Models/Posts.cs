@@ -11,5 +11,6 @@ namespace CardsMobileService.Models
         public string Qrcode { get; set; }
 
         public virtual Device IddeviceNavigation { get; set; }
+        public virtual Wash IdwashNavigation { get; set; }
     }
 }

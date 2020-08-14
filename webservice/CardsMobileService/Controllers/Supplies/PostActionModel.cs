@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CardsMobileService.Controllers.Supplies
 {
-    public class StartPostModel : StartModel
+    public class PostActionModel : StartModel
     {
         [Required]
         public string post { get; set; }

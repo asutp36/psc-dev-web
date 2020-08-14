@@ -10,5 +10,6 @@ namespace CardsMobileService.Models
         public int Idwash { get; set; }
 
         public virtual Device IddeviceNavigation { get; set; }
+        public virtual Wash IdwashNavigation { get; set; }
     }
 }

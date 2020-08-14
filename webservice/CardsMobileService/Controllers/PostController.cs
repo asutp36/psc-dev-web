@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using CardsMobileService.Controllers.Supplies;
 using CardsMobileService.Models;
@@ -40,7 +41,7 @@ namespace CardsMobileService.Controllers
         /// <response code="423">Пост занят</response>
         /// <response code="424">Нет связи с постом</response>
         [HttpPost("start")]
-        public IActionResult Start(StartPostModel model)
+        public IActionResult Start(PostActionModel model)
         {
             _logger.LogInformation("StartPost: запуск с параметрами\n" + JsonConvert.SerializeObject(model));
 
@@ -52,7 +53,7 @@ namespace CardsMobileService.Controllers
 
             if (!_cardsApi.IsExist(model.cardNum))
             {
-                _logger.LogError("StartPost: карта с номером {0} не существует" + Environment.NewLine);
+                _logger.LogError("StartPost: карты с номером {0} не существует" + Environment.NewLine);
                 return NotFound();
             }
 
@@ -88,9 +89,54 @@ namespace CardsMobileService.Controllers
         }
 
         [HttpPost("stop")]
-        public IActionResult Stop()
+        public IActionResult Stop(PostActionModel model)
         {
-            return Ok();
+            _logger.LogInformation("StopPost: запуск с параметрами\n" + JsonConvert.SerializeObject(model));
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("StopPost: модель не прошла валидацию" + Environment.NewLine);
+                return BadRequest();
+            }
+
+            if (!_cardsApi.IsExist(model.cardNum))
+            {
+                _logger.LogError("StopPost: карты с номером {0} не существует" + Environment.NewLine);
+                return NotFound();
+            }
+
+            try
+            {
+                int decreaseResult = _cardsApi.WriteDecrease(new IncreaseFromChanger
+                {
+                    cardNum = model.cardNum,
+                    changer = model.post,
+                    amount = model.amount,
+                    operationType = "decrease",
+                    localizedID = 0
+                });
+
+                if (decreaseResult > 0)
+                {
+                    _logger.LogInformation("StopPost: списание записано id = " + decreaseResult);
+                }
+                else
+                {
+                    _logger.LogError("StopPost: списание не записано");
+                }
+            }
+            catch(Exception e)
+            {
+                _logger.LogError("StopPost: " + e.Message);
+            }
+
+            string dtime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            Supplies.HttpResponse response = HttpSender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new DecreaseToMobile(dtime, model.cardNum, dtime, model.post, model.amount)));
+
+            _logger.LogInformation("StopPost: ответ сервера мобильного приложения:\n" + JsonConvert.SerializeObject(response));
+
+            return StatusCode((int)response.StatusCode, response.ResultMessage);
         }
     }
 }
