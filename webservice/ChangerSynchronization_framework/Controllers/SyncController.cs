@@ -97,7 +97,7 @@ namespace ChangerSynchronization_framework.Controllers
 
                 int idEventChanger = int.Parse(id.ToString());
 
-                if (eventFull.eventsAcquiring.Count > 0)
+                if (eventFull.eventsAcquiring != null && eventFull.eventsAcquiring.Count > 0)
                 {
                     result.eventsAcquiring = new List<DbInsertResult>();
                     foreach (EventAcquiring ea in eventFull.eventsAcquiring)
@@ -106,7 +106,7 @@ namespace ChangerSynchronization_framework.Controllers
                     }
                 }
 
-                if (eventFull.eventsNominals.Count > 0)
+                if (eventFull.eventsNominals != null && eventFull.eventsNominals.Count > 0)
                 {
                     result.eventsNominals = new List<DbInsertResult>();
                     foreach (EventWithNominals ewn in eventFull.eventsNominals)
@@ -118,7 +118,7 @@ namespace ChangerSynchronization_framework.Controllers
                     }
                 }
 
-                if (eventFull.eventsCard.Count > 0)
+                if (eventFull.eventsCard != null && eventFull.eventsCard.Count > 0)
                 {
                     result.eventsCard = new List<DbInsertResult>();
                     foreach (EventCard ec in eventFull.eventsCard)
@@ -145,6 +145,15 @@ namespace ChangerSynchronization_framework.Controllers
                         //insertRes.serverMessage += res;
 
                         result.eventsCard.Add(insertRes);
+                    }
+                }
+
+                if (eventFull.eventsCollect != null && eventFull.eventsCollect.Count > 0)
+                {
+                    result.eventsCollect = new List<DbInsertResult>();
+                    foreach(EventCollect ec in eventFull.eventsCollect)
+                    {
+                        result.eventsCollect.Add(WriteEventChangerCollect(ec, idEventChanger));
                     }
                 }
 
@@ -319,7 +328,7 @@ namespace ChangerSynchronization_framework.Controllers
                 Logger.Log.Debug("WriteEventChangerCollet: connection state: " + _model.Database.Connection.State);
 
                 DbCommand command = _model.Database.Connection.CreateCommand();
-                command.CommandText = $"INSERT INTO EventChangerCollect (IDEventChanger, DTime, m10, b50, b100, b500, b1000, b2000, box1_50, box2_100, box3_50, box4_100, BadCards, AvailibleCards) " +
+                command.CommandText = $"INSERT INTO EventChangerCollect (IDEventChanger, DTime, m10, b50, b100, b200, b500, b1000, b2000, box1_50, box2_100, box3_50, box4_100, BadCards, AvailibleCards) " +
                     $"VALUES ({idEventChanger}, '{eventCollect.dtime.ToString("yyyy-MM-dd HH:mm:ss")}', {eventCollect.m10}, {eventCollect.b50}, {eventCollect.b100}, " +
                     $"{eventCollect.b200}, {eventCollect.b500}, {eventCollect.b1000}, {eventCollect.b2000}, {eventCollect.box1_50}, {eventCollect.box2_100}, {eventCollect.box3_50}, " +
                     $"{eventCollect.box4_100}, {eventCollect.badCards}, {eventCollect.availibleCards}); " +

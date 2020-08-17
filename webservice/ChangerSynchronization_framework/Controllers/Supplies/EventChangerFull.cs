@@ -22,5 +22,7 @@ namespace ChangerSynchronization_framework.Controllers.Supplies
         public List<EventWithNominals> eventsNominals { get; set; }
 
         public List<EventCard> eventsCard { get; set; }
+
+        public List<EventCollect> eventsCollect { get; set; }
     }
 }
