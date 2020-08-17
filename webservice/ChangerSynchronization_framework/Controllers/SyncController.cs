@@ -310,6 +310,45 @@ namespace ChangerSynchronization_framework.Controllers
             }
         }
 
+        private DbInsertResult WriteEventChangerCollect(EventCollect eventCollect, int idEventChanger)
+        {
+            Logger.InitLogger();
+            try
+            {
+                _model.Database.Connection.Open();
+                Logger.Log.Debug("WriteEventChangerCollet: connection state: " + _model.Database.Connection.State);
+
+                DbCommand command = _model.Database.Connection.CreateCommand();
+                command.CommandText = $"INSERT INTO EventChangerCollect (IDEventChanger, DTime, m10, b50, b100, b500, b1000, b2000, box1_50, box2_100, box3_50, box4_100, BadCards, AvailibleCards) " +
+                    $"VALUES ({idEventChanger}, '{eventCollect.dtime.ToString("yyyy-MM-dd HH:mm:ss")}', {eventCollect.m10}, {eventCollect.b50}, {eventCollect.b100}, " +
+                    $"{eventCollect.b200}, {eventCollect.b500}, {eventCollect.b1000}, {eventCollect.b2000}, {eventCollect.box1_50}, {eventCollect.box2_100}, {eventCollect.box3_50}, " +
+                    $"{eventCollect.box4_100}, {eventCollect.badCards}, {eventCollect.availibleCards}); " +
+                    $"SELECT SCOPE_IDENTITY();";
+
+                Logger.Log.Debug("WriteEventChangerCollect: command is:\n" + command.CommandText);
+
+                var id = command.ExecuteScalar();
+
+                _model.Database.Connection.Close();
+
+                if (id == null || int.Parse(id.ToString()) < 1)
+                {
+                    Logger.Log.Error("WriteEventChangerCollect: ошибка при записи EventChangerCollect." + Environment.NewLine);
+                    return new DbInsertResult { serverMessage = "Ошибка записи в базу EventChangerCollect" };
+                }
+
+                Logger.Log.Debug("WriteEventChangerCollect: eventCollect добавлен id = " + id.ToString() + Environment.NewLine);
+                return new DbInsertResult { serverId = int.Parse(id.ToString()) };
+            }
+            catch (Exception e)
+            {
+                if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                    _model.Database.Connection.Close();
+                Logger.Log.Error("WriteEventChangerCollect: ошибка при записи в базу. Событие:\n" + JsonConvert.SerializeObject(eventCollect) + Environment.NewLine + e.Message + Environment.NewLine);
+                return new DbInsertResult { serverMessage = "Приём ок. Ошибка записи в базу" };
+            }
+        }
+
         private string WriteNewCard(EventChangerFull eventChanger)
         {
             Logger.InitLogger();
