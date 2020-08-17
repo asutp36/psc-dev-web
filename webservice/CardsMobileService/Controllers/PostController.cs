@@ -88,6 +88,15 @@ namespace CardsMobileService.Controllers
             }
         }
 
+        /// <summary>
+        /// Отправка конца мойки на мобильное приложение
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <response code="200">Удачно отправлено</response>
+        /// <response code="400">Модель не прошла валидацию</response>
+        /// <response code="404">Карта не найдена</response>
+        /// <response code="1000">Остальные коды ответов приходят с мобильного приложения</response>
         [HttpPost("stop")]
         public IActionResult Stop(PostActionModel model)
         {

@@ -130,14 +130,17 @@ namespace CardsMobileService.Controllers
         }
 
         [HttpPost("start")]
-        public IActionResult StartPost()
+        public IActionResult StartPost(StartModelMobile model)
         {
-            if (!CryptHash.CheckHashCode("hash", "dtime"))
+            _logger.LogInformation("StartPost: запуск с параметрами\n" + JsonConvert.SerializeObject(model));
+
+            if (!CryptHash.CheckHashCode(model.hash, model.dtime))
             {
+                _logger.LogError("StartPost: хэш не прошёл проверку" + Environment.NewLine);
                 return Unauthorized();
             }
 
-            return Ok();
+            return new RedirectToActionResult("Start", "Post", new PostActionModel { cardNum = model.cardNum, post = model.post, amount = model.amount });
         }
 
         [HttpPost("card")]
