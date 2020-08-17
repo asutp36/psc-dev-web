@@ -151,6 +151,7 @@
     <Compile Include="Controllers\Supplies\EventAcquiring.cs" />
     <Compile Include="Controllers\Supplies\EventCard.cs" />
     <Compile Include="Controllers\Supplies\EventChangerFull.cs" />
+    <Compile Include="Controllers\Supplies\EventCollect.cs" />
     <Compile Include="Controllers\Supplies\EventWithNominals.cs" />
     <Compile Include="Controllers\Supplies\InsertFullEventChangerResult.cs" />
     <Compile Include="Controllers\Supplies\Logger.cs" />
