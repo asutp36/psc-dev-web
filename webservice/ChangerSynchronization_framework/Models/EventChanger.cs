@@ -21,6 +21,7 @@ namespace ChangerSynchronization_framework.Models
             this.EventChangerCard = new HashSet<EventChangerCard>();
             this.EventChangerIncrease = new HashSet<EventChangerIncrease>();
             this.EventChangerOut = new HashSet<EventChangerOut>();
+            this.EventChangerCollect = new HashSet<EventChangerCollect>();
         }
     
         public int IDEventChanger { get; set; }
@@ -38,5 +39,7 @@ namespace ChangerSynchronization_framework.Models
         public virtual ICollection<EventChangerIncrease> EventChangerIncrease { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EventChangerOut> EventChangerOut { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EventChangerCollect> EventChangerCollect { get; set; }
     }
 }

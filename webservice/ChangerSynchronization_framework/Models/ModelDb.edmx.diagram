@@ -21,6 +21,8 @@
         <AssociationConnector Association="WashCompanyEntities.FK_EventChangerOut_EventChanger" ManuallyRouted="false" />
         <EntityTypeShape EntityType="WashCompanyEntities.Device" Width="1.5" PointX="0.75" PointY="10.375" />
         <AssociationConnector Association="WashCompanyEntities.FK_Changers_Device" />
+        <EntityTypeShape EntityType="WashCompanyEntities.EventChangerCollect" Width="1.5" PointX="5.25" PointY="14.125" />
+        <AssociationConnector Association="WashCompanyEntities.FK_EventChangerCollect_EventChanger" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

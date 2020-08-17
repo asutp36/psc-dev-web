@@ -21,9 +21,7 @@ namespace ChangerSynchronization_framework.Models
         }
     
         public int IDChanger { get; set; }
-        public string Name { get; set; }
         public int IDWash { get; set; }
-        public string Code { get; set; }
         public Nullable<int> IDDevice { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

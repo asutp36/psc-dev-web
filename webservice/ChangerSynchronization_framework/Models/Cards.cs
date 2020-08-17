@@ -21,5 +21,6 @@ namespace ChangerSynchronization_framework.Models
         public int IDCardType { get; set; }
         public int LocalizedBy { get; set; }
         public int LocalizedID { get; set; }
+        public Nullable<int> Balance { get; set; }
     }
 }
