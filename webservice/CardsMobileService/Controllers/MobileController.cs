@@ -131,6 +131,20 @@ namespace CardsMobileService.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Запуск поста
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <response code="200">Успешно</response>
+        /// <response code="400">Модель не прошла валидацию</response>
+        /// <response code="401">Хэш не прошёл проверку</response>
+        /// <response code="404">Карта не найдена</response>
+        /// <response code="405">Пост не найден</response>
+        /// <response code="417">Неудачный ответ поста</response>
+        /// <response code="422">Сумма недостаточна для включения</response>
+        /// <response code="423">Пост занят</response>
+        /// <response code="424">Нет связи с постом</response>
         [HttpPost("start")]
         public IActionResult StartPost(StartModelMobile model)
         {
