@@ -54,8 +54,7 @@ namespace Inspinia_MVC5.Helpers
             string cards,
             string issueCards,
             string fr,
-            string printCheck,
-            Device changer
+            string printCheck
             )
         {
             this.m10 = m10;
@@ -80,7 +79,6 @@ namespace Inspinia_MVC5.Helpers
             this.issueCards = issueCards;
             this.fr = fr;
             this.printCheck = printCheck;
-            this.changer = changer;
         }
     }
 }

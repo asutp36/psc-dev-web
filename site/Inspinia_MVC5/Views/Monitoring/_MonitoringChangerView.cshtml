@@ -117,21 +117,64 @@
         </div>
     </div>
 </div>
-<div class="row">
+<div class="row" style="margin:10px;">
     <div class="col-lg-4">
-        <h2 style="display:inline" class="label label-info">Купюрник</h2>
-        <h2 style="display:inline" class="label label-info">Монетник</h2>
-        <h2 style="display:inline" class="label label-info">Банк</h2>
+        <div class="sensor">
+            <div class="sensor-name">Купюрник</div>
+            <div class="sensor-state-work">@Model.bill</div>
+        </div>
     </div>
     <div class="col-lg-4">
-        <h2 style="display:inline" class="label label-info">Сдача</h2>
-        <h2 style="display:inline" class="label label-info">Хоппер</h2>
-        <h2 style="display:inline" class="label label-info">Карты</h2>
+        <div class="sensor">
+            <div class="sensor-name">Монетник</div>
+            <div class="sensor-state-notwork">@Model.coiner</div>
+        </div>
     </div>
     <div class="col-lg-4">
-        <h2 style="display:inline" class="label label-info">Выдача карт</h2>
-        <h2 style="display:inline" class="label label-info">ФР</h2>
-        <h2 style="display:inline" class="label label-info">Принтер чеков</h2>
+        <div class="sensor">
+            <div class="sensor-name">Банк</div>
+            <div class="sensor-state-notwork">@Model.bank</div>
+        </div>
+    </div>
+</div>
+<div class="row" style="margin:10px">
+    <div class="col-lg-4">
+        <div class="sensor">
+            <div class="sensor-name">Сдача</div>
+            <div class="sensor-state-notconnect">@Model.oddMoney</div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="sensor">
+            <div class="sensor-name">Хоппер</div>
+            <div class="sensor-state-work">@Model.hopper</div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="sensor">
+            <div class="sensor-name">Карты</div>
+            <div class="sensor-state-work">@Model.cards</div>
+        </div>
+    </div>
+</div>
+<div class="row" style="margin:10px">
+    <div class="col-lg-4">
+        <div class="sensor">
+            <div class="sensor-name">Выдача карт</div>
+            <div class="sensor-state-work">@Model.issueCards</div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="sensor">
+            <div class="sensor-name">ФР</div>
+            <div class="sensor-state-notwork">@Model.fr</div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="sensor">
+            <div class="sensor-name">Принтер чеков</div>
+            <div class="sensor-state-notwork">@Model.printCheck</div>
+        </div>
     </div>
 </div>
 
