@@ -17,11 +17,13 @@ namespace CardsMobileService.Controllers
     {
         ILogger<MobileController> _logger;
         CardsApi _cardsApi;
+        PostApi _postApi;
 
-        public MobileController(ILogger<MobileController> logger, CardsApi cardsApi)
+        public MobileController(ILogger<MobileController> logger, CardsApi cardsApi, PostApi postApi)
         {
             _logger = logger;
             _cardsApi = cardsApi;
+            _postApi = postApi;
         }
 
         /// <summary>
@@ -140,7 +142,47 @@ namespace CardsMobileService.Controllers
                 return Unauthorized();
             }
 
-            return new RedirectToActionResult("Start", "Post", new PostActionModel { cardNum = model.cardNum, post = model.post, amount = model.amount });
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("StartPost: модель не прошла валидацию" + Environment.NewLine);
+                return BadRequest();
+            }
+
+            if (!_cardsApi.IsExist(model.cardNum))
+            {
+                _logger.LogError("StartPost: карты с номером {0} не существует" + Environment.NewLine);
+                return NotFound();
+            }
+
+            if (!_postApi.IsExist(model.post))
+            {
+                _logger.LogError("StartPost: не найден код поста" + Environment.NewLine);
+                return StatusCode(405);
+            }
+
+            string result = _postApi.Start(model);
+
+            switch (result)
+            {
+                case "weak":
+                    _logger.LogError("StartPost: сумма недостаточна для включения" + Environment.NewLine);
+                    return StatusCode(422);
+
+                case "unavailible":
+                    _logger.LogError("StartPost: не удалось установить связь с постом" + Environment.NewLine);
+                    return StatusCode(424);
+
+                case "busy":
+                    _logger.LogError("StartPost: пост занят" + Environment.NewLine);
+                    return StatusCode(423);
+                case "ok":
+                    _logger.LogError("StartPost: мойка начата" + Environment.NewLine);
+                    return Ok();
+
+                default:
+                    _logger.LogError("StartPost: " + result + Environment.NewLine);
+                    return StatusCode(417);
+            }
         }
 
         [HttpPost("card")]
