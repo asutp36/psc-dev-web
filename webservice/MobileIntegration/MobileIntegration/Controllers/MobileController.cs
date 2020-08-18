@@ -26,9 +26,7 @@ namespace MobileIntegration.Controllers
         /// <response code="204">Некорректное входное значение</response>
         [HttpPost]
         [ActionName("increase_dev")]
-        //где записан баланс?
-        //можно просто через операцию
-        public HttpResponseMessage IncreaseBalanceDev([FromBody]IncreaseFromMobile increase)
+        public HttpResponseMessage IncreaseBalanceDev([FromBody]IncreaseFromChanger increase)
         {
             Logger.InitLogger();
             if (increase != null)
@@ -37,7 +35,7 @@ namespace MobileIntegration.Controllers
                 {
                     Logger.Log.Debug(String.Format("IncreaseBalnce. Запуск с параметрами:\n" +
                         "time_send: {0}, hash: {1}\ncard: {2}, value: {3}\nfrom: {4}, operation_type: {5}", increase.time_send, increase.hash, increase.card.ToString(),
-                        increase.value, increase.from, increase.operation_type));
+                        increase.value, increase.fromCode, increase.operation_type));
 
                     if (_model.Database.Exists())
                     {
@@ -59,13 +57,13 @@ namespace MobileIntegration.Controllers
 
                         try
                         {
-                            command.CommandText = $"UPDATE Cards SET Balance = {commandBalance.CommandText} + {increase.value} WHERE CardNum = '{increase.card}'";
+                            command.CommandText = $"UPDATE Cards SET Balance = ({commandBalance.CommandText}) + {increase.value} WHERE CardNum = '{increase.card}'";
                             Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
                             command.ExecuteNonQuery();
 
                             command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                             $"VALUES ((select IDDevice from Device where Code = 'MOB-EM'), (select IDOperationType from OperationTypes where Code = 'increase'), " +
-                            $"(select IDCard from Cards where CardNum = '{increase.card}'), '{increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {increase.value}, {commandBalance.CommandText} + {increase.value}, " +
+                            $"(select IDCard from Cards where CardNum = '{increase.card}'), '{increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {increase.value}, ({commandBalance.CommandText}) + {increase.value}, " +
                             $"(select IDDevice from Device where Code = 'MOB-EM'), 0);";
                             Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
                             command.ExecuteNonQuery();
