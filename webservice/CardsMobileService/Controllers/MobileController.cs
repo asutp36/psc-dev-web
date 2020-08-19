@@ -232,6 +232,7 @@ namespace CardsMobileService.Controllers
                 _logger.LogError("PostCard: на этот номер уже записаны карты" + Environment.NewLine);
                 return Conflict();
             }
+
             try
             {
                 int serverID = _cardsApi.WriteNewCard(new NewCardFromChanger

@@ -159,7 +159,7 @@ namespace CardsMobileService.Controllers
                     _logger.LogInformation("WriteNewCard: command is: " + command);
                     _model.Database.ExecuteSqlRaw(command);
 
-                    _logger.LogDebug("WriteNewCard: Добавлены Owner и Card. CardNum = " + model.cardNum);
+                    _logger.LogInformation("WriteNewCard: Добавлены Owner и Card. CardNum = " + model.cardNum);
 
                     command = $"insert into Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                                 $"values ((select IDDevice from Device where Code = '{model.changer}'), " +
