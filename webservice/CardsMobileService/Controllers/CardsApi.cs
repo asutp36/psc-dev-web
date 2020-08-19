@@ -146,6 +146,28 @@ namespace CardsMobileService.Controllers
                 {
                     _model.Database.BeginTransaction();
 
+                    string command = $"insert into Owners (Phone, PhoneInt, LocalizedBy, LocalizedID) values ('{formattedPhone.phone}', " +
+                        $"{formattedPhone.phoneInt}, (select IDDevice from Device where Code = '{model.changer}'), {model.localizedID})";
+                    _logger.LogInformation("WriteNewCard: command is: " + command);
+                    _model.Database.ExecuteSqlRaw(command);
+
+                    command = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID, Balance) " +
+                        $"values (scope_identity(), '{model.cardNum}', (select IDCardStatus from CardStatuses cs where cs.Code = 'norm'), " +
+                        $"(select IDCardType from CardTypes ct where ct.Code = 'client'), " +
+                        $"(select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = '{model.changer}'), {model.localizedID}, {model.amount})";
+                    _logger.LogInformation("WriteNewCard: command is: " + command);
+                    _model.Database.ExecuteSqlRaw(command);
+
+                    _logger.LogDebug("WriteNewCard: Добавлены Owner и Card. CardNum = " + model.cardNum);
+
+                    command = $"insert into Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
+                                $"values ((select IDDevice from Device where Code = '{model.changer}'), " +
+                                $"(select IDOperationType from OperationTypes ot where ot.Code = 'activation'), " +
+                                $"scope_identity(), '{model.dtime}', " +
+                                $"0, 0, (select IDDevice from Device where Code = '{model.changer}'), {model.localizedID});";
+                    _logger.LogInformation("WriteNewCard: command is: " + command);
+                    _model.Database.ExecuteSqlRaw(command);
+
                     _model.Database.CommitTransaction();
                 }
                 catch(Exception e)
@@ -158,8 +180,9 @@ namespace CardsMobileService.Controllers
                     _model.Database.RollbackTransaction();
 
                     _logger.LogError("WriteNewCard: ошибка записи. " + e.Message + Environment.NewLine + e.StackTrace);
-
                 }
+
+
             }
 
             throw new Exception("База данных не найдена");
