@@ -11,7 +11,7 @@ namespace CardsMobileService.Controllers.Supplies
         [Required]
         public string changer { get; set; }
         [Required]
-        public string localizedID { get; set; }
+        public int localizedID { get; set; }
         [Required]
         public int amount { get; set; }
     }

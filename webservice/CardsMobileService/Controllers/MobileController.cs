@@ -199,15 +199,64 @@ namespace CardsMobileService.Controllers
             }
         }
 
+        /// <summary>
+        /// Запись новой карты
+        /// </summary>
+        /// <param name="model">Данные новой карты</param>
+        /// <returns></returns>
+        /// <response code="201">Создано успешно</response>
+        /// <response code="400">Модель не прошла валидацию</response>
+        /// <response code="401">Хэш не прошёл валидацию</response>
+        /// <response code="409">На этот номер уже записана карта</response>
+        /// <response code="417">Ошибка при записи в базу</response>
+        /// <response code="500">Внутренняя ошибка</response>
         [HttpPost("card")]
-        public IActionResult PostCard()
+        public IActionResult PostCard(NewCardFromMobile model)
         {
-            if (!CryptHash.CheckHashCode("hash", "dtime"))
+            _logger.LogInformation("PostCard: запуск с параметрами: " + JsonConvert.SerializeObject(model));
+
+            if (!CryptHash.CheckHashCode(model.hash, model.dtime))
             {
+                _logger.LogError("PostCard: хэш не прошёл проверку" + Environment.NewLine);
                 return Unauthorized();
             }
 
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("PostCard: модель не прошла валидацию" + Environment.NewLine);
+                return BadRequest();
+            }
+
+            if (_cardsApi.GetCardsByPhone(model.phone).Count > 0)
+            {
+                _logger.LogError("PostCard: на этот номер уже записаны карты" + Environment.NewLine);
+                return Conflict();
+            }
+            try
+            {
+                int serverID = _cardsApi.WriteNewCard(new NewCardFromChanger
+                {
+                    changer = "MOB-EM",
+                    localizedID = 0,
+                    amount = 0,
+                    dtime = model.dtime,
+                    cardNum = _cardsApi.GetNewCardNum(),
+                    phone = model.phone
+                });
+
+                if (serverID > 0)
+                {
+                    _logger.LogDebug("PostCard: удачно всё запсано. SeverID = " + serverID + Environment.NewLine);
+                    return Created("/api/mobile/card", null);
+                }
+            }
+            catch(Exception e)
+            {
+                _logger.LogError("PostCard: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(417, "Не найдена база данных");
+            }
+
+            return StatusCode(500);
         }
     }
 }

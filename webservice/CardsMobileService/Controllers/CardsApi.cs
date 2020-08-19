@@ -191,7 +191,18 @@ namespace CardsMobileService.Controllers
             throw new Exception("База данных не найдена");
         }
 
-        public void GetCardsByPhone(string phone) { }
+        public List<string> GetCardsByPhone(string phone) 
+        {
+            PhoneFormatter formattedPhone = new PhoneFormatter(phone);
+
+            List<Cards> cards = _model.Cards.Where(c => c.Idowner == _model.Owners.Where(o => o.PhoneInt.Equals(formattedPhone.phoneInt)).First().Idowner).ToList();
+            List<string> nums = new List<string>();
+
+            foreach (Cards c in cards)
+                nums.Add(c.CardNum);
+
+            return nums;
+        }
 
         public bool IsExist(string cardNum)
         {
