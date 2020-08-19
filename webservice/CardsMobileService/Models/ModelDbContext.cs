@@ -21,6 +21,7 @@ namespace CardsMobileService.Models
         public virtual DbSet<Changers> Changers { get; set; }
         public virtual DbSet<Device> Device { get; set; }
         public virtual DbSet<DeviceTypes> DeviceTypes { get; set; }
+        public virtual DbSet<NumsMobileCards> NumsMobileCards { get; set; }
         public virtual DbSet<OperationTypes> OperationTypes { get; set; }
         public virtual DbSet<Operations> Operations { get; set; }
         public virtual DbSet<Owners> Owners { get; set; }
@@ -164,6 +165,13 @@ namespace CardsMobileService.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<NumsMobileCards>(entity =>
+            {
+                entity.HasKey(e => e.Num);
+
+                entity.Property(e => e.Num).HasMaxLength(20);
             });
 
             modelBuilder.Entity<OperationTypes>(entity =>
