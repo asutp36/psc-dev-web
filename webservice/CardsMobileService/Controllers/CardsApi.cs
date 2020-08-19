@@ -1,6 +1,7 @@
 ﻿using CardsMobileService.Controllers.Supplies;
 using CardsMobileService.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -134,7 +135,7 @@ namespace CardsMobileService.Controllers
 
         public void UpdatePhone() { }
 
-        public void WriteNewCard(NewCardFromChanger model) 
+        public int WriteNewCard(NewCardFromChanger model) 
         {
             if (_model.Database.CanConnect())
             {
@@ -180,9 +181,11 @@ namespace CardsMobileService.Controllers
                     _model.Database.RollbackTransaction();
 
                     _logger.LogError("WriteNewCard: ошибка записи. " + e.Message + Environment.NewLine + e.StackTrace);
+
+                    return -1;
                 }
 
-
+                return _model.Operations.Where(o => o.Idcard == _model.Cards.Where(c => c.CardNum.Equals(model.cardNum)).FirstOrDefault().Idcard).Max(o => o.Idoperation);
             }
 
             throw new Exception("База данных не найдена");
