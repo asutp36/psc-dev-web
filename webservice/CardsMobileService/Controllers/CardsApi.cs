@@ -134,13 +134,53 @@ namespace CardsMobileService.Controllers
 
         public void UpdatePhone() { }
 
-        public void WriteNewCard() { }
+        public void WriteNewCard(NewCardFromChanger model) 
+        {
+            if (_model.Database.CanConnect())
+            {
+                PhoneFormatter formattedPhone = new PhoneFormatter(model.phone);
+
+                _model.Database.OpenConnection();
+
+                try
+                {
+                    _model.Database.BeginTransaction();
+
+                    _model.Database.CommitTransaction();
+                }
+                catch(Exception e)
+                {
+                    if (_model.Database.GetDbConnection().State == System.Data.ConnectionState.Open)
+                    {
+                        _model.Database.CloseConnection();
+                    }
+
+                    _model.Database.RollbackTransaction();
+
+                    _logger.LogError("WriteNewCard: ошибка записи. " + e.Message + Environment.NewLine + e.StackTrace);
+
+                }
+            }
+
+            throw new Exception("База данных не найдена");
+        }
 
         public void GetCardsByPhone(string phone) { }
 
         public bool IsExist(string cardNum)
         {
             return _model.Cards.Where(c => c.CardNum.Equals(cardNum)).ToList().Count > 0;
+        }
+
+        public string GetNewCardNum()
+        {
+            string commandCardNum = "select " +
+                                "min(v.Num) as Num " +
+                                "from NumsMobileCards v " +
+                                "left join Cards c on c.CardNum = v.Num " +
+                                "where c.CardNum is null";
+
+            return _model.NumsMobileCards.FromSqlRaw(commandCardNum).First().Num;
         }
     }
 }
