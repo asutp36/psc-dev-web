@@ -1960,6 +1960,7 @@ button.dim:active:before {
     border-style: solid;
     border-color: #5e5e5e;
     text-align: center;
+    margin: 0 0 10px 0;
 }
 
 .sensor-name {

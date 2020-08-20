@@ -181,6 +181,7 @@
     <Compile Include="Helpers\InfoPost.cs" />
     <Compile Include="Helpers\NotificationClass.cs" />
     <Compile Include="Helpers\RatesWash.cs" />
+    <Compile Include="Helpers\Sensor.cs" />
     <Compile Include="Models\Card.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>

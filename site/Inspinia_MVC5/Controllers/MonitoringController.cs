@@ -88,16 +88,16 @@ namespace Inspinia_MVC5.Controllers
 
             Device changer = _devices.Find(d => d.Code == code);
 
-            string data = $"{{\"Changer\":\"{changer.Code}\"}}";
+            //string data = $"{{\"Changer\":\"{changer.Code}\"}}";
 
-            infoChanger = GetInfoChanger(data, changer);
+            infoChanger = GetInfoChanger(changer);
 
             return PartialView("_MonitoringChangerView", infoChanger);
         }
 
-        public InfoChanger GetInfoChanger(string json, Device changer)
+        public InfoChanger GetInfoChanger(Device changer)
         {
-            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/post/heartbeat");
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/changer/state/"+changer.Code);
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/pev9y-1597747203/post");
 
@@ -105,100 +105,84 @@ namespace Inspinia_MVC5.Controllers
 
             request.KeepAlive = false;
             request.ProtocolVersion = HttpVersion.Version10;
-            request.Method = "POST";
-
-            byte[] postBytes = Encoding.UTF8.GetBytes(json);
-
-            request.ContentType = "application/json";
-            request.Accept = "application/json";
-            request.ContentLength = postBytes.Length;
-
-            Stream requestStream = request.GetRequestStream();
-
-            requestStream.Write(postBytes, 0, postBytes.Length);
-            requestStream.Close();
+            request.Method = "GET";
 
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    //int m10 = Convert.ToInt32(response.GetResponseHeader("m10"));
-                    //int b50 = Convert.ToInt32(response.GetResponseHeader("b50"));
-                    //int b100 = Convert.ToInt32(response.GetResponseHeader("b100"));
-                    //int b200 = Convert.ToInt32(response.GetResponseHeader("b200"));
-                    //int b500 = Convert.ToInt32(response.GetResponseHeader("b500"));
-                    //int b1000 = Convert.ToInt32(response.GetResponseHeader("b1000"));
-                    //int b2000 = Convert.ToInt32(response.GetResponseHeader("b2000"));
-                    //int box1_50 = Convert.ToInt32(response.GetResponseHeader("box1_50"));
-                    //int box2_100 = Convert.ToInt32(response.GetResponseHeader("box2_100"));
-                    //int box3_50 = Convert.ToInt32(response.GetResponseHeader("box3_50"));
-                    //int box4_100 = Convert.ToInt32(response.GetResponseHeader("box4_100"));
-                    //int badCards = Convert.ToInt32(response.GetResponseHeader("badCards"));
-                    //int availableCards = Convert.ToInt32(response.GetResponseHeader("avaiableCards"));
-                    //string bill = response.GetResponseHeader("bill");
-                    //string coiner = response.GetResponseHeader("coiner");
-                    //string bank = response.GetResponseHeader("bank");
-                    //string oddMoney = response.GetResponseHeader("oddMoney");
-                    //string hopper = response.GetResponseHeader("hopper");
-                    //string cards = response.GetResponseHeader("cards");
-                    //string issueCards = response.GetResponseHeader("issueCards");
-                    //string fr = response.GetResponseHeader("fr");
-                    //string printCheck = response.GetResponseHeader("printCheck");
-
-                    //InfoChanger infoChanger = new InfoChanger(
-                    //    m10,
-                    //    b50,
-                    //    b100,
-                    //    b200,
-                    //    b500,
-                    //    b1000,
-                    //    b2000,
-                    //    box1_50,
-                    //    box2_100,
-                    //    box3_50,    
-                    //    box4_100,
-                    //    badCards,
-                    //    availableCards,
-                    //    bill,
-                    //    coiner,
-                    //    bank,
-                    //    oddMoney,
-                    //    hopper,
-                    //    cards,
-                    //    issueCards,
-                    //    fr,
-                    //    printCheck,
-                    //    changer
-                    //    );
-
                     //StreamReader reader = new StreamReader(response.GetResponseStream());
                     //string responseBody = reader.ReadToEnd();
 
                     string responseBody = "{" +
-                        "\"m10\": 1," +
-                        "\"b50\" : 2," +
-                        "\"b100\" : 1," +
-                        "\"b200\" : 3," +
-                        "\"b500\" : 2," +
-                        "\"b1000\" : 1," +
-                        "\"b2000\" : 1," +
-                        "\"box1_50\" : 4," +
-                        "\"box2_100\" : 5," +
-                        "\"box3_50\" : 7," +
-                        "\"box4_100\" : 6," +
-                        "\"badCards\" : 12," +
-                        "\"availableCards\" : 42," +
-                        "\"bill\" : \"активен\"," +
-                        "\"coiner\" : \"не подключен\"," +
-                        "\"bank\" : \"не подключен\"," +
-                        "\"oddMoney\" : \"неактивен\"," +
-                        "\"hopper\" : \"активен\"," +
-                        "\"cards\" : \"активен\"," +
-                        "\"issueCards\" : \"активен\"," +
-                        "\"fr\" : \"не подключен\"," +
-                        "\"printCheck\" : \"не подключен\"" +
-                        "}";
+                        "\"m10\": 1, " +
+                        "\"b50\": 4, " +
+                        "\"b100\": 0, " +
+                        "\"b200\": 0, " +
+                        "\"b500\": 0, " +
+                        "\"b1000\": 3, " +
+                        "\"b2000\": 0, " +
+                        "\"box1_50\": 1, " +
+                        "\"box2_100\": 4, " +
+                        "\"box3_50\":1000, " +
+                        "\"box4_100\": 12345, " +
+                        "\"badCards\": 3, " +
+                        "\"availableCards\": 5, " +
+                        "\"bill\": {" +
+                            "\"devicecode\": \"cashcode\", " +
+                            "\"devicename\": \"Купюрник\", " +
+                            "\"errlevel\": \"critical\", " +
+                            "\"errors\": [\"замятие\", \"сломался\", \"нет провода\"]" +
+                        "}, " +
+                        "\"coiner\": {" +
+                            "\"devicecode\": \"coins\", " +
+                            "\"devicename\": \"Монетник\"," +
+                            "\"errlevel\": \"no_error\", " +
+                            "\"errors\": []" +
+                        "}, " +
+                        "\"bank\": {" +
+                            "\"devicecode\": \"acquiring\", " +
+                            "\"devicename\": \"Эквайринг\", " +
+                            "\"errlevel\": \"critical\", " +
+                            "\"errors\": [\"не прописан\"]" +
+                        "}, " +
+                        "\"oddMoney\": {" +
+                            "\"devicecode\": \"carddispenser\", " +
+                            "\"devicename\": \"Выдача карт\", " +
+                            "\"errlevel\": \"warning\", " +
+                            "\"errors\": [\"мало карт\"]" +
+                        "}, " +
+                        //"\"hopper\": {" +
+                        //    "\"devicecode\": \"banknotedispenser\", " +
+                        //    "\"devicename\": \"Выдача купюр\", " +
+                        //    "\"errlevel\": \"warning\", " +
+                        //    "\"errors\": [\"мало 50 руб\"]" +
+                        //"}, " +
+                        "\"cards\": {" +
+                            "\"devicecode\": \"hopper\", " +
+                            "\"devicename\": \"Хоппер\", " +
+                            "\"errlevel\": \"no_error\", " +
+                            "\"errors\": []}, " +
+                        "\"issueCards\": {" +
+                            "\"devicecode\": \"cardreader\", " +
+                            "\"devicename\": \"Считыватель карт\", " +
+                            "\"errlevel\": \"not_available\", " +
+                            "\"errors\": []" +
+                        "}, " +
+                        "\"fr\": {" +
+                            "\"devicecode\": \"fiscal\", " +
+                            "\"devicename\": \"ФР\", " +
+                            "\"errlevel\": \"critical\", " +
+                            "\"errors\": [\"не ФН\"]" +
+                        "}, " +
+                        "\"printCheck\": {" +
+                            "\"devicecode\": \"checkprinter\", " +
+                            "\"devicename\": \"Принтер\", " +
+                            "\"errlevel\": \"no_error\", " +
+                            "\"errors\": []" +
+                        "}" +
+                    "}";
 
                     InfoChanger infochanger = JsonConvert.DeserializeObject<InfoChanger>(responseBody);
                     infochanger.changer = changer;
@@ -215,7 +199,6 @@ namespace Inspinia_MVC5.Controllers
                 return null;
             }
         }
-
 
         #region Мониторинг за моечными постами
         public ActionResult MonitoringPostView()
