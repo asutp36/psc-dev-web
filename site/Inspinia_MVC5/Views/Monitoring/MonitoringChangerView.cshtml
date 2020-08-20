@@ -95,18 +95,6 @@
                 <div id="cur_changer" class="ibox-content">
                 </div>
             </div>
-            <div id="alert-sum" class="alert alert-warning">
-                Введите сумму!
-            </div>
-            <div id="alert-success-sum" class="alert alert-success">
-                Запрос на внесение суммы отправлен!
-            </div>
-            <div id="alert-success-fun" class="alert alert-success">
-                Запрос на изменение функции отправлен!
-            </div>
-            <div id="alert-function" class="alert alert-warning">
-                Введите функцию!
-            </div>
         </div>
     </div>
 </div>
@@ -124,46 +112,8 @@
 
     <script type="text/javascript">
 
-        function hideall() {
-            $('#alert-sum').hide()
-            $('#alert-success-sum').hide()
-            $('#alert-function').hide()
-            $('#alert-success-fun').hide()
-            $('#alert-intsererr').hide();
-        }
-
-        function clearall() {
-            $('#input-balance').val("");
-            $('#input-function').val("");
-        }
-
         var timeid = -1;
         $('#changer').hide();
-
-        function validate(evt) {
-            var theEvent = evt || window.event;
-            var key = theEvent.keyCode || theEvent.which;
-            key = String.fromCharCode(key);
-            var regex = /[0-9]/;
-            if (!regex.test(key)) {
-                theEvent.returnValue = false;
-                if (theEvent.preventDefault) theEvent.preventDefault();
-            }
-        }
-
-        function check_state() {
-
-            if ($('#state').text() == "Нет доступа") {
-                $('#label-balance').attr("class", "label label-secondary");
-                $('#label-function').attr("class", "label label-secondary");
-                $('#label-state').attr("class", "label label-secondary");
-            }
-            else {
-                $('#label-balance').attr("class", "label label-primary");
-                $('#label-function').attr("class", "label label-primary");
-                $('#label-state').attr("class", "label label-primary");
-            }
-        }
 
         function show() {
             let code = $('#current_changer').val()
@@ -173,19 +123,17 @@
             data: {
                 codeChanger: code
             },
-            success: function () {
+            success: function (result) {
+                $('#cur_changer').html(result);
             },
-            error: function () {
-                alert("error-show");
+            error: function (jqXHR) {
+                alert(jqXHR.statusText);
             },
             url: "@Url.Action("_MonitoringChangerView", "Monitoring")",
-        }).done(function (result) {
-            $('#cur_changer').html(result);
-        });
+        })
         }
 
         function select_changer(code) {
-            hideall();
 
             if (timeid != -1) {
                 clearInterval(timeid);
@@ -205,22 +153,19 @@
                 complete: function () {
                     $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
                 },
-                error: function () {
-                    alert('Возникла ошибка!');
+                error: function (jqXHR) {
+                    alert(jqXHR.statusText);
                 },
-                success: function () {
+                success: function (result) {
                     if (timeid == -1) {
                         timeid = setInterval(show, 1500);
                     }
-                    $('#changer').show('fade')
+                    $('#cur_changer').html(result);
+                    $('#changer').fadeIn();
                 },
                 url: "@Url.Action("_MonitoringChangerView", "Monitoring")",
-            }).done(function (result) {
-                $('#cur_changer').html(result);
-                });
+            });
         }
-
-        hideall();
 
         function initjstree () {
             $('#jstree1').jstree({
@@ -243,83 +188,6 @@
 
         $(document).ready(function () {
 
-            $('#btn-increase').ladda();
-            $('#btn-change').ladda();
-
-            $(document).on("click", "#btn-increase", function () {
-                hideall();
-                if ($('#input-balance').val() != "") {
-                    $.ajax({
-                        type: "POST",
-                        cache: false,
-                        data: {
-                            Post: $('#current_post').val(),
-                            sum: $('#input-balance').val(),
-                            login: "@User.Identity.Name.ToString()"
-                        },
-                        beforeSend: function () {
-                            $('#btn-increase').ladda('start');
-                            $('#input-balance').attr('readonly', true);
-                        },
-                        complete: function () {
-                            $('#btn-increase').ladda('stop');
-                            $('#input-balance').attr('readonly', false);
-                        },
-                        error: function (xhr, ajaxOPtions, thrownError) {
-                            alert(xhr.responseText);
-                            alert(thrownError);
-                        },
-                        success: function ()
-                        {
-                            $('#input-balance').val('');
-                            $('#alert-success-sum').show('fade')
-                        },
-                        url: "@Url.Action("IncreaseBalance", "Monitoring")",
-                    }).done(function (result) {
-                        $('#cur_post').html(result);
-                    });
-                }
-                else {
-                    $('#alert-sum').show('fade')
-                }
-            });
-
-            $(document).on("click", "#btn-change", function () {
-                hideall();
-                if ($('#input-function').val() != "") {
-                    $.ajax({
-                        type: "POST",
-                        cache: false,
-                        data: {
-                            Post: $('#current_post').val(),
-                            Function: $('#input-function').val(),
-                            login: "@User.Identity.Name.ToString()"
-                        },
-                        beforeSend: function () {
-                            $('#btn-change').ladda('start');
-                            $('#input-function').attr('readonly', true);
-                        },
-                        complete: function () {
-                            $('#btn-change').ladda('stop');
-                            $('#input-function').attr('readonly', false);
-                        },
-                        error: function () {
-                            alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
-                        },
-                        success: function ()
-                        {
-                            $('#input-function').val('');
-                        },
-                        url: "@Url.Action("ChangeFunction", "Monitoring")",
-                    }).done(function (result) {
-                        $('#cur_post').html(result);
-                        $('#alert-success-fun').show('fade')
-                    });
-                }
-                else {
-                    $('#alert-function').show('fade')
-                }
-            });
         });
     </script>
 }

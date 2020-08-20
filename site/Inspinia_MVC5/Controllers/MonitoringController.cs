@@ -97,9 +97,9 @@ namespace Inspinia_MVC5.Controllers
 
         public InfoChanger GetInfoChanger(Device changer)
         {
-            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/changer/state/"+changer.Code);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://194.87.98.177/postrc/api/changer/state/"+changer.Code);
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/pev9y-1597747203/post");
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/pev9y-1597747203/post");
 
             request.Timeout = 5000;
 
@@ -112,77 +112,77 @@ namespace Inspinia_MVC5.Controllers
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    //StreamReader reader = new StreamReader(response.GetResponseStream());
-                    //string responseBody = reader.ReadToEnd();
+                    StreamReader reader = new StreamReader(response.GetResponseStream());
+                    string responseBody = reader.ReadToEnd();
 
-                    string responseBody = "{" +
-                        "\"m10\": 1, " +
-                        "\"b50\": 4, " +
-                        "\"b100\": 0, " +
-                        "\"b200\": 0, " +
-                        "\"b500\": 0, " +
-                        "\"b1000\": 3, " +
-                        "\"b2000\": 0, " +
-                        "\"box1_50\": 1, " +
-                        "\"box2_100\": 4, " +
-                        "\"box3_50\":1000, " +
-                        "\"box4_100\": 12345, " +
-                        "\"badCards\": 3, " +
-                        "\"availableCards\": 5, " +
-                        "\"bill\": {" +
-                            "\"devicecode\": \"cashcode\", " +
-                            "\"devicename\": \"Купюрник\", " +
-                            "\"errlevel\": \"critical\", " +
-                            "\"errors\": [\"замятие\", \"сломался\", \"нет провода\"]" +
-                        "}, " +
-                        "\"coiner\": {" +
-                            "\"devicecode\": \"coins\", " +
-                            "\"devicename\": \"Монетник\"," +
-                            "\"errlevel\": \"no_error\", " +
-                            "\"errors\": []" +
-                        "}, " +
-                        "\"bank\": {" +
-                            "\"devicecode\": \"acquiring\", " +
-                            "\"devicename\": \"Эквайринг\", " +
-                            "\"errlevel\": \"critical\", " +
-                            "\"errors\": [\"не прописан\"]" +
-                        "}, " +
-                        "\"oddMoney\": {" +
-                            "\"devicecode\": \"carddispenser\", " +
-                            "\"devicename\": \"Выдача карт\", " +
-                            "\"errlevel\": \"warning\", " +
-                            "\"errors\": [\"мало карт\"]" +
-                        "}, " +
-                        //"\"hopper\": {" +
-                        //    "\"devicecode\": \"banknotedispenser\", " +
-                        //    "\"devicename\": \"Выдача купюр\", " +
-                        //    "\"errlevel\": \"warning\", " +
-                        //    "\"errors\": [\"мало 50 руб\"]" +
-                        //"}, " +
-                        "\"cards\": {" +
-                            "\"devicecode\": \"hopper\", " +
-                            "\"devicename\": \"Хоппер\", " +
-                            "\"errlevel\": \"no_error\", " +
-                            "\"errors\": []}, " +
-                        "\"issueCards\": {" +
-                            "\"devicecode\": \"cardreader\", " +
-                            "\"devicename\": \"Считыватель карт\", " +
-                            "\"errlevel\": \"not_available\", " +
-                            "\"errors\": []" +
-                        "}, " +
-                        "\"fr\": {" +
-                            "\"devicecode\": \"fiscal\", " +
-                            "\"devicename\": \"ФР\", " +
-                            "\"errlevel\": \"critical\", " +
-                            "\"errors\": [\"не ФН\"]" +
-                        "}, " +
-                        "\"printCheck\": {" +
-                            "\"devicecode\": \"checkprinter\", " +
-                            "\"devicename\": \"Принтер\", " +
-                            "\"errlevel\": \"no_error\", " +
-                            "\"errors\": []" +
-                        "}" +
-                    "}";
+                    //string responseBody = "{" +
+                    //    "\"m10\": 1, " +
+                    //    "\"b50\": 4, " +
+                    //    "\"b100\": 0, " +
+                    //    "\"b200\": 0, " +
+                    //    "\"b500\": 0, " +
+                    //    "\"b1000\": 3, " +
+                    //    "\"b2000\": 0, " +
+                    //    "\"box1_50\": 1, " +
+                    //    "\"box2_100\": 4, " +
+                    //    "\"box3_50\":1000, " +
+                    //    "\"box4_100\": 12345, " +
+                    //    "\"badCards\": 3, " +
+                    //    "\"availableCards\": 5, " +
+                    //    "\"bill\": {" +
+                    //        "\"devicecode\": \"cashcode\", " +
+                    //        "\"devicename\": \"Купюрник\", " +
+                    //        "\"errlevel\": \"critical\", " +
+                    //        "\"errors\": [\"замятие\", \"сломался\", \"нет провода\"]" +
+                    //    "}, " +
+                    //    "\"coiner\": {" +
+                    //        "\"devicecode\": \"coins\", " +
+                    //        "\"devicename\": \"Монетник\"," +
+                    //        "\"errlevel\": \"no_error\", " +
+                    //        "\"errors\": []" +
+                    //    "}, " +
+                    //    "\"bank\": {" +
+                    //        "\"devicecode\": \"acquiring\", " +
+                    //        "\"devicename\": \"Эквайринг\", " +
+                    //        "\"errlevel\": \"critical\", " +
+                    //        "\"errors\": [\"не прописан\"]" +
+                    //    "}, " +
+                    //    "\"oddMoney\": {" +
+                    //        "\"devicecode\": \"carddispenser\", " +
+                    //        "\"devicename\": \"Выдача карт\", " +
+                    //        "\"errlevel\": \"warning\", " +
+                    //        "\"errors\": [\"мало карт\"]" +
+                    //    "}, " +
+                    //    //"\"hopper\": {" +
+                    //    //    "\"devicecode\": \"banknotedispenser\", " +
+                    //    //    "\"devicename\": \"Выдача купюр\", " +
+                    //    //    "\"errlevel\": \"warning\", " +
+                    //    //    "\"errors\": [\"мало 50 руб\"]" +
+                    //    //"}, " +
+                    //    "\"cards\": {" +
+                    //        "\"devicecode\": \"hopper\", " +
+                    //        "\"devicename\": \"Хоппер\", " +
+                    //        "\"errlevel\": \"no_error\", " +
+                    //        "\"errors\": []}, " +
+                    //    "\"issueCards\": {" +
+                    //        "\"devicecode\": \"cardreader\", " +
+                    //        "\"devicename\": \"Считыватель карт\", " +
+                    //        "\"errlevel\": \"not_available\", " +
+                    //        "\"errors\": []" +
+                    //    "}, " +
+                    //    "\"fr\": {" +
+                    //        "\"devicecode\": \"fiscal\", " +
+                    //        "\"devicename\": \"ФР\", " +
+                    //        "\"errlevel\": \"critical\", " +
+                    //        "\"errors\": [\"не ФН\"]" +
+                    //    "}, " +
+                    //    "\"printCheck\": {" +
+                    //        "\"devicecode\": \"checkprinter\", " +
+                    //        "\"devicename\": \"Принтер\", " +
+                    //        "\"errlevel\": \"no_error\", " +
+                    //        "\"errors\": []" +
+                    //    "}" +
+                    //"}";
 
                     InfoChanger infochanger = JsonConvert.DeserializeObject<InfoChanger>(responseBody);
                     infochanger.changer = changer;
