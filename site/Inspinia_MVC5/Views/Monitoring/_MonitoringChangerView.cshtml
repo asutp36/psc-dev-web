@@ -64,14 +64,17 @@
     </div>
     <div class="col-lg-4">
         <h2>Сдача</h2>
-        <div class="row">
-            <div class="col-lg-6">
-                <h4>Монеты 10&nbsp;руб.</h4>
+        @if(Model.hopper != null)
+        { 
+            <div class="row">
+                <div class="col-lg-6">
+                    <h4>Монеты 10&nbsp;руб.</h4>
+                </div>
+                <div class="col-lg-6">
+                    <h4>@Model.box5_10</h4>
+                </div>
             </div>
-            <div class="col-lg-6">
-                <h4>@Model.box5_10</h4>
-            </div>
-        </div>
+        }
         <div class="row">
             <div class="col-lg-6">
                 <h4>Ящик&nbsp;1 50&nbsp;руб.</h4>
