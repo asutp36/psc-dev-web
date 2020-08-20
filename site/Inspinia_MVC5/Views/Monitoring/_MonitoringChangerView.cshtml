@@ -125,237 +125,246 @@
         </div>
     </div>
 </div>
-<div class="row" style="margin:10px;">
-    <div class="col-lg-4">
-        @if (Model.bill != null)
-        {
-            <div class="sensor">
-                <div class="sensor-name">@Model.bill.devicename</div>
-
-                @if (Model.bill.errlevel == "critical")
-                {
-                    <div class="sensor-state-notwork">@string.Join(", ", Model.bill.errors)</div>
-                }
-                else if (Model.bill.errlevel == "warning")
-                {
-                    <div class="sensor-state-notconnect">@string.Join(", ", Model.bill.errors)</div>
-                }
-                else if (Model.bill.errlevel == "no_error")
-                {
-                    <div class="sensor-state-work">активен</div>
-                }
-                else if (Model.bill.errlevel == "not_available")
-                {
-                    <div class="sensor-state-notwork">нет подключения</div>
-                }
-            </div>
-        }
-    </div>
-    <div class="col-lg-4">
-        @if (Model.issueCards != null)
-        {
-            <div class="sensor">
-                <div class="sensor-name">@Model.issueCards.devicename</div>
-
-                @if (Model.issueCards.errlevel == "critical")
-                {
-                    <div class="sensor-state-notwork">@string.Join(", ", Model.issueCards.errors)</div>
-                }
-                else if (Model.issueCards.errlevel == "warning")
-                {
-                    <div class="sensor-state-notconnect">@string.Join(", ", Model.issueCards.errors)</div>
-                }
-                else if (Model.issueCards.errlevel == "no_error")
-                {
-                    <div class="sensor-state-work">активен</div>
-                }
-                else if (Model.issueCards.errlevel == "not_available")
-                {
-                    <div class="sensor-state-notwork">нет подключения</div>
-                }
-            </div>
-        }
-    </div>
-    <div class="col-lg-4">
-        @if (Model.cards != null)
-        {
-            <div class="sensor">
-                <div class="sensor-name">@Model.cards.devicename</div>
-
-                @if (Model.cards.errlevel == "critical")
-                {
-                    <div class="sensor-state-notwork">@string.Join(", ", Model.cards.errors)</div>
-                }
-                else if (Model.cards.errlevel == "warning")
-                {
-                    <div class="sensor-state-notconnect">@string.Join(", ", Model.cards.errors)</div>
-                }
-                else if (Model.cards.errlevel == "no_error")
-                {
-                    <div class="sensor-state-work">активен</div>
-                }
-                else if (Model.cards.errlevel == "not_available")
-                {
-                    <div class="sensor-state-notwork">нет подключения</div>
-                }
-            </div>
-        }
-    </div>
-</div>
-<div class="row" style="margin:10px">
-    <div class="col-lg-4">
-        @if (Model.coiner != null)
-        {
-            <div class="sensor">
-                <div class="sensor-name">@Model.coiner.devicename</div>
-
-                @if (Model.coiner.errlevel == "critical")
-                {
-                    <div class="sensor-state-notwork">@string.Join(", ", Model.coiner.errors)</div>
-                }
-                else if (Model.coiner.errlevel == "warning")
-                {
-                    <div class="sensor-state-notconnect">@string.Join(", ", Model.coiner.errors)</div>
-                }
-                else if (Model.coiner.errlevel == "no_error")
-                {
-                    <div class="sensor-state-work">активен</div>
-                }
-                else if (Model.coiner.errlevel == "not_available")
-                {
-                    <div class="sensor-state-notwork">нет подключения</div>
-                }
-            </div>
-        }
-    </div>
-    <div class="col-lg-4">
-        @if (Model.oddMoney != null)
-        {
-            <div class="sensor">
-                <div class="sensor-name">@Model.oddMoney.devicename</div>
-
-                @if (Model.oddMoney.errlevel == "critical")
-                {
-                    <div class="sensor-state-notwork">@string.Join(", ", Model.oddMoney.errors)</div>
-                }
-                else if (Model.oddMoney.errlevel == "warning")
-                {
-                    <div class="sensor-state-notconnect">@string.Join(", ", Model.oddMoney.errors)</div>
-                }
-                else if (Model.oddMoney.errlevel == "no_error")
-                {
-                    <div class="sensor-state-work">активен</div>
-                }
-                else if (Model.oddMoney.errlevel == "not_available")
-                {
-                    <div class="sensor-state-notwork">нет подключения</div>
-                }
-            </div>
-        }
-    </div>
-    <div class="col-lg-4">
-        @if (Model.fr != null)
-        {
-            <div class="sensor">
-                <div class="sensor-name">@Model.fr.devicename</div>
-
-                @if (Model.fr.errlevel == "critical")
-                {
-                    <div class="sensor-state-notwork">@string.Join(", ", Model.fr.errors)</div>
-                }
-                else if (Model.fr.errlevel == "warning")
-                {
-                    <div class="sensor-state-notconnect">@string.Join(", ", Model.fr.errors)</div>
-                }
-                else if (Model.fr.errlevel == "no_error")
-                {
-                    <div class="sensor-state-work">активен</div>
-                }
-                else if (Model.fr.errlevel == "not_available")
-                {
-                    <div class="sensor-state-notwork">нет подключения</div>
-                }
-            </div>
-        }
-    </div>
-</div>
-<div class="row" style="margin:10px">
-    <div class="col-lg-4">
-        @if (Model.bank != null)
-        {
-            <div class="sensor">
-                <div class="sensor-name">@Model.bank.devicename</div>
-
-                @if (Model.bank.errlevel == "critical")
-                {
-                    <div class="sensor-state-notwork">@string.Join(", ", Model.bank.errors)</div>
-                }
-                else if (Model.bank.errlevel == "warning")
-                {
-                    <div class="sensor-state-notconnect">@string.Join(", ", Model.bank.errors)</div>
-                }
-                else if (Model.bank.errlevel == "no_error")
-                {
-                    <div class="sensor-state-work">активен</div>
-                }
-                else if (Model.bank.errlevel == "not_available")
-                {
-                    <div class="sensor-state-notwork">нет подключения</div>
-                }
-            </div>
-        }
-    </div>
-    <div class="col-lg-4">
-        @if (Model.hopper != null)
-        { 
-        <div class="sensor">
-            <div class="sensor-name">@Model.hopper.devicename</div>
-
-            @if (Model.hopper.errlevel == "critical")
+@if (Model.bill != null && Model.issueCards != null && Model.cards != null)
+{
+    <div class="row" style="margin:10px;">
+        <div class="col-lg-4">
+            @if (Model.bill != null)
             {
-                <div class="sensor-state-notwork">@string.Join(", ", Model.hopper.errors)</div>
-            }
-            else if (Model.hopper.errlevel == "warning")
-            {
-                <div class="sensor-state-notconnect">@string.Join(", ", Model.hopper.errors)</div>
-            }
-            else if (Model.hopper.errlevel == "no_error")
-            {
-                <div class="sensor-state-work">активен</div>
-            }
-            else
-            {
-                <div class="sensor-state-notwork">нет подключения</div>
+                <div class="sensor">
+                    <div class="sensor-name">@Model.bill.devicename</div>
+
+                    @if (Model.bill.errlevel == "critical")
+                    {
+                        <div class="sensor-state-notwork">@string.Join(", ", Model.bill.errors)</div>
+                    }
+                    else if (Model.bill.errlevel == "warning")
+                    {
+                        <div class="sensor-state-notconnect">@string.Join(", ", Model.bill.errors)</div>
+                    }
+                    else if (Model.bill.errlevel == "no_error")
+                    {
+                        <div class="sensor-state-work">активен</div>
+                    }
+                    else if (Model.bill.errlevel == "not_available")
+                    {
+                        <div class="sensor-state-notwork">нет подключения</div>
+                    }
+                </div>
             }
         </div>
-        }
-    </div>
-    <div class="col-lg-4">
-        @if (Model.printCheck != null)
-        {
-            <div class="sensor">
-                <div class="sensor-name">@Model.printCheck.devicename</div>
+        <div class="col-lg-4">
+            @if (Model.issueCards != null)
+            {
+                <div class="sensor">
+                    <div class="sensor-name">@Model.issueCards.devicename</div>
 
-                @if (Model.printCheck.errlevel == "critical")
-                {
-                    <div class="sensor-state-notwork">@string.Join(", ", Model.printCheck.errors)</div>
-                }
-                else if (Model.printCheck.errlevel == "warning")
-                {
-                    <div class="sensor-state-notconnect">@string.Join(", ", Model.printCheck.errors)</div>
-                }
-                else if (Model.printCheck.errlevel == "no_error")
-                {
-                    <div class="sensor-state-work">активен</div>
-                }
-                else if (Model.printCheck.errlevel == "not_available")
-                {
-                    <div class="sensor-state-notwork">нет подключения</div>
-                }
-            </div>
-        }
+                    @if (Model.issueCards.errlevel == "critical")
+                    {
+                        <div class="sensor-state-notwork">@string.Join(", ", Model.issueCards.errors)</div>
+                    }
+                    else if (Model.issueCards.errlevel == "warning")
+                    {
+                        <div class="sensor-state-notconnect">@string.Join(", ", Model.issueCards.errors)</div>
+                    }
+                    else if (Model.issueCards.errlevel == "no_error")
+                    {
+                        <div class="sensor-state-work">активен</div>
+                    }
+                    else if (Model.issueCards.errlevel == "not_available")
+                    {
+                        <div class="sensor-state-notwork">нет подключения</div>
+                    }
+                </div>
+            }
+        </div>
+        <div class="col-lg-4">
+            @if (Model.cards != null)
+            {
+                <div class="sensor">
+                    <div class="sensor-name">@Model.cards.devicename</div>
+
+                    @if (Model.cards.errlevel == "critical")
+                    {
+                        <div class="sensor-state-notwork">@string.Join(", ", Model.cards.errors)</div>
+                    }
+                    else if (Model.cards.errlevel == "warning")
+                    {
+                        <div class="sensor-state-notconnect">@string.Join(", ", Model.cards.errors)</div>
+                    }
+                    else if (Model.cards.errlevel == "no_error")
+                    {
+                        <div class="sensor-state-work">активен</div>
+                    }
+                    else if (Model.cards.errlevel == "not_available")
+                    {
+                        <div class="sensor-state-notwork">нет подключения</div>
+                    }
+                </div>
+            }
+        </div>
     </div>
-</div>
+}
+@if (Model.coiner != null && Model.oddMoney != null && Model.fr != null)
+{
+    <div class="row" style="margin:10px">
+        <div class="col-lg-4">
+            @if (Model.coiner != null)
+            {
+                <div class="sensor">
+                    <div class="sensor-name">@Model.coiner.devicename</div>
+
+                    @if (Model.coiner.errlevel == "critical")
+                    {
+                        <div class="sensor-state-notwork">@string.Join(", ", Model.coiner.errors)</div>
+                    }
+                    else if (Model.coiner.errlevel == "warning")
+                    {
+                        <div class="sensor-state-notconnect">@string.Join(", ", Model.coiner.errors)</div>
+                    }
+                    else if (Model.coiner.errlevel == "no_error")
+                    {
+                        <div class="sensor-state-work">активен</div>
+                    }
+                    else if (Model.coiner.errlevel == "not_available")
+                    {
+                        <div class="sensor-state-notwork">нет подключения</div>
+                    }
+                </div>
+            }
+        </div>
+        <div class="col-lg-4">
+            @if (Model.oddMoney != null)
+            {
+                <div class="sensor">
+                    <div class="sensor-name">@Model.oddMoney.devicename</div>
+
+                    @if (Model.oddMoney.errlevel == "critical")
+                    {
+                        <div class="sensor-state-notwork">@string.Join(", ", Model.oddMoney.errors)</div>
+                    }
+                    else if (Model.oddMoney.errlevel == "warning")
+                    {
+                        <div class="sensor-state-notconnect">@string.Join(", ", Model.oddMoney.errors)</div>
+                    }
+                    else if (Model.oddMoney.errlevel == "no_error")
+                    {
+                        <div class="sensor-state-work">активен</div>
+                    }
+                    else if (Model.oddMoney.errlevel == "not_available")
+                    {
+                        <div class="sensor-state-notwork">нет подключения</div>
+                    }
+                </div>
+            }
+        </div>
+        <div class="col-lg-4">
+            @if (Model.fr != null)
+            {
+                <div class="sensor">
+                    <div class="sensor-name">@Model.fr.devicename</div>
+
+                    @if (Model.fr.errlevel == "critical")
+                    {
+                        <div class="sensor-state-notwork">@string.Join(", ", Model.fr.errors)</div>
+                    }
+                    else if (Model.fr.errlevel == "warning")
+                    {
+                        <div class="sensor-state-notconnect">@string.Join(", ", Model.fr.errors)</div>
+                    }
+                    else if (Model.fr.errlevel == "no_error")
+                    {
+                        <div class="sensor-state-work">активен</div>
+                    }
+                    else if (Model.fr.errlevel == "not_available")
+                    {
+                        <div class="sensor-state-notwork">нет подключения</div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}
+@if (Model.bank != null && Model.hopper != null && Model.printCheck != null)
+{ 
+    <div class="row" style="margin:10px">
+        <div class="col-lg-4">
+            @if (Model.bank != null)
+            {
+                <div class="sensor">
+                    <div class="sensor-name">@Model.bank.devicename</div>
+
+                    @if (Model.bank.errlevel == "critical")
+                    {
+                        <div class="sensor-state-notwork">@string.Join(", ", Model.bank.errors)</div>
+                    }
+                    else if (Model.bank.errlevel == "warning")
+                    {
+                        <div class="sensor-state-notconnect">@string.Join(", ", Model.bank.errors)</div>
+                    }
+                    else if (Model.bank.errlevel == "no_error")
+                    {
+                        <div class="sensor-state-work">активен</div>
+                    }
+                    else if (Model.bank.errlevel == "not_available")
+                    {
+                        <div class="sensor-state-notwork">нет подключения</div>
+                    }
+                </div>
+            }
+        </div>
+        <div class="col-lg-4">
+            @if (Model.hopper != null)
+            {
+                <div class="sensor">
+                    <div class="sensor-name">@Model.hopper.devicename</div>
+
+                    @if (Model.hopper.errlevel == "critical")
+                    {
+                        <div class="sensor-state-notwork">@string.Join(", ", Model.hopper.errors)</div>
+                    }
+                    else if (Model.hopper.errlevel == "warning")
+                    {
+                        <div class="sensor-state-notconnect">@string.Join(", ", Model.hopper.errors)</div>
+                    }
+                    else if (Model.hopper.errlevel == "no_error")
+                    {
+                        <div class="sensor-state-work">активен</div>
+                    }
+                    else
+                    {
+                        <div class="sensor-state-notwork">нет подключения</div>
+                    }
+                </div>
+            }
+        </div>
+        <div class="col-lg-4">
+            @if (Model.printCheck != null)
+            {
+                <div class="sensor">
+                    <div class="sensor-name">@Model.printCheck.devicename</div>
+
+                    @if (Model.printCheck.errlevel == "critical")
+                    {
+                        <div class="sensor-state-notwork">@string.Join(", ", Model.printCheck.errors)</div>
+                    }
+                    else if (Model.printCheck.errlevel == "warning")
+                    {
+                        <div class="sensor-state-notconnect">@string.Join(", ", Model.printCheck.errors)</div>
+                    }
+                    else if (Model.printCheck.errlevel == "no_error")
+                    {
+                        <div class="sensor-state-work">активен</div>
+                    }
+                    else if (Model.printCheck.errlevel == "not_available")
+                    {
+                        <div class="sensor-state-notwork">нет подключения</div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}
 
 <script>
 </script>
