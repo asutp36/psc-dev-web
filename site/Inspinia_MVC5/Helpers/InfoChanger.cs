@@ -20,6 +20,7 @@ namespace Inspinia_MVC5.Helpers
         public int box2_100 { get; set; }
         public int box3_50 { get; set; }
         public int box4_100 { get; set; }
+        public int box5_10 { get; set; }
         public int badCards { get; set; }
         public int availableCards { get; set; }
         public Sensor bill { get; set; } //купюрник

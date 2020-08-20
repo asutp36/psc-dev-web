@@ -158,7 +158,7 @@
                 },
                 success: function (result) {
                     if (timeid == -1) {
-                        timeid = setInterval(show, 1500);
+                        timeid = setInterval(show, 300000);
                     }
                     $('#cur_changer').html(result);
                     $('#changer').fadeIn();
