@@ -91,18 +91,42 @@ namespace CardsMobileService.Controllers
         public IActionResult GetBalance(GetBalanceFromMobile model)
         {
             _logger.LogInformation("MOBILE GetBalance: запуск с параметрами:\n" + JsonConvert.SerializeObject(model));
-            if (!CryptHash.CheckHashCode(model.hash, model.dtime))
+            try
             {
-                _logger.LogError("MOBILE GetBalance: хэш не прошёл проверку" + Environment.NewLine);
-                return Unauthorized();
-            }
+                if (!CryptHash.CheckHashCode(model.hash, model.dtime))
+                {
+                    _logger.LogError("MOBILE GetBalance: хэш не прошёл проверку" + Environment.NewLine);
+                    return Unauthorized();
+                }
 
-            if (!ModelState.IsValid)
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
+
+                if (!_cardsApi.IsExist(model.cardNum))
+                {
+                    _logger.LogError("MOBILE GetBalance: карта с таким номером не найдена");
+                    return NotFound();
+                }
+
+                int? balance = _cardsApi.GetBalance(model.cardNum);
+
+                if (balance == null)
+                {
+                    _logger.LogError("MOBILE GetBalance: баланс null" + Environment.NewLine);
+                    return StatusCode(500);
+                }
+
+                _logger.LogInformation("MOBILE GetBalance: баланс = " + balance + Environment.NewLine);
+
+                return Ok(balance);
+            }
+            catch(Exception e)
             {
-                return BadRequest();
+                _logger.LogError("MOBILE GetBalance: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500);
             }
-
-            return Ok();
         }
 
         /// <summary>

@@ -131,7 +131,10 @@ namespace CardsMobileService.Controllers
             throw new Exception("База данных не найдена");
         }
 
-        public void GetBalance(string cardNum) { }
+        public int? GetBalance(string cardNum) 
+        {
+            return _model.Cards.Where(c => c.CardNum.Equals(cardNum)).FirstOrDefault().Balance;
+        }
 
         public void UpdatePhone() { }
 
