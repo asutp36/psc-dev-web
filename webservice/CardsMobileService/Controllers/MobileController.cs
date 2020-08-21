@@ -87,6 +87,16 @@ namespace CardsMobileService.Controllers
             }
         }
 
+        /// <summary>
+        /// Узнать баланс карты
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Баланс в теле</returns>
+        /// <response code="200">Успешно</response>
+        /// <response code="400">Модель не прошла валидацию</response>
+        /// <response code="401">Хэш не прошёл проверку</response>
+        /// <response code="404">Не найдена карта</response>
+        /// <response code="500">Внутренняя ошибка сервера</response>
         [HttpPost("get_balance")]
         public IActionResult GetBalance(GetBalanceFromMobile model)
         {
