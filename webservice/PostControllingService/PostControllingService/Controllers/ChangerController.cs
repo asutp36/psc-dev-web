@@ -39,18 +39,18 @@ namespace PostControllingService.Controllers
                 if (changer.Length == 0)
                 {
                     Logger.Log.Error("GetState: входное значение некорректное" + Environment.NewLine);
-                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Некорректное значение");
                 }
 
-                string ip = _model.Device.Where(d => d.Code.Equals(changer)).FirstOrDefault().IpAddress;
+                Device devive = _model.Device.Where(d => d.Code.Equals(changer)).FirstOrDefault();
 
-                if (ip == null || ip.Length == 0)
+                if (devive == null)
                 {
                     Logger.Log.Error("GetState: разменник не найден" + Environment.NewLine);
-                    return Request.CreateResponse(HttpStatusCode.NotFound);
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Разменник не найден");
                 }
 
-                HttpSenderResponse response = HttpSender.SendGet("http://" + ip + "/api/exch/get/counter");
+                HttpSenderResponse response = HttpSender.SendGet("http://" + devive.IpAddress + "/api/exch/get/counter");
 
                 Logger.Log.Debug("GetState: ответ от разменника:\n" + JsonConvert.SerializeObject(response) + Environment.NewLine);
 
@@ -60,12 +60,12 @@ namespace PostControllingService.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, state);
                 }
 
-                return Request.CreateResponse((HttpStatusCode)424);
+                return Request.CreateResponse((HttpStatusCode)424, "Нет связи с разменником");
             }
             catch(Exception e)
             {
                 Logger.Log.Error("GetState: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, e.Message);
             }
         }
     }

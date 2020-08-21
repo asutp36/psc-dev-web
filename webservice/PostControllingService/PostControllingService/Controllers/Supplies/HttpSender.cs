@@ -95,13 +95,16 @@ namespace PostControllingService.Controllers.Supplies
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                string result;
-                using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+                string result = "";
+                if (response.ContentType != null)
                 {
-                    result = rdr.ReadToEnd();
-                }
 
-                return new HttpSenderResponse(response.StatusCode, result);
+                    using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+                    {
+                        result = rdr.ReadToEnd();
+                    }
+                }
+                    return new HttpSenderResponse(response.StatusCode, result);
             }
             catch (WebException ex)
             {

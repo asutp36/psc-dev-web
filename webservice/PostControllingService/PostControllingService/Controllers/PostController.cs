@@ -277,7 +277,12 @@ namespace PostControllingService.Controllers
                     Logger.Log.Debug(String.Format("GetCurrentFunction: Запуск с параметрами:\nPost: {0}", post.Post));
 
                     string address = GetPostIp(post.Post);
-                    if (address != null || address != "")
+                    if (address == null || address == "")
+                    {
+                        Logger.Log.Error("GetCurrentFunction: не найден ip адрес поста" + Environment.NewLine);
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError, "Не найден ip адрес поста");
+                    }
+                    else
                     {
                         GetScalarResponse getFuncResponse = HttpSender.GetScalar("http://" + address + "/api/post/func/get");
                         if (getFuncResponse.StatusCode != HttpStatusCode.OK && getFuncResponse.StatusCode != (HttpStatusCode)228)
@@ -287,8 +292,10 @@ namespace PostControllingService.Controllers
                         }
                         else
                         {
+                            Logger.Log.Debug("Перед строчкой 296");
                             if (getFuncResponse.StatusCode == (HttpStatusCode)228)
                             {
+                                Logger.Log.Debug("После строчки 296");
                                 Logger.Log.Debug("GetCurrentFunction: на посту функция = никакая" + Environment.NewLine);
                                 return Request.CreateResponse(HttpStatusCode.OK, "");
                             }
@@ -304,11 +311,6 @@ namespace PostControllingService.Controllers
                             response.Headers.Add("Function", func.Name);
                             return response;
                         }
-                    }
-                    else
-                    {
-                        Logger.Log.Error("GetCurrentFunction: не найден ip адрес поста" + Environment.NewLine);
-                        return Request.CreateResponse(HttpStatusCode.InternalServerError, "Не найден ip адрес поста");
                     }
 
                 }
@@ -440,7 +442,13 @@ namespace PostControllingService.Controllers
 
         private string GetPostIp(string code)
         {
-            string ip = _model.Device.Where(d => d.Code.Equals(code)).FirstOrDefault().IpAddress;
+            Device device = _model.Device.Where(d => d.Code.Equals(code)).FirstOrDefault();
+            if (device == null)
+            {
+                return null;
+            }
+
+            string ip = device.IpAddress;
 
             if (ip.Length > 1)
                 return ip;
