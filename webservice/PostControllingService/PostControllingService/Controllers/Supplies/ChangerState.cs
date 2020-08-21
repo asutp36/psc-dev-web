@@ -5,7 +5,7 @@ using System.Web;
 
 namespace PostControllingService.Controllers.Supplies
 {
-    public class ChangerCounters
+    public class ChangerState
     {
         public int m10 { get; set; }
         public int b50 { get; set; }
@@ -18,16 +18,17 @@ namespace PostControllingService.Controllers.Supplies
         public int box2_100 { get; set; }
         public int box3_50 { get; set; }
         public int box4_100 { get; set; }
+        public int box5_10 { get; set; }
         public int badCards { get; set; }
         public int availableCards { get; set; }
-        public string bill { get; set; }
-        public string coiner { get; set; }
-        public string bank { get; set; }
-        public string oddMoney { get; set; }
-        public string hopper { get; set; }
-        public string cards { get; set; }
-        public string issueCards { get; set; }
-        public string fr { get; set; }
-        public string printCheck { get; set; }
+        public ChangerDevice bill { get; set; }
+        public ChangerDevice coiner { get; set; }
+        public ChangerDevice bank { get; set; }
+        public ChangerDevice oddMoney { get; set; }
+        public ChangerDevice hopper { get; set; }
+        public ChangerDevice cards { get; set; }
+        public ChangerDevice issueCards { get; set; }
+        public ChangerDevice fr { get; set; }
+        public ChangerDevice printCheck { get; set; }
     }
 }
