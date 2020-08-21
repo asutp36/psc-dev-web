@@ -1951,7 +1951,7 @@ button.dim:active:before {
 }
 
 .blur{
-    filter: blur(5px);
+    filter: blur(2px);
 }
 
 .sensor {
@@ -7252,6 +7252,87 @@ body.body-small .vote-icon {
     opacity: 0;
   }
 }
+
+/*
+ *  Usage:
+ *
+ *    <div class="sk-spinner sk-spinner-pulse"></div>
+ *
+ */
+.sk-spinner-mypulse-green.sk-spinner {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+    background-color: #1ab394;
+    border-radius: 100%;
+    -webkit-animation: sk-mypulsegreenScaleOut 2s infinite ease-in-out;
+    animation: sk-mypulsegreenScaleOut 2s infinite ease-in-out;
+}
+
+@-webkit-keyframes sk-mypulsegreenScaleOut {
+    0% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+@keyframes sk-mypulsegreenScaleOut {
+    0% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 0.3;
+    }
+}
+
+
+.sk-spinner-mypulse-red.sk-spinner {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+    background-color: #ed5565;
+    border-radius: 100%;
+    -webkit-animation: sk-mypulseredScaleOut 1s infinite ease-in-out;
+    animation: sk-mypulseredScaleOut 1s infinite ease-in-out;
+}
+
+
+@-webkit-keyframes sk-mypulseredScaleOut {
+    0% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+@keyframes sk-mypulseredScaleOut {
+    0% {
+        -webkit-transform: scale(0);
+        transform: scale(1);
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 0.5;
+    }
+}
+
 /*
  *  Usage:
  *
