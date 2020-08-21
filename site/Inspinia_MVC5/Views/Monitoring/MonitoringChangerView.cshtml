@@ -81,12 +81,13 @@
                     </div>
                 </div>
                 <div class="ibox-content-more">
-                    <a style="margin-left:15px" id="btn-history" class="btn btn-secondary btn-sm" 
+                    <a style="margin-left:15px" id="btn-history" class="btn btn-secondary btn-sm"
                        href="@Url.Action("EventChangerView", "EventChanger", new {
                             begdate = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss"),
                             enddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"),
                             })">
-                    <i class="fa fa-history"></i> История событий на платежных аппаратах</a>
+                        <i class="fa fa-history"></i> История событий на платежных аппаратах
+                    </a>
                 </div>
             </div>
         </div>
@@ -103,31 +104,62 @@
 
 @section Styles {
     @Styles.Render("~/Content/plugins/jsTree")
-    @Styles.Render("~/plugins/laddaStyles")
 }
 
 @section Scripts {
     @Scripts.Render("~/plugins/jsTree")
-    @Scripts.Render("~/plugins/ladda")
+    @Scripts.Render("~/plugins/dateRange")
+
 
     <script type="text/javascript">
 
-        var timeid = -1;
+        var timeridupdate = -1;
+        var timeriddisconnect = -1;
         $('#changer').hide();
+
+        function blurDiv() {
+            $('#changer-name').html($('#changer-name').html() + ' - Связь  утеряна!'); 
+            $('#changer-info').addClass('blur');
+            console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Данные о разменнике неактуальны!");
+        }
 
         function show() {
             let code = $('#current_changer').val()
         $.ajax({
-            type: "GET",
+            type: "POST",
             cache: false,
             data: {
                 codeChanger: code
             },
             success: function (result) {
-                $('#cur_changer').html(result);
+                if (result.statusCode == 200) {
+                    clearInterval(timeriddisconnect);
+                    timeriddisconnect = -1;
+                    $('#changer-info').removeClass('blur');
+                    $('#cur_changer').html(result.view);
+                }
+                else {
+                    if (timeriddisconnect == -1) {
+                        console.log("Утеряна связь с разменником.");
+                        timeriddisconnect = setTimeout(blurDiv, 120000);
+                    }
+                    console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Во время обновления данных произошла ошибка!");
+                    if (result.statusCode == 400) {
+                        console.log("Код ошибки от сервера 400 - принято некорректное значение!");
+                    }
+                    else if (result.statusCode == 404) {
+                        console.log("Код ошибки от сервера 404 - данный разменник не найден!");
+                    }
+                    else if (result.statusCode == 424) {   
+                        console.log("Код ошибки от сервера 424 - ответ от разменника неудовлетворительный или нет связи!");
+                    }
+                    else if (result.statusCode == 500) {
+                        console.log("Код ошибки от сервера 500 - внутренняя ошибка сервера!");
+                    }
+                }
             },
             error: function (jqXHR) {
-                alert(jqXHR.statusText);
+                console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Во время обновления данных произошла неизвестная внутренная ошибка!" + jqXHR.StatusCode);
             },
             url: "@Url.Action("_MonitoringChangerView", "Monitoring")",
         })
@@ -135,14 +167,19 @@
 
         function select_changer(code) {
 
-            if (timeid != -1) {
-                clearInterval(timeid);
-                timeid = -1;
+            if (timeridupdate != -1) {
+                clearInterval(timeridupdate);
+                timeridupdate = -1;
+            }
+
+            if (timeriddisconnect != -1) {
+                clearInterval(timeriddisconnect);
+                timeriddisconnect = -1;
             }
 
             $('#current_changer').val(code);
             $.ajax({
-                type: "GET",
+                type: "POST",
                 cache: false,
                 data: {
                     codeChanger: code
@@ -154,14 +191,36 @@
                     $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
                 },
                 error: function (jqXHR) {
-                    alert(jqXHR.statusText);
+                    console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Во время загрузки данных произошла неизвестная внутренная ошибка!" + jqXHR.StatusCode);
                 },
                 success: function (result) {
-                    if (timeid == -1) {
-                        timeid = setInterval(show, 30000);
+                    if (result.statusCode == 200) {
+                        if (timeridupdate == -1) {
+                            timeridupdate = setInterval(show, 10000);
+                        }
+                        $('#cur_changer').html(result.view);
+                        $('#changer').fadeIn();
                     }
-                    $('#cur_changer').html(result);
-                    $('#changer').fadeIn();
+                    else {
+                        $('#cur_changer').html(result.view);
+                        $('#changer').fadeIn();
+                    }
+                    //else if (result.statusCode == 400) {
+                    //    $('#cur_changer').html(result.view);
+                    //    $('#changer').fadeIn();
+                    //}
+                    //else if (result.statusCode == 404) {
+                    //    $('#cur_changer').html(result.view);
+                    //    $('#changer').fadeIn();
+                    //}
+                    //else if (result.statusCode == 424) {
+                    //    $('#cur_changer').html(result.view);
+                    //    $('#changer').fadeIn();
+                    //}
+                    //else if (result.statusCode == 500) {
+                    //    $('#cur_changer').html(result.view);
+                    //    $('#changer').fadeIn();
+                    //}
                 },
                 url: "@Url.Action("_MonitoringChangerView", "Monitoring")",
             });

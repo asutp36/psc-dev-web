@@ -175,6 +175,7 @@
     </Compile>
     <Compile Include="Helpers\ChangeFunctionOnPost.cs" />
     <Compile Include="Helpers\ChangeRatesData.cs" />
+    <Compile Include="Helpers\GetScalarResponse.cs" />
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />
     <Compile Include="Helpers\IncreaseBalanceOnPostClass.cs" />
     <Compile Include="Helpers\InfoChanger.cs" />
@@ -2092,6 +2093,7 @@
     <Content Include="Views\Cards\_CurrentCardList.cshtml" />
     <Content Include="Views\Monitoring\MonitoringChangerView.cshtml" />
     <Content Include="Views\Monitoring\_MonitoringChangerView.cshtml" />
+    <Content Include="Views\Monitoring\_ErrorMessage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
