@@ -6,8 +6,12 @@ using System.Web;
 
 namespace ChangerSynchronization_framework.Controllers.Supplies
 {
-    public class EventCollect : Event
+    public class EventCollect
     {
+        [Required]
+        public string changer { get; set; }
+        [Required]
+        public DateTime dtime { get; set; }
         [Required]
         public int m10 { get; set; }
         [Required]
@@ -30,6 +34,8 @@ namespace ChangerSynchronization_framework.Controllers.Supplies
         public int box3_50 { get; set; }
         [Required]
         public int box4_100 { get; set; }
+        [Required]
+        public int box5_10 { get; set; }
         [Required]
         public int badCards { get; set; }
         [Required]

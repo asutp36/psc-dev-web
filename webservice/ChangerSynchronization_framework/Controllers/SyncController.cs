@@ -148,14 +148,14 @@ namespace ChangerSynchronization_framework.Controllers
                     }
                 }
 
-                if (eventFull.eventsCollect != null && eventFull.eventsCollect.Count > 0)
-                {
-                    result.eventsCollect = new List<DbInsertResult>();
-                    foreach(EventCollect ec in eventFull.eventsCollect)
-                    {
-                        result.eventsCollect.Add(WriteEventChangerCollect(ec, idEventChanger));
-                    }
-                }
+                //if (eventFull.eventsCollect != null && eventFull.eventsCollect.Count > 0)
+                //{
+                //    result.eventsCollect = new List<DbInsertResult>();
+                //    foreach(EventCollect ec in eventFull.eventsCollect)
+                //    {
+                //        result.eventsCollect.Add(WriteEventChangerCollect(ec, idEventChanger));
+                //    }
+                //}
 
                 return result;
             }
@@ -479,6 +479,92 @@ namespace ChangerSynchronization_framework.Controllers
                     _model.Database.Connection.Close();
                 Logger.Log.Error("WriteEventChangerOut: ошибка при записи в базу.\n" + e.Message + Environment.NewLine);
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Синхронизация события инкассации
+        /// </summary>
+        /// <param name="ec">Данные события</param>
+        /// <returns></returns>
+        /// <response code="201">Событие записано, в теле айдишник</response>
+        /// <response code="503">Не получилось записать в базу</response>
+        /// <response code="500">Внутренняя ошибка сервера</response>
+        /// <response code="400">Модель не прошла валидацию</response>
+        [HttpPost]
+        [ActionName("collect")]
+        public HttpResponseMessage PostCollect([FromBody]EventCollect ec)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                Logger.Log.Debug("PostCollect: запуск с параметрами:" + JsonConvert.SerializeObject(ec));
+
+                if (!ModelState.IsValid)
+                {
+                    Logger.Log.Error("PostCollect: модель не прошла валидацию" + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+
+
+                if (!_model.Database.Exists())
+                {
+                    Logger.Log.Error("PostCollect: база данных не найдена" + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Не найдена база данных");
+                }
+
+                _model.Database.Connection.Open();
+                DbCommand command = _model.Database.Connection.CreateCommand();
+                DbTransaction tran = _model.Database.Connection.BeginTransaction();
+
+                try
+                {
+                    command.Transaction = tran;
+
+                    command.CommandText = $"INSERT INTO EventChanger (IDChanger, IDEventChangerKind, DTime) " +
+                        $"VALUES ((select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = '{ec.changer}'), " +
+                        $"(select IDEventChangerKind from EventChangerKind evk where evk.Code = 'collect'), " +
+                        $"'{ec.dtime.ToString("yyyy-MM-dd HH:mm:ss")}')";
+                    Logger.Log.Debug("PostCollect: command is " + command.CommandText);
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = $"INSERT INTO EventChangerCollect (IDEventChanger, DTime, m10, b50, b100, b200, b500, b1000, b2000, " +
+                        $"box1_50, box2_100, box3_50, box4_100, box5_10, BadCards, AvailibleCards)" +
+                        $"VALUES (scope_identity(), '{ec.dtime:yyyy-MM-dd HH:mm:ss}', {ec.m10}, {ec.b50}, {ec.b100}, {ec.b200}, {ec.b500}, {ec.b1000}, " +
+                        $"{ec.b2000}, {ec.box1_50}, {ec.box2_100}, {ec.box3_50}, {ec.box4_100}, {ec.box5_10}, {ec.badCards}, {ec.availibleCards})";
+                    Logger.Log.Debug("PostCollect: command is " + command.CommandText);
+                    command.ExecuteNonQuery();
+
+                    tran.Commit();
+                }
+                catch(Exception e)
+                {
+                    tran.Rollback();    
+                    if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                        _model.Database.Connection.Close();
+
+                    Logger.Log.Error("PostCollect: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                    return Request.CreateResponse((HttpStatusCode)503);
+                }
+
+                string dtime = ec.dtime.ToString("yyyy-MM-dd HH:mm:ss");
+
+                int eventChangerID = _model.EventChanger.Where(e => e.Changers.IDDevice == _model.Device.Where(d => d.Code.Equals(ec.changer)).FirstOrDefault().IDDevice).Max(e => e.IDEventChanger);
+
+                int serverID = _model.EventChangerCollect.Where(e => e.IDEventChanger == eventChangerID).FirstOrDefault().IDEventChangerCollect;
+
+                _model.Database.Connection.Close();
+
+                return Request.CreateResponse(HttpStatusCode.Created, serverID);
+            }
+            catch(Exception e)
+            {
+                if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                    _model.Database.Connection.Close();
+
+                Logger.Log.Error("PostCollect: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
     }
