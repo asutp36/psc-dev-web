@@ -2094,6 +2094,7 @@
     <Content Include="Views\Monitoring\MonitoringChangerView.cshtml" />
     <Content Include="Views\Monitoring\_MonitoringChangerView.cshtml" />
     <Content Include="Views\Monitoring\_ErrorMessage.cshtml" />
+    <Content Include="Views\Monitoring\_NotConnectedMonitoringChangerView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

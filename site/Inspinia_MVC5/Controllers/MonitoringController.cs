@@ -126,10 +126,16 @@ namespace Inspinia_MVC5.Controllers
                     //    });
 
                     return Json(new
-                        {
-                            view = RenderRazorViewToString(ControllerContext, "_MonitoringChangerView", infoChanger),
-                            statusCode = response.StatusCode
-                        });
+                    {
+                        view = RenderRazorViewToString(ControllerContext, "_MonitoringChangerView", infoChanger),
+                        statusCode = response.StatusCode
+                    });
+
+                    //return Json(new
+                    //{
+                    //    view = RenderRazorViewToString(ControllerContext, "_NotConnectedMonitoringChangerView", changer.Name),
+                    //    statusCode = (HttpStatusCode)404
+                    //});
 
                     //return PartialView("_MonitoringChangerView", infoChanger);
                 }
@@ -137,7 +143,7 @@ namespace Inspinia_MVC5.Controllers
                 {
                     return Json(new
                     {
-                        view = RenderRazorViewToString(ControllerContext, "_ErrorMessage", response.Result),
+                        view = RenderRazorViewToString(ControllerContext, "_NotConnectedMonitoringChangerView", changer.Name),
                         statusCode = response.StatusCode
                     });
                 }                
