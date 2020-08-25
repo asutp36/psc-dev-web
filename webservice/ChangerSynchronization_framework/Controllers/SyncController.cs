@@ -331,7 +331,7 @@ namespace ChangerSynchronization_framework.Controllers
                 command.CommandText = $"INSERT INTO EventChangerCollect (IDEventChanger, DTime, m10, b50, b100, b200, b500, b1000, b2000, box1_50, box2_100, box3_50, box4_100, BadCards, AvailibleCards) " +
                     $"VALUES ({idEventChanger}, '{eventCollect.dtime.ToString("yyyy-MM-dd HH:mm:ss")}', {eventCollect.m10}, {eventCollect.b50}, {eventCollect.b100}, " +
                     $"{eventCollect.b200}, {eventCollect.b500}, {eventCollect.b1000}, {eventCollect.b2000}, {eventCollect.box1_50}, {eventCollect.box2_100}, {eventCollect.box3_50}, " +
-                    $"{eventCollect.box4_100}, {eventCollect.badCards}, {eventCollect.availibleCards}); " +
+                    $"{eventCollect.box4_100}, {eventCollect.badCards}, {eventCollect.availableCards}); " +
                     $"SELECT SCOPE_IDENTITY();";
 
                 Logger.Log.Debug("WriteEventChangerCollect: command is:\n" + command.CommandText);
@@ -530,9 +530,9 @@ namespace ChangerSynchronization_framework.Controllers
                     command.ExecuteNonQuery();
 
                     command.CommandText = $"INSERT INTO EventChangerCollect (IDEventChanger, DTime, m10, b50, b100, b200, b500, b1000, b2000, " +
-                        $"box1_50, box2_100, box3_50, box4_100, box5_10, BadCards, AvailibleCards)" +
+                        $"box1_50, box2_100, box3_50, box4_100, box5_10, BadCards, AvailableCards)" +
                         $"VALUES (scope_identity(), '{ec.dtime:yyyy-MM-dd HH:mm:ss}', {ec.m10}, {ec.b50}, {ec.b100}, {ec.b200}, {ec.b500}, {ec.b1000}, " +
-                        $"{ec.b2000}, {ec.box1_50}, {ec.box2_100}, {ec.box3_50}, {ec.box4_100}, {ec.box5_10}, {ec.badCards}, {ec.availibleCards})";
+                        $"{ec.b2000}, {ec.box1_50}, {ec.box2_100}, {ec.box3_50}, {ec.box4_100}, {ec.box5_10}, {ec.badCards}, {ec.availableCards})";
                     Logger.Log.Debug("PostCollect: command is " + command.CommandText);
                     command.ExecuteNonQuery();
 
@@ -553,8 +553,9 @@ namespace ChangerSynchronization_framework.Controllers
                 int eventChangerID = _model.EventChanger.Where(e => e.Changers.IDDevice == _model.Device.Where(d => d.Code.Equals(ec.changer)).FirstOrDefault().IDDevice).Max(e => e.IDEventChanger);
 
                 int serverID = _model.EventChangerCollect.Where(e => e.IDEventChanger == eventChangerID).FirstOrDefault().IDEventChangerCollect;
-
                 _model.Database.Connection.Close();
+
+                Logger.Log.Debug("PostCollect: добавлена инкассация. id = " + serverID + Environment.NewLine);
 
                 return Request.CreateResponse(HttpStatusCode.Created, serverID);
             }

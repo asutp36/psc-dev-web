@@ -83,8 +83,9 @@
           <Property Name="box2_100" Type="int" Nullable="false" />
           <Property Name="box3_50" Type="int" Nullable="false" />
           <Property Name="box4_100" Type="int" Nullable="false" />
+          <Property Name="box5_10" Type="int" Nullable="false" />
           <Property Name="BadCards" Type="int" Nullable="false" />
-          <Property Name="AvailibleCards" Type="int" Nullable="false" />
+          <Property Name="AvailableCards" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="EventChangerIncrease">
           <Key>
@@ -550,8 +551,9 @@
           <Property Name="box3_50" Type="Int32" Nullable="false" />
           <Property Name="box4_100" Type="Int32" Nullable="false" />
           <Property Name="BadCards" Type="Int32" Nullable="false" />
-          <Property Name="AvailibleCards" Type="Int32" Nullable="false" />
           <NavigationProperty Name="EventChanger" Relationship="WashCompanyEntities.FK_EventChangerCollect_EventChanger" FromRole="EventChangerCollect" ToRole="EventChanger" />
+          <Property Name="box5_10" Type="Int32" Nullable="false" />
+          <Property Name="AvailableCards" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="FK_EventChangerCollect_EventChanger">
           <End Type="WashCompanyEntities.EventChanger" Role="EventChanger" Multiplicity="1">
@@ -679,7 +681,8 @@
           <EntitySetMapping Name="EventChangerCollect">
             <EntityTypeMapping TypeName="WashCompanyEntities.EventChangerCollect">
               <MappingFragment StoreEntitySet="EventChangerCollect">
-                <ScalarProperty Name="AvailibleCards" ColumnName="AvailibleCards" />
+                <ScalarProperty Name="AvailableCards" ColumnName="AvailableCards" />
+                <ScalarProperty Name="box5_10" ColumnName="box5_10" />
                 <ScalarProperty Name="BadCards" ColumnName="BadCards" />
                 <ScalarProperty Name="box4_100" ColumnName="box4_100" />
                 <ScalarProperty Name="box3_50" ColumnName="box3_50" />

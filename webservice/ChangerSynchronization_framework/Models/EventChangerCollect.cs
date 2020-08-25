@@ -29,7 +29,8 @@ namespace ChangerSynchronization_framework.Models
         public int box3_50 { get; set; }
         public int box4_100 { get; set; }
         public int BadCards { get; set; }
-        public int AvailibleCards { get; set; }
+        public int box5_10 { get; set; }
+        public int AvailableCards { get; set; }
     
         public virtual EventChanger EventChanger { get; set; }
     }

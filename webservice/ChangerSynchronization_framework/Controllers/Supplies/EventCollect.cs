@@ -34,12 +34,11 @@ namespace ChangerSynchronization_framework.Controllers.Supplies
         public int box3_50 { get; set; }
         [Required]
         public int box4_100 { get; set; }
-        [Required]
         public int box5_10 { get; set; }
         [Required]
         public int badCards { get; set; }
         [Required]
-        public int availibleCards { get; set; }
+        public int availableCards { get; set; }
     }
 
 }
