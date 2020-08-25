@@ -147,5 +147,34 @@ namespace CardsMobileService.Controllers
 
             return StatusCode((int)response.StatusCode, response.ResultMessage);
         }
+
+        /// <summary>
+        /// Получить номер карты по номеру владельца
+        /// </summary>
+        /// <param name="phone">Номер владельца</param>
+        /// <returns></returns>
+        /// <response code="200">Номер карты в теле</response>
+        /// <response code="404">Не найдены карты</response>
+        /// <response code="500">Внутренняя ошибка сервера</response>
+        [HttpGet]
+        [Route("api/post/cards/{phone}")]
+        public IActionResult GetCards(string phone)
+        {
+            _logger.LogInformation("POST GetCards: запуск с параметром: " + phone);
+            try
+            {
+                List<string> cards = _cardsApi.GetCardsByPhone(phone);
+                _logger.LogInformation("POST GetCards: найдено:" + JsonConvert.SerializeObject(cards) + Environment.NewLine);
+                if (cards.Count > 0)
+                    return Ok(cards);
+                else
+                    return NotFound();
+            }
+            catch(Exception e)
+            {
+                _logger.LogError("POST GetCards: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500);
+            }
+        }
     }
 }

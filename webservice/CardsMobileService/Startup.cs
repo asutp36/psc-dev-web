@@ -62,7 +62,7 @@ namespace CardsMobileService
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "mobile-int");
+                c.SwaggerEndpoint("./swagger/v1/swagger.json", "mobile-int");
                 c.RoutePrefix = string.Empty;
             });
 
