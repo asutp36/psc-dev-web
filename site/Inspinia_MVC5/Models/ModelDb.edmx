@@ -419,6 +419,15 @@
           <Property Name="Email" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Description" Type="nvarchar" MaxLength="200" />
         </EntityType>
+        <EntityType Name="UsersAvailableWash">
+          <Key>
+            <PropertyRef Name="IDUserAvailableWash" />
+          </Key>
+          <Property Name="IDUserAvailableWash" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDUser" Type="int" Nullable="false" />
+          <Property Name="IDWash" Type="int" Nullable="false" />
+          <Property Name="Available" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Wash">
           <Key>
             <PropertyRef Name="IDWash" />
@@ -919,6 +928,34 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UsersAvailableWash_Users">
+          <End Role="Users" Type="Self.Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="UsersAvailableWash" Type="Self.UsersAvailableWash" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="IDUser" />
+            </Principal>
+            <Dependent Role="UsersAvailableWash">
+              <PropertyRef Name="IDUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UsersAvailableWash_Wash">
+          <End Role="Wash" Type="Self.Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="UsersAvailableWash" Type="Self.UsersAvailableWash" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="UsersAvailableWash">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Wash_Regions">
           <End Role="Regions" Type="Self.Regions" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -1232,6 +1269,7 @@
           <EntitySet Name="Posts" EntityType="Self.Posts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Regions" EntityType="Self.Regions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UsersAvailableWash" EntityType="Self.UsersAvailableWash" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Wash" EntityType="Self.Wash" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Cards_CardStatuses" Association="Self.FK_Cards_CardStatuses">
             <End Role="CardStatuses" EntitySet="CardStatuses" />
@@ -1372,6 +1410,14 @@
           <AssociationSet Name="FK_Regions_Companies" Association="Self.FK_Regions_Companies">
             <End Role="Companies" EntitySet="Companies" />
             <End Role="Regions" EntitySet="Regions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UsersAvailableWash_Users" Association="Self.FK_UsersAvailableWash_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UsersAvailableWash" EntitySet="UsersAvailableWash" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UsersAvailableWash_Wash" Association="Self.FK_UsersAvailableWash_Wash">
+            <End Role="Wash" EntitySet="Wash" />
+            <End Role="UsersAvailableWash" EntitySet="UsersAvailableWash" />
           </AssociationSet>
           <AssociationSet Name="FK_Wash_Regions" Association="Self.FK_Wash_Regions">
             <End Role="Regions" EntitySet="Regions" />
@@ -1864,6 +1910,7 @@
           <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Description" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="UsersAvailableWashes" Relationship="ModelDb.FK_UsersAvailableWash_Users" FromRole="User" ToRole="UsersAvailableWash" />
         </EntityType>
         <EntityType Name="Wash">
           <Key>
@@ -1877,6 +1924,7 @@
           <NavigationProperty Name="Changers" Relationship="Self.FK_Changers_Wash" FromRole="Wash" ToRole="Changers" />
           <NavigationProperty Name="Posts" Relationship="Self.FK_Posts_Wash" FromRole="Wash" ToRole="Posts" />
           <NavigationProperty Name="Region" Relationship="Self.FK_Wash_Regions" FromRole="Wash" ToRole="Regions" />
+          <NavigationProperty Name="UsersAvailableWashes" Relationship="ModelDb.FK_UsersAvailableWash_Wash" FromRole="Wash" ToRole="UsersAvailableWash" />
         </EntityType>
         <Association Name="FK_Cards_CardStatuses">
           <End Role="CardStatuses" Type="Self.CardStatus" Multiplicity="1">
@@ -2820,6 +2868,15 @@
             <Parameter Name="p_Login" Mode="In" Type="String" />
             <Parameter Name="p_WashCode" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="UsersAvailableWashes" EntityType="ModelDb.UsersAvailableWash" />
+          <AssociationSet Name="FK_UsersAvailableWash_Users" Association="ModelDb.FK_UsersAvailableWash_Users">
+            <End Role="User" EntitySet="Users" />
+            <End Role="UsersAvailableWash" EntitySet="UsersAvailableWashes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UsersAvailableWash_Wash" Association="ModelDb.FK_UsersAvailableWash_Wash">
+            <End Role="Wash" EntitySet="Washes" />
+            <End Role="UsersAvailableWash" EntitySet="UsersAvailableWashes" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="GetBoxAndCollect_Result">
           <Property Type="DateTime" Name="reportdate" Nullable="true" Precision="23" />
@@ -3165,6 +3222,45 @@
           <Property Type="Int32" Name="data1DataData1datad7" Nullable="true" />
           <Property Type="Int32" Name="data1DataData1datad8" Nullable="true" />
         </ComplexType>
+        <EntityType Name="UsersAvailableWash">
+          <Key>
+            <PropertyRef Name="IDUserAvailableWash" />
+          </Key>
+          <Property Name="IDUserAvailableWash" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDUser" Type="Int32" Nullable="false" />
+          <Property Name="IDWash" Type="Int32" Nullable="false" />
+          <Property Name="Available" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="ModelDb.FK_UsersAvailableWash_Users" FromRole="UsersAvailableWash" ToRole="User" />
+          <NavigationProperty Name="Wash" Relationship="ModelDb.FK_UsersAvailableWash_Wash" FromRole="UsersAvailableWash" ToRole="Wash" />
+        </EntityType>
+        <Association Name="FK_UsersAvailableWash_Users">
+          <End Type="ModelDb.User" Role="User" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ModelDb.UsersAvailableWash" Role="UsersAvailableWash" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="IDUser" />
+            </Principal>
+            <Dependent Role="UsersAvailableWash">
+              <PropertyRef Name="IDUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UsersAvailableWash_Wash">
+          <End Type="ModelDb.Wash" Role="Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ModelDb.UsersAvailableWash" Role="UsersAvailableWash" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="UsersAvailableWash">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -4109,6 +4205,16 @@
           <FunctionImportMapping FunctionImportName="GetCollectDurPeriod" FunctionName="Хранилище ModelDb.GetCollectDurPeriod" />
           <FunctionImportMapping FunctionImportName="GetIncreaseBefDate" FunctionName="Хранилище ModelDb.GetIncreaseBefDate" />
           <FunctionImportMapping FunctionImportName="GetIncreaseDurPeriod" FunctionName="Хранилище ModelDb.GetIncreaseDurPeriod" />
+          <EntitySetMapping Name="UsersAvailableWashes">
+            <EntityTypeMapping TypeName="ModelDb.UsersAvailableWash">
+              <MappingFragment StoreEntitySet="UsersAvailableWash">
+                <ScalarProperty Name="Available" ColumnName="Available" />
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
+                <ScalarProperty Name="IDUser" ColumnName="IDUser" />
+                <ScalarProperty Name="IDUserAvailableWash" ColumnName="IDUserAvailableWash" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -12,21 +12,14 @@ namespace Inspinia_MVC5.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class UsersAvailableWash
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public User()
-        {
-            this.UsersAvailableWashes = new HashSet<UsersAvailableWash>();
-        }
-    
+        public int IDUserAvailableWash { get; set; }
         public int IDUser { get; set; }
-        public string Login { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
-        public string Description { get; set; }
+        public int IDWash { get; set; }
+        public int Available { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UsersAvailableWash> UsersAvailableWashes { get; set; }
+        public virtual User User { get; set; }
+        public virtual Wash Wash { get; set; }
     }
 }

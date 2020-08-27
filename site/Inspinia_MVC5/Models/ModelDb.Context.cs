@@ -66,6 +66,7 @@ namespace Inspinia_MVC5.Models
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Wash> Washes { get; set; }
+        public virtual DbSet<UsersAvailableWash> UsersAvailableWashes { get; set; }
     
         public virtual int CardDecrease(string p_CardNum, Nullable<int> p_Amount)
         {

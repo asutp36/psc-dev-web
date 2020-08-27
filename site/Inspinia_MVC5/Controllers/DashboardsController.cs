@@ -46,7 +46,6 @@ namespace Inspinia_MVC5.Controllers
 
             return PartialView("_NumLabel", increases);
         }
-
         public int GetIncreasesFromStart(string enddate, string login, string washcode)
         {
             DateTime edate;
@@ -70,10 +69,10 @@ namespace Inspinia_MVC5.Controllers
             }
             prmWashCode.Value = washcode;
 
-            //int result = db.GetIncreaseBefDate(edate, login, washcode);
-            int result = db.Database.ExecuteSqlCommand(
-                "GetIncreaseBefDate @p_DateEnd, @p_Login, @p_WashCode ",
-                prmEndDate, prmLogin, prmWashCode);
+            int result = db.GetIncreaseBefDate(edate, login, washcode);
+            //int result = db.Database.ExecuteSqlCommand(
+            //    "GetIncreaseBefDate @p_DateEnd, @p_Login, @p_WashCode ",
+            //    prmEndDate, prmLogin, prmWashCode);
 
             return result;
         }
@@ -84,7 +83,6 @@ namespace Inspinia_MVC5.Controllers
 
             return PartialView("_NumLabel", increases);
         }
-
         public int GetIncreasesYesterday(string begdate, string enddate, string login, string washcode)
         {
             DateTime bdate;
@@ -122,44 +120,12 @@ namespace Inspinia_MVC5.Controllers
             return result;
         }
 
-        public int GetIncreasesFromStart(string enddate, string login, string washcode)
-        {
-            DateTime edate;
-            if (!DateTime.TryParse(enddate, out edate))
-                edate = DateTime.Now;
-
-            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
-            prmEndDate.Value = edate;
-
-            var prmLogin = new System.Data.SqlClient.SqlParameter("@p_Login", System.Data.SqlDbType.NVarChar);
-            if (login == null)
-            {
-                login = "";
-            }
-            prmLogin.Value = login;
-
-            var prmWashCode = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
-            if (washcode == null)
-            {
-                washcode = "";
-            }
-            prmWashCode.Value = washcode;
-
-            //int result = db.GetIncreaseBefDate(edate, login, washcode);
-            int result = db.Database.ExecuteSqlCommand(
-                "GetIncreaseBefDate @p_DateEnd, @p_Login, @p_WashCode ",
-                prmEndDate, prmLogin, prmWashCode);
-
-            return result;
-        }
-
         public ActionResult _CollectLastMonth(string begdate, string enddate)
         {
             int collects = GetCollectLastMonth(begdate, enddate, "", "");
 
             return PartialView("_NumLabel", collects);
         }
-
         public int GetCollectLastMonth(string begdate, string enddate, string login, string washcode)
         {
             DateTime bdate;
@@ -196,6 +162,7 @@ namespace Inspinia_MVC5.Controllers
 
             return result;
         }
+
         private void GetIncomesFromDBToday()
         {
             ViewBag.Incomes = GetIncomesFromDB(DateTime.Today, DateTime.Now, "", "");

@@ -19,6 +19,7 @@ namespace Inspinia_MVC5.Models
         {
             this.Changers = new HashSet<Changer>();
             this.Posts = new HashSet<Post>();
+            this.UsersAvailableWashes = new HashSet<UsersAvailableWash>();
         }
     
         public int IDWash { get; set; }
@@ -32,5 +33,7 @@ namespace Inspinia_MVC5.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Post> Posts { get; set; }
         public virtual Region Region { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UsersAvailableWash> UsersAvailableWashes { get; set; }
     }
 }

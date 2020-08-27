@@ -80,6 +80,9 @@
         <AssociationConnector Association="ModelDb.FK_Operations_OperationTypes" ManuallyRouted="false" />
         <AssociationConnector Association="ModelDb.FK_Posts_Wash" ManuallyRouted="false" />
         <AssociationConnector Association="ModelDb.FK_Wash_Regions" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ModelDb.UsersAvailableWash" Width="1.5" PointX="7.5" PointY="17.375" />
+        <AssociationConnector Association="ModelDb.FK_UsersAvailableWash_Users" />
+        <AssociationConnector Association="ModelDb.FK_UsersAvailableWash_Wash" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
