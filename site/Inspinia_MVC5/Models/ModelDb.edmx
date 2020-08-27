@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Хранилище ModelDb" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Хранилище ModelDb" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Cards">
           <Key>
             <PropertyRef Name="IDCard" />
@@ -34,14 +34,6 @@
           <Property Name="Code" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
-        <!--Ошибки, обнаруженные при создании:
-предупреждение 6013: Первичный ключ в таблице или представлении "WashCompany.dbo.CashIntegration" не определен, его не удалось вывести. Эта таблица или представление исключены. Чтобы использовать сущность, необходимо проверить схему, добавить правильные ключи и раскомментировать ее.
-        <EntityType Name="CashIntegration">
-          <Property Name="IDEvent" Type="int" />
-          <Property Name="ServerID" Type="int" />
-          <Property Name="ServerStatus" Type="int" />
-          <Property Name="ServerMessage" Type="nvarchar" MaxLength="50" />
-        </EntityType>-->
         <EntityType Name="Changers">
           <Key>
             <PropertyRef Name="IDChanger" />
@@ -1047,6 +1039,12 @@
           <Parameter Name="p_RegionCode" Type="smallint" Mode="In" />
           <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
         </Function>
+        <Function Name="GetCollectDurPeriod" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_Login" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="GetCollectWashList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_RegionCode" Type="int" Mode="In" />
           <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
@@ -1093,6 +1091,11 @@
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="GetIncreaseBefDate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_Login" Type="nvarchar" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="GetIncreaseByEvents" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
@@ -1111,6 +1114,12 @@
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
           <Parameter Name="p_RegionCode" Type="smallint" Mode="In" />
+          <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="GetIncreaseDurPeriod" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_Login" Type="nvarchar" Mode="In" />
           <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="GetIncreaseOnPosts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -1369,8 +1378,7 @@
             <End Role="Wash" EntitySet="Wash" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ModelDb" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -2586,7 +2594,7 @@
             <Parameter Name="p_WashCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetCardBalance" ReturnType="Collection(Int32)">
-            <Parameter Name="Card" Mode="In" Type="String" />
+          <Parameter Name="Card" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetCardList" ReturnType="Collection(ModelDb.GetCardList_Result)">
             <Parameter Name="p_Phone" Mode="In" Type="String" />
@@ -2751,7 +2759,7 @@
             <Parameter Name="p_Message" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetNoticeRecipient" ReturnType="Collection(ModelDb.GetNoticeRecipient_Result)">
-            <Parameter Name="RecipientCode" Mode="In" Type="String" />
+          <Parameter Name="RecipientCode" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetPostAmounts" ReturnType="Collection(ModelDb.GetPostAmounts_Result)">
             <Parameter Name="p_RegionCode" Mode="In" Type="Int32" />
@@ -2794,6 +2802,23 @@
             <Parameter Name="p_RegionCode" Mode="In" Type="Int16" />
             <Parameter Name="p_WashCode" Mode="In" Type="String" />
             <Parameter Name="p_PostCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetCollectDurPeriod">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_Login" Mode="In" Type="String" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetIncreaseBefDate">
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_Login" Mode="In" Type="String" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetIncreaseDurPeriod">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_Login" Mode="In" Type="String" />
+            <Parameter Name="p_WashCode" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetBoxAndCollect_Result">
@@ -4081,6 +4106,9 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetCollectDurPeriod" FunctionName="Хранилище ModelDb.GetCollectDurPeriod" />
+          <FunctionImportMapping FunctionImportName="GetIncreaseBefDate" FunctionName="Хранилище ModelDb.GetIncreaseBefDate" />
+          <FunctionImportMapping FunctionImportName="GetIncreaseDurPeriod" FunctionName="Хранилище ModelDb.GetIncreaseDurPeriod" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

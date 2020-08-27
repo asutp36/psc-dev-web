@@ -12,12 +12,10 @@
                 </div>
                 @*</a>*@
             <div class="ibox-content">
-                @*@Html.Action("_IncreasesSum", "Increases", new
+                @Html.Action("_IncreasesFromStart", "Dashboards", new
            {
-               begdate =  new DateTime(2019, 1, 1).ToString("dd.MM.yyyy HH:mm:ss"),
-               //DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
-               enddate = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
-           })*@
+               enddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")
+           })
                 @*                    <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>*@
                 <small>с начала работы</small>
             </div>
@@ -31,7 +29,7 @@
                     @*                    <span data-diameter="40" class="updating-chart">5,3,9,6,5,9,7,3,5,2,5,3,9,6,5,9,4,7,3,2,9,8,7,4,5,1,2,9,5,4,7,2,7,7,3,5,2</span>*@
                 </div>
                 <div class="ibox-content">
-                    @Html.Action("_IncreasesSum", "Increases", new
+                    @Html.Action("_IncreasesYesterday", "Dashboards", new
                {
                    begdate = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                    enddate = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
@@ -51,7 +49,7 @@
                     <h5>Инкассировано</h5>
                 </div>
                 <div class="ibox-content">
-                    @Html.Action("_CollectSum", "CollectWash", new
+                    @Html.Action("_CollectLastMonth", "Dashboards", new
                {
                    begdate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                    enddate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
@@ -67,7 +65,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
+        @*<div class="col-lg-3">
             <div class="ibox ">
                 <div class="ibox-title">
                     <span class="label label-warning-light float-right">макет</span>
@@ -75,7 +73,7 @@
                 </div>
                 <div class="ibox-content">
                     <h1 class="no-margins">0</h1>
-                    @*<div class="stat-percent font-bold text-danger">4% <i class="fa fa-level-down"></i></div>*@
+                    <div class="stat-percent font-bold text-danger">4% <i class="fa fa-level-down"></i></div>
                     <a href="@Url.Action("FinanceOperations", "Finance", new {
                             begTime = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss"),
                             endTime = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss")})">
@@ -83,7 +81,7 @@
                     </a>
                 </div>
             </div>
-        </div>
+        </div>*@
     </div>
     <div class="row">
         @*<div class="col-lg-3">

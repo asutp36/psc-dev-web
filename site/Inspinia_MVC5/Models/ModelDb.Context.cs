@@ -909,5 +909,64 @@ namespace Inspinia_MVC5.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<RptWashPrevFunc_Result>("RptWashPrevFunc", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_WashCodeParameter, p_PostCodeParameter);
         }
+    
+        public virtual int GetCollectDurPeriod(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, string p_Login, string p_WashCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_LoginParameter = p_Login != null ?
+                new ObjectParameter("p_Login", p_Login) :
+                new ObjectParameter("p_Login", typeof(string));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetCollectDurPeriod", p_DateBegParameter, p_DateEndParameter, p_LoginParameter, p_WashCodeParameter);
+        }
+    
+        public virtual int GetIncreaseBefDate(Nullable<System.DateTime> p_DateEnd, string p_Login, string p_WashCode)
+        {
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_LoginParameter = p_Login != null ?
+                new ObjectParameter("p_Login", p_Login) :
+                new ObjectParameter("p_Login", typeof(string));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetIncreaseBefDate", p_DateEndParameter, p_LoginParameter, p_WashCodeParameter);
+        }
+    
+        public virtual int GetIncreaseDurPeriod(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, string p_Login, string p_WashCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_LoginParameter = p_Login != null ?
+                new ObjectParameter("p_Login", p_Login) :
+                new ObjectParameter("p_Login", typeof(string));
+    
+            var p_WashCodeParameter = p_WashCode != null ?
+                new ObjectParameter("p_WashCode", p_WashCode) :
+                new ObjectParameter("p_WashCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetIncreaseDurPeriod", p_DateBegParameter, p_DateEndParameter, p_LoginParameter, p_WashCodeParameter);
+        }
     }
 }

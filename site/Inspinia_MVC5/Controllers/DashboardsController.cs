@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Inspinia_MVC5.Models;
+using System.Security.Cryptography.Xml;
 
 namespace Inspinia_MVC5.Controllers
 {
@@ -39,6 +40,162 @@ namespace Inspinia_MVC5.Controllers
             return View();
         }
 
+        public ActionResult _IncreasesFromStart(string enddate)
+        {
+            int increases = GetIncreasesFromStart(enddate, "", "");
+
+            return PartialView("_NumLabel", increases);
+        }
+
+        public int GetIncreasesFromStart(string enddate, string login, string washcode)
+        {
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
+
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
+
+            var prmLogin = new System.Data.SqlClient.SqlParameter("@p_Login", System.Data.SqlDbType.NVarChar);
+            if (login == null)
+            {
+                login = "";
+            }
+            prmLogin.Value = login;
+
+            var prmWashCode = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            if (washcode == null)
+            {
+                washcode = "";
+            }
+            prmWashCode.Value = washcode;
+
+            //int result = db.GetIncreaseBefDate(edate, login, washcode);
+            int result = db.Database.ExecuteSqlCommand(
+                "GetIncreaseBefDate @p_DateEnd, @p_Login, @p_WashCode ",
+                prmEndDate, prmLogin, prmWashCode);
+
+            return result;
+        }
+
+        public ActionResult _IncreasesYesterday(string begdate, string enddate)
+        {
+            int increases = GetIncreasesYesterday(begdate, enddate, "", "");
+
+            return PartialView("_NumLabel", increases);
+        }
+
+        public int GetIncreasesYesterday(string begdate, string enddate, string login, string washcode)
+        {
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = DateTime.Today.AddDays(-1);
+
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Today.AddSeconds(-1);
+
+            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            prmBegDate.Value = bdate;
+
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
+
+            var prmLogin = new System.Data.SqlClient.SqlParameter("@p_Login", System.Data.SqlDbType.NVarChar);
+            if (login == null)
+            {
+                login = "";
+            }
+            prmLogin.Value = login;
+
+            var prmWashCode = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            if (washcode == null)
+            {
+                washcode = "";
+            }
+            prmWashCode.Value = washcode;
+
+            int result = db.Database.ExecuteSqlCommand(
+                "GetIncreaseDurPeriod @p_DateBeg, @p_DateEnd, @p_Login, @p_WashCode ",
+                prmBegDate, prmEndDate, prmLogin, prmWashCode);
+
+            return result;
+        }
+
+        public int GetIncreasesFromStart(string enddate, string login, string washcode)
+        {
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
+
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
+
+            var prmLogin = new System.Data.SqlClient.SqlParameter("@p_Login", System.Data.SqlDbType.NVarChar);
+            if (login == null)
+            {
+                login = "";
+            }
+            prmLogin.Value = login;
+
+            var prmWashCode = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            if (washcode == null)
+            {
+                washcode = "";
+            }
+            prmWashCode.Value = washcode;
+
+            //int result = db.GetIncreaseBefDate(edate, login, washcode);
+            int result = db.Database.ExecuteSqlCommand(
+                "GetIncreaseBefDate @p_DateEnd, @p_Login, @p_WashCode ",
+                prmEndDate, prmLogin, prmWashCode);
+
+            return result;
+        }
+
+        public ActionResult _CollectLastMonth(string begdate, string enddate)
+        {
+            int collects = GetCollectLastMonth(begdate, enddate, "", "");
+
+            return PartialView("_NumLabel", collects);
+        }
+
+        public int GetCollectLastMonth(string begdate, string enddate, string login, string washcode)
+        {
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-1);
+
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddSeconds(-1);
+
+            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            prmBegDate.Value = bdate;
+
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
+
+            var prmLogin = new System.Data.SqlClient.SqlParameter("@p_Login", System.Data.SqlDbType.NVarChar);
+            if (login == null)
+            {
+                login = "";
+            }
+            prmLogin.Value = login;
+
+            var prmWashCode = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            if (washcode == null)
+            {
+                washcode = "";
+            }
+            prmWashCode.Value = washcode;
+
+            int result = db.Database.ExecuteSqlCommand(
+                "GetCollectDurPeriod @p_DateBeg, @p_DateEnd, @p_Login, @p_WashCode ",
+                prmBegDate, prmEndDate, prmLogin, prmWashCode);
+
+            return result;
+        }
         private void GetIncomesFromDBToday()
         {
             ViewBag.Incomes = GetIncomesFromDB(DateTime.Today, DateTime.Now, "", "");
