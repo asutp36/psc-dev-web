@@ -113,66 +113,81 @@
 
     <script type="text/javascript">
 
+        var xhr;
+
         var timeridupdate = -1;
         var timeriddisconnect = -1;
         var timeridstarterror = -1;
         $('#changer').hide();
 
         function blurDiv() {
-            $('#changer-name').html($('#changer-name').html() + ' - нет связи'); 
+            $('#changer-state').html(' - нет связи'); 
             $('#changer-info').addClass('blur');
             console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Данные о разменнике неактуальны!");
         }
 
         function show() {
+            if (xhr) {
+                xhr.abort();
+            }
             let code = $('#current_changer').val()
-        $.ajax({
-            type: "POST",
-            cache: false,
-            data: {
-                codeChanger: code
-            },
-            success: function (result) {
-                if (result.statusCode == 200) {
 
-                    clearInterval(timeriddisconnect);
-                    timeriddisconnect = -1;
+            xhr = $.ajax({
+                type: "POST",
+                cache: false,
+                data: {
+                    codeChanger: code
+                },
+                success: function (result) {
+                    if (result.statusCode == 200) {
 
-                    clearInterval(timeridstarterror);
-                    timeridstarterror = -1;
+                        clearInterval(timeriddisconnect);
+                        timeriddisconnect = -1;
 
-                    $('#changer-info').removeClass('blur');
-                    $('#cur_changer').html(result.view);
-                    $('#changer-name').html($('#changer-name').html() + ' - есть связь'); 
-                }
-                else {
-                    if (timeriddisconnect == -1 && timeridstarterror == -1) {
-                        console.log("Утеряна связь с разменником.");
-                        timeriddisconnect = setTimeout(blurDiv, 120000);
+                        clearInterval(timeridstarterror);
+                        timeridstarterror = -1;
+
+                        $('#changer-info').removeClass('blur');
+                        $('#cur_changer').html(result.view);
+                        $('#changer-state').html(' - есть связь'); 
                     }
-                    console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Во время запроса данных произошла ошибка!");
-                    if (result.statusCode == 400) {
-                        console.log("Код ошибки от сервера 400 - принято некорректное значение!");
+                    else {
+                        if (timeriddisconnect == -1 && timeridstarterror == -1) {
+                            console.log("Утеряна связь с разменником.");
+                            timeriddisconnect = setTimeout(blurDiv, 120000);
+                        }
+                        console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Во время запроса данных произошла ошибка!");
+                        if (result.statusCode == 400) {
+                            console.log("Код ошибки от сервера 400 - принято некорректное значение!");
+                        }
+                        else if (result.statusCode == 404) {
+                            console.log("Код ошибки от сервера 404 - данный разменник не найден!");
+                        }
+                        else if (result.statusCode == 424) {   
+                            console.log("Код ошибки от сервера 424 - ответ от разменника неудовлетворительный или нет связи!");
+                        }
+                        else if (result.statusCode == 500) {
+                            console.log("Код ошибки от сервера 500 - внутренняя ошибка сервера!");
+                        }
                     }
-                    else if (result.statusCode == 404) {
-                        console.log("Код ошибки от сервера 404 - данный разменник не найден!");
+                },
+                error: function (jqXHR) {
+                    if (jqXHR.statusText == "abort") {
+                        //
                     }
-                    else if (result.statusCode == 424) {   
-                        console.log("Код ошибки от сервера 424 - ответ от разменника неудовлетворительный или нет связи!");
+                    else {
+                        console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Во время запроса данных произошла неизвестная внутренная ошибка!" + jqXHR.StatusCode);
                     }
-                    else if (result.statusCode == 500) {
-                        console.log("Код ошибки от сервера 500 - внутренняя ошибка сервера!");
-                    }
-                }
-            },
-            error: function (jqXHR) {
-                console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Во время запроса данных произошла неизвестная внутренная ошибка!" + jqXHR.StatusCode);
-            },
-            url: "@Url.Action("_MonitoringChangerView", "Monitoring")",
-        })
+                },
+                url: "@Url.Action("_MonitoringChangerView", "Monitoring")",
+            })
         }
 
         function select_changer(code) {
+
+            if (xhr) {
+                xhr.abort();
+            }  
 
             if (timeridupdate != -1) {
                 clearInterval(timeridupdate);
@@ -210,7 +225,7 @@
                         timeridupdate = setInterval(show, 10000);
 
                         $('#cur_changer').html(result.view);
-                        $('#changer-name').html($('#changer-name').html() + ' - есть связь'); 
+                        $('#changer-state').html(' - есть связь');
                         $('#changer').fadeIn();
                     }
                     else {

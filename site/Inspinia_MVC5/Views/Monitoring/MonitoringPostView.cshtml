@@ -138,6 +138,8 @@
 
     <script type="text/javascript">
 
+        var xhr;
+
         function hideall() {
             $('#alert-sum').hide()
             $('#alert-success-sum').hide()
@@ -165,40 +167,35 @@
             }
         }
 
-        function check_state() {
-
-            if ($('#state').text() == "Нет доступа") {
-                $('#label-balance').attr("class", "label label-secondary");
-                $('#label-function').attr("class", "label label-secondary");
-                $('#label-state').attr("class", "label label-secondary");
-            }
-            else {
-                $('#label-balance').attr("class", "label label-primary");
-                $('#label-function').attr("class", "label label-primary");
-                $('#label-state').attr("class", "label label-primary");
-            }
-        }
-
         function show() {
+            if (xhr) {
+                xhr.abort();
+            }            
             let code = $('#current_post').val()
-        $.ajax({
-            type: "GET",
-            cache: false,
-            data: {
-                codePost: code
-            },
-            success: function () {
-            },
-            error: function () {
-                alert("error-show");
-            },
-            url: "@Url.Action("_MonitoringPostView", "Monitoring")",
-        }).done(function (result) {
-            $('#cur_post').html(result);
-        });
+
+            xhr = $.ajax({
+                type: "GET",
+                cache: false,
+                data: {
+                    codePost: code
+                },
+                success: function () {
+                },
+                error: function (jqXHR) {
+                    if (jqXHR.statusText == "abort") {
+                        //console.log("Запрос отменен!");
+                    }
+                },
+                url: "@Url.Action("_MonitoringPostView", "Monitoring")",
+            }).done(function (result) {
+                $('#cur_post').html(result);
+            });
         }
 
         function select_post(code) {
+            if (xhr) {
+                xhr.abort();
+            }
             hideall();
 
             if (timeid != -1) {
@@ -220,7 +217,7 @@
                     $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
                 },
                 error: function () {
-                    alert('Возникла ошибка!');
+                    console.log('Возникла ошибка!');
                 },
                 success: function () {
                     if (timeid == -1) {
@@ -279,9 +276,9 @@
                             $('#btn-increase').ladda('stop');
                             $('#input-balance').attr('readonly', false);
                         },
-                        error: function (xhr, ajaxOPtions, thrownError) {
-                            alert(xhr.responseText);
-                            alert(thrownError);
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            console.log(xhr.responseText);
+                            console.log(thrownError);
                         },
                         success: function ()
                         {
@@ -318,7 +315,7 @@
                             $('#input-function').attr('readonly', false);
                         },
                         error: function () {
-                            alert('Возникла ошибка!\nПроверьте правильность введенных данных!');
+                            console.log('Возникла ошибка!\nПроверьте правильность введенных данных!');
                         },
                         success: function ()
                         {

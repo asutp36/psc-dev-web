@@ -4,7 +4,7 @@
     <div class="sidebar-collapse">
         <ul class="nav metismenu" id="side-menu">
             <li class="nav-header">
-                @*<div class="dropdown profile-element">
+                <div class="dropdown profile-element">
                     <img alt="image" src="~/Images/logo-eco.png" />
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                         <span class="block m-t-xs font-bold">eco</span>
@@ -12,7 +12,7 @@
                 </div>
                 <div class="logo-element">
                     ECO
-                </div>*@
+                </div>
             </li>
             @*<li class="@Html.IsSelected(controller: "Metrics")">
             <a href="@Url.Action("Index", "Layouts")"><i class="fa fa-bar-chart-o"></i> <span class="nav-label" data-i18n="nav.layouts">Dashboard</span></a>
@@ -70,8 +70,8 @@
                         <a><i class="fa fa-tags"></i> <span class="nav-label" data-i18n="nav.graphs">Тарифы</span></a>
                     </li>
                     <li class="@Html.IsSelected(controller: "Monitoring")">
-                        <a href="@Url.Action("MonitoringPostView","Monitoring")"><i class="fa fa-desktop"></i> <span class="nav-label" data-i18n="nav.mailbox">Мониторинг</span></a>
-                        @*<a><i class="fa fa-calculator"></i> <span class="nav-label" data-i18n="nav.mailbox">Мониторинг</span></a>*@
+                        @*<a href="@Url.Action("MonitoringPostView","Monitoring")"><i class="fa fa-desktop"></i> <span class="nav-label" data-i18n="nav.mailbox">Мониторинг</span></a>*@
+                        <a><i class="fa fa-calculator"></i> <span class="nav-label" data-i18n="nav.mailbox">Мониторинг</span></a>
                     </li>
                 </ul>
             </li>
@@ -83,11 +83,13 @@
                         <a href="@Url.Action("FinanceOperations","Finance")"><i class="fa fa-credit-card"></i> <span class="nav-label" data-i18n="nav.graphs">Финансовые операции</span></a>
                     </li>
                     <li class="@Html.IsSelected(controller: "EventChanger")">
-                        <a href="@Url.Action("EventChangerView", "EventChanger", new {
+                        @*<a href="@Url.Action("EventChangerView", "EventChanger", new {
                             begdate = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss"),
                             enddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"),
                             })">
                             <i class="fa fa-ruble-sign"></i><span class="nav-label" data-i18n="nav.graphs">События на разменниках</span>
+                        </a>*@
+                        <a><i class="fa fa-ruble-sign"></i><span class="nav-label" data-i18n="nav.graphs">События на разменниках</span>
                         </a>
                     </li>
                     <li class="@Html.IsSelected(controller: "Monitoring")">
