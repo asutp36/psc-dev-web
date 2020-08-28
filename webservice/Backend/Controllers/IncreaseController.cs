@@ -24,8 +24,16 @@ namespace Backend.Controllers
             SqlParameter log = new SqlParameter("@p_Login", login);
             SqlParameter wash = new SqlParameter("@p_WashCode", washCode);
 
-            var increases = _model.Database.ExecuteSqlRaw("GetIncreaseDurPeriod @p_DateBeg, @p_DateEnd, @p_Login, @p_WashCode", dateBeg, dateEnd, log, wash);
-            return Ok(increases);
+            SqlParameter ssum = new SqlParameter()
+            {
+                ParameterName = "@ssum",
+                SqlDbType = System.Data.SqlDbType.Int,
+                Direction = System.Data.ParameterDirection.Output
+            };
+
+            _model.Database.ExecuteSqlRaw("GetIncreaseDurPeriod @p_DateBeg, @p_DateEnd, @p_Login, @p_WashCode, @ssum OUT", dateBeg, dateEnd, log, wash, ssum);
+
+            return Ok(ssum.Value);
         }
     }
 }
