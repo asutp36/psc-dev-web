@@ -175,6 +175,7 @@
     </Compile>
     <Compile Include="Helpers\ChangeFunctionOnPost.cs" />
     <Compile Include="Helpers\ChangeRatesData.cs" />
+    <Compile Include="Helpers\DashboardData.cs" />
     <Compile Include="Helpers\GetScalarResponse.cs" />
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />
     <Compile Include="Helpers\IncreaseBalanceOnPostClass.cs" />
@@ -2095,7 +2096,7 @@
     <Content Include="Views\Rates\_NoAvailableWash.cshtml" />
     <Content Include="Views\EventChanger\EventChangerView.cshtml" />
     <Content Include="Views\EventChanger\_EventChangerList.cshtml" />
-    <Content Include="Views\Increases\_IncreasesSum.cshtml" />
+    <Content Include="Views\Increases\_ErrorMessage.cshtml" />
     <Content Include="Views\CollectWash\_CollectSum.cshtml" />
     <Content Include="Views\Cards\CurrentCardView.cshtml" />
     <Content Include="Views\Cards\_CurrentCardList.cshtml" />
@@ -2104,6 +2105,8 @@
     <Content Include="Views\Monitoring\_ErrorMessage.cshtml" />
     <Content Include="Views\Monitoring\_NotConnectedMonitoringChangerView.cshtml" />
     <Content Include="Views\Dashboards\_NumLabel.cshtml" />
+    <Content Include="Views\Pages\_ErrorMessage.cshtml" />
+    <Content Include="Views\Dashboards\_ErrorMessage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">

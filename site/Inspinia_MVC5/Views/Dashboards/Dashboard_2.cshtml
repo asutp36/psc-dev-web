@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Inspinia_MVC5.Helpers.DashboardData
+
+@{
     ViewBag.Title = "Сводка";
 }
 <div class="wrapper wrapper-content">
@@ -12,11 +14,20 @@
                 </div>
                 @*</a>*@
             <div class="ibox-content">
-                @Html.Action("_IncreasesFromStart", "Dashboards", new
-           {
-               enddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")
-           })
-                @*                    <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>*@
+                @if (Model.increaseAllTime == null)
+                {
+                    <h1 class="blur no-margins">1 729 012</h1>
+                }
+                else
+                {
+                    <h1 class="no-margins">@Model.increaseAllTime</h1>
+                }
+                @*@Html.Action("_IncreasesFromStart", "Dashboards", new
+        {
+            enddate = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")
+        })*@
+                @*
+        <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>*@
                 <small>с начала работы</small>
             </div>
             </div>
@@ -29,11 +40,19 @@
                     @*                    <span data-diameter="40" class="updating-chart">5,3,9,6,5,9,7,3,5,2,5,3,9,6,5,9,4,7,3,2,9,8,7,4,5,1,2,9,5,4,7,2,7,7,3,5,2</span>*@
                 </div>
                 <div class="ibox-content">
-                    @Html.Action("_IncreasesYesterday", "Dashboards", new
-               {
-                   begdate = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
-                   enddate = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
-               })
+                    @if (Model.increaseYesterday == null)
+                    {
+                        <h1 class="blur no-margins">65 322</h1>
+                    }
+                    else
+                    {
+                        <h1 class="no-margins">@Model.increaseYesterday</h1>
+                    }
+                    @*@Html.Action("_IncreasesYesterday", "Dashboards", new
+        {
+            begdate = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+            enddate = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
+        })*@
                     @*<div class="stat-percent font-bold text-info">11% <i class="fa fa-level-up"></i></div>*@
                     @*<a href="@Url.Action("IncashWashes", "Incash", new { begTime = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"), endTime =  DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss"), region = "0", wash = "0" })">*@
                     <a href="@Url.Action("IncreasesByWashesView","Increases")">
@@ -49,15 +68,23 @@
                     <h5>Инкассировано</h5>
                 </div>
                 <div class="ibox-content">
-                    @Html.Action("_CollectLastMonth", "Dashboards", new
-               {
-                   begdate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-1).ToString("dd.MM.yyyy HH:mm:ss"),
-                   enddate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
-               })
+                    @if (Model.collectLastMonth == null)
+                    {
+                        <h1 class="blur no-margins">481 920</h1>
+                    }
+                    else
+                    {
+                        <h1 class="no-margins">@Model.collectLastMonth</h1>
+                    }
+                    @*@Html.Action("_CollectLastMonth", "Dashboards", new
+        {
+            begdate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-1).ToString("dd.MM.yyyy HH:mm:ss"),
+            enddate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
+        })*@
                     @*<div class="stat-percent font-bold text-danger">38% <i class="fa fa-level-down"></i></div>*@
                     <a href="@Url.Action("CollectByWashesView","CollectWash", new
-                        { 
-                            begdate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-1).ToString("dd.MM.yyyy HH:mm:ss"), 
+                        {
+                            begdate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                             enddate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
                         })">
                         <small>@DateTime.Today.AddMonths(-1).ToString("MMMM yyyy")</small>
@@ -66,55 +93,55 @@
             </div>
         </div>
         @*<div class="col-lg-3">
-            <div class="ibox ">
-                <div class="ibox-title">
-                    <span class="label label-warning-light float-right">макет</span>
-                    <h5>Поступления</h5>
+                <div class="ibox ">
+                    <div class="ibox-title">
+                        <span class="label label-warning-light float-right">макет</span>
+                        <h5>Поступления</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">0</h1>
+                        <div class="stat-percent font-bold text-danger">4% <i class="fa fa-level-down"></i></div>
+                        <a href="@Url.Action("FinanceOperations", "Finance", new {
+                                begTime = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss"),
+                                endTime = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss")})">
+                            <small>@DateTime.Today.ToString("dd MMMM yyyy")</small>
+                        </a>
+                    </div>
                 </div>
-                <div class="ibox-content">
-                    <h1 class="no-margins">0</h1>
-                    <div class="stat-percent font-bold text-danger">4% <i class="fa fa-level-down"></i></div>
-                    <a href="@Url.Action("FinanceOperations", "Finance", new {
-                            begTime = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss"),
-                            endTime = DateTime.Today.ToString("dd.MM.yyyy HH:mm:ss")})">
-                        <small>@DateTime.Today.ToString("dd MMMM yyyy")</small>
-                    </a>
-                </div>
-            </div>
-        </div>*@
+            </div>*@
     </div>
     <div class="row">
         @*<div class="col-lg-3">
-            <div class="ibox ">
-                <div class="ibox-title">
-                    <span class="label label-warning-light float-right">работает</span>
-                    <h5>Липецк</h5>
-                </div>
-                <div class="ibox-content">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <a style="margin-left:15px" class="btn btn-info btn-sm" href="@Url.Action("IncreasesLipetskView","Increases")">Внесения</a>
-                            <a style="margin-left:15px" class="btn btn-secondary btn-sm" href="@Url.Action("IncreasesByWashesView","Increases")">Внесения на мойках</a>
-                        </div>
-                        <div class="col-sm-6">
-                            <a style="margin-left:15px" class="btn btn-success btn-sm" href="@Url.Action("CollectLipetskView","CollectWash")">Инкассации</a>
+                <div class="ibox ">
+                    <div class="ibox-title">
+                        <span class="label label-warning-light float-right">работает</span>
+                        <h5>Липецк</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <a style="margin-left:15px" class="btn btn-info btn-sm" href="@Url.Action("IncreasesLipetskView","Increases")">Внесения</a>
+                                <a style="margin-left:15px" class="btn btn-secondary btn-sm" href="@Url.Action("IncreasesByWashesView","Increases")">Внесения на мойках</a>
+                            </div>
+                            <div class="col-sm-6">
+                                <a style="margin-left:15px" class="btn btn-success btn-sm" href="@Url.Action("CollectLipetskView","CollectWash")">Инкассации</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>*@
+            </div>*@
     </div>
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox ">
                 <div class="ibox-title">
                     @*<div class="float-right">
-            <div class="btn-group">
-                <button type="button" class="btn btn-xs btn-white active">Today</button>
-                <button type="button" class="btn btn-xs btn-white">Monthly</button>
-                <button type="button" class="btn btn-xs btn-white">Annual</button>
-            </div>
-        </div>*@
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-xs btn-white active">Today</button>
+                                <button type="button" class="btn btn-xs btn-white">Monthly</button>
+                                <button type="button" class="btn btn-xs btn-white">Annual</button>
+                            </div>
+                        </div>*@
                 </div>
                 <div class="ibox-content">
                     <div class="row">
@@ -586,37 +613,37 @@
     </script>
 
     @*<script type="text/javascript">
-        $(document).ready(function () {
-            timedRefresh(10000);
-        });
+            $(document).ready(function () {
+                timedRefresh(10000);
+            });
 
-        function timedRefresh(timeoutPeriod) {
-            let period = timeoutPeriod;
-            let timedId = setInterval(
-            function refreshData() {
-                $.ajax({
-                    type: "GET",
-                    url: "@Url.Action("UpdateTime", "Dashboards")",
-                }).done(function (result) {
-                    $('#update-time').html(result);
-                });
+            function timedRefresh(timeoutPeriod) {
+                let period = timeoutPeriod;
+                let timedId = setInterval(
+                function refreshData() {
+                    $.ajax({
+                        type: "GET",
+                        url: "@Url.Action("UpdateTime", "Dashboards")",
+                    }).done(function (result) {
+                        $('#update-time').html(result);
+                    });
 
 
-                $.ajax({
-                    type: "GET",
-                    url: "@Url.Action("UpdateTable", "Dashboards")",
-                }).done(function (result) {
-                    $('#op-table').html(result);
-                });
+                    $.ajax({
+                        type: "GET",
+                        url: "@Url.Action("UpdateTable", "Dashboards")",
+                    }).done(function (result) {
+                        $('#op-table').html(result);
+                    });
 
-                    //if (надо увеличить период обновления){
-                    //    period *= 2;
-                    //}
+                        //if (надо увеличить период обновления){
+                        //    period *= 2;
+                        //}
 
-                    //alert('tick');
-            },
-            timeoutPeriod
-            );
-        };
-    </script>*@
+                        //alert('tick');
+                },
+                timeoutPeriod
+                );
+            };
+        </script>*@
 }

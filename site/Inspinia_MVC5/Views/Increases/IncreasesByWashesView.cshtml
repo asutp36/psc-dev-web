@@ -59,13 +59,13 @@
         <div class="col-lg-12 table-cards">
             <div class="ibox" id="ibox-load">
                 <div class="ibox-content" id="output">
-                    @Html.Action("_IncreasesByWashesList", "Increases", new
+                    @*@Html.Action("_IncreasesByWashesList", "Increases", new
                {
                    region = "",
                    wash = "",
                    begdate = DateTime.Today.AddDays(-1).ToString("dd.MM.yyyy HH:mm:ss"),
                    enddate = DateTime.Today.AddSeconds(-1).ToString("dd.MM.yyyy HH:mm:ss")
-               })
+               })*@
                 </div>
             </div>
         </div>
@@ -86,7 +86,7 @@
     @Scripts.Render("~/plugins/dataPicker")
     @Scripts.Render("~/plugins/dateRange")
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
         function initDataTable() {
             $('#table-increases').DataTable({
@@ -229,20 +229,53 @@
                 complete: function () {
                     $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
                 },
-                success: function () {
+                success: function (result) {
+                    $('#output').html(result.view);
                 },
                 error: function () {
-                    alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
+                    console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Во время загрузки данных произошла неизвестная внутренная ошибка!" + jqXHR.StatusCode);
                 },
-                url: "@Url.Action("IncreasesByWashesFilter", "Increases")"
+                url: "@Url.Action("_IncreasesByWashesList", "Increases")"
             }).done(function (result) {
-                $('#output').html(result);
+              //  $('#output').html(result);
 
                 initDataTable();
             });
         }
 
         $(document).ready(function () {
+
+            var bdate = moment().subtract(1, 'days').startOf('day').format('YYYY-MM-DD HH:mm:ss');
+            var edate = moment().subtract(1, 'days').endOf('day').format('YYYY-MM-DD HH:mm:ss');
+            var region = "";
+            var wash = "";
+
+            $.ajax({
+                type: "POST",
+                cache: true,
+                data: {
+                    region: region,
+                    wash: wash,
+                    begdate: bdate,
+                    enddate: edate
+                },
+                beforeSend: function () {
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                },
+                complete: function () {
+                    $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
+                },
+                success: function (result) {
+                    $('#output').html(result.view);
+                },
+                error: function () {
+                    console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Во время загрузки данных произошла неизвестная внутренная ошибка!" + jqXHR.StatusCode);
+                },
+                url: "@Url.Action("_IncreasesByWashesList", "Increases")"
+            }).done(function (result) {
+
+                initDataTable();
+            });
 
             $('#filter-region').change(eventChangeRegion);
 
@@ -252,8 +285,8 @@
 
         $('input[name="daterange"]').daterangepicker();
 
-        $('#bdate').val(moment().subtract(1, 'days').startOf('day').format('DD.MM.YYYY HH:mm:ss'));
-        $('#edate').val(moment().subtract(1, 'days').endOf('day').format('DD.MM.YYYY HH:mm:ss'));
+        $('#bdate').val(moment().subtract(1, 'days').startOf('day').format('YYYY-MM-DD HH:mm:ss'));
+        $('#edate').val(moment().subtract(1, 'days').endOf('day').format('YYYY-MM-DD HH:mm:ss'));
 
         $('#filter-date span').html(moment().subtract(1, 'days').startOf('day').format('с DD.MM.YYYY HH:mm:ss') + ' ' + moment().subtract(1, 'days').endOf('day').format('по DD.MM.YYYY HH:mm:ss'));
 
@@ -319,10 +352,10 @@
                     $('#filter-date span').html(start.format('с DD.MM.YYYY HH:mm:ss') + ' ' + end.format('по DD.MM.YYYY HH:mm:ss'));
                 }
 
-                $('#bdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
-                $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
+                $('#bdate').val(start.format('YYYY-MM-DD HH:mm:ss'));
+                $('#edate').val(end.format('YYYY-MM-DD HH:mm:ss'));
                 filter();
         });
-    </script>
+</script>
 }
 

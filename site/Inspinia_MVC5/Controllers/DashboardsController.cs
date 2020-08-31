@@ -6,6 +6,11 @@ using System.Web;
 using System.Web.Mvc;
 using Inspinia_MVC5.Models;
 using System.Security.Cryptography.Xml;
+using Inspinia_MVC5.Helpers;
+using Newtonsoft.Json;
+using System.Net;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Inspinia_MVC5.Controllers
 {
@@ -37,131 +42,52 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.Regions = db.Regions;
             ViewBag.Washes = db.Washes;
 
-            return View();
-        }
+            var response = GetDashboardData();
 
-        public ActionResult _IncreasesFromStart(string enddate)
-        {
-            int increases = GetIncreasesFromStart(enddate, "", "");
-
-            return PartialView("_NumLabel", increases);
-        }
-        public int GetIncreasesFromStart(string enddate, string login, string washcode)
-        {
-            DateTime edate;
-            if (!DateTime.TryParse(enddate, out edate))
-                edate = DateTime.Now;
-
-            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
-            prmEndDate.Value = edate;
-
-            var prmLogin = new System.Data.SqlClient.SqlParameter("@p_Login", System.Data.SqlDbType.NVarChar);
-            if (login == null)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                login = "";
-            }
-            prmLogin.Value = login;
+                DashboardData view = JsonConvert.DeserializeObject<DashboardData>(response.Result);
 
-            var prmWashCode = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
-            if (washcode == null)
+                return View("Dashboard_2", view);
+            }
+            else
             {
-                washcode = "";
+                ViewBag.Title = "Ошибка";
+
+                return View("_ErrorMessage", (object)response.Result);
             }
-            prmWashCode.Value = washcode;
-
-            int result = db.GetIncreaseBefDate(edate, login, washcode);
-            //int result = db.Database.ExecuteSqlCommand(
-            //    "GetIncreaseBefDate @p_DateEnd, @p_Login, @p_WashCode ",
-            //    prmEndDate, prmLogin, prmWashCode);
-
-            return result;
         }
 
-        public ActionResult _IncreasesYesterday(string begdate, string enddate)
+        public GetScalarResponse GetDashboardData()
         {
-            int increases = GetIncreasesYesterday(begdate, enddate, "", "");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(
+                "http://194.87.98.177/backend/api/increase/svodka");
 
-            return PartialView("_NumLabel", increases);
-        }
-        public int GetIncreasesYesterday(string begdate, string enddate, string login, string washcode)
-        {
-            DateTime bdate;
-            if (!DateTime.TryParse(begdate, out bdate))
-                bdate = DateTime.Today.AddDays(-1);
+            request.Timeout = 5000;
 
-            DateTime edate;
-            if (!DateTime.TryParse(enddate, out edate))
-                edate = DateTime.Today.AddSeconds(-1);
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Method = "GET";
 
-            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
-            prmBegDate.Value = bdate;
-
-            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
-            prmEndDate.Value = edate;
-
-            var prmLogin = new System.Data.SqlClient.SqlParameter("@p_Login", System.Data.SqlDbType.NVarChar);
-            if (login == null)
+            try
             {
-                login = "";
-            }
-            prmLogin.Value = login;
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader reader = new StreamReader(response.GetResponseStream());
+                string responseBody = reader.ReadToEnd();
 
-            var prmWashCode = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
-            if (washcode == null)
+                GetScalarResponse getScalarResponse = new GetScalarResponse(response.StatusCode, responseBody);
+
+                return getScalarResponse;
+            }
+            catch (WebException ex)
             {
-                washcode = "";
+                GetScalarResponse getScalarResponse = new GetScalarResponse((HttpStatusCode)500, ex.Message);
+
+                return getScalarResponse;
             }
-            prmWashCode.Value = washcode;
-
-            int result = db.Database.ExecuteSqlCommand(
-                "GetIncreaseDurPeriod @p_DateBeg, @p_DateEnd, @p_Login, @p_WashCode ",
-                prmBegDate, prmEndDate, prmLogin, prmWashCode);
-
-            return result;
         }
 
-        public ActionResult _CollectLastMonth(string begdate, string enddate)
-        {
-            int collects = GetCollectLastMonth(begdate, enddate, "", "");
 
-            return PartialView("_NumLabel", collects);
-        }
-        public int GetCollectLastMonth(string begdate, string enddate, string login, string washcode)
-        {
-            DateTime bdate;
-            if (!DateTime.TryParse(begdate, out bdate))
-                bdate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-1);
-
-            DateTime edate;
-            if (!DateTime.TryParse(enddate, out edate))
-                edate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddSeconds(-1);
-
-            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
-            prmBegDate.Value = bdate;
-
-            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
-            prmEndDate.Value = edate;
-
-            var prmLogin = new System.Data.SqlClient.SqlParameter("@p_Login", System.Data.SqlDbType.NVarChar);
-            if (login == null)
-            {
-                login = "";
-            }
-            prmLogin.Value = login;
-
-            var prmWashCode = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
-            if (washcode == null)
-            {
-                washcode = "";
-            }
-            prmWashCode.Value = washcode;
-
-            int result = db.Database.ExecuteSqlCommand(
-                "GetCollectDurPeriod @p_DateBeg, @p_DateEnd, @p_Login, @p_WashCode ",
-                prmBegDate, prmEndDate, prmLogin, prmWashCode);
-
-            return result;
-        }
 
         private void GetIncomesFromDBToday()
         {

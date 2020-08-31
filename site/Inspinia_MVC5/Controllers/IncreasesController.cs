@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
 using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Management;
 using System.Web.Mvc;
+using Inspinia_MVC5.Helpers;
 using Inspinia_MVC5.Models;
 using Microsoft.SqlServer.Server;
+using Newtonsoft.Json;
 
 namespace Inspinia_MVC5.Controllers
 {
@@ -280,60 +285,133 @@ namespace Inspinia_MVC5.Controllers
             return View("IncreasesByWashesView");
         }
 
-        public ActionResult _IncreasesByWashesList(string region, string wash, string begdate, string enddate)
+        public static string RenderRazorViewToString(ControllerContext controllerContext, string viewName, object model)
         {
-            List<GetIncreaseByWashs_Result> view = GetIncreasesByWashes(region, wash, begdate, enddate);
-
-            return PartialView("_IncreasesByWashesList", view);
+            controllerContext.Controller.ViewData.Model = model;
+            using (var sw = new StringWriter())
+            {
+                var ViewResult = ViewEngines.Engines.FindPartialView(controllerContext, viewName);
+                var ViewContext = new ViewContext(controllerContext, ViewResult.View, controllerContext.Controller.ViewData, controllerContext.Controller.TempData, sw);
+                ViewResult.View.Render(ViewContext, sw);
+                ViewResult.ViewEngine.ReleaseView(controllerContext, ViewResult.View);
+                return sw.GetStringBuilder().ToString();
+            }
         }
 
-        public List<GetIncreaseByWashs_Result> GetIncreasesByWashes(string region, string wash, string begdate, string enddate)
+        public ActionResult _IncreasesByWashesList(string region, string wash, string begdate, string enddate)
+        {
+            //List<GetIncreaseByWashs_Result> view = GetIncreasesByWashes(region, wash, begdate, enddate);
+            
+            GetScalarResponse scalarResponse = GetIncreasesByWashes(region, wash, begdate, enddate);
+
+            if (scalarResponse.StatusCode == HttpStatusCode.OK)
+            {
+                List<GetIncreaseByWashs_Result> resultlist = JsonConvert.DeserializeObject<List<GetIncreaseByWashs_Result>>(scalarResponse.Result);
+
+                return Json(new
+                {
+                    view = RenderRazorViewToString(ControllerContext, "_IncreasesByWashesList", resultlist),
+                    statusCode = scalarResponse.StatusCode
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    view = RenderRazorViewToString(ControllerContext, "_ErrorMessage", scalarResponse.Result),
+                    statusCode = scalarResponse.StatusCode
+                });
+            }
+
+            //return PartialView("_IncreasesByWashesList", view);
+        }
+
+        public GetScalarResponse GetIncreasesByWashes(string region, string wash, string begdate, string enddate)
         {
             List<GetIncreaseByWashs_Result> resultlist = null;
 
-            DateTime bdate;
-            if (!DateTime.TryParse(begdate, out bdate))
-                bdate = new DateTime(2019, 1, 1);
+            //DateTime bdate;
+            //if (!DateTime.TryParse(begdate, out bdate))
+            //    bdate = new DateTime(2019, 1, 1);
 
-            DateTime edate;
-            if (!DateTime.TryParse(enddate, out edate))
-                edate = DateTime.Now;
+            //DateTime edate;
+            //if (!DateTime.TryParse(enddate, out edate))
+            //    edate = DateTime.Now;
 
-            var prmRegion = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
-            if (region == "")
+            //var prmRegion = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
+            //if (region == "")
+            //{
+            //    region = "0";
+            //}
+            //prmRegion.Value = Convert.ToInt32(region);
+
+            //var prmWash = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            //if (wash == null)
+            //{
+            //    wash = "";
+            //}
+            //prmWash.Value = wash;
+
+            //var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            //prmBegDate.Value = bdate;
+
+            //var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            //prmEndDate.Value = edate;
+
+            //var result = db.Database.SqlQuery<GetIncreaseByWashs_Result>
+            //    ("GetIncreaseByWashs @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode ",
+            //    prmBegDate, prmEndDate, prmRegion, prmWash).ToList();
+
+            //resultlist = result;
+
+            //return resultlist;
+
+            string url = "http://194.87.98.177/backend/api/Increase/bywashs?" +
+                "startDate=" + begdate +
+                "&endDate=" + enddate;
+
+            if(region != "")
             {
-                region = "0";
+                url += "&regionCode=" + region;
             }
-            prmRegion.Value = Convert.ToInt32(region);
 
-            var prmWash = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
-            if (wash == null)
+            if(wash != "")
             {
-                wash = "";
+                url += "&washCode=" + wash;
             }
-            prmWash.Value = wash;
 
-            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
-            prmBegDate.Value = bdate;
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
-            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
-            prmEndDate.Value = edate;
+            request.Timeout = 5000;
 
-            var result = db.Database.SqlQuery<GetIncreaseByWashs_Result>
-                ("GetIncreaseByWashs @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode ",
-                prmBegDate, prmEndDate, prmRegion, prmWash).ToList();
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Method = "GET";
 
-            resultlist = result;
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader reader = new StreamReader(response.GetResponseStream());
+                string responseBody = reader.ReadToEnd();
 
-            return resultlist;
+                GetScalarResponse getScalarResponse = new GetScalarResponse(response.StatusCode, responseBody);
+
+                return getScalarResponse;
+            }
+            catch (WebException ex)
+            {
+                GetScalarResponse getScalarResponse = new GetScalarResponse((HttpStatusCode)500, ex.Message);
+
+                return getScalarResponse;
+            }
         }
 
-        public ActionResult IncreasesByWashesFilter(string region, string wash, string begdate, string enddate)
-        {
-            List<GetIncreaseByWashs_Result> view = GetIncreasesByWashes(region, wash, begdate, enddate);
+        //public ActionResult IncreasesByWashesFilter(string region, string wash, string begdate, string enddate)
+        //{
+        //    List<GetIncreaseByWashs_Result> view = GetIncreasesByWashes(region, wash, begdate, enddate);
 
-            return PartialView("_IncreasesByWashesList", view);
-        }
+        //    return PartialView("_IncreasesByWashesList", view);
+        //}
 
         public ActionResult IncreasesByPostsView(string begdate, string enddate, string wash)
         {
@@ -524,23 +602,23 @@ namespace Inspinia_MVC5.Controllers
             return PartialView("_IncreasesByEventsList", view);
         }
 
-        public ActionResult _IncreasesSum(string begdate, string enddate)
-        {
-            int sum = 0;
+        //public ActionResult _IncreasesSum(string begdate, string enddate)
+        //{
+        //    int sum = 0;
 
-            List<GetIncreaseByWashs_Result> res = GetIncreasesByWashes("", "", begdate, enddate);
+        //    List<GetIncreaseByWashs_Result> res = GetIncreasesByWashes("", "", begdate, enddate);
 
-            foreach(var r in res)
-            {
-                sum += r.sum;
-            }
+        //    foreach(var r in res)
+        //    {
+        //        sum += r.sum;
+        //    }
 
-            var nf = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
-            nf.NumberGroupSeparator = " ";
+        //    var nf = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+        //    nf.NumberGroupSeparator = " ";
 
-            string result = sum.ToString("#,0", nf);
+        //    string result = sum.ToString("#,0", nf);
 
-            return PartialView("_IncreasesSum", result);
-        }
+        //    return PartialView("_IncreasesSum", result);
+        //}
     }
 }
