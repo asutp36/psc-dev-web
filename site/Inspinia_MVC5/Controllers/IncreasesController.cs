@@ -308,11 +308,23 @@ namespace Inspinia_MVC5.Controllers
             {
                 List<GetIncreaseByWashs_Result> resultlist = JsonConvert.DeserializeObject<List<GetIncreaseByWashs_Result>>(scalarResponse.Result);
 
-                return Json(new
+                if (resultlist != null)
                 {
-                    view = RenderRazorViewToString(ControllerContext, "_IncreasesByWashesList", resultlist),
-                    statusCode = scalarResponse.StatusCode
-                });
+
+                    return Json(new
+                    {
+                        view = RenderRazorViewToString(ControllerContext, "_IncreasesByWashesList", resultlist),
+                        statusCode = scalarResponse.StatusCode
+                    });
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        view = RenderRazorViewToString(ControllerContext, "_ErrorMessage", "Результатов нет"),
+                        statusCode = (HttpStatusCode)500
+                    });
+                }
             }
             else
             {

@@ -14,9 +14,9 @@
                 </div>
                 @*</a>*@
             <div class="ibox-content">
-                @if (Model.increaseAllTime == null)
+                @if (Model == null || Model.increaseAllTime == null)
                 {
-                    <h1 class="blur no-margins">1 729 012</h1>
+                    <h1 class="no-margins" style="filter: blur(4px);">1 729 012</h1>
                 }
                 else
                 {
@@ -40,9 +40,9 @@
                     @*                    <span data-diameter="40" class="updating-chart">5,3,9,6,5,9,7,3,5,2,5,3,9,6,5,9,4,7,3,2,9,8,7,4,5,1,2,9,5,4,7,2,7,7,3,5,2</span>*@
                 </div>
                 <div class="ibox-content">
-                    @if (Model.increaseYesterday == null)
+                    @if (Model == null || Model.increaseYesterday == null)
                     {
-                        <h1 class="blur no-margins">65 322</h1>
+                        <h1 class="no-margins" style="filter: blur(4px);">65 322</h1>
                     }
                     else
                     {
@@ -68,9 +68,9 @@
                     <h5>Инкассировано</h5>
                 </div>
                 <div class="ibox-content">
-                    @if (Model.collectLastMonth == null)
+                    @if (Model == null || Model.collectLastMonth == null)
                     {
-                        <h1 class="blur no-margins">481 920</h1>
+                        <h1 class="no-margins" style="filter: blur(4px);">481 920</h1>
                     }
                     else
                     {

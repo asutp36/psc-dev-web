@@ -232,7 +232,7 @@
                 success: function (result) {
                     $('#output').html(result.view);
                 },
-                error: function () {
+                error: function (jqXHR) {
                     console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Во время загрузки данных произошла неизвестная внутренная ошибка!" + jqXHR.StatusCode);
                 },
                 url: "@Url.Action("_IncreasesByWashesList", "Increases")"
@@ -268,7 +268,7 @@
                 success: function (result) {
                     $('#output').html(result.view);
                 },
-                error: function () {
+                error: function (jqXHR) {
                     console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Во время загрузки данных произошла неизвестная внутренная ошибка!" + jqXHR.StatusCode);
                 },
                 url: "@Url.Action("_IncreasesByWashesList", "Increases")"
