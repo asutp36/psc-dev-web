@@ -35,5 +35,25 @@ namespace Backend.Controllers
 
             return Ok(ssum.Value);
         }
+
+        [HttpGet("bywashs")]
+        public IActionResult GetByWashs(string startDate, string endDate, int regionCode = 0, string washCode = "")
+        {
+            try
+            {
+                SqlParameter p_dateBeg = new SqlParameter("@p_DateBeg", startDate);
+                SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", endDate);
+                SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+
+                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashs @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode);
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
     }
 }
