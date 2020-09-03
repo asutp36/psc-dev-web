@@ -11,6 +11,8 @@ using Newtonsoft.Json;
 using System.Net;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Globalization;
+using System.Reflection;
 
 namespace Inspinia_MVC5.Controllers
 {
@@ -48,6 +50,24 @@ namespace Inspinia_MVC5.Controllers
             {
                 DashboardData view = JsonConvert.DeserializeObject<DashboardData>(response.Result);
 
+                Type t = view.GetType();
+                PropertyInfo[] props = t.GetProperties();
+
+                var nf = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+                nf.NumberGroupSeparator = " ";
+
+                foreach (var p in props)
+                {
+                    if (p.GetValue(view).ToString() != null)
+                    {
+                        int data = Convert.ToInt32(p.GetValue(view));
+
+                        string result = data.ToString("#,0", nf);
+
+                        p.SetValue(view, result);
+                    }
+                }
+
                 return View("Dashboard_2", view);
             }
             else
@@ -61,7 +81,7 @@ namespace Inspinia_MVC5.Controllers
         public GetScalarResponse GetDashboardData()
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(
-                "http://194.87.98.177/backend/api/increase/svodka");
+                "http://194.87.98.177/backend/api/summary");
 
             request.Timeout = 5000;
 

@@ -121,7 +121,10 @@
         $('#changer').hide();
 
         function blurDiv() {
-            $('#changer-state').html(' - нет связи'); 
+            $('#changer-state').removeClass('label-primary');
+            $('#changer-state').removeClass('label-danger');
+            $('#changer-state').addClass('label-danger');
+            $('#changer-state').html('соединение разорвано'); 
             $('#changer-info').addClass('blur');
             console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Данные о разменнике неактуальны!");
         }
@@ -149,7 +152,10 @@
 
                         $('#changer-info').removeClass('blur');
                         $('#cur_changer').html(result.view);
-                        $('#changer-state').html(' - есть связь'); 
+                        $('#changer-state').removeClass('label-primary');
+                        $('#changer-state').removeClass('label-danger');
+                        $('#changer-state').addClass('label-primary');
+                        $('#changer-state').html('соединение установлено'); 
                     }
                     else {
                         if (timeriddisconnect == -1 && timeridstarterror == -1) {
@@ -225,7 +231,10 @@
                         timeridupdate = setInterval(show, 10000);
 
                         $('#cur_changer').html(result.view);
-                        $('#changer-state').html(' - есть связь');
+                        $('#changer-state').removeClass('label-primary');
+                        $('#changer-state').removeClass('label-danger');
+                        $('#changer-state').addClass('label-primary');
+                        $('#changer-state').html('соединение установлено'); 
                         $('#changer').fadeIn();
                     }
                     else {

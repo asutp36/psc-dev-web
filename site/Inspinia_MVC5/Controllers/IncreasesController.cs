@@ -378,7 +378,7 @@ namespace Inspinia_MVC5.Controllers
 
             //return resultlist;
 
-            string url = "http://194.87.98.177/backend/api/Increase/bywashs?" +
+            string url = "http://194.87.98.177/backend/api/Summary/bywashs?" +
                 "startDate=" + begdate +
                 "&endDate=" + enddate;
 
