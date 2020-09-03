@@ -49,7 +49,7 @@ namespace Backend
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env/*, ILoggerFactory loggerFactory*/)
         {
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -62,8 +62,8 @@ namespace Backend
                 c.RoutePrefix = string.Empty;
             });
 
-            loggerFactory.AddFile(Path.Combine(Directory.GetCurrentDirectory(), "Logs/logger.txt"));
-            var logger = loggerFactory.CreateLogger("FileLogger");
+            //loggerFactory.AddFile(Path.Combine(Directory.GetCurrentDirectory(), "Logs/logger.txt"));
+            //var logger = loggerFactory.CreateLogger("FileLogger");
 
             if (env.IsDevelopment())
             {
