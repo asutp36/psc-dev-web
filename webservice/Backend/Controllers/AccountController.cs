@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Backend.Controllers.Supplies;
 using Backend.Controllers.Supplies.Auth;
 using Backend.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,12 +23,12 @@ namespace Backend.Controllers
         private IActionResult Token(LoginModel login)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(new Error("Модель не прошла валидацию", "model"));
 
             var identity = GetIdentity(login);
             if (identity == null)
             {
-                return BadRequest(new { errorText = "Invalid username or password." });
+                return BadRequest(new Error("Неверный логин или пароль", "login"));
             }
 
             var now = DateTime.UtcNow;
@@ -82,7 +83,7 @@ namespace Backend.Controllers
         public IActionResult Login(LoginModel login)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(new Error("Модель не прошла валидацию", "model"));
             return Token(login);
         }
 
