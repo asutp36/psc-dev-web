@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Backend.Controllers.Supplies;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Backend.Controllers
 {
@@ -42,11 +44,9 @@ namespace Backend.Controllers
                     signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-            var response = new
+            Token response = new Token()
             {
-                access_token = encodedJwt,
-                login = identity.Name,
-                role = identity.Claims.Where(c => c.Type == ClaimsIdentity.DefaultRoleClaimType).FirstOrDefault().Value
+                accessToken = encodedJwt
             };
 
             return Ok(response);
@@ -79,6 +79,8 @@ namespace Backend.Controllers
             return null;
         }
 
+        [SwaggerResponse(200, Type = typeof(Token))]
+        [SwaggerResponse(400, Type = typeof(Error))]
         [HttpPost]
         public IActionResult Login(LoginModel login)
         {
