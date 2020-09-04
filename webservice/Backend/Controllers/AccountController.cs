@@ -81,6 +81,8 @@ namespace Backend.Controllers
         [HttpPost]
         public IActionResult Login(LoginModel login)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
             return Token(login);
         }
 

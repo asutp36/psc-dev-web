@@ -40,8 +40,10 @@ namespace Backend.Controllers
             };
 
             _model.Database.ExecuteSqlRaw("GetIncreaseDurPeriod @p_DateBeg, @p_DateEnd, @p_Login, @p_WashCode, @ssum OUT", dateBeg, dateEnd, log, wash, ssum);
-
-            return Ok(ssum.Value);
+            if (ssum.Value is System.DBNull)
+                return Ok(0);
+            else
+                return Ok((int)ssum.Value);
         }
 
         [HttpGet("bywashs")]
@@ -88,20 +90,29 @@ namespace Backend.Controllers
                 };
 
                 _model.Database.ExecuteSqlRaw("GetIncreaseBefDate @p_DateEnd, @p_Login, @p_WashCode, @ssum OUT", p_DateEnd, p_Login, p_WashCode, ssum);
-                result.increaseAllTime = (int)ssum.Value;
+                if(ssum.Value is System.DBNull)
+                    result.increaseAllTime = 0;
+                else
+                    result.increaseAllTime = (int)ssum.Value;
 
                 _model.Database.ExecuteSqlRaw("GetIncreaseDurPeriod @p_DateBeg, @p_DateEnd, @p_Login, @p_WashCode, @ssum OUT", p_DateBeg, p_DateEnd, p_Login, p_WashCode, ssum);
-                result.increaseYesterday = (int)ssum.Value;
+                if (ssum.Value is System.DBNull)
+                    result.increaseYesterday = 0;
+                else
+                    result.increaseYesterday = (int)ssum.Value;
 
                 _model.Database.ExecuteSqlRaw("GetCollectDurPeriod @p_DateBeg, @p_DateEnd, @p_Login, @p_WashCode, @ssum OUT", p_DateBeg, p_DateEnd, p_Login, p_WashCode, ssum);
-                result.collectLastMonth = (int)ssum.Value;
+                if (ssum.Value is System.DBNull)
+                    result.collectLastMonth = 0;
+                else
+                    result.collectLastMonth = (int)ssum.Value;
 
                 return Ok(result);
             }
             catch (Exception e)
             {
                 //_logger.LogError("Svodka: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500);
+                return StatusCode(500, e.Message);
             }
         }
     }
