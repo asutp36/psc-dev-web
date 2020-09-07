@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Backend.Controllers.Supplies;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Backend.Controllers
 {
@@ -67,12 +69,16 @@ namespace Backend.Controllers
             }
         }
 
+        [SwaggerResponse(200, Type = typeof(Summary))]
+        [Authorize]
         [HttpGet]
         public IActionResult Get()
         {
             //_logger.LogInformation("Svodka: запуск с парамерами ");
             try
             {
+                List<string> washes = UserInfo.GetWashes(User.Claims.ToList());
+
                 Summary result = new Summary();
                 string begdate = DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd HH:mm:ss");
                 string enddate = DateTime.Today.AddSeconds(-1).ToString("yyyy-MM-dd HH:mm:ss");
@@ -80,7 +86,7 @@ namespace Backend.Controllers
                 SqlParameter p_DateBeg = new SqlParameter("@p_DateBeg", DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd HH:mm:ss"));
                 SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", DateTime.Today.AddSeconds(-1).ToString("yyyy-MM-dd HH:mm:ss"));
                 SqlParameter p_Login = new SqlParameter("@p_Login", "");
-                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", "");
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washes.FirstOrDefault());
 
                 SqlParameter ssum = new SqlParameter()
                 {

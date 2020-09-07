@@ -46,7 +46,9 @@ namespace Backend.Controllers
 
             Token response = new Token()
             {
-                accessToken = encodedJwt
+                accessToken = encodedJwt,
+                login = identity.Name,
+                role = identity.Claims.Where(c => c.Type == ClaimsIdentity.DefaultRoleClaimType).FirstOrDefault().Value
             };
 
             return Ok(response);

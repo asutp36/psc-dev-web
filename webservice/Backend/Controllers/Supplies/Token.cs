@@ -10,5 +10,9 @@ namespace Backend.Controllers.Supplies
     {
         [Required]
         public string accessToken { get; set; }
+        [Required]
+        public string login { get; set; }
+        [Required]
+        public string role { get; set; }
     }
 }
