@@ -63,13 +63,13 @@ namespace Backend.Controllers
                 Claim c1 = new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login);
                 claims.Add(c1);
 
-                //List<UsersAvailableWash> washes = _model.UsersAvailableWash.Where(uaw => uaw.Iduser == user.Iduser).ToList();
+                List<UserRole> roles = _model.UserRole.Where(ur => ur.Iduser.Equals(_model.Users.Where(u => u.Login.Equals(user.Login)).FirstOrDefault().Iduser)).ToList();
 
-                //foreach (UsersAvailableWash uaw in washes)
-                //{
-                //    Claim c2 = new Claim(ClaimsIdentity.DefaultRoleClaimType, _model.Wash.Find(uaw.Idwash).Name);
-                //    claims.Add(c2);
-                //}
+                foreach(UserRole ur in roles)
+                {
+                    Claim c = new Claim(ClaimsIdentity.DefaultRoleClaimType, _model.Roles.Find(ur.Idrole).Name);
+                    claims.Add(c);
+                }
 
                 ClaimsIdentity claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
@@ -95,7 +95,7 @@ namespace Backend.Controllers
         [HttpGet("data")]
         public IActionResult GetData()
         {
-            return Ok();
+            return Ok(UserInfo.GetWashes(User.Claims.ToList()));
         }
     }
 }
