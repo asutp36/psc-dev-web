@@ -21,15 +21,12 @@ namespace Backend.Models
         public virtual DbSet<Changers> Changers { get; set; }
         public virtual DbSet<Device> Device { get; set; }
         public virtual DbSet<DeviceTypes> DeviceTypes { get; set; }
-        public virtual DbSet<Event> Event { get; set; }
-        public virtual DbSet<EventIncrease> EventIncrease { get; set; }
-        public virtual DbSet<NumsMobileCards> NumsMobileCards { get; set; }
-        public virtual DbSet<OperationTypes> OperationTypes { get; set; }
-        public virtual DbSet<Operations> Operations { get; set; }
-        public virtual DbSet<Owners> Owners { get; set; }
         public virtual DbSet<Posts> Posts { get; set; }
+        public virtual DbSet<Regions> Regions { get; set; }
+        public virtual DbSet<RoleWash> RoleWash { get; set; }
+        public virtual DbSet<Roles> Roles { get; set; }
+        public virtual DbSet<UserRole> UserRole { get; set; }
         public virtual DbSet<Users> Users { get; set; }
-        public virtual DbSet<UsersAvailableWash> UsersAvailableWash { get; set; }
         public virtual DbSet<Wash> Wash { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -101,11 +98,6 @@ namespace Backend.Models
                     .WithMany(p => p.Cards)
                     .HasForeignKey(d => d.IdcardType)
                     .HasConstraintName("FK_Cards_CardTypes");
-
-                entity.HasOne(d => d.IdownerNavigation)
-                    .WithMany(p => p.Cards)
-                    .HasForeignKey(d => d.Idowner)
-                    .HasConstraintName("FK_Cards_Owners");
             });
 
             modelBuilder.Entity<Changers>(entity =>
@@ -172,132 +164,6 @@ namespace Backend.Models
                     .HasMaxLength(50);
             });
 
-            modelBuilder.Entity<Event>(entity =>
-            {
-                entity.HasKey(e => e.Idevent);
-
-                entity.Property(e => e.Idevent).HasColumnName("IDEvent");
-
-                entity.Property(e => e.Dtime)
-                    .HasColumnName("DTime")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.IdeventKind).HasColumnName("IDEventKind");
-
-                entity.Property(e => e.IdeventPost).HasColumnName("IDEventPost");
-
-                entity.Property(e => e.Idpost).HasColumnName("IDPost");
-
-                entity.HasOne(d => d.IdpostNavigation)
-                    .WithMany(p => p.Event)
-                    .HasForeignKey(d => d.Idpost)
-                    .HasConstraintName("FK_Event_Point");
-            });
-
-            modelBuilder.Entity<EventIncrease>(entity =>
-            {
-                entity.HasKey(e => e.Idevent)
-                    .HasName("PK_EventCash");
-
-                entity.Property(e => e.Idevent)
-                    .HasColumnName("IDEvent")
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.Amount).HasColumnName("amount");
-
-                entity.Property(e => e.B10).HasColumnName("b10");
-
-                entity.Property(e => e.B100).HasColumnName("b100");
-
-                entity.Property(e => e.B200).HasColumnName("b200");
-
-                entity.Property(e => e.B50).HasColumnName("b50");
-
-                entity.Property(e => e.Balance).HasColumnName("balance");
-
-                entity.Property(e => e.M10).HasColumnName("m10");
-
-                entity.HasOne(d => d.IdeventNavigation)
-                    .WithOne(p => p.EventIncrease)
-                    .HasForeignKey<EventIncrease>(d => d.Idevent)
-                    .HasConstraintName("FK_EventCash_Event");
-            });
-
-            modelBuilder.Entity<NumsMobileCards>(entity =>
-            {
-                entity.HasKey(e => e.Num);
-
-                entity.Property(e => e.Num).HasMaxLength(20);
-            });
-
-            modelBuilder.Entity<OperationTypes>(entity =>
-            {
-                entity.HasKey(e => e.IdoperationType);
-
-                entity.Property(e => e.IdoperationType).HasColumnName("IDOperationType");
-
-                entity.Property(e => e.Code)
-                    .IsRequired()
-                    .HasMaxLength(10);
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<Operations>(entity =>
-            {
-                entity.HasKey(e => e.Idoperation);
-
-                entity.Property(e => e.Idoperation).HasColumnName("IDOperation");
-
-                entity.Property(e => e.Details).HasMaxLength(500);
-
-                entity.Property(e => e.Dtime)
-                    .HasColumnName("DTime")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.Functions).HasMaxLength(500);
-
-                entity.Property(e => e.Idcard).HasColumnName("IDCard");
-
-                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
-
-                entity.Property(e => e.IdoperationType).HasColumnName("IDOperationType");
-
-                entity.Property(e => e.LocalizedId).HasColumnName("LocalizedID");
-
-                entity.HasOne(d => d.IdcardNavigation)
-                    .WithMany(p => p.Operations)
-                    .HasForeignKey(d => d.Idcard)
-                    .HasConstraintName("FK_Operations_Cards");
-
-                entity.HasOne(d => d.IddeviceNavigation)
-                    .WithMany(p => p.Operations)
-                    .HasForeignKey(d => d.Iddevice)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_Operations_Device");
-
-                entity.HasOne(d => d.IdoperationTypeNavigation)
-                    .WithMany(p => p.Operations)
-                    .HasForeignKey(d => d.IdoperationType)
-                    .HasConstraintName("FK_Operations_OperationTypes");
-            });
-
-            modelBuilder.Entity<Owners>(entity =>
-            {
-                entity.HasKey(e => e.Idowner)
-                    .HasName("PK_Clients");
-
-                entity.Property(e => e.Idowner).HasColumnName("IDOwner");
-
-                entity.Property(e => e.LocalizedId).HasColumnName("LocalizedID");
-
-                entity.Property(e => e.Phone)
-                    .IsRequired()
-                    .HasMaxLength(20);
-            });
-
             modelBuilder.Entity<Posts>(entity =>
             {
                 entity.HasKey(e => e.Idpost);
@@ -324,6 +190,73 @@ namespace Backend.Models
                     .HasConstraintName("FK_Posts_Wash");
             });
 
+            modelBuilder.Entity<Regions>(entity =>
+            {
+                entity.HasKey(e => e.Idregion);
+
+                entity.Property(e => e.Idregion).HasColumnName("IDRegion");
+
+                entity.Property(e => e.Idcompany).HasColumnName("IDCompany");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<RoleWash>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.Property(e => e.Idrole).HasColumnName("IDRole");
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.HasOne(d => d.IdroleNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idrole)
+                    .HasConstraintName("FK_RoleWash_Roles");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_RoleWash_Wash");
+            });
+
+            modelBuilder.Entity<Roles>(entity =>
+            {
+                entity.HasKey(e => e.Idrole)
+                    .HasName("PK_Role");
+
+                entity.Property(e => e.Idrole).HasColumnName("IDRole");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(20);
+            });
+
+            modelBuilder.Entity<UserRole>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.Property(e => e.Idrole).HasColumnName("IDRole");
+
+                entity.Property(e => e.Iduser).HasColumnName("IDUser");
+
+                entity.HasOne(d => d.IdroleNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idrole)
+                    .HasConstraintName("FK_UserRole_Roles");
+
+                entity.HasOne(d => d.IduserNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Iduser)
+                    .HasConstraintName("FK_UserRole_Users");
+            });
+
             modelBuilder.Entity<Users>(entity =>
             {
                 entity.HasKey(e => e.Iduser);
@@ -345,27 +278,6 @@ namespace Backend.Models
                     .HasMaxLength(50);
             });
 
-            modelBuilder.Entity<UsersAvailableWash>(entity =>
-            {
-                entity.HasKey(e => e.IduserAvailableWash);
-
-                entity.Property(e => e.IduserAvailableWash).HasColumnName("IDUserAvailableWash");
-
-                entity.Property(e => e.Iduser).HasColumnName("IDUser");
-
-                entity.Property(e => e.Idwash).HasColumnName("IDWash");
-
-                entity.HasOne(d => d.IduserNavigation)
-                    .WithMany(p => p.UsersAvailableWash)
-                    .HasForeignKey(d => d.Iduser)
-                    .HasConstraintName("FK_UsersAvailableWash_Users");
-
-                entity.HasOne(d => d.IdwashNavigation)
-                    .WithMany(p => p.UsersAvailableWash)
-                    .HasForeignKey(d => d.Idwash)
-                    .HasConstraintName("FK_UsersAvailableWash_Wash");
-            });
-
             modelBuilder.Entity<Wash>(entity =>
             {
                 entity.HasKey(e => e.Idwash);
@@ -381,6 +293,11 @@ namespace Backend.Models
                 entity.Property(e => e.Idregion).HasColumnName("IDRegion");
 
                 entity.Property(e => e.Name).HasMaxLength(100);
+
+                entity.HasOne(d => d.IdregionNavigation)
+                    .WithMany(p => p.Wash)
+                    .HasForeignKey(d => d.Idregion)
+                    .HasConstraintName("FK_Wash_Regions");
             });
 
             OnModelCreatingPartial(modelBuilder);

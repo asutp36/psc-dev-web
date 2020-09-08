@@ -9,7 +9,6 @@ namespace Backend.Models
         {
             Changers = new HashSet<Changers>();
             Posts = new HashSet<Posts>();
-            UsersAvailableWash = new HashSet<UsersAvailableWash>();
         }
 
         public int Idwash { get; set; }
@@ -18,8 +17,8 @@ namespace Backend.Models
         public string Address { get; set; }
         public int Idregion { get; set; }
 
+        public virtual Regions IdregionNavigation { get; set; }
         public virtual ICollection<Changers> Changers { get; set; }
         public virtual ICollection<Posts> Posts { get; set; }
-        public virtual ICollection<UsersAvailableWash> UsersAvailableWash { get; set; }
     }
 }

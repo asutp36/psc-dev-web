@@ -8,7 +8,6 @@ namespace Backend.Models
         public Device()
         {
             Changers = new HashSet<Changers>();
-            Operations = new HashSet<Operations>();
             Posts = new HashSet<Posts>();
         }
 
@@ -21,7 +20,6 @@ namespace Backend.Models
 
         public virtual DeviceTypes IddeviceTypeNavigation { get; set; }
         public virtual ICollection<Changers> Changers { get; set; }
-        public virtual ICollection<Operations> Operations { get; set; }
         public virtual ICollection<Posts> Posts { get; set; }
     }
 }

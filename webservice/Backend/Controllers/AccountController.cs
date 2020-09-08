@@ -63,13 +63,13 @@ namespace Backend.Controllers
                 Claim c1 = new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login);
                 claims.Add(c1);
 
-                List<UsersAvailableWash> washes = _model.UsersAvailableWash.Where(uaw => uaw.Iduser == user.Iduser).ToList();
+                //List<UsersAvailableWash> washes = _model.UsersAvailableWash.Where(uaw => uaw.Iduser == user.Iduser).ToList();
 
-                foreach (UsersAvailableWash uaw in washes)
-                {
-                    Claim c2 = new Claim(ClaimsIdentity.DefaultRoleClaimType, _model.Wash.Find(uaw.Idwash).Name);
-                    claims.Add(c2);
-                }
+                //foreach (UsersAvailableWash uaw in washes)
+                //{
+                //    Claim c2 = new Claim(ClaimsIdentity.DefaultRoleClaimType, _model.Wash.Find(uaw.Idwash).Name);
+                //    claims.Add(c2);
+                //}
 
                 ClaimsIdentity claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
@@ -91,20 +91,11 @@ namespace Backend.Controllers
             return Token(login);
         }
 
-
         [Authorize]
-        [HttpGet]
-        public IActionResult GetWashes()
+        [HttpGet("data")]
+        public IActionResult GetData()
         {
-            List<Claim> claims = User.Claims.ToList();
-            List<string> result = new List<string>();
-
-            foreach(Claim c in claims)
-            {
-                if(c.Type == ClaimsIdentity.DefaultRoleClaimType)
-                    result.Add(c.Value);
-            }
-            return Ok(result);
+            return Ok();
         }
     }
 }

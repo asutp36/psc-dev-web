@@ -5,11 +5,6 @@ namespace Backend.Models
 {
     public partial class Cards
     {
-        public Cards()
-        {
-            Operations = new HashSet<Operations>();
-        }
-
         public int Idcard { get; set; }
         public int Idowner { get; set; }
         public string CardNum { get; set; }
@@ -21,7 +16,5 @@ namespace Backend.Models
 
         public virtual CardStatuses IdcardStatusNavigation { get; set; }
         public virtual CardTypes IdcardTypeNavigation { get; set; }
-        public virtual Owners IdownerNavigation { get; set; }
-        public virtual ICollection<Operations> Operations { get; set; }
     }
 }
