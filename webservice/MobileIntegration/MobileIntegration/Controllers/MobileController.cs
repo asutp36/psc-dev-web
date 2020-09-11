@@ -1046,5 +1046,17 @@ namespace MobileIntegration.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
+
+        /// <summary>
+        /// Получить номера технических карт
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Ок</response>
+        [HttpGet]
+        [ActionName("tech_cards")]
+        public HttpResponseMessage GetTechCards()
+        {
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
     }
 }
