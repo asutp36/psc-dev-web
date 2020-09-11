@@ -166,6 +166,7 @@
     <Compile Include="Controllers\Supplies\Sender.cs" />
     <Compile Include="Controllers\Supplies\StartPostBindingModel.cs" />
     <Compile Include="Controllers\Supplies\StartPostDevModel.cs" />
+    <Compile Include="Controllers\Supplies\TechCards.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
