@@ -17,6 +17,7 @@ namespace CardsMobileService.Models
         public string Address { get; set; }
         public int Idregion { get; set; }
 
+        public virtual Regions IdregionNavigation { get; set; }
         public virtual ICollection<Changers> Changers { get; set; }
         public virtual ICollection<Posts> Posts { get; set; }
     }

@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace CardsMobileService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/post")]
     [ApiController]
     public class PostController : ControllerBase
     {
@@ -157,7 +157,7 @@ namespace CardsMobileService.Controllers
         /// <response code="404">Не найдены карты</response>
         /// <response code="500">Внутренняя ошибка сервера</response>
         [HttpGet]
-        [Route("api/post/cards/{phone}")]
+        [Route("cards/{phone}")]
         public IActionResult GetCards(string phone)
         {
             _logger.LogInformation("POST GetCards: запуск с параметром: " + phone);
@@ -175,6 +175,13 @@ namespace CardsMobileService.Controllers
                 _logger.LogError("POST GetCards: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500);
             }
+        }
+
+        [HttpGet]
+        [Route("tech_cards")]
+        public IActionResult GetTechCards()
+        {
+            return Ok();
         }
     }
 }

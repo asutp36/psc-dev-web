@@ -26,6 +26,7 @@ namespace CardsMobileService.Models
         public virtual DbSet<Operations> Operations { get; set; }
         public virtual DbSet<Owners> Owners { get; set; }
         public virtual DbSet<Posts> Posts { get; set; }
+        public virtual DbSet<Regions> Regions { get; set; }
         public virtual DbSet<Wash> Wash { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -34,6 +35,7 @@ namespace CardsMobileService.Models
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=WashCompany;Trusted_Connection=True;");
+                //optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Initial Catalog=WashCompany;User Id=sa; Password=ora4paSS");
             }
         }
 
@@ -268,6 +270,19 @@ namespace CardsMobileService.Models
                     .HasConstraintName("FK_Posts_Wash");
             });
 
+            modelBuilder.Entity<Regions>(entity =>
+            {
+                entity.HasKey(e => e.Idregion);
+
+                entity.Property(e => e.Idregion).HasColumnName("IDRegion");
+
+                entity.Property(e => e.Idcompany).HasColumnName("IDCompany");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+            });
+
             modelBuilder.Entity<Wash>(entity =>
             {
                 entity.HasKey(e => e.Idwash);
@@ -283,6 +298,11 @@ namespace CardsMobileService.Models
                 entity.Property(e => e.Idregion).HasColumnName("IDRegion");
 
                 entity.Property(e => e.Name).HasMaxLength(100);
+
+                entity.HasOne(d => d.IdregionNavigation)
+                    .WithMany(p => p.Wash)
+                    .HasForeignKey(d => d.Idregion)
+                    .HasConstraintName("FK_Wash_Regions");
             });
 
             OnModelCreatingPartial(modelBuilder);
