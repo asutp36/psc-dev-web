@@ -77,7 +77,8 @@ namespace Backend.Controllers
             //_logger.LogInformation("Svodka: запуск с парамерами ");
             try
             {
-                List<string> washes = UserInfo.GetWashes(User.Claims.ToList());
+                UserInfo uInfo = new UserInfo();
+                List<WashViewModel> washes = uInfo.GetWashes(User.Claims.ToList());
 
                 Summary result = new Summary();
                 string begdate = DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd HH:mm:ss");
@@ -86,7 +87,7 @@ namespace Backend.Controllers
                 SqlParameter p_DateBeg = new SqlParameter("@p_DateBeg", DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd HH:mm:ss"));
                 SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", DateTime.Today.AddSeconds(-1).ToString("yyyy-MM-dd HH:mm:ss"));
                 SqlParameter p_Login = new SqlParameter("@p_Login", "");
-                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washes.FirstOrDefault());
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washes.FirstOrDefault().code);
 
                 SqlParameter ssum = new SqlParameter()
                 {

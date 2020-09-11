@@ -67,7 +67,7 @@ namespace Backend.Controllers
 
                 foreach(UserRole ur in roles)
                 {
-                    Claim c = new Claim(ClaimsIdentity.DefaultRoleClaimType, _model.Roles.Find(ur.Idrole).Name);
+                    Claim c = new Claim(ClaimsIdentity.DefaultRoleClaimType, _model.Roles.Find(ur.Idrole).Code);
                     claims.Add(c);
                 }
 
@@ -91,11 +91,13 @@ namespace Backend.Controllers
             return Token(login);
         }
 
+        [SwaggerResponse(200, Type = typeof(List<WashViewModel>))]
         [Authorize]
         [HttpGet("data")]
         public IActionResult GetData()
         {
-            return Ok(UserInfo.GetWashes(User.Claims.ToList()));
+            UserInfo uInfo = new UserInfo();
+            return Ok(uInfo.GetWashes(User.Claims.ToList()));
         }
     }
 }
