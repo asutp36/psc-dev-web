@@ -1056,7 +1056,42 @@ namespace MobileIntegration.Controllers
         [ActionName("tech_cards")]
         public HttpResponseMessage GetTechCards()
         {
-            return Request.CreateResponse(HttpStatusCode.OK);
+            Logger.InitLogger();
+            try 
+            {
+                TechCards result = new TechCards();
+
+                List<Cards> cards = _model.Cards.Where(c => !c.IDCardType.Equals(_model.CardTypes.Where(ct => ct.Code.Equals("client")).FirstOrDefault().IDCardType)).ToList();
+
+                result.cleanUp = new List<string>();
+                result.collect = new List<string>();
+                result.doors = new List<string>();
+                result.service = new List<string>();
+
+                int idService = _model.CardTypes.Where(ct => ct.Code.Equals("service")).FirstOrDefault().IDCardType;
+                int idClean = _model.CardTypes.Where(ct => ct.Code.Equals("clean")).FirstOrDefault().IDCardType;
+                int idDoors = _model.CardTypes.Where(ct => ct.Code.Equals("doors")).FirstOrDefault().IDCardType;
+                int idCollect = _model.CardTypes.Where(ct => ct.Code.Equals("collect")).FirstOrDefault().IDCardType;
+
+                foreach (Cards c in cards)
+                {
+                    if (c.IDCardType == idClean)
+                        result.cleanUp.Add(c.CardNum);
+                    if (c.IDCardType == idCollect)
+                        result.collect.Add(c.CardNum);
+                    if (c.IDCardType == idDoors)
+                        result.doors.Add(c.CardNum);
+                    if (c.IDCardType == idService)
+                        result.service.Add(c.CardNum);
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, result);
+            }
+            catch (Exception e)
+            {
+                Logger.Log.Error("GetTechCards: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
         }
     }
 }
