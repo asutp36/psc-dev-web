@@ -91,13 +91,28 @@ namespace Backend.Controllers
             return Token(login);
         }
 
-        [SwaggerResponse(200, Type = typeof(List<WashViewModel>))]
+        [SwaggerResponse(200, Type = typeof(DashboardFilters))]
+        [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
         [HttpGet("data")]
         public IActionResult GetData()
         {
-            UserInfo uInfo = new UserInfo();
-            return Ok(uInfo.GetWashes(User.Claims.ToList()));
+            try
+            {
+                UserInfo uInfo = new UserInfo(User.Claims.ToList());
+
+                DashboardFilters filters = new DashboardFilters()
+                {
+                    washes = uInfo.GetWashes(),
+                    posts = uInfo.GetPosts()
+                };
+
+                return Ok(filters);
+            }
+            catch(Exception e)
+            {
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
         }
     }
 }

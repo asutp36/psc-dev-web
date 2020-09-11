@@ -1,4 +1,5 @@
 ﻿using Backend.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,15 @@ namespace Backend.Controllers.Supplies
 {
     public class UserInfo
     {
-        ModelDbContext _model = new ModelDbContext();
-        public List<WashViewModel> GetWashes(List<Claim> claims)
+        private ModelDbContext _model = new ModelDbContext();
+        public List<Claim> claims { get; set; }
+
+        public UserInfo(List<Claim> c)
+        {
+            this.claims = c;
+        }
+
+        public List<WashViewModel> GetWashes()
         {
             List<WashViewModel> result = new List<WashViewModel>();
 
@@ -31,6 +39,33 @@ namespace Backend.Controllers.Supplies
                     }
                 }
             }
+
+            return result;
+        }
+
+        public List<PostViewModel> GetPosts()
+        {
+            List<WashViewModel> washes = this.GetWashes();
+            List<PostViewModel> result = new List<PostViewModel>();
+
+            foreach (WashViewModel w in washes)
+            {
+                List<Posts> posts = _model.Posts.Where(p => p.Idwash.Equals(w.idWash)).Include(p => p.IddeviceNavigation).ToList();
+
+                foreach(Posts p in posts)
+                {
+                    if (p.Iddevice == null)
+                        continue;
+
+                    result.Add(new PostViewModel()
+                    {
+                        code = p.IddeviceNavigation.Code,
+                        name = p.IddeviceNavigation.Name,
+                        idWash = w.idWash
+                    });
+                }
+            }
+            
 
             return result;
         }

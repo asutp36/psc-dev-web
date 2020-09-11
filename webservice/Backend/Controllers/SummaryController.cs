@@ -77,8 +77,8 @@ namespace Backend.Controllers
             //_logger.LogInformation("Svodka: запуск с парамерами ");
             try
             {
-                UserInfo uInfo = new UserInfo();
-                List<WashViewModel> washes = uInfo.GetWashes(User.Claims.ToList());
+                UserInfo uInfo = new UserInfo(User.Claims.ToList());
+                List<WashViewModel> washes = uInfo.GetWashes();
 
                 Summary result = new Summary();
                 string begdate = DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd HH:mm:ss");
