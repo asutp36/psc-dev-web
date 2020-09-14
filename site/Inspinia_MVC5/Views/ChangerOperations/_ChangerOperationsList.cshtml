@@ -1,0 +1,55 @@
+﻿
+@model IEnumerable<Inspinia_MVC5.Models.GetCollectByWashs_Result>
+
+<div class="sk-spinner sk-spinner-double-bounce">
+    <div class="sk-double-bounce1"></div>
+    <div class="sk-double-bounce2"></div>
+</div>
+
+<table id="table-increases" class="display table table-striped table-bordered table-hover responsive">
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th>Принято за день*сделать переносы*</th>
+            <th>Выдано за день</th>
+            <th>Продано карт за день</th>
+            <th>Заполненность принятых</th>
+            <th>Заполненность размена</th>
+            <th>Заполненность карт</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var n in Model)
+        {
+            <tr>
+                <td>
+                    <a href="#" onclick="selectWash('@n.WashCode')">@n.WashCode</a>
+                </td>
+                <td>@n.WashAddress</td>
+                <td style="text-align:right">@n.m10</td>
+                <td style="text-align:right">@n.sumofm</td>
+                <td style="text-align:right">@n.b10</td>
+                <td style="text-align:right">@n.b50</td>
+                <td style="text-align:right">@n.b100</td>
+                <td style="text-align:right">@n.b200</td>
+                <td style="text-align:right">@n.sumofb</td>
+                <td style="text-align:right">@n.sum</td>
+            </tr>
+        }
+    </tbody>
+    @*<tfoot>
+        <tr>
+            <th>Итого:</th>
+            <th></th>
+            <th style="text-align:right"></th>
+            <th style="text-align:right"></th>
+            <th style="text-align:right"></th>
+            <th style="text-align:right"></th>
+            <th style="text-align:right"></th>
+            <th style="text-align:right"></th>
+            <th style="text-align:right"></th>
+            <th style="text-align:right"></th>
+        </tr>
+    </tfoot>*@
+</table>

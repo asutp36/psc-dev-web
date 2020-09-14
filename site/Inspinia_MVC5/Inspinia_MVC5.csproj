@@ -137,6 +137,7 @@
     <Compile Include="Controllers\AppViewsController.cs" />
     <Compile Include="Controllers\BoxesController.cs" />
     <Compile Include="Controllers\CardsController.cs" />
+    <Compile Include="Controllers\ChangerOperationsController.cs" />
     <Compile Include="Controllers\CollectWashController.cs" />
     <Compile Include="Controllers\CSSAnimationsController.cs" />
     <Compile Include="Controllers\EcommerceController.cs" />
@@ -2107,6 +2108,8 @@
     <Content Include="Views\Dashboards\_NumLabel.cshtml" />
     <Content Include="Views\Pages\_ErrorMessage.cshtml" />
     <Content Include="Views\Dashboards\_ErrorMessage.cshtml" />
+    <Content Include="Views\ChangerOperations\ChangerOperationsView.cshtml" />
+    <Content Include="Views\ChangerOperations\_ChangerOperationsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
