@@ -344,6 +344,9 @@
     <Compile Include="Models\GetPostAmounts_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetSumsByChanger_Result.cs">
+      <DependentUpon>ModelDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GetWashAmounts_Result.cs">
       <DependentUpon>ModelDb.tt</DependentUpon>
     </Compile>

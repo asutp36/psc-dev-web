@@ -969,5 +969,26 @@ namespace Inspinia_MVC5.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetIncreaseDurPeriod", p_DateBegParameter, p_DateEndParameter, p_LoginParameter, p_WashCodeParameter);
         }
+    
+        public virtual ObjectResult<GetSumsByChanger_Result> GetSumsByChanger(Nullable<System.DateTime> p_DateBeg, Nullable<System.DateTime> p_DateEnd, Nullable<short> p_RegionCode, string p_ChangerCode)
+        {
+            var p_DateBegParameter = p_DateBeg.HasValue ?
+                new ObjectParameter("p_DateBeg", p_DateBeg) :
+                new ObjectParameter("p_DateBeg", typeof(System.DateTime));
+    
+            var p_DateEndParameter = p_DateEnd.HasValue ?
+                new ObjectParameter("p_DateEnd", p_DateEnd) :
+                new ObjectParameter("p_DateEnd", typeof(System.DateTime));
+    
+            var p_RegionCodeParameter = p_RegionCode.HasValue ?
+                new ObjectParameter("p_RegionCode", p_RegionCode) :
+                new ObjectParameter("p_RegionCode", typeof(short));
+    
+            var p_ChangerCodeParameter = p_ChangerCode != null ?
+                new ObjectParameter("p_ChangerCode", p_ChangerCode) :
+                new ObjectParameter("p_ChangerCode", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetSumsByChanger_Result>("GetSumsByChanger", p_DateBegParameter, p_DateEndParameter, p_RegionCodeParameter, p_ChangerCodeParameter);
+        }
     }
 }

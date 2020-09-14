@@ -25,6 +25,9 @@ namespace Inspinia_MVC5.Controllers
 
             foreach (Wash w in washes)
             {
+                if (!_regions.Contains(w.Region))
+                    _regions.Add(w.Region);
+
                 var chs = changers.FindAll(c => c.IDWash == w.IDWash);
 
                 foreach (var c in chs)
@@ -68,6 +71,11 @@ namespace Inspinia_MVC5.Controllers
                 var mobileapp = _devices.Find(d => d.Code == "MOB-EM");
 
                 _requiredChangers.Add(mobileapp);
+            }
+
+            if(_regions.Count < 1)
+            {
+                _regions = db.Regions.ToList();
             }
 
             ViewBag.Regions = _regions;

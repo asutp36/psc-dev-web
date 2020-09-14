@@ -1,5 +1,5 @@
 ﻿
-@model IEnumerable<Inspinia_MVC5.Models.GetCollectByWashs_Result>
+@model IEnumerable<Inspinia_MVC5.Models.GetSumsByChanger_Result>
 
 <div class="sk-spinner sk-spinner-double-bounce">
     <div class="sk-double-bounce1"></div>
@@ -11,9 +11,9 @@
         <tr>
             <th></th>
             <th></th>
-            <th>Принято за день*сделать переносы*</th>
-            <th>Выдано за день</th>
-            <th>Продано карт за день</th>
+            <th>Принято за&nbsp;день</th>
+            <th>Выдано за&nbsp;день</th>
+            <th>Продано&nbsp;карт за&nbsp;день</th>
             <th>Заполненность принятых</th>
             <th>Заполненность размена</th>
             <th>Заполненность карт</th>
@@ -24,17 +24,16 @@
         {
             <tr>
                 <td>
-                    <a href="#" onclick="selectWash('@n.WashCode')">@n.WashCode</a>
+                    @*<a href="#" onclick="selectWash('@n.WashCode')">@n.WashCode</a>*@
+                    @n.ChangerCode
                 </td>
-                <td>@n.WashAddress</td>
-                <td style="text-align:right">@n.m10</td>
-                <td style="text-align:right">@n.sumofm</td>
-                <td style="text-align:right">@n.b10</td>
-                <td style="text-align:right">@n.b50</td>
-                <td style="text-align:right">@n.b100</td>
-                <td style="text-align:right">@n.b200</td>
-                <td style="text-align:right">@n.sumofb</td>
-                <td style="text-align:right">@n.sum</td>
+                <td>@n.ChangerCode</td>
+                <td style="text-align:right">@n.sincrease</td>
+                <td style="text-align:right">@n.sout</td>
+                <td style="text-align:right">@n.ccard</td>
+                <td style="text-align:right">123</td>
+                <td style="text-align:right">132</td>
+                <td style="text-align:right">123</td>
             </tr>
         }
     </tbody>

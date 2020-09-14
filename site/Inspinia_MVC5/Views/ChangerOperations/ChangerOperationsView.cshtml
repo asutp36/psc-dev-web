@@ -94,46 +94,46 @@
                 "paging": false,
                 "info": false,
                 "searching": false,
-                columnDefs: [{ targets: [2, 3, 4, 5, 6, 7, 8, 9], className: 'dt-body-right' }],
-                columns: [null, null, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }],
+                columnDefs: [{ targets: [2, 3, 4, 5, 6, 7], className: 'dt-body-right' }],
+                columns: [null, null, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '', 0) }],
                 dom: '<"html5buttons"B>lTfgitp',
                 buttons: [],
                 "language": {
                     "zeroRecords": "Данные по заданному фильтру не найдены",
                     "emptyTable": "Данные по заданному фильтру не найдены"
                 },
-                "footerCallback": function () {
-                    var api = this.api();
+                //"footerCallback": function () {
+                //    var api = this.api();
 
-                    var intVal = function (i) {
-                        return typeof i === 'string' ?
-                            i.replace(/[\$,]/g, '') * 1 :
-                            typeof i === 'number' ?
-                                i : 0;
-                    };
+                //    var intVal = function (i) {
+                //        return typeof i === 'string' ?
+                //            i.replace(/[\$,]/g, '') * 1 :
+                //            typeof i === 'number' ?
+                //                i : 0;
+                //    };
 
-                    var numFormat = $.fn.dataTable.render.number(' ', '.', 1).display;
-                    var numFormatCoins = $.fn.dataTable.render.number(' ', '', 0).display;
+                //    var numFormat = $.fn.dataTable.render.number(' ', '.', 1).display;
+                //    var numFormatCoins = $.fn.dataTable.render.number(' ', '', 0).display;
 
-                    for (var i = 2; i < 10; ++i) {
-                        total = api.column(i).data().reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-                        if (i == 3 || i == 8 || i == 9) {
-                            $(api.column(i).footer()).html(numFormat(total));
-                        }
-                        else {
-                            $(api.column(i).footer()).html(numFormatCoins(total));
-                        }
-                    }
-                }
+                //    for (var i = 2; i < 10; ++i) {
+                //        total = api.column(i).data().reduce(function (a, b) {
+                //            return intVal(a) + intVal(b);
+                //        }, 0);
+                //        if (i == 3 || i == 8 || i == 9) {
+                //            $(api.column(i).footer()).html(numFormat(total));
+                //        }
+                //        else {
+                //            $(api.column(i).footer()).html(numFormatCoins(total));
+                //        }
+                //    }
+                //}
             });
         }
 
         var regions = [];
         var changers = [];
 
-        @foreach (var item in ViewBag.Regions) {
+        @*@foreach (var item in ViewBag.Regions) {
             <text>
                 regions.push({ value:"@item.Code", text:"@item.Name", washes:[
                     @foreach(var w in item.Washes)
@@ -152,35 +152,35 @@
             <text>
                 washes.push({ value:"@item.Code", text:"@item.Name"});
             </text>
-        }
+        }*@
 
-        function eventChangeRegion () {
+        //function eventChangeRegion () {
 
-            var curreg = $('#filter-region').find(":selected").val();
-            var curwashval = $('#filter-changer').find(":selected").val();
+        //    var curreg = $('#filter-region').find(":selected").val();
+        //    var curwashval = $('#filter-changer').find(":selected").val();
 
-            if (curreg == "") {
-                var $selwash = $('#filter-changer');
+        //    if (curreg == "") {
+        //        var $selwash = $('#filter-changer');
 
-                $selwash.empty();
-                $selwash.append($("<option></option>", { value: "", text: "" }));
-                washes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
+        //        $selwash.empty();
+        //        $selwash.append($("<option></option>", { value: "", text: "" }));
+        //        washes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
 
-                $selwash.val(curwashval);
-            }
-            else {
-                var newwashes = [];
-                newwashes = regions.find(reg => reg.value == curreg).washes;
+        //        $selwash.val(curwashval);
+        //    }
+        //    else {
+        //        var newwashes = [];
+        //        newwashes = regions.find(reg => reg.value == curreg).washes;
 
-                var $selwash = $('#filter-changer');
+        //        var $selwash = $('#filter-changer');
 
-                $selwash.empty();
-                $selwash.append($("<option></option>", { value: "", text: "" }));
-                newwashes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
+        //        $selwash.empty();
+        //        $selwash.append($("<option></option>", { value: "", text: "" }));
+        //        newwashes.forEach(element => $selwash.append($("<option></option>", { value: element.value, text: element.text })));
 
-                $selwash.val(curwashval);
-            }
-        }
+        //        $selwash.val(curwashval);
+        //    }
+        //}
 
         function selectWash(IDWash) {
 
@@ -196,14 +196,14 @@
             var bdate = $('#bdate').val();
             var edate = $('#edate').val();
             var region = $('#filter-region').find(":selected").val();
-            var wash = $('#filter-changer').find(":selected").val();
+            var changer = $('#filter-changer').find(":selected").val();
 
             $.ajax({
                 type: "POST",
                 cache: true,
                 data: {
                     region: region,
-                    wash: wash,
+                    changer: changer,
                     begdate: bdate,
                     enddate: edate
                 },
@@ -218,7 +218,7 @@
                 error: function () {
                     alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
                 },
-                url: "@Url.Action("CollectByWashesFilter", "CollectWash")"
+                url: "@Url.Action("ChangerOperationsFilter", "ChangerOperations")"
             }).done(function (result) {
                 $('#output').html(result);
 
@@ -228,7 +228,7 @@
 
         $(document).ready(function () {
 
-            $('#filter-region').change(eventChangeRegion);
+            //$('#filter-region').change(eventChangeRegion);
 
             $("#filter-i").on("input", filter);
             initDataTable();

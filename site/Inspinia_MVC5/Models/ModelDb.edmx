@@ -1195,6 +1195,12 @@
           <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
           <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="GetSumsByChanger" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="p_DateBeg" Type="datetime" Mode="In" />
+          <Parameter Name="p_DateEnd" Type="datetime" Mode="In" />
+          <Parameter Name="p_RegionCode" Type="smallint" Mode="In" />
+          <Parameter Name="p_ChangerCode" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="GetWashAmounts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="p_RegionCode" Type="int" Mode="In" />
           <Parameter Name="p_WashCode" Type="nvarchar" Mode="In" />
@@ -2877,6 +2883,12 @@
             <End Role="Wash" EntitySet="Washes" />
             <End Role="UsersAvailableWash" EntitySet="UsersAvailableWashes" />
           </AssociationSet>
+          <FunctionImport Name="GetSumsByChanger" ReturnType="Collection(ModelDb.GetSumsByChanger_Result)">
+            <Parameter Name="p_DateBeg" Mode="In" Type="DateTime" />
+            <Parameter Name="p_DateEnd" Mode="In" Type="DateTime" />
+            <Parameter Name="p_RegionCode" Mode="In" Type="Int16" />
+            <Parameter Name="p_ChangerCode" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetBoxAndCollect_Result">
           <Property Type="DateTime" Name="reportdate" Nullable="true" Precision="23" />
@@ -3261,6 +3273,14 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="GetSumsByChanger_Result">
+          <Property Type="Int32" Name="IDChanger" Nullable="false" />
+          <Property Type="String" Name="ChangerCode" Nullable="false" MaxLength="10" />
+          <Property Type="String" Name="IpAddress" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="sincrease" Nullable="true" />
+          <Property Type="Int32" Name="ccard" Nullable="true" />
+          <Property Type="Int32" Name="sout" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -4215,6 +4235,18 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetSumsByChanger" FunctionName="Хранилище ModelDb.GetSumsByChanger">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ModelDb.GetSumsByChanger_Result">
+                <ScalarProperty Name="IDChanger" ColumnName="IDChanger" />
+                <ScalarProperty Name="ChangerCode" ColumnName="ChangerCode" />
+                <ScalarProperty Name="IpAddress" ColumnName="IpAddress" />
+                <ScalarProperty Name="sincrease" ColumnName="sincrease" />
+                <ScalarProperty Name="ccard" ColumnName="ccard" />
+                <ScalarProperty Name="sout" ColumnName="sout" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
