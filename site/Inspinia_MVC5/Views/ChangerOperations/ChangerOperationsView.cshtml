@@ -95,7 +95,16 @@
                 "info": false,
                 "searching": false,
                 columnDefs: [{ targets: [2, 3, 4, 5, 6, 7], className: 'dt-body-right' }],
-                columns: [null, null, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '', 0) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '.', 1) }, { render: $.fn.dataTable.render.number(' ', '', 0) }],
+                //columns: [
+                //    null,
+                //    null,
+                //    { render: $.fn.dataTable.render.number(' ', '.', 1) },
+                //    { render: $.fn.dataTable.render.number(' ', '.', 1) },
+                //    { render: $.fn.dataTable.render.number(' ', '', 0) },
+                //    { render: $.fn.dataTable.render.number(' ', '.', 1) },
+                //    { render: $.fn.dataTable.render.number(' ', '.', 1) },
+                //    { render: $.fn.dataTable.render.number(' ', '', 0) }
+                //],
                 dom: '<"html5buttons"B>lTfgitp',
                 buttons: [],
                 "language": {
@@ -218,7 +227,7 @@
                 error: function () {
                     alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
                 },
-                url: "@Url.Action("ChangerOperationsFilter", "ChangerOperations")"
+                url: "@Url.Action("_ChangerOperationsList", "ChangerOperations")"
             }).done(function (result) {
                 $('#output').html(result);
 

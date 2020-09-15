@@ -176,6 +176,7 @@
     </Compile>
     <Compile Include="Helpers\ChangeFunctionOnPost.cs" />
     <Compile Include="Helpers\ChangeRatesData.cs" />
+    <Compile Include="Helpers\ChangerSumData.cs" />
     <Compile Include="Helpers\DashboardData.cs" />
     <Compile Include="Helpers\GetScalarResponse.cs" />
     <Compile Include="Helpers\HMTLHelperExtensions.cs" />

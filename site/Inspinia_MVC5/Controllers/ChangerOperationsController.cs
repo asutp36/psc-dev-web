@@ -4,6 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Inspinia_MVC5.Models;
+using Inspinia_MVC5.Controllers;
+using System.Net;
+using Newtonsoft.Json;
+using Inspinia_MVC5.Helpers;
+using System.Globalization;
 
 namespace Inspinia_MVC5.Controllers
 {
@@ -13,6 +18,8 @@ namespace Inspinia_MVC5.Controllers
         List<Region> _regions = null;
         List<Device> _devices = null;
         List<Device> _requiredChangers = null;
+
+        MonitoringController monitoringController = new MonitoringController();
 
         public ChangerOperationsController()
         {
@@ -92,7 +99,75 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult _ChangerOperationsList(string region, string changer, string begdate, string enddate)
         {
-            List<GetSumsByChanger_Result> view = GetSumsByChanger(region, changer, begdate, enddate);
+            List<ChangerSumData> view = new List<ChangerSumData>();
+
+            List<GetSumsByChanger_Result> resFromProcedure = GetSumsByChanger(region, changer, begdate, enddate);
+
+            foreach(var r in resFromProcedure)
+            {
+                Device ch = _devices.Find(d => d.Code == r.ChangerCode);
+
+                var response = monitoringController.GetInfoChanger(ch);
+
+                ChangerSumData changerSumData;
+
+                var nf = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+                nf.NumberGroupSeparator = " ";
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    InfoChanger infoChanger = JsonConvert.DeserializeObject<InfoChanger>(response.Result);
+                    infoChanger.changer = ch;
+
+                    int boxIncrease =
+                        infoChanger.m10 * 10 +
+                        infoChanger.b50 * 50 +
+                        infoChanger.b100 * 100 +
+                        infoChanger.b200 * 200 +
+                        infoChanger.b500 * 500 +
+                        infoChanger.b1000 * 1000 +
+                        infoChanger.b2000 * 2000;
+
+                    int boxOut =
+                        infoChanger.box1_50 * 50 +
+                        infoChanger.box2_100 * 100 +
+                        infoChanger.box3_50 * 50 +
+                        infoChanger.box4_100 * 100;
+
+                    if(infoChanger.hopper !=null)
+                    {
+                        boxOut += infoChanger.box5_10 * 10;
+                    }
+
+                    changerSumData = new ChangerSumData(
+                        ch.Code,
+                        ch.Name,
+                        ((int)r.sincrease).ToString("0,0.00"),
+                        ((int)r.sout).ToString("0,0.00"),
+                        ((int)r.ccard).ToString(nf),
+                        boxIncrease.ToString("0,0.00"),
+                        boxOut.ToString("0,0.00"),
+                        infoChanger.availableCards.ToString(nf)
+                        );
+
+                    view.Add(changerSumData);
+                }
+                else
+                {
+                    changerSumData = new ChangerSumData(
+                        ch.Code,
+                        ch.Name,
+                        ((int)r.sincrease).ToString("0,0.00"),
+                        ((int)r.sout).ToString("0,0.00"),
+                        ((int)r.ccard).ToString(nf),
+                        "нет доступа",
+                        "нет доступа",
+                        "нет доступа"
+                        );
+
+                    view.Add(changerSumData);
+                }
+            }
 
             return PartialView("_ChangerOperationsList", view);
         }

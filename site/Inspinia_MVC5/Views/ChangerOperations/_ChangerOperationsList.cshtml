@@ -1,5 +1,5 @@
 ﻿
-@model IEnumerable<Inspinia_MVC5.Models.GetSumsByChanger_Result>
+@model IEnumerable<Inspinia_MVC5.Helpers.ChangerSumData>
 
 <div class="sk-spinner sk-spinner-double-bounce">
     <div class="sk-double-bounce1"></div>
@@ -24,31 +24,40 @@
         {
             <tr>
                 <td>
-                    @*<a href="#" onclick="selectWash('@n.WashCode')">@n.WashCode</a>*@
-                    @n.ChangerCode
+                    @n.changerCode
                 </td>
-                <td>@n.ChangerCode</td>
-                <td style="text-align:right">@n.sincrease</td>
-                <td style="text-align:right">@n.sout</td>
-                <td style="text-align:right">@n.ccard</td>
-                <td style="text-align:right">123</td>
-                <td style="text-align:right">132</td>
-                <td style="text-align:right">123</td>
+                <td>@n.changerName</td>
+                <td style="text-align:right">
+                    <a href="#" onclick="selectEvents('@n.changerCode')">
+                        @n.sumIncrease
+                    </a>
+                </td>
+                <td style="text-align:right">
+                    <a href="#" onclick="selectEvents('@n.changerCode')">
+                        @n.sumOut
+                    </a>
+                </td>
+                <td style="text-align:right">
+                    <a href="#" onclick="selectEvents('@n.changerCode')">
+                        @n.sumCards
+                    </a>
+                </td>
+                <td style="text-align:right">
+                    <a href="#" onclick="selectMonitoring('@n.changerCode')">
+                        @n.boxIncrease
+                    </a>
+                </td>
+                <td style="text-align:right">
+                    <a href="#" onclick="selectMonitoring('@n.changerCode')">
+                        @n.boxChange
+                    </a>
+                </td>
+                <td style="text-align:right">
+                    <a href="#" onclick="selectMonitoring('@n.changerCode')">
+                        @n.boxCards
+                    </a>
+                </td>
             </tr>
         }
     </tbody>
-    @*<tfoot>
-        <tr>
-            <th>Итого:</th>
-            <th></th>
-            <th style="text-align:right"></th>
-            <th style="text-align:right"></th>
-            <th style="text-align:right"></th>
-            <th style="text-align:right"></th>
-            <th style="text-align:right"></th>
-            <th style="text-align:right"></th>
-            <th style="text-align:right"></th>
-            <th style="text-align:right"></th>
-        </tr>
-    </tfoot>*@
 </table>
