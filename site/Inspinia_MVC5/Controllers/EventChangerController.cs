@@ -49,12 +49,10 @@ namespace Inspinia_MVC5.Controllers
 
                     _requiredChangers.Add(changer);
                 }
-            }
-            else
-            {
+
                 var mobileapp = _devices.Find(d => d.Code == "MOB-EM");
 
-                _requiredChangers.Add(mobileapp);
+                _requiredChangers.Remove(mobileapp);
             }
 
             ViewBag.Changers = _requiredChangers;

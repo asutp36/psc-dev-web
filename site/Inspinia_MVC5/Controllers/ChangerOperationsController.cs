@@ -48,6 +48,10 @@ namespace Inspinia_MVC5.Controllers
                 }
             }
 
+            var rs = db.Regions.ToList().Find(r => r.Code == 200);
+
+            _regions.Add(rs);
+
             foreach (var r in _regions)
             {
                 for (int i = r.Washes.Count - 1; i >= 0; i--)
@@ -72,12 +76,10 @@ namespace Inspinia_MVC5.Controllers
 
                     _requiredChangers.Add(changer);
                 }
-            }
-            else
-            {
+
                 var mobileapp = _devices.Find(d => d.Code == "MOB-EM");
 
-                _requiredChangers.Add(mobileapp);
+                _requiredChangers.Remove(mobileapp);
             }
 
             if(_regions.Count < 1)
