@@ -230,7 +230,8 @@
                     $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
                 },
                 success: function (result) {
-                    $('#output').html(result.view);
+                    $('#output').html(result);
+                    //$('#output').html(result.view); для версии с бэком
                 },
                 error: function (jqXHR) {
                     console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Во время загрузки данных произошла неизвестная внутренная ошибка!" + jqXHR.StatusCode);
@@ -266,7 +267,8 @@
                     $('#ibox-load').children('.ibox-content').toggleClass('sk-loading');
                 },
                 success: function (result) {
-                    $('#output').html(result.view);
+                    $('#output').html(result);
+                    //$('#output').html(result.view); для версии с бэком
                 },
                 error: function (jqXHR) {
                     console.log(moment().format('DD.MM.YYYY HH:mm:ss') + " Во время загрузки данных произошла неизвестная внутренная ошибка!" + jqXHR.StatusCode);

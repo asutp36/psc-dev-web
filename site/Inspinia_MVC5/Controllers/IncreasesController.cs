@@ -300,130 +300,130 @@ namespace Inspinia_MVC5.Controllers
 
         public ActionResult _IncreasesByWashesList(string region, string wash, string begdate, string enddate)
         {
-            //List<GetIncreaseByWashs_Result> view = GetIncreasesByWashes(region, wash, begdate, enddate);
-            
-            GetScalarResponse scalarResponse = GetIncreasesByWashes(region, wash, begdate, enddate);
+            List<GetIncreaseByWashs_Result> view = GetIncreasesByWashes(region, wash, begdate, enddate);
 
-            if (scalarResponse.StatusCode == HttpStatusCode.OK)
-            {
-                List<GetIncreaseByWashs_Result> resultlist = JsonConvert.DeserializeObject<List<GetIncreaseByWashs_Result>>(scalarResponse.Result);
+            return PartialView("_IncreasesByWashesList", view);
 
-                if (resultlist != null)
-                {
+            //GetScalarResponse scalarResponse = GetIncreasesByWashes(region, wash, begdate, enddate);
 
-                    return Json(new
-                    {
-                        view = RenderRazorViewToString(ControllerContext, "_IncreasesByWashesList", resultlist),
-                        statusCode = scalarResponse.StatusCode
-                    });
-                }
-                else
-                {
-                    return Json(new
-                    {
-                        view = RenderRazorViewToString(ControllerContext, "_ErrorMessage", "Результатов нет"),
-                        statusCode = (HttpStatusCode)500
-                    });
-                }
-            }
-            else
-            {
-                return Json(new
-                {
-                    view = RenderRazorViewToString(ControllerContext, "_ErrorMessage", scalarResponse.Result),
-                    statusCode = scalarResponse.StatusCode
-                });
-            }
+            //if (scalarResponse.StatusCode == HttpStatusCode.OK)
+            //{
+            //    List<GetIncreaseByWashs_Result> resultlist = JsonConvert.DeserializeObject<List<GetIncreaseByWashs_Result>>(scalarResponse.Result);
 
-            //return PartialView("_IncreasesByWashesList", view);
+            //    if (resultlist != null)
+            //    {
+
+            //        return Json(new
+            //        {
+            //            view = RenderRazorViewToString(ControllerContext, "_IncreasesByWashesList", resultlist),
+            //            statusCode = scalarResponse.StatusCode
+            //        });
+            //    }
+            //    else
+            //    {
+            //        return Json(new
+            //        {
+            //            view = RenderRazorViewToString(ControllerContext, "_ErrorMessage", "Результатов нет"),
+            //            statusCode = (HttpStatusCode)500
+            //        });
+            //    }
+            //}
+            //else
+            //{
+            //    return Json(new
+            //    {
+            //        view = RenderRazorViewToString(ControllerContext, "_ErrorMessage", scalarResponse.Result),
+            //        statusCode = scalarResponse.StatusCode
+            //    });
+            //}
         }
 
-        public GetScalarResponse GetIncreasesByWashes(string region, string wash, string begdate, string enddate)
+        public List<GetIncreaseByWashs_Result> GetIncreasesByWashes(string region, string wash, string begdate, string enddate)
         {
             List<GetIncreaseByWashs_Result> resultlist = null;
 
-            //DateTime bdate;
-            //if (!DateTime.TryParse(begdate, out bdate))
-            //    bdate = new DateTime(2019, 1, 1);
+            DateTime bdate;
+            if (!DateTime.TryParse(begdate, out bdate))
+                bdate = new DateTime(2019, 1, 1);
 
-            //DateTime edate;
-            //if (!DateTime.TryParse(enddate, out edate))
-            //    edate = DateTime.Now;
+            DateTime edate;
+            if (!DateTime.TryParse(enddate, out edate))
+                edate = DateTime.Now;
 
-            //var prmRegion = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
-            //if (region == "")
+            var prmRegion = new System.Data.SqlClient.SqlParameter("@p_RegionCode", System.Data.SqlDbType.Int);
+            if (region == "")
+            {
+                region = "0";
+            }
+            prmRegion.Value = Convert.ToInt32(region);
+
+            var prmWash = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
+            if (wash == null)
+            {
+                wash = "";
+            }
+            prmWash.Value = wash;
+
+            var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
+            prmBegDate.Value = bdate;
+
+            var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
+            prmEndDate.Value = edate;
+
+            var result = db.Database.SqlQuery<GetIncreaseByWashs_Result>
+                ("GetIncreaseByWashs @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode ",
+                prmBegDate, prmEndDate, prmRegion, prmWash).ToList();
+
+            resultlist = result;
+
+            return resultlist;
+
+            //string url = "http://194.87.98.177/backend/api/Summary/bywashs?" +
+            //    "startDate=" + begdate +
+            //    "&endDate=" + enddate;
+
+            //if(region != "")
             //{
-            //    region = "0";
+            //    url += "&regionCode=" + region;
             //}
-            //prmRegion.Value = Convert.ToInt32(region);
 
-            //var prmWash = new System.Data.SqlClient.SqlParameter("@p_WashCode", System.Data.SqlDbType.NVarChar);
-            //if (wash == null)
+            //if(wash != "")
             //{
-            //    wash = "";
+            //    url += "&washCode=" + wash;
             //}
-            //prmWash.Value = wash;
 
-            //var prmBegDate = new System.Data.SqlClient.SqlParameter("@p_DateBeg", System.Data.SqlDbType.DateTime);
-            //prmBegDate.Value = bdate;
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
-            //var prmEndDate = new System.Data.SqlClient.SqlParameter("@p_DateEnd", System.Data.SqlDbType.DateTime);
-            //prmEndDate.Value = edate;
+            //request.Timeout = 5000;
 
-            //var result = db.Database.SqlQuery<GetIncreaseByWashs_Result>
-            //    ("GetIncreaseByWashs @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode ",
-            //    prmBegDate, prmEndDate, prmRegion, prmWash).ToList();
+            //request.KeepAlive = false;
+            //request.ProtocolVersion = HttpVersion.Version10;
+            //request.Method = "GET";
 
-            //resultlist = result;
+            //try
+            //{
+            //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            //    StreamReader reader = new StreamReader(response.GetResponseStream());
+            //    string responseBody = reader.ReadToEnd();
 
-            //return resultlist;
+            //    GetScalarResponse getScalarResponse = new GetScalarResponse(response.StatusCode, responseBody);
 
-            string url = "http://194.87.98.177/backend/api/Summary/bywashs?" +
-                "startDate=" + begdate +
-                "&endDate=" + enddate;
+            //    return getScalarResponse;
+            //}
+            //catch (WebException ex)
+            //{
+            //    GetScalarResponse getScalarResponse = new GetScalarResponse((HttpStatusCode)500, ex.Message);
 
-            if(region != "")
-            {
-                url += "&regionCode=" + region;
-            }
-
-            if(wash != "")
-            {
-                url += "&washCode=" + wash;
-            }
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-
-            request.Timeout = 5000;
-
-            request.KeepAlive = false;
-            request.ProtocolVersion = HttpVersion.Version10;
-            request.Method = "GET";
-
-            try
-            {
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                StreamReader reader = new StreamReader(response.GetResponseStream());
-                string responseBody = reader.ReadToEnd();
-
-                GetScalarResponse getScalarResponse = new GetScalarResponse(response.StatusCode, responseBody);
-
-                return getScalarResponse;
-            }
-            catch (WebException ex)
-            {
-                GetScalarResponse getScalarResponse = new GetScalarResponse((HttpStatusCode)500, ex.Message);
-
-                return getScalarResponse;
-            }
+            //    return getScalarResponse;
+            //}
         }
 
-        //public ActionResult IncreasesByWashesFilter(string region, string wash, string begdate, string enddate)
-        //{
-        //    List<GetIncreaseByWashs_Result> view = GetIncreasesByWashes(region, wash, begdate, enddate);
+        public ActionResult IncreasesByWashesFilter(string region, string wash, string begdate, string enddate)
+        {
+            List<GetIncreaseByWashs_Result> view = GetIncreasesByWashes(region, wash, begdate, enddate);
 
-        //    return PartialView("_IncreasesByWashesList", view);
-        //}
+            return PartialView("_IncreasesByWashesList", view);
+        }
 
         public ActionResult IncreasesByPostsView(string begdate, string enddate, string wash)
         {
