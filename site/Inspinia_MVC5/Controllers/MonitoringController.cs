@@ -77,8 +77,15 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.Changers = _requiredChangers;
             ViewBag.Devices = _devices;
         }
-        public ActionResult MonitoringChangerView()
+        public ActionResult MonitoringChangerView(string changer)
         {
+            if(changer == null)
+            {
+                changer = "";
+            }
+
+            ViewBag.Changer = changer;
+
             return View(_regions);
         }
 

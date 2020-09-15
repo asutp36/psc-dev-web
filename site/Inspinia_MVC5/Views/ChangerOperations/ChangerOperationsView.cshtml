@@ -88,6 +88,8 @@
 
 <script type="text/javascript">
 
+    var timeridupdate = -1;
+
         function initDataTable() {
             $('#table-increases').DataTable({
                 "responsive": true,
@@ -191,17 +193,20 @@
         //    }
         //}
 
-        function selectWash(IDWash) {
+        function selectEvents(changerCode) {
 
             var bdate = $('#bdate').val();
             var edate = $('#edate').val();
-            var wash = IDWash;
 
-            window.location.href = "CollectByDaysView?begdate=" + bdate + "&enddate=" + edate + "&wash=" + wash;
+            window.location.href = "../EventChanger/EventChangerView?begdate=" + bdate + "&enddate=" + edate + "&changer=" + changerCode;
         }
 
-        function filter() {
+        function selectMonitoring(changerCode) {
 
+            window.location.href = "../Monitoring/MonitoringChangerView?changer=" + changerCode;
+        }
+
+    function filter() {
             var bdate = $('#bdate').val();
             var edate = $('#edate').val();
             var region = $('#filter-region').find(":selected").val();
@@ -224,8 +229,34 @@
                 },
                 success: function () {
                 },
-                error: function () {
-                    alert('Возникла ошибка!\nПроверьте, все ли данные Вы ввели!');
+                error: function (err) {
+                    console.log(err);
+                },
+                url: "@Url.Action("_ChangerOperationsList", "ChangerOperations")"
+            }).done(function (result) {
+                $('#output').html(result);
+
+                initDataTable();
+            });
+    }
+
+    function update() {
+            var bdate = $('#bdate').val();
+            var edate = $('#edate').val();
+            var region = $('#filter-region').find(":selected").val();
+            var changer = $('#filter-changer').find(":selected").val();
+
+            $.ajax({
+                type: "POST",
+                cache: true,
+                data: {
+                    region: region,
+                    changer: changer,
+                    begdate: bdate,
+                    enddate: edate
+                },
+                error: function (err) {
+                    console.log(err);
                 },
                 url: "@Url.Action("_ChangerOperationsList", "ChangerOperations")"
             }).done(function (result) {
@@ -235,12 +266,22 @@
             });
         }
 
+
         $(document).ready(function () {
 
             //$('#filter-region').change(eventChangeRegion);
 
-            $("#filter-i").on("input", filter);
+            $("#filter-i").on("input", function () {
+                if (timeridupdate != -1) {
+                    clearInterval(timeridupdate);
+                    timeridupdate = -1;
+                }
+                filter();
+                timeridupdate = setInterval(update, 10000);
+            });
             initDataTable();
+
+            timeridupdate = setInterval(update, 10000);
         });
 
         $('input[name="daterange"]').daterangepicker();
@@ -302,7 +343,7 @@
             "opens": "right",
             "drops": "down"
         }, function (start, end, label) {
-                console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+                //console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
 
                 if (moment('1.1.2019').isSame(start)) {
                     $('#filter-date span').html('С начала работы');
@@ -313,7 +354,12 @@
 
                 $('#bdate').val(start.format('DD.MM.YYYY HH:mm:ss'));
                 $('#edate').val(end.format('DD.MM.YYYY HH:mm:ss'));
+                if (timeridupdate != -1) {
+                    clearInterval(timeridupdate);
+                    timeridupdate = -1;
+                }
                 filter();
+                timeridupdate = setInterval(update, 10000);
         });
 </script>
 }

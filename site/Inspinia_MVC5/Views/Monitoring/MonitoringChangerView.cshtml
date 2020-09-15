@@ -269,6 +269,12 @@
 
         $(document).ready(function () {
 
+            if ('@ViewBag.Changer') {
+
+                $('#current_changer').val('@ViewBag.Changer');
+                let code = $('#current_changer').val()
+                select_changer(code);
+            }
         });
     </script>
 }

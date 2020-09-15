@@ -61,7 +61,7 @@ namespace Inspinia_MVC5.Controllers
             ViewBag.Events = _eventKinds;
         }
 
-        public ActionResult EventChangerView(string begdate, string enddate)
+        public ActionResult EventChangerView(string begdate, string enddate, string changer)
         {
             DateTime bdate;
             if (!DateTime.TryParse(begdate, out bdate))
@@ -71,8 +71,14 @@ namespace Inspinia_MVC5.Controllers
             if (!DateTime.TryParse(enddate, out edate))
                 edate = DateTime.Now;
 
+            if(changer == null)
+            {
+                changer = "";
+            }
+
             ViewBag.BegDate = begdate;
             ViewBag.EndDate = enddate;
+            ViewBag.Changer = changer;
 
             return View("EventChangerView");
         }
