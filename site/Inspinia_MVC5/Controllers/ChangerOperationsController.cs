@@ -109,6 +109,36 @@ namespace Inspinia_MVC5.Controllers
             {
                 Device ch = _devices.Find(d => d.Code == r.ChangerCode);
 
+                int sincrease;
+                if (r.sincrease == null)
+                {
+                    sincrease = 0;
+                }
+                else
+                {
+                    sincrease = (int)r.sincrease;
+                }
+
+                int sout;
+                if (r.sout == null)
+                {
+                    sout = 0;
+                }
+                else
+                {
+                    sout = (int)r.sout;
+                }
+
+                int ccard;
+                if (r.ccard == null)
+                {
+                    ccard = 0;
+                }
+                else
+                {
+                    ccard = (int)r.ccard;
+                }
+
                 var response = monitoringController.GetInfoChanger(ch);
 
                 ChangerSumData changerSumData;
@@ -144,9 +174,9 @@ namespace Inspinia_MVC5.Controllers
                     changerSumData = new ChangerSumData(
                         ch.Code,
                         ch.Name,
-                        ((int)r.sincrease).ToString("0,0.00"),
-                        ((int)r.sout).ToString("0,0.00"),
-                        ((int)r.ccard).ToString(nf),
+                        (sincrease).ToString("0,0.00"),
+                        (sout).ToString("0,0.00"),
+                        (ccard).ToString(nf),
                         boxIncrease.ToString("0,0.00"),
                         boxOut.ToString("0,0.00"),
                         infoChanger.availableCards.ToString(nf)
@@ -159,12 +189,12 @@ namespace Inspinia_MVC5.Controllers
                     changerSumData = new ChangerSumData(
                         ch.Code,
                         ch.Name,
-                        ((int)r.sincrease).ToString("0,0.00"),
-                        ((int)r.sout).ToString("0,0.00"),
-                        ((int)r.ccard).ToString(nf),
-                        "нет доступа",
-                        "нет доступа",
-                        "нет доступа"
+                        (sincrease).ToString("0,0.00"),
+                        (sout).ToString("0,0.00"),
+                        (ccard).ToString(nf),
+                        "неизвестно",
+                        "неизвестно",
+                        "неизвестно"
                         );
 
                     view.Add(changerSumData);
