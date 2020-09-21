@@ -834,6 +834,12 @@ namespace MobileIntegration.Controllers
 
                     PhoneFormatter formattedPhone = new PhoneFormatter(card.phone);
 
+                    if (!CardIsExists(newCard.card))
+                    {
+                        Logger.Log.Error("SendNewCardDev: карта с таким номером существует" + Environment.NewLine);
+                        return Request.CreateResponse(HttpStatusCode.Conflict, "Card Exists");
+                    }
+
                     // запись в нашу базу новую карту
                     if (_model.Database.Exists())
                     {
@@ -845,7 +851,7 @@ namespace MobileIntegration.Controllers
                         {
                             _model.Database.Connection.Close();
                             Logger.Log.Error("SendNewCardDev: У пользователя есть карта" + Environment.NewLine);
-                            return Request.CreateErrorResponse(HttpStatusCode.Conflict, new Exception("У пользователя уже есть карта"));
+                            return Request.CreateResponse(HttpStatusCode.Conflict, "Owner Exists");
                         }
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
@@ -1092,6 +1098,11 @@ namespace MobileIntegration.Controllers
                 Logger.Log.Error("GetTechCards: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
+        }
+
+        private bool CardIsExists(string cardNum)
+        {
+            return _model.Cards.Where(c => c.CardNum.Equals(cardNum)).FirstOrDefault() == null;
         }
     }
 }
