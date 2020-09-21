@@ -116,6 +116,7 @@ namespace Inspinia_MVC5
                       "~/Scripts/plugins/dataTables/datatables.js",
                       "~/Scripts/plugins/dataTables/datatables.min.js",
                       "~/Scripts/plugins/dataTables/jquery.datatables.min.js",
+                      "~/Scripts/plugins/dataTables/dataTables.sorting-date.js",
                       "~/Scripts/plugins/dataTables/dataTables.bootstrap4.min.js"));
 
             // jeditable 

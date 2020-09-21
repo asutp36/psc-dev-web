@@ -2114,6 +2114,7 @@
     <Content Include="Views\Dashboards\_ErrorMessage.cshtml" />
     <Content Include="Views\ChangerOperations\ChangerOperationsView.cshtml" />
     <Content Include="Views\ChangerOperations\_ChangerOperationsList.cshtml" />
+    <Content Include="Scripts\plugins\dataTables\dataTables.sorting-date.js" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Resource.en.resx">
