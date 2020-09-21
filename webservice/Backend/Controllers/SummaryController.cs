@@ -48,6 +48,7 @@ namespace Backend.Controllers
                 return Ok((int)ssum.Value);
         }
 
+        [Authorize]
         [HttpGet("bywashs")]
         public IActionResult GetByWashs(string startDate, string endDate, int regionCode = 0, string washCode = "")
         {
