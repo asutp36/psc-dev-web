@@ -834,7 +834,7 @@ namespace MobileIntegration.Controllers
 
                     PhoneFormatter formattedPhone = new PhoneFormatter(card.phone);
 
-                    if (!CardIsExists(newCard.card))
+                    if (CardIsExists(newCard.card))
                     {
                         Logger.Log.Error("SendNewCardDev: карта с таким номером существует" + Environment.NewLine);
                         return Request.CreateResponse(HttpStatusCode.Conflict, "Card Exists");
@@ -1102,7 +1102,72 @@ namespace MobileIntegration.Controllers
 
         private bool CardIsExists(string cardNum)
         {
-            return _model.Cards.Where(c => c.CardNum.Equals(cardNum)).FirstOrDefault() == null;
+            return _model.Cards.Where(c => c.CardNum.Equals(cardNum)).FirstOrDefault() != null;
+        }
+
+        /// <summary>
+        /// Изменение номера карты
+        /// </summary>
+        /// <param name="change">Страый и новый номер</param>
+        /// <returns></returns>
+        /// <response code="200">Ок</response>
+        /// <response code="404">Не найдена карта</response>
+        /// <response code="409">Новый номер уже есть в базе</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        [HttpPut]
+        [ActionName("change_card")]
+        public HttpResponseMessage ChangeCard([FromBody]CardChange change)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            Logger.InitLogger();
+
+            try
+            {
+                Logger.Log.Debug("ChangeCard: запуск с параметрами: " + JsonConvert.SerializeObject(change));
+
+                if (!CardIsExists(change.oldNum))
+                {
+                    Logger.Log.Error("ChangeCard: не найдена карта" + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.NotFound);
+                }
+
+                if (CardIsExists(change.newNum))
+                {
+                    Logger.Log.Error("ChangeCard: новый номер карты уже записан в базе" + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.Conflict);
+                }
+
+                if (!_model.Database.Exists())
+                {
+                    Logger.Log.Error("ChangeCard: база данных не найдена" + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                }
+
+                _model.Database.Connection.Open();
+                Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
+
+                DbCommand command = _model.Database.Connection.CreateCommand();
+                command.CommandText = $"UPDATE Cards SET CardNum = '{change.newNum}' WHERE CardNum = '{change.oldNum}'";
+                Logger.Log.Debug("ChangeCard: command is: " + command.CommandText);
+
+                var id = command.ExecuteScalar();
+                Logger.Log.Debug("ChangeCard: номер карты изменён" + Environment.NewLine);
+
+                _model.Database.Connection.Close();
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch(Exception e)
+            {
+                if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                    _model.Database.Connection.Close();
+                Logger.Log.Error("ChangeCard: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
         }
     }
 }
