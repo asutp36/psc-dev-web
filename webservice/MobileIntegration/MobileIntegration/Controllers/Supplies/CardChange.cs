@@ -9,6 +9,8 @@ namespace MobileIntegration.Controllers.Supplies
     public class CardChange
     {
         [Required]
+        public string changer { get; set; }
+        [Required]
         public string oldNum { get; set; }
         [Required]
         public string newNum { get; set; }

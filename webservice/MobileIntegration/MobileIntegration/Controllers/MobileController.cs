@@ -1151,7 +1151,8 @@ namespace MobileIntegration.Controllers
                 Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
                 DbCommand command = _model.Database.Connection.CreateCommand();
-                command.CommandText = $"UPDATE Cards SET CardNum = '{change.newNum}' WHERE CardNum = '{change.oldNum}'";
+                command.CommandText = $"UPDATE Cards SET CardNum = '{change.newNum}', LocalizedBy = (select IDDevice from Device where Code = '{change.changer}') " +
+                    $"WHERE CardNum = '{change.oldNum}'";
                 Logger.Log.Debug("ChangeCard: command is: " + command.CommandText);
 
                 var id = command.ExecuteScalar();
