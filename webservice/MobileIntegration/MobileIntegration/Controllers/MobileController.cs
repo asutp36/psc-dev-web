@@ -721,7 +721,7 @@ namespace MobileIntegration.Controllers
                             _model.Database.Connection.Open();
                             Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
-                            List<string> cards = GetCardsByPhone(newCard.phone);
+                            List<Cards> cards = GetCardsByPhone(newCard.phone);
                             if (cards.Count > 0)
                             {
                                 _model.Database.Connection.Close();
@@ -792,11 +792,11 @@ namespace MobileIntegration.Controllers
             return Request.CreateResponse(HttpStatusCode.NoContent);
         }
 
-        private List<string> GetCardsByPhone(string phone)
+        private List<Cards> GetCardsByPhone(string phone)
         {
             PhoneFormatter formattedPhone = new PhoneFormatter(phone);
 
-            List<string> cards = _model.Cards.Where(c => c.IDOwner == _model.Owners.Where(o => o.PhoneInt == formattedPhone.phoneInt).FirstOrDefault().IDOwner).Select(c => c.CardNum).ToList();
+            List<Cards> cards = _model.Cards.Where(c => c.IDOwner == _model.Owners.Where(o => o.PhoneInt == formattedPhone.phoneInt).FirstOrDefault().IDOwner).ToList();
 
             return cards;
         }
@@ -846,7 +846,7 @@ namespace MobileIntegration.Controllers
                         _model.Database.Connection.Open();
                         Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
-                        List<string> cards = GetCardsByPhone(newCard.phone);
+                        List<Cards> cards = GetCardsByPhone(newCard.phone);
                         if (cards.Count > 0)
                         {
                             _model.Database.Connection.Close();
@@ -1006,10 +1006,28 @@ namespace MobileIntegration.Controllers
             {
                 Logger.Log.Debug("GetCardsList: запуск с параметром " + id);
 
-                List<string> cards = GetCardsByPhone(id);
-                Logger.Log.Debug("GetCardsList: список карт:\n" + JsonConvert.SerializeObject(cards));
+                List<Cards> cards = GetCardsByPhone(id);
 
-                return Request.CreateResponse<List<string>>(HttpStatusCode.OK, cards);
+                List<CardsNumType> result = new List<CardsNumType>();
+
+                foreach(Cards c in cards)
+                {
+                    CardsNumType cnt = new CardsNumType();
+                    cnt.cardNum = c.CardNum;
+
+                    string localizedBy = _model.Device.Find(c.LocalizedBy).Code;
+
+                    if (localizedBy.Equals("MOB-EM"))
+                        cnt.type = "virtual";
+                    else
+                        cnt.type = "real";
+
+                    result.Add(cnt);
+                }
+
+                Logger.Log.Debug("GetCardsList: список карт:\n" + JsonConvert.SerializeObject(result));
+
+                return Request.CreateResponse<List<CardsNumType>>(HttpStatusCode.OK, result);
             }
             catch(Exception e)
             {

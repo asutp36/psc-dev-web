@@ -150,6 +150,7 @@
     <Compile Include="Controllers\MobileController.cs" />
     <Compile Include="Controllers\Supplies\BalanceChanging.cs" />
     <Compile Include="Controllers\Supplies\CardChange.cs" />
+    <Compile Include="Controllers\Supplies\CardsNumType.cs" />
     <Compile Include="Controllers\Supplies\ChangeCardState.cs" />
     <Compile Include="Controllers\Supplies\ChangePhoneFromMobile.cs" />
     <Compile Include="Controllers\Supplies\CryptHash.cs" />
