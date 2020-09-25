@@ -7,6 +7,7 @@ namespace Backend.Controllers.Supplies
 {
     public class DashboardFilters
     {
+        public List<RegionViewModel> regions { get; set; }
         public List<WashViewModel> washes { get; set; }
         public List<PostViewModel> posts { get; set; }
     }

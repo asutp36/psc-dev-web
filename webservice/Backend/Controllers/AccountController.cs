@@ -103,6 +103,7 @@ namespace Backend.Controllers
 
                 DashboardFilters filters = new DashboardFilters()
                 {
+                    regions = uInfo.GetRegions(),
                     washes = uInfo.GetWashes(),
                     posts = uInfo.GetPosts()
                 };

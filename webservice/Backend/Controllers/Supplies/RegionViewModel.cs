@@ -5,11 +5,10 @@ using System.Threading.Tasks;
 
 namespace Backend.Controllers.Supplies
 {
-    public class WashViewModel
+    public class RegionViewModel
     {
-        public int idWash { get; set; }
-        public string code { get; set; }
-        public string name { get; set; }
         public int idRegion { get; set; }
+        public int code { get; set; }
+        public string name { get; set; }
     }
 }

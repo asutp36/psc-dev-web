@@ -34,7 +34,8 @@ namespace Backend.Controllers.Supplies
                         {
                             idWash = w.Idwash,
                             code = w.Code,
-                            name = w.Name
+                            name = w.Name,
+                            idRegion = w.Idregion
                         });
                     }
                 }
@@ -66,6 +67,26 @@ namespace Backend.Controllers.Supplies
                 }
             }
             
+
+            return result;
+        }
+
+        public List<RegionViewModel> GetRegions()
+        {
+            List<WashViewModel> washes = this.GetWashes();
+            List<RegionViewModel> result = new List<RegionViewModel>();
+
+            foreach(WashViewModel w in washes)
+            {
+                Regions region = _model.Regions.Find(w.idRegion);
+
+                result.Add(new RegionViewModel
+                {
+                    idRegion = region.Idregion,
+                    code = region.Code,
+                    name = region.Name
+                });
+            }
 
             return result;
         }
