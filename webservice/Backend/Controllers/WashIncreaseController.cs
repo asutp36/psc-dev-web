@@ -23,7 +23,7 @@ namespace Backend.Controllers
         [SwaggerResponse(200, Type = typeof(GetIncreaseByWashs_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
-        [HttpGet("bywashs")]
+        [HttpGet("washs")]
         public IActionResult GetByWashs(string startDate, string endDate, int regionCode = 0, string washCode = "")
         {
             try
@@ -47,7 +47,7 @@ namespace Backend.Controllers
         [SwaggerResponse(200, Type = typeof(GetIncreaseByPosts_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
-        [HttpGet("byposts")]
+        [HttpGet("posts")]
         public IActionResult GetByPosts(string startDate, string endDate, int regionCode = 0, string washCode = "", string postCode = "")
         {
             try
@@ -61,6 +61,21 @@ namespace Backend.Controllers
                 var result = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPosts @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode);
 
                 return Ok(result);
+            }
+            catch(Exception e)
+            {
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        [SwaggerResponse(500, Type = typeof(Error))]
+        [Authorize]
+        [HttpGet("events")]
+        public IActionResult GetByEvents()
+        {
+            try
+            {
+                return Ok();
             }
             catch(Exception e)
             {
