@@ -40,7 +40,7 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 //_logger.LogError("GetByWashs: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("ошибка вызова хранимки", "unexpected"));
+                return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
 
@@ -64,7 +64,7 @@ namespace Backend.Controllers
             }
             catch(Exception e)
             {
-                return StatusCode(500, new Error("Ошибка вызова хранимки", "unexpected"));
+                return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
     }
