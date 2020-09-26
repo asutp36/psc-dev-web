@@ -157,6 +157,7 @@
     <Compile Include="Controllers\Supplies\Decrease.cs" />
     <Compile Include="Controllers\Supplies\GetBalance.cs" />
     <Compile Include="Controllers\Supplies\GetBalanceFromMobile.cs" />
+    <Compile Include="Controllers\Supplies\GetPhoneResult.cs" />
     <Compile Include="Controllers\Supplies\HttpResponse.cs" />
     <Compile Include="Controllers\Supplies\Increase.cs" />
     <Compile Include="Controllers\Supplies\IncreaseFromChanger.cs" />

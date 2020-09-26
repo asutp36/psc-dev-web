@@ -1064,7 +1064,11 @@ namespace MobileIntegration.Controllers
 
                 string phone = _model.Owners.Find(card.IDOwner).Phone;
 
-                return Request.CreateResponse(HttpStatusCode.OK, phone);
+                GetPhoneResult result = new GetPhoneResult();
+                result.phone = phone;
+                result.balance = card.Balance;
+
+                return Request.CreateResponse(HttpStatusCode.OK, result);
             }
             catch (Exception e)
             {
