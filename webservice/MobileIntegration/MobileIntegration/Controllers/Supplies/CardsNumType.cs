@@ -9,5 +9,6 @@ namespace MobileIntegration.Controllers.Supplies
     {
         public string cardNum { get; set; }
         public string type { get; set; }
+        public int? balance { get; set; }
     }
 }

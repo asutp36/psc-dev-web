@@ -1022,6 +1022,8 @@ namespace MobileIntegration.Controllers
                     else
                         cnt.type = "real";
 
+                    cnt.balance = c.Balance;
+
                     result.Add(cnt);
                 }
 
