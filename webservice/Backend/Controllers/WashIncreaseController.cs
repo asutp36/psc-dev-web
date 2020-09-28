@@ -56,7 +56,7 @@ namespace Backend.Controllers
                 SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", endDate);
                 SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
-                SqlParameter p_PostCode = new SqlParameter("@p_WashCode", postCode);
+                SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
                 var result = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPosts @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode);
 
@@ -68,14 +68,23 @@ namespace Backend.Controllers
             }
         }
 
+        [SwaggerResponse(200, Type = typeof(GetIncreaseByEvents_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
         [HttpGet("events")]
-        public IActionResult GetByEvents()
+        public IActionResult GetByEvents(string startDate, string endDate, int regionCode = 0, string washCode = "", string postCode = "")
         {
             try
             {
-                return Ok();
+                SqlParameter p_dateBeg = new SqlParameter("@p_DateBeg", startDate);
+                SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", endDate);
+                SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+                SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
+
+                var result = _model.Set<GetIncreaseByEvents_Result>().FromSqlRaw("GetIncreaseByEvents @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode);
+
+                return Ok(result);
             }
             catch(Exception e)
             {
