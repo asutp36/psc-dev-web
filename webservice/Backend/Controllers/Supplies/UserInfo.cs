@@ -76,16 +76,19 @@ namespace Backend.Controllers.Supplies
             List<WashViewModel> washes = this.GetWashes();
             List<RegionViewModel> result = new List<RegionViewModel>();
 
-            foreach(WashViewModel w in washes)
+            foreach (WashViewModel w in washes)
             {
                 Regions region = _model.Regions.Find(w.idRegion);
 
-                result.Add(new RegionViewModel
+                RegionViewModel rvm = new RegionViewModel()
                 {
                     idRegion = region.Idregion,
                     code = region.Code,
                     name = region.Name
-                });
+                };
+
+                if (result.Find(r => r.idRegion == rvm.idRegion) == null)
+                    result.Add(rvm);
             }
 
             return result;
