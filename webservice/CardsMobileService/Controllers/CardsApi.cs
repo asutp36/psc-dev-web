@@ -158,7 +158,7 @@ namespace CardsMobileService.Controllers
                     command = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID, Balance) " +
                         $"values (scope_identity(), '{model.cardNum}', (select IDCardStatus from CardStatuses cs where cs.Code = 'norm'), " +
                         $"(select IDCardType from CardTypes ct where ct.Code = 'client'), " +
-                        $"(select IDChanger from Changers ch join Device d on d.IDDevice = ch.IDDevice where d.Code = '{model.changer}'), {model.localizedID}, {model.amount})";
+                        $"(select IDDevice from Device where Code = '{model.changer}'), {model.localizedID}, {model.amount})";
                     _logger.LogInformation("WriteNewCard: command is: " + command);
                     _model.Database.ExecuteSqlRaw(command);
 

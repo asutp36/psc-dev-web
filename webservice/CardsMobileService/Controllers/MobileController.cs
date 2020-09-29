@@ -243,7 +243,7 @@ namespace CardsMobileService.Controllers
 
             try
             {
-                int serverID = _cardsApi.WriteNewCard(new NewCardFromChanger
+                NewCardFromChanger card = new NewCardFromChanger
                 {
                     changer = "MOB-EM",
                     localizedID = 0,
@@ -251,12 +251,14 @@ namespace CardsMobileService.Controllers
                     dtime = model.dtime,
                     cardNum = _cardsApi.GetNewCardNum(),
                     phone = model.phone
-                });
+                };
+
+                int serverID = _cardsApi.WriteNewCard(card);
 
                 if (serverID > 0)
                 {
                     _logger.LogDebug("MOBILE PostCard: удачно всё запсано. SeverID = " + serverID + Environment.NewLine);
-                    return StatusCode(201);
+                    return StatusCode(201, card.cardNum);
                 }
             }
             catch(Exception e)

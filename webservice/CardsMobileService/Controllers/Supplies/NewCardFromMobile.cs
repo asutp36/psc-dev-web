@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace CardsMobileService.Controllers.Supplies
 {
-    public class NewCardFromMobile : NewCardModel
+    public class NewCardFromMobile
     {
         [Required]
         public string hash { get; set; }
+        [Required]
+        public string dtime { get; set; }
+        [Required]
+        public string phone { get; set; }
     }
 }
