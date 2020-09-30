@@ -3,9 +3,11 @@ using CardsMobileService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
@@ -221,6 +223,31 @@ namespace CardsMobileService.Controllers
                                 "where c.CardNum is null";
 
             return _model.NumsMobileCards.FromSqlRaw(commandCardNum).First().Num;
+        }
+
+        public string SendCardToApp(NewCardFromChanger card)
+        {
+            NewCardToApp cardToApp = new NewCardToApp
+            {
+                card = card.cardNum,
+                phone = card.phone,
+                dtime = card.dtime,
+                hash = CryptHash.GetHashCode(card.dtime)
+            };
+
+            HttpResponse response = HttpSender.SendPost("http://loyalty.myeco24.ru/api/externaldb/user-create", JsonConvert.SerializeObject(cardToApp));
+
+            if (response.StatusCode == 0)
+            {
+                return "unavailible";
+            }
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return "ok";
+            }
+
+            return response.ResultMessage;
         }
     }
 }

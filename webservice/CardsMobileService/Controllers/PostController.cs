@@ -177,11 +177,46 @@ namespace CardsMobileService.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("tech_cards")]
-        public IActionResult GetTechCards()
+        /// <summary>
+        /// Новая карта с разменника
+        /// </summary>
+        /// <param name="model"></param>
+        /// <response code="201">Удачно</response>
+        /// <response code="400">Модель не прошла валидацию</response>
+        /// <response code="409">Карта с таким номером уже существует</response>
+        /// <response code="417">Ошибка при записи в базу</response>
+        /// <response code="500">Внутренняя ошибка сервера</response>
+        [HttpPost]
+        [Route("card")]
+        public IActionResult NewCard(NewCardFromChanger model)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            if (_cardsApi.IsExist(model.cardNum))
+            {
+                return Conflict();
+            }
+
+            try
+            {
+                int serverID = _cardsApi.WriteNewCard(model);
+
+                if (serverID > 0)
+                {
+                    _logger.LogDebug("MOBILE PostCard: удачно всё запсано. SeverID = " + serverID + Environment.NewLine);
+                    return StatusCode(201, model.cardNum);
+                }
+            }
+            catch(Exception e)
+            {
+                _logger.LogError("MOBILE PostCard: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(417, "Не найдена база данных");
+            }
+
+            return StatusCode(500);
         }
     }
 }
