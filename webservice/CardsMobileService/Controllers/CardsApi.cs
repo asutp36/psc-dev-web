@@ -276,5 +276,10 @@ namespace CardsMobileService.Controllers
 
             return response.ResultMessage;
         }
+
+        public string GetPhone(string cardNum)
+        {
+            return _model.Owners.Find(_model.Cards.Where(c => c.CardNum.Equals(cardNum)).FirstOrDefault().Idowner).Phone;
+        }
     }
 }

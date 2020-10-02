@@ -263,5 +263,35 @@ namespace CardsMobileService.Controllers
                 return StatusCode(500, "Непредвиденная ошибка");
             }
         }
+
+        /// <summary>
+        /// Получить номер телефона и баланс по номеру карты
+        /// </summary>
+        /// <param name="cardNum"></param>
+        /// <response code="200">Ок</response>
+        /// <response code="500">Внутренняя ошибка сервера</response>
+        [HttpGet]
+        [Route("phone/{cardNum}")]
+        public IActionResult GetPhoneByCardNum(string cardNum)
+        {
+            if (!_cardsApi.IsExist(cardNum))
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                GetPhoneByCardNum result = new GetPhoneByCardNum();
+                result.phone = _cardsApi.GetPhone(cardNum);
+                result.balance = _cardsApi.GetBalance(cardNum);
+
+                return Ok(result);
+            }
+            catch(Exception e)
+            {
+                return StatusCode(500);
+            }
+        }
+
     }
 }
