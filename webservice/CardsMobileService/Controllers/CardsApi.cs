@@ -281,5 +281,36 @@ namespace CardsMobileService.Controllers
         {
             return _model.Owners.Find(_model.Cards.Where(c => c.CardNum.Equals(cardNum)).FirstOrDefault().Idowner).Phone;
         }
+
+        public TechCards GetTechCards()
+        {
+            TechCards result = new TechCards();
+
+            int idService = GetIDCardType("service");
+            int idClean = GetIDCardType("clean");
+            int idDoors = GetIDCardType("doors");
+            int idCollect = GetIDCardType("collect");
+
+            List<Cards> cards = _model.Cards.Where(c => !c.IdcardType.Equals(_model.CardTypes.Where(ct => ct.Code.Equals("client")).FirstOrDefault().IdcardType)).ToList();
+
+            foreach(Cards c in cards)
+            {
+                if (c.IdcardType == idClean)
+                    result.cleanUp.Add(c.CardNum);
+                if (c.IdcardType == idCollect)
+                    result.collect.Add(c.CardNum);
+                if (c.IdcardType == idDoors)
+                    result.doors.Add(c.CardNum);
+                if (c.IdcardType == idService)
+                    result.service.Add(c.CardNum);
+            }
+
+            return result;
+        }
+
+        private int GetIDCardType(string typeCode)
+        {
+            return _model.CardTypes.Where(ct => ct.Code.Equals(typeCode)).FirstOrDefault().IdcardType;
+        }
     }
 }

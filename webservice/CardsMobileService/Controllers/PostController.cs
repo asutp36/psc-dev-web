@@ -293,5 +293,24 @@ namespace CardsMobileService.Controllers
             }
         }
 
+        /// <summary>
+        /// Получить номера технических карт
+        /// </summary>
+        /// <response code="200">Ок</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        [HttpGet]
+        [Route("cards/tech")]
+        public IActionResult GetTechCards()
+        {
+            try
+            {
+                return Ok(_cardsApi.GetTechCards());
+            }
+            catch(Exception e)
+            {
+                return StatusCode(500);
+            }
+        }
+
     }
 }
