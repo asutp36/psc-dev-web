@@ -249,5 +249,32 @@ namespace CardsMobileService.Controllers
 
             return response.ResultMessage;
         }
+
+        public string SendIncreaseToApp(IncreaseFromChanger model)
+        {
+            IncreaseToApp increaseToApp = new IncreaseToApp
+            {
+                card = model.cardNum,
+                value = model.amount,
+                wash_id = model.changer,
+                operation_time = model.dtime,
+                time_send = model.dtime,
+                hash = CryptHash.GetHashCode(model.dtime)
+            };
+
+            HttpResponse response = HttpSender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-replenish", JsonConvert.SerializeObject(increaseToApp));
+
+            if (response.StatusCode == 0)
+            {
+                return "unavailible";
+            }
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return "ok";
+            }
+
+            return response.ResultMessage;
+        }
     }
 }

@@ -185,7 +185,8 @@ namespace CardsMobileService.Controllers
         /// <response code="400">Модель не прошла валидацию</response>
         /// <response code="409">Карта с таким номером уже существует</response>
         /// <response code="417">Ошибка при записи в базу</response>
-        /// <response code="500">Внутренняя ошибка сервера</response>
+        /// <response code="500">Не удалось записать карту</response>
+        /// <response code="503">Не удалось записать пополнение</response>
         [HttpPost]
         [Route("card")]
         public IActionResult NewCard(NewCardFromChanger model)
@@ -204,19 +205,63 @@ namespace CardsMobileService.Controllers
             {
                 int serverID = _cardsApi.WriteNewCard(model);
 
-                if (serverID > 0)
+                if (serverID <= 0)
                 {
-                    _logger.LogDebug("MOBILE PostCard: удачно всё запсано. SeverID = " + serverID + Environment.NewLine);
-                    return StatusCode(201, model.cardNum);
+                    _logger.LogDebug("MOBILE PostCard: удачно всё записано. SeverID = " + Environment.NewLine);
+                    return StatusCode(500, "Не удалось записать новую карту в базу");
                 }
+
+                _logger.LogDebug("MOBILE PostCard: записана новая карта. SeverID = " + serverID);
+                _logger.LogDebug("MOBILE PostCard: отправка новой карты на сервер приложения");
+                string sendCardResult = _cardsApi.SendCardToApp(model);
+
+                if (!sendCardResult.Equals("ok"))
+                {
+                    _logger.LogError("MOBILE PostCard: отправка неудачная. Ответ сервера: " + sendCardResult);
+                }
+                else
+                {
+                    _logger.LogDebug("MOBILE PostCard: карта отправлена успешно");
+                }
+
+                _logger.LogDebug("MOBILE PostCard: запись внесения");
+                IncreaseFromChanger increase = new IncreaseFromChanger
+                {
+                    changer = model.changer,
+                    cardNum = model.cardNum,
+                    dtime = model.dtime,
+                    operationType = "increase",
+                    amount = model.amount,
+                    localizedID = model.localizedID
+                };
+
+                int increaseServerID = _cardsApi.WriteIncrease(increase);
+
+                if (increaseServerID == -1)
+                {
+                    _logger.LogError("MOBILE PostCard: не удалось записать внесение" + Environment.NewLine);
+                    return StatusCode(503, "Не удалось записать пополнение");
+                }
+
+                _logger.LogDebug("MOBILE PostCard: отправка пополнения на сервер приложения");
+                string sendIncreaseResult = _cardsApi.SendIncreaseToApp(increase);
+
+                if (!sendIncreaseResult.Equals("ok"))
+                {
+                    _logger.LogError("MOBILE PostCard: не удалось отправить списание. Ответ сервера: " + sendIncreaseResult);
+                }
+                else
+                {
+                    _logger.LogDebug("MOBILE PostCard: пополнение отправлено успешно");
+                }
+
+                return StatusCode(201);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError("MOBILE PostCard: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(417, "Не найдена база данных");
+                return StatusCode(500, "Непредвиденная ошибка");
             }
-
-            return StatusCode(500);
         }
     }
 }
