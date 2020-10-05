@@ -312,5 +312,42 @@ namespace CardsMobileService.Controllers
         {
             return _model.CardTypes.Where(ct => ct.Code.Equals(typeCode)).FirstOrDefault().IdcardType;
         }
+
+        public string UpdateCardNum(ChangeCardNumModel change)
+        {
+            if (_model.Database.CanConnect())
+            {
+                _model.Database.OpenConnection();
+
+                try
+                {
+                    string command = $"UPDATE Cards SET CardNum = '{change.newNum}', LocalizedBy = (select IDDevice from Device where Code = '{change.changer}') " +
+                    $"WHERE CardNum = '{change.oldNum}'";
+                    int rowAffected = _model.Database.ExecuteSqlRaw(command);
+                    
+                    if (rowAffected > 0)
+                    {
+                        return "ok";
+                    }
+
+                    return "not ok";
+                }
+                catch(Exception e)
+                {
+                    if (_model.Database.GetDbConnection().State == System.Data.ConnectionState.Open)
+                    {
+                        _model.Database.CloseConnection();
+                    }
+
+                    _model.Database.RollbackTransaction();
+
+                    _logger.LogError("WriteIncrease: ошибка записи. " + e.Message + Environment.NewLine + e.StackTrace);
+
+                    return e.Message;
+                }
+            }
+
+            return "База данных не найдена";
+        }
     }
 }

@@ -312,5 +312,35 @@ namespace CardsMobileService.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("card")]
+        public IActionResult ChangeCardNum(ChangeCardNumModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            if (!_cardsApi.IsExist(model.oldNum))
+            {
+                return NotFound();
+            }
+
+            if (_cardsApi.IsExist(model.newNum))
+            {
+                return Conflict();
+            }
+
+            string result = _cardsApi.UpdateCardNum(model);
+
+            switch (result)
+            {
+                case "ok":
+                    return Ok();
+
+                default:
+                    return StatusCode(500, "Ошибка при записи в базу");
+            }
+        }
     }
 }
