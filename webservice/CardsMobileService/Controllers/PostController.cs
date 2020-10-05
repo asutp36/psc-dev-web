@@ -304,10 +304,12 @@ namespace CardsMobileService.Controllers
         {
             try
             {
+                _logger.LogDebug("POST GetTechCards" + Environment.NewLine);
                 return Ok(_cardsApi.GetTechCards());
             }
             catch(Exception e)
             {
+                _logger.LogError("POST GetTechCards: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500);
             }
         }
