@@ -58,9 +58,9 @@ namespace Backend.Controllers
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                 SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                var result = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPosts @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode);
+                var pocedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPosts @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode);
 
-                return Ok(result);
+                return Ok(pocedureResult);
             }
             catch(Exception e)
             {

@@ -16,5 +16,9 @@ namespace Backend.Models
         public int b50 { get; set; }
         public int b100 { get; set; }
         public int b200 { get; set; }
+
+        public int sumofm { get { return this.m10 * 10; } }
+        public int sumofb { get { return (this.b10 * 10) + (this.b50 * 50) + (this.b100 * 100) + (this.b200 * 200); } }
+        public int sumall { get { return this.sumofm + this.sumofb; } }
     }
 }
