@@ -43,5 +43,30 @@ namespace Backend.Controllers
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
+
+
+        [SwaggerResponse(200, Type = typeof(GetCollectByPosts_Result))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        [Authorize]
+        [HttpGet("posts")]
+        public IActionResult GetByPosts(string startDate, string endDate, int regionCode = 0, string washCode = "", string postCode = "")
+        {
+            try
+            {
+                SqlParameter p_dateBeg = new SqlParameter("@p_DateBeg", startDate);
+                SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", endDate);
+                SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+                SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
+
+                var pocedureResult = _model.Set<GetCollectByPosts_Result>().FromSqlRaw("GetCollectByPosts @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode);
+
+                return Ok(pocedureResult);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
     }
 }

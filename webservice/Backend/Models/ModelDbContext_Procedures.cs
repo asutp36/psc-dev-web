@@ -15,6 +15,7 @@ namespace Backend.Models
             modelBuilder.Entity<GetIncreaseByWashs_Result>().HasNoKey();
             modelBuilder.Entity<GetIncreaseByPosts_Result>().HasNoKey();
             modelBuilder.Entity<GetCollectByWashs_Result>().HasNoKey();
+            modelBuilder.Entity<GetCollectByPosts_Result>().HasNoKey();
         }
     }
 }
