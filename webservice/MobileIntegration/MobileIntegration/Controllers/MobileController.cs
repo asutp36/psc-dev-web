@@ -1156,19 +1156,19 @@ namespace MobileIntegration.Controllers
                 if (!CardIsExists(change.oldNum))
                 {
                     Logger.Log.Error("ChangeCard: не найдена карта" + Environment.NewLine);
-                    return Request.CreateResponse(HttpStatusCode.NotFound);
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "С таким номером карта не найдена");
                 }
 
                 if (CardIsExists(change.newNum))
                 {
                     Logger.Log.Error("ChangeCard: новый номер карты уже записан в базе" + Environment.NewLine);
-                    return Request.CreateResponse(HttpStatusCode.Conflict);
+                    return Request.CreateResponse(HttpStatusCode.Conflict, "Уже существует карта с такм номером");
                 }
 
                 if (!_model.Database.Exists())
                 {
                     Logger.Log.Error("ChangeCard: база данных не найдена" + Environment.NewLine);
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Внутренняя ошибка сервера");
                 }
 
                 _model.Database.Connection.Open();
@@ -1191,7 +1191,7 @@ namespace MobileIntegration.Controllers
                 if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
                     _model.Database.Connection.Close();
                 Logger.Log.Error("ChangeCard: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Внутренняя ошибка сервера");
             }
         }
     }
