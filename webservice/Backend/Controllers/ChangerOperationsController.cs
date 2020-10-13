@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Backend.Controllers
@@ -20,7 +21,7 @@ namespace Backend.Controllers
     {
         ModelDbContext _model = new ModelDbContext();
 
-        [SwaggerResponse(200, Type = typeof(GetSumsByChanger_Result))]
+        [SwaggerResponse(200, Type = typeof(List<GetSumsByChangerViewModel>))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
         [HttpGet("sums")]
@@ -33,7 +34,23 @@ namespace Backend.Controllers
                 SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
                 SqlParameter p_ChangerCode = new SqlParameter("@p_ChangerCode", changerCode);
 
-                var result = _model.Set<GetSumsByChanger_Result>().FromSqlRaw("GetSumsByChanger @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_ChangerCode", p_DateBeg, p_DateEnd, p_RegionCode, p_ChangerCode);
+                List<GetSumsByChanger_Result> sums = _model.Set<GetSumsByChanger_Result>().FromSqlRaw("GetSumsByChanger @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_ChangerCode", p_DateBeg, p_DateEnd, p_RegionCode, p_ChangerCode).ToList();
+
+                List<GetSumsByChangerViewModel> result = new List<GetSumsByChangerViewModel>();
+
+                foreach(GetSumsByChanger_Result s in sums)
+                {
+                    Supplies.HttpResponse response = HttpSender.SendGet("http://194.87.98.177/postrc/api/changer/state/" + s.ChangerCode);
+
+                    if(response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        result.Add(new GetSumsByChangerViewModel(s, JsonConvert.DeserializeObject<ChangerInfo>(response.ResultMessage)));
+                    }
+                    else
+                    {
+                        result.Add(new GetSumsByChangerViewModel(s));
+                    }
+                }
 
                 return Ok(result);
             } 
