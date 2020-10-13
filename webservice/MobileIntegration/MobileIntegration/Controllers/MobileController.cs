@@ -147,13 +147,13 @@ namespace MobileIntegration.Controllers
 
                             try
                             {
-                                command.CommandText = $"UPDATE Cards SET Balance = {commandBalance.CommandText} + {increase.value} WHERE CardNum = '{increase.card}'";
+                                command.CommandText = $"UPDATE Cards SET Balance = ({commandBalance.CommandText}) + {increase.value} WHERE CardNum = '{increase.card}'";
                                 Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
                                 command.ExecuteNonQuery();
 
                                 command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                                 $"VALUES ((select IDDevice from Device where Code = 'MOB-EM'), (select IDOperationType from OperationTypes where Code = 'increase'), " +
-                                $"(select IDCard from Cards where CardNum = '{increase.card}'), '{increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {increase.value}, {commandBalance.CommandText} + {increase.value}, " +
+                                $"(select IDCard from Cards where CardNum = '{increase.card}'), '{increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {increase.value}, ({commandBalance.CommandText}) + {increase.value}, " +
                                 $"(select IDDevice from Device where Code = 'MOB-EM'), 0);";
                                 Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
                                 command.ExecuteNonQuery();
@@ -290,7 +290,12 @@ namespace MobileIntegration.Controllers
             {
                 try
                 {
-                    Logger.Log.Debug(String.Format("Запуск с параметрами: номер карты: {0}", getBalance.card));
+                    Logger.Log.Debug(String.Format("GeyBalanceDev: Запуск с параметрами: номер карты: {0}", getBalance.card));
+
+                    if (!CardIsExists(getBalance.card))
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Карта с таким номером не найдена");
+                    }
 
                     if (_model.Database.Exists())
                     {
@@ -670,7 +675,7 @@ namespace MobileIntegration.Controllers
 
             Logger.Log.Debug("StopPostDev: отправка конца мойки");
 
-            HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), "m15", model.balance)));
+            HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), model.post, model.balance)));
 
             Logger.Log.Debug("StopPostDev: Ответ от их сервера: " + resp.ResultMessage);
 
