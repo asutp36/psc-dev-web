@@ -114,5 +114,39 @@ namespace Backend.Controllers.Supplies
                 };
             }
         }
+
+        public static HttpResponse SendGet(string url)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Method = "GET";
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                string result = "";
+                if (response.ContentType != null)
+                {
+
+                    using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+                    {
+                        result = rdr.ReadToEnd();
+                    }
+                }
+                return new HttpResponse { StatusCode = response.StatusCode, ResultMessage = result };
+            }
+            catch (WebException ex)
+            {
+                HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
+                string result;
+                using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))
+                {
+                    result = rdr.ReadToEnd();
+                }
+
+                return new HttpResponse{StatusCode = webResponse.StatusCode, ResultMessage = result};
+            }
+        }
     }
 }
