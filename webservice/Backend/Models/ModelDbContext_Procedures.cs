@@ -19,6 +19,7 @@ namespace Backend.Models
             modelBuilder.Entity<GetCollectByDays_Result>().HasNoKey();
             modelBuilder.Entity<GetBoxByWashs_Result>().HasNoKey();
             modelBuilder.Entity<GetBoxByPosts_Result>().HasNoKey();
+            modelBuilder.Entity<GetSumsByChanger_Result>().HasNoKey();
         }
     }
 }
