@@ -1,4 +1,6 @@
-﻿using Backend.Models;
+﻿using Backend.Controllers.Supplies.Filters;
+using Backend.Models;
+using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,8 @@ namespace Backend.Controllers.Supplies
     {
         private ModelDbContext _model = new ModelDbContext();
         public List<Claim> claims { get; set; }
+        private List<WashViewModel> _washes;
+
 
         public UserInfo(List<Claim> c)
         {
@@ -40,20 +44,21 @@ namespace Backend.Controllers.Supplies
                     }
                 }
             }
-
+            _washes = result;
             return result;
         }
 
         public List<PostViewModel> GetPosts()
         {
-            List<WashViewModel> washes = this.GetWashes();
+            if (_washes == null)
+                this.GetWashes();
             List<PostViewModel> result = new List<PostViewModel>();
 
-            foreach (WashViewModel w in washes)
+            foreach (WashViewModel w in _washes)
             {
                 List<Posts> posts = _model.Posts.Where(p => p.Idwash.Equals(w.idWash)).Include(p => p.IddeviceNavigation).ToList();
 
-                foreach(Posts p in posts)
+                foreach (Posts p in posts)
                 {
                     if (p.Iddevice == null)
                         continue;
@@ -66,17 +71,16 @@ namespace Backend.Controllers.Supplies
                     });
                 }
             }
-            
-
             return result;
         }
 
         public List<RegionViewModel> GetRegions()
         {
-            List<WashViewModel> washes = this.GetWashes();
+            if (_washes == null)
+                this.GetWashes();
             List<RegionViewModel> result = new List<RegionViewModel>();
 
-            foreach (WashViewModel w in washes)
+            foreach (WashViewModel w in _washes)
             {
                 Regions region = _model.Regions.Find(w.idRegion);
 
@@ -89,6 +93,28 @@ namespace Backend.Controllers.Supplies
 
                 if (result.Find(r => r.idRegion == rvm.idRegion) == null)
                     result.Add(rvm);
+            }
+            return result;
+        }
+
+        public List<ChangerViewModel> GetChangers()
+        {
+            if (_washes == null)
+                this.GetWashes();
+
+            List<ChangerViewModel> result = new List<ChangerViewModel>();
+
+            foreach (WashViewModel w in _washes)
+            {
+                List<Changers> changers = _model.Changers.Where(c => c.Idwash == w.idWash).Include(c => c.IddeviceNavigation).ToList();
+
+                foreach (Changers c in changers)
+                {
+                    if (c.Iddevice == null)
+                        continue;
+
+                    result.Add(new ChangerViewModel { code = c.IddeviceNavigation.Code, name = c.IddeviceNavigation.Name, idRegion = w.idRegion });
+                }
             }
 
             return result;
