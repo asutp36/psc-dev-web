@@ -94,8 +94,8 @@ namespace Backend.Controllers
         [SwaggerResponse(200, Type = typeof(DashboardFilters))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
-        [HttpGet("data")]
-        public IActionResult GetData()
+        [HttpGet("filters")]
+        public IActionResult GetFilters()
         {
             try
             {
