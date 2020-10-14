@@ -90,6 +90,23 @@ namespace MobileIntegration.Controllers
                             return Request.CreateResponse(HttpStatusCode.InternalServerError, "Ошибка при записи в базу");
                         }
 
+                        int washID = _model.Changers.Where(c => c.IDDevice == _model.Device.Where(d => d.Code.Equals(increase.fromCode)).FirstOrDefault().IDDevice).FirstOrDefault().IDWash;
+                        
+
+                        // отправка пополнения на пост
+                        HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-replenish", JsonConvert.SerializeObject(new Increase
+                        {
+                            time_send = increase.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
+                            hash = CryptHash.GetHashCode(increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")),
+                            card = increase.card,
+                            value = increase.value,
+                            wash_id = "",
+                            operation_time = increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")
+                        }));
+
+                        Logger.Log.Debug("IncreaseDev: отправлено пополнение. Ответ сервера:" + JsonConvert.SerializeObject(resp) + Environment.NewLine);
+
+
                         var responseGood = Request.CreateResponse(HttpStatusCode.OK);
                         //responseGood.Headers.Add("ServerID", serverID.ToString());
                         return responseGood;
@@ -624,13 +641,13 @@ namespace MobileIntegration.Controllers
 
                         try
                         {
-                            command.CommandText = $"UPDATE Cards SET Balance = {commandBalance.CommandText} - {model.balance} WHERE CardNum = '{model.card}'";
+                            command.CommandText = $"UPDATE Cards SET Balance = ({commandBalance.CommandText}) - {model.balance} WHERE CardNum = '{model.card}'";
                             Logger.Log.Debug("StopPost: command is: " + command.CommandText);
                             command.ExecuteNonQuery();
 
                             command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                             $"VALUES ((select IDDevice from Device where Code = '{model.post}'), (select IDOperationType from OperationTypes where Code = 'decrease'), " +
-                            $"(select IDCard from Cards where CardNum = '{model.card}'), '{model.time_send}', {model.balance}, {commandBalance.CommandText} - {model.balance}, " +
+                            $"(select IDCard from Cards where CardNum = '{model.card}'), '{model.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {model.balance}, ({commandBalance.CommandText}) - {model.balance}, " +
                             $"(select IDDevice from Device where Code = '{model.post}'), 0);";
                             Logger.Log.Debug("StopPost: command is: " + command.CommandText);
                             command.ExecuteNonQuery();
@@ -675,7 +692,7 @@ namespace MobileIntegration.Controllers
 
             Logger.Log.Debug("StopPostDev: отправка конца мойки");
 
-            HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), model.post, model.balance)));
+            HttpResponse resp = Sender.SendPost("http://188.225.79.69/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), model.post, model.balance)));
 
             Logger.Log.Debug("StopPostDev: Ответ от их сервера: " + resp.ResultMessage);
 
