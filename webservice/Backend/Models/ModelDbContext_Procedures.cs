@@ -20,6 +20,7 @@ namespace Backend.Models
             modelBuilder.Entity<GetBoxByWashs_Result>().HasNoKey();
             modelBuilder.Entity<GetBoxByPosts_Result>().HasNoKey();
             modelBuilder.Entity<GetSumsByChanger_Result>().HasNoKey();
+            modelBuilder.Entity<GetEventsByChanger_Result>().HasNoKey();
         }
     }
 }
