@@ -7,7 +7,7 @@ namespace Backend.Controllers.Supplies.Stored_Procedures
 {
     public class GetEventsByChanger_Result
     {
-        public string CangerCode { get; set; }
+        public string ChangerCode { get; set; }
         public string ChangerName { get; set; }
         public int IDEventChanger { get; set; }
         public DateTime DTime { get; set; }
