@@ -25,12 +25,12 @@ namespace Backend.Controllers
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
         [HttpGet("sums")]
-        public IActionResult GetSumsByChanger(string dateBeg, string dateEnd, int regionCode = 0, string changerCode = "")
+        public IActionResult GetSumsByChanger(string startDate, string endDate, int regionCode = 0, string changerCode = "")
         {
             try
             {
-                SqlParameter p_DateBeg = new SqlParameter("@p_DateBeg", dateBeg);
-                SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", dateEnd);
+                SqlParameter p_DateBeg = new SqlParameter("@p_DateBeg", startDate);
+                SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", endDate);
                 SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
                 SqlParameter p_ChangerCode = new SqlParameter("@p_ChangerCode", changerCode);
 

@@ -24,6 +24,9 @@
         <AssociationConnector Association="WashCompanyEntities.FK_Operations_Device" ManuallyRouted="false" />
         <AssociationConnector Association="WashCompanyEntities.FK_Posts_Device" ManuallyRouted="false" />
         <AssociationConnector Association="WashCompanyEntities.FK_Operations_OperationTypes" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="WashCompanyEntities.Wash" Width="1.5" PointX="3" PointY="8.875" />
+        <AssociationConnector Association="WashCompanyEntities.FK_Changers_Wash" />
+        <AssociationConnector Association="WashCompanyEntities.FK_Posts_Wash" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

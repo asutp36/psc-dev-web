@@ -22,8 +22,8 @@ namespace Backend.Models
         public virtual DbSet<Device> Device { get; set; }
         public virtual DbSet<DeviceTypes> DeviceTypes { get; set; }
         public virtual DbSet<Posts> Posts { get; set; }
-        public virtual DbSet<Regions> Regions { get; set; }
         public virtual DbSet<RoleWash> RoleWash { get; set; }
+        public virtual DbSet<Regions> Regions { get; set; }
         public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<UserRole> UserRole { get; set; }
         public virtual DbSet<Users> Users { get; set; }

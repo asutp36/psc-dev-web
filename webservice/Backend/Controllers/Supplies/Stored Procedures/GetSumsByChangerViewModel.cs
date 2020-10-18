@@ -5,20 +5,28 @@ using System.Threading.Tasks;
 
 namespace Backend.Controllers.Supplies.Stored_Procedures
 {
-    public class GetSumsByChangerViewModel : GetSumsByChanger_Result
+    public class GetSumsByChangerViewModel
     {
+        public int IDChanger { get; set; }
+        public string ChangerCode { get; set; }
+        public string ChangerName { get; set; }
+        public string IpAddress { get; set; }
+        public int sumIncrease { get; set; }
+        public int sumOut { get; set; }
+        public int countCards { get; set; }
         public string boxIncrease { get; set; }
         public string boxOut { get; set; }
         public string boxCards { get; set; }
+
 
         public GetSumsByChangerViewModel(GetSumsByChanger_Result storedProcedureResult, ChangerInfo info) 
         {
             this.IDChanger = storedProcedureResult.IDChanger;
             this.ChangerCode = storedProcedureResult.ChangerCode;
             this.IpAddress = storedProcedureResult.IpAddress;
-            this.sincrease = storedProcedureResult.sincrease;
-            this.sout = storedProcedureResult.sout;
-            this.ccard = storedProcedureResult.ccard;
+            this.sumIncrease = storedProcedureResult.sincrease;
+            this.sumOut = storedProcedureResult.sout;
+            this.countCards = storedProcedureResult.ccard;
 
             this.boxIncrease = (info.m10 * 10 +
                         info.b50 * 50 +
@@ -41,9 +49,9 @@ namespace Backend.Controllers.Supplies.Stored_Procedures
             this.IDChanger = storedProcedureResult.IDChanger;
             this.ChangerCode = storedProcedureResult.ChangerCode;
             this.IpAddress = storedProcedureResult.IpAddress;
-            this.sincrease = storedProcedureResult.sincrease;
-            this.sout = storedProcedureResult.sout;
-            this.ccard = storedProcedureResult.ccard;
+            this.sumIncrease = storedProcedureResult.sincrease;
+            this.sumOut = storedProcedureResult.sout;
+            this.countCards = storedProcedureResult.ccard;
             this.boxIncrease = "неизвестно";
             this.boxOut = "неизвестно";
             this.boxCards = "неизвестно";

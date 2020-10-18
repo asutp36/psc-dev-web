@@ -11,7 +11,7 @@ namespace Backend.Controllers.Supplies.Stored_Procedures
         public string ChangerCode { get; set; }
         public string IpAddress { get; set; }
         public int sincrease { get; set; }
-        public int ccard { get; set; }
-        public int sout { get; set; }
+        public int ccard { internal get; set; }
+        public int sout { internal get; set; }
     }
 }

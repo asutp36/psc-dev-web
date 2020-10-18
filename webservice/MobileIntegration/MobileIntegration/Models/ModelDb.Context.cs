@@ -35,5 +35,6 @@ namespace MobileIntegration.Models
         public virtual DbSet<OperationTypes> OperationTypes { get; set; }
         public virtual DbSet<Owners> Owners { get; set; }
         public virtual DbSet<Posts> Posts { get; set; }
+        public virtual DbSet<Wash> Wash { get; set; }
     }
 }

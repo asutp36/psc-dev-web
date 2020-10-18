@@ -91,6 +91,7 @@ namespace MobileIntegration.Controllers
                         }
 
                         int washID = _model.Changers.Where(c => c.IDDevice == _model.Device.Where(d => d.Code.Equals(increase.fromCode)).FirstOrDefault().IDDevice).FirstOrDefault().IDWash;
+                        string washCode = _model.Wash.Find(washID).Code;
                         
 
                         // отправка пополнения на пост
@@ -100,7 +101,7 @@ namespace MobileIntegration.Controllers
                             hash = CryptHash.GetHashCode(increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")),
                             card = increase.card,
                             value = increase.value,
-                            wash_id = "",
+                            wash_id = washCode,
                             operation_time = increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")
                         }));
 
@@ -987,6 +988,9 @@ namespace MobileIntegration.Controllers
                         return Request.CreateResponse(HttpStatusCode.InternalServerError);
                     }
 
+                    int washID = _model.Changers.Where(c => c.IDDevice == _model.Device.Where(d => d.Code.Equals(newCard.changer)).FirstOrDefault().IDDevice).FirstOrDefault().IDWash;
+                    string washCode = _model.Wash.Find(washID).Code;
+
                     // отправка пополнения на пост
                     resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-replenish", JsonConvert.SerializeObject(new Increase
                     {
@@ -994,7 +998,7 @@ namespace MobileIntegration.Controllers
                         hash = CryptHash.GetHashCode(dtime.ToString("yyyy-MM-dd HH:mm:ss")),
                         card = newCard.card,
                         value = newCard.value,
-                        wash_id = "1",
+                        wash_id = washCode,
                         operation_time = dtime.ToString("yyyy-MM-dd HH:mm:ss")
                     }));
 
@@ -1037,7 +1041,11 @@ namespace MobileIntegration.Controllers
                     CardsNumType cnt = new CardsNumType();
                     cnt.cardNum = c.CardNum;
 
-                    string localizedBy = _model.Device.Find(c.LocalizedBy).Code;
+                    string localizedBy = "";
+                    if (_model.Device.Find(c.LocalizedBy) == null)
+                        localizedBy = "MOB-EM";
+                    else
+                        localizedBy = _model.Device.Find(c.LocalizedBy).Code;
 
                     if (localizedBy.Equals("MOB-EM"))
                         cnt.type = "virtual";

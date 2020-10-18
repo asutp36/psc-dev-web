@@ -20,5 +20,6 @@ namespace MobileIntegration.Models
         public string QRCode { get; set; }
     
         public virtual Device Device { get; set; }
+        public virtual Wash Wash { get; set; }
     }
 }

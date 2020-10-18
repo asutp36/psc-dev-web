@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="WashCompanyEntities.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="WashCompanyEntities.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Cards">
           <Key>
             <PropertyRef Name="IDCard" />
@@ -104,6 +104,16 @@
           <Property Name="IDDevice" Type="int" />
           <Property Name="QRCode" Type="nvarchar" MaxLength="20" />
         </EntityType>
+        <EntityType Name="Wash">
+          <Key>
+            <PropertyRef Name="IDWash" />
+          </Key>
+          <Property Name="IDWash" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="5" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="Address" Type="nvarchar" MaxLength="100" />
+          <Property Name="IDRegion" Type="int" Nullable="false" />
+        </EntityType>
         <Association Name="FK_Cards_CardStatuses">
           <End Role="CardStatuses" Type="Self.CardStatuses" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -157,6 +167,20 @@
             </Principal>
             <Dependent Role="Changers">
               <PropertyRef Name="IDDevice" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Changers_Wash">
+          <End Role="Wash" Type="Self.Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Changers" Type="Self.Changers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Changers">
+              <PropertyRef Name="IDWash" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -230,6 +254,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Posts_Wash">
+          <End Role="Wash" Type="Self.Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Posts" Type="Self.Posts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Posts">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="WashCompanyEntitiesStoreContainer">
           <EntitySet Name="Cards" EntityType="Self.Cards" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CardStatuses" EntityType="Self.CardStatuses" Schema="dbo" store:Type="Tables" />
@@ -241,6 +279,7 @@
           <EntitySet Name="OperationTypes" EntityType="Self.OperationTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Owners" EntityType="Self.Owners" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Posts" EntityType="Self.Posts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Wash" EntityType="Self.Wash" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Cards_CardStatuses" Association="Self.FK_Cards_CardStatuses">
             <End Role="CardStatuses" EntitySet="CardStatuses" />
             <End Role="Cards" EntitySet="Cards" />
@@ -255,6 +294,10 @@
           </AssociationSet>
           <AssociationSet Name="FK_Changers_Device" Association="Self.FK_Changers_Device">
             <End Role="Device" EntitySet="Device" />
+            <End Role="Changers" EntitySet="Changers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Changers_Wash" Association="Self.FK_Changers_Wash">
+            <End Role="Wash" EntitySet="Wash" />
             <End Role="Changers" EntitySet="Changers" />
           </AssociationSet>
           <AssociationSet Name="FK_Device_DeviceTypes" Association="Self.FK_Device_DeviceTypes">
@@ -277,9 +320,12 @@
             <End Role="Device" EntitySet="Device" />
             <End Role="Posts" EntitySet="Posts" />
           </AssociationSet>
+          <AssociationSet Name="FK_Posts_Wash" Association="Self.FK_Posts_Wash">
+            <End Role="Wash" EntitySet="Wash" />
+            <End Role="Posts" EntitySet="Posts" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="WashCompanyEntities" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -326,6 +372,7 @@
           <Property Name="IDDevice" Type="Int32" />
           <Property Name="IDWash" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Device" Relationship="Self.FK_Changers_Device" FromRole="Changers" ToRole="Device" />
+          <NavigationProperty Name="Wash" Relationship="WashCompanyEntities.FK_Changers_Wash" FromRole="Changers" ToRole="Wash" />
         </EntityType>
         <EntityType Name="Device">
           <Key>
@@ -399,6 +446,7 @@
           <Property Name="IDDevice" Type="Int32" />
           <Property Name="QRCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Device" Relationship="Self.FK_Posts_Device" FromRole="Posts" ToRole="Device" />
+          <NavigationProperty Name="Wash" Relationship="WashCompanyEntities.FK_Posts_Wash" FromRole="Posts" ToRole="Wash" />
         </EntityType>
         <Association Name="FK_Cards_CardStatuses">
           <End Role="CardStatuses" Type="Self.CardStatuses" Multiplicity="1">
@@ -573,7 +621,56 @@
             <End Role="OperationTypes" EntitySet="OperationTypes" />
             <End Role="Operations" EntitySet="Operations" />
           </AssociationSet>
+          <EntitySet Name="Wash" EntityType="WashCompanyEntities.Wash" />
+          <AssociationSet Name="FK_Changers_Wash" Association="WashCompanyEntities.FK_Changers_Wash">
+            <End Role="Wash" EntitySet="Wash" />
+            <End Role="Changers" EntitySet="Changers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Posts_Wash" Association="WashCompanyEntities.FK_Posts_Wash">
+            <End Role="Wash" EntitySet="Wash" />
+            <End Role="Posts" EntitySet="Posts" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Wash">
+          <Key>
+            <PropertyRef Name="IDWash" />
+          </Key>
+          <Property Name="IDWash" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IDRegion" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Changers" Relationship="WashCompanyEntities.FK_Changers_Wash" FromRole="Wash" ToRole="Changers" />
+          <NavigationProperty Name="Posts" Relationship="WashCompanyEntities.FK_Posts_Wash" FromRole="Wash" ToRole="Posts" />
+        </EntityType>
+        <Association Name="FK_Changers_Wash">
+          <End Type="WashCompanyEntities.Wash" Role="Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WashCompanyEntities.Changers" Role="Changers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Changers">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Posts_Wash">
+          <End Type="WashCompanyEntities.Wash" Role="Wash" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WashCompanyEntities.Posts" Role="Posts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Wash">
+              <PropertyRef Name="IDWash" />
+            </Principal>
+            <Dependent Role="Posts">
+              <PropertyRef Name="IDWash" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -686,6 +783,17 @@
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
                 <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
                 <ScalarProperty Name="QRCode" ColumnName="QRCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Wash">
+            <EntityTypeMapping TypeName="WashCompanyEntities.Wash">
+              <MappingFragment StoreEntitySet="Wash">
+                <ScalarProperty Name="IDRegion" ColumnName="IDRegion" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="IDWash" ColumnName="IDWash" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
