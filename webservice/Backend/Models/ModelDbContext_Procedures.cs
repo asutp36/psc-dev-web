@@ -21,6 +21,7 @@ namespace Backend.Models
             modelBuilder.Entity<GetBoxByPosts_Result>().HasNoKey();
             modelBuilder.Entity<GetSumsByChanger_Result>().HasNoKey();
             modelBuilder.Entity<GetEventsByChanger_Result>().HasNoKey();
+            modelBuilder.Entity<GetDataEventsByChanger_Result>().HasNoKey();
         }
     }
 }

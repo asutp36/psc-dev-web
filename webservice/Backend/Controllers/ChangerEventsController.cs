@@ -11,5 +11,6 @@ namespace Backend.Controllers
     [ApiController]
     public class ChangerEventsController : ControllerBase
     {
+
     }
 }
