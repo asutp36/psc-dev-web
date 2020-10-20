@@ -12,7 +12,7 @@ namespace LeikaIntegration.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostsController : ControllerBase
+    public class PostController : ControllerBase
     {
         private readonly ModelDbContext _model = new ModelDbContext();
 
@@ -52,7 +52,14 @@ namespace LeikaIntegration.Controllers
         [HttpPost]
         public IActionResult Start()
         {
-            return Ok();
+            try
+            {
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return StatusCode(500);
+            }
         }
 
         private string GetPosIp(string code)
