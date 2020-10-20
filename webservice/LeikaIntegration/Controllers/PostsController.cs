@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using LeikaIntegration.Controllers.Supplies;
 using LeikaIntegration.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,9 +27,21 @@ namespace LeikaIntegration.Controllers
                     return NotFound();
                 }
 
+                Supplies.HttpResponse response = Supplies.HttpSender.SendGet("http://" + postIp + "");
+                switch (response.StatusCode)
+                {
+                    case 0:
+                        return StatusCode(424);
 
+                    case (HttpStatusCode)423:
+                        return StatusCode(423);
 
-                return Ok();
+                    case HttpStatusCode.OK:
+                        return Ok();
+
+                    default:
+                        return StatusCode(500);
+                }
             }
             catch(Exception e)
             {
