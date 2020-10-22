@@ -35,6 +35,17 @@ namespace LeikaIntegration.Controllers.Supplies
 
             catch (WebException ex)
             {
+                if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException != null &&
+                    typeof(SocketException) == ex.InnerException.InnerException.GetType())
+                {
+                    SocketException se = (SocketException)ex.InnerException.InnerException;
+
+                    if (se.ErrorCode == 10060)
+                        return new HttpResponse { StatusCode = 0 };
+
+                    return new HttpResponse { ResultMessage = ex.Message };
+                }
+
                 HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
                 string result;
                 using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))
@@ -62,8 +73,6 @@ namespace LeikaIntegration.Controllers.Supplies
 
             try
             {
-
-
                 Stream requestStream = request.GetRequestStream();
 
                 requestStream.Write(postBytes, 0, postBytes.Length);
