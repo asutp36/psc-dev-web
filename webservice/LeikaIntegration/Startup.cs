@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-
+using Swashbuckle.AspNetCore.Filters;
 
 namespace LeikaIntegration
 {
@@ -42,13 +42,15 @@ namespace LeikaIntegration
                     Title = "mobapp"
                 });
 
-                
+                c.ExampleFilters();
 
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
+
+            services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
 
             services.AddCors(options =>
             {

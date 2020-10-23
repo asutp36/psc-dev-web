@@ -31,17 +31,6 @@ namespace LeikaIntegration.Controllers
         /// Узнать состояние поста
         /// </summary>
         /// <returns></returns>
-        /// <remarks>
-        /// Sample request:
-        ///
-        /// {
-        ///     "dtime": "2020-08-07 12:27:00",
-        ///     "hash": "$2a$07$30ydOQDXv5akDSajgDaSjubWyGrfbeTjI9BKwBU2kKtEdZd5O1.rC",
-        ///     "post": "1111",
-        ///     "clientID": ""
-        /// }
-        ///
-        /// </remarks>
         /// <response code="200">Свободен</response>
         /// <response code="401">Хэш не прошёл проверку</response>
         /// <response code="404">Не найден пост</response>
@@ -102,18 +91,6 @@ namespace LeikaIntegration.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        /// <remarks>
-        /// Sample request:
-        ///
-        /// {
-        ///     "dtime": "2020-08-07 12:27:00",
-        ///     "hash": "$2a$07$30ydOQDXv5akDSajgDaSjubWyGrfbeTjI9BKwBU2kKtEdZd5O1.rC",
-        ///     "post": "1111",
-        ///     "amount": 100,
-        ///     "clientID": ""
-        /// }
-        ///
-        /// </remarks>
         /// <response code="200">Удачно</response>
         /// <response code="400">Некорректные входные параметры</response>
         /// <response code="401">Хэш не прошёл проверку</response>
