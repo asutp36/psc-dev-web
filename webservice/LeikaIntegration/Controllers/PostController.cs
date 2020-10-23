@@ -4,11 +4,14 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using LeikaIntegration.Controllers.Supplies;
+
 using LeikaIntegration.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Annotations;
+
 
 namespace LeikaIntegration.Controllers
 {
@@ -24,23 +27,56 @@ namespace LeikaIntegration.Controllers
             _logger = logger;
         }
 
-        [HttpGet("state/{post}/{clientID}")]
-        public IActionResult State(string post, string clientID = "")
+        /// <summary>
+        /// Узнать состояние поста
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        ///
+        /// {
+        ///     "dtime": "2020-08-07 12:27:00",
+        ///     "hash": "$2a$07$30ydOQDXv5akDSajgDaSjubWyGrfbeTjI9BKwBU2kKtEdZd5O1.rC",
+        ///     "post": "1111",
+        ///     "clientID": ""
+        /// }
+        ///
+        /// </remarks>
+        /// <response code="200">Свободен</response>
+        /// <response code="401">Хэш не прошёл проверку</response>
+        /// <response code="404">Не найден пост</response>
+        /// <response code="424">Нет связи с постом</response>
+        /// <response code="423">Пост занят</response>
+        /// <response code="500">Внутренняя ошибка сервера</response>
+        //[SwaggerRequestExample(typeof(PostStateRequestBindingModel), typeof(PostStateRequestExample))]
+        [HttpPost("state")]
+        public IActionResult State(PostStateRequestBindingModel model)
         {
             try 
             {
-                //string postIp = GetPosIp(post);
-                //if (postIp.Equals(""))
-                //{
-                //    _logger.LogError("не нашёлся пост " + post + Environment.NewLine);
-                //    return NotFound();
-                //}
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
 
-                Supplies.HttpResponse response = Supplies.HttpSender.SendGet("http://" + "192.168.201.4:5000" + "/api/post/state?ClientId=" + clientID);
+                if (!CryptHash.CheckHashCode(model.hash, model.dtime))
+                {
+                    _logger.LogError("хэш не прошёл проверку" + Environment.NewLine);
+                    return Unauthorized();
+                }
+
+                string postIp = GetPosIp(model.post);
+                if (postIp.Equals(""))
+                {
+                    _logger.LogError("не нашёлся пост " + model.post + Environment.NewLine);
+                    return NotFound();
+                }
+
+                Supplies.HttpResponse response = Supplies.HttpSender.SendGet("http://" + postIp + "/api/post/state?ClientId=" + model.clientID);
                 switch (response.StatusCode)
                 {
                     case (HttpStatusCode)0:
-                        _logger.LogInformation("пост " + post + " недоступен" + Environment.NewLine);
+                        _logger.LogInformation("пост " + model.post + " недоступен" + Environment.NewLine);
                         return StatusCode(424);
 
                     case (HttpStatusCode)423:
@@ -50,7 +86,7 @@ namespace LeikaIntegration.Controllers
                         return Ok();
 
                     default:
-                        _logger.LogInformation("пост " + post + " недоступен (default)" + Environment.NewLine);
+                        _logger.LogInformation("пост " + model.post + " недоступен (default)" + Environment.NewLine);
                         return StatusCode(424);
                 }
             }
@@ -61,6 +97,30 @@ namespace LeikaIntegration.Controllers
             }
         }
 
+        /// <summary>
+        /// Запустить пост
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        ///
+        /// {
+        ///     "dtime": "2020-08-07 12:27:00",
+        ///     "hash": "$2a$07$30ydOQDXv5akDSajgDaSjubWyGrfbeTjI9BKwBU2kKtEdZd5O1.rC",
+        ///     "post": "1111",
+        ///     "amount": 100,
+        ///     "clientID": ""
+        /// }
+        ///
+        /// </remarks>
+        /// <response code="200">Удачно</response>
+        /// <response code="400">Некорректные входные параметры</response>
+        /// <response code="401">Хэш не прошёл проверку</response>
+        /// <response code="404">Пост не найден</response>
+        /// <response code="424">Нет связи с постом</response>
+        /// <response code="423">Пост занят</response>
+        /// <response code="500">Внутренняя ошибка сервера</response>
         [HttpPost("start")]
         public IActionResult Start(StartPostRequestBindingModel model)
         {
@@ -80,19 +140,25 @@ namespace LeikaIntegration.Controllers
                     }
                 }
 
-                //string postIp = GetPosIp(model.post);
-                //if (postIp.Equals(""))
-                //{
-                //    _logger.LogError("не найден пост " + model.post + Environment.NewLine);
-                //    return NotFound();
-                //}
+                if (!CryptHash.CheckHashCode(model.hash, model.dtime))
+                {
+                    _logger.LogError("хэш не прошёл проверку" + Environment.NewLine);
+                    return Unauthorized();
+                }
 
-                if(model.clientID == null)
+                string postIp = GetPosIp(model.post);
+                if (postIp.Equals(""))
+                {
+                    _logger.LogError("не найден пост " + model.post + Environment.NewLine);
+                    return NotFound();
+                }
+
+                if (model.clientID == null)
                 {
                     model.clientID = "";
                 }
 
-                Supplies.HttpResponse response = Supplies.HttpSender.SendPost("http://" + "192.168.201.4:5000" + "/api/post/balance/increase/mob_app", JsonConvert.SerializeObject(new StartPostPostBindingModel { Amount = model.amount, ClientId = model.clientID }));
+                Supplies.HttpResponse response = Supplies.HttpSender.SendPost("http://" + postIp + "/api/post/balance/increase/mob_app", JsonConvert.SerializeObject(new StartPostPostBindingModel { Amount = model.amount, ClientId = model.clientID }));
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.OK:
@@ -105,9 +171,11 @@ namespace LeikaIntegration.Controllers
                     case (HttpStatusCode)423:
                         _logger.LogError("пост " + model.post + " занят" + Environment.NewLine);
                         return StatusCode(423);
-                }
 
-                return Ok();
+                    default:
+                        _logger.LogInformation("пост " + model.post + " недоступен (default)" + Environment.NewLine);
+                        return StatusCode(424);
+                }
             }
             catch(Exception e)
             {
