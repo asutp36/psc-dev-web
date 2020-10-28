@@ -107,7 +107,8 @@ namespace Backend.Controllers
                     regions = uInfo.GetRegions(),
                     washes = uInfo.GetWashes(),
                     posts = uInfo.GetPosts(),
-                    changers = uInfo.GetChangers()
+                    changers = uInfo.GetChangers(),
+                    operationTypes = uInfo.GetOperationTypes()
                 };
 
                 return Ok(filters);

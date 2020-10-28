@@ -12,5 +12,6 @@ namespace Backend.Controllers.Supplies
         public List<WashViewModel> washes { get; set; }
         public List<PostViewModel> posts { get; set; }
         public List<ChangerViewModel> changers { get; set; }
+        public List<OperationTypeViewModel> operationTypes { get; set; }
     }
 }

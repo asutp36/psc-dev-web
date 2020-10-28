@@ -119,5 +119,18 @@ namespace Backend.Controllers.Supplies
 
             return result;
         }
+
+        public List<OperationTypeViewModel> GetOperationTypes()
+        {
+            List<OperationTypeViewModel> result = new List<OperationTypeViewModel>();
+
+            List<OperationTypes> types = _model.OperationTypes.ToList();
+            foreach(OperationTypes ot in types)
+            {
+                result.Add(new OperationTypeViewModel { code = ot.Code, name = ot.Name });
+            }
+
+            return result;
+        }
     }
 }

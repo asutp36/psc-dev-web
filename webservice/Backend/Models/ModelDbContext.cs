@@ -21,9 +21,10 @@ namespace Backend.Models
         public virtual DbSet<Changers> Changers { get; set; }
         public virtual DbSet<Device> Device { get; set; }
         public virtual DbSet<DeviceTypes> DeviceTypes { get; set; }
+        public virtual DbSet<OperationTypes> OperationTypes { get; set; }
         public virtual DbSet<Posts> Posts { get; set; }
-        public virtual DbSet<RoleWash> RoleWash { get; set; }
         public virtual DbSet<Regions> Regions { get; set; }
+        public virtual DbSet<RoleWash> RoleWash { get; set; }
         public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<UserRole> UserRole { get; set; }
         public virtual DbSet<Users> Users { get; set; }
@@ -154,6 +155,21 @@ namespace Backend.Models
                 entity.HasKey(e => e.IddeviceType);
 
                 entity.Property(e => e.IddeviceType).HasColumnName("IDDeviceType");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<OperationTypes>(entity =>
+            {
+                entity.HasKey(e => e.IdoperationType);
+
+                entity.Property(e => e.IdoperationType).HasColumnName("IDOperationType");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
