@@ -11,6 +11,7 @@ using Backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -56,7 +57,7 @@ namespace Backend.Controllers
 
         private ClaimsIdentity GetIdentity(LoginModel login)
         {
-            Users user = _model.Users.FirstOrDefault(u => u.Login.Equals(login.login) && u.Password.Equals(login.password));
+            Users user = _model.Users.FirstOrDefault(u => EF.Functions.Like(u.Login, login.login) && EF.Functions.Like(u.Password, login.password));
             if (user != null)
             {
                 var claims = new List<Claim>();
