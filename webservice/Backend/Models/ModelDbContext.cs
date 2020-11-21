@@ -24,9 +24,8 @@ namespace Backend.Models
         public virtual DbSet<OperationTypes> OperationTypes { get; set; }
         public virtual DbSet<Posts> Posts { get; set; }
         public virtual DbSet<Regions> Regions { get; set; }
-        public virtual DbSet<RoleWash> RoleWash { get; set; }
         public virtual DbSet<Roles> Roles { get; set; }
-        public virtual DbSet<UserRole> UserRole { get; set; }
+        public virtual DbSet<UserWash> UserWash { get; set; }
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<Wash> Wash { get; set; }
 
@@ -36,7 +35,6 @@ namespace Backend.Models
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=WashCompany;Trusted_Connection=True;");
-                //optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Initial Catalog=WashCompany;User Id=sa; Password=ora4paSS");
             }
         }
 
@@ -219,25 +217,6 @@ namespace Backend.Models
                     .HasMaxLength(100);
             });
 
-            modelBuilder.Entity<RoleWash>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.Property(e => e.Idrole).HasColumnName("IDRole");
-
-                entity.Property(e => e.Idwash).HasColumnName("IDWash");
-
-                entity.HasOne(d => d.IdroleNavigation)
-                    .WithMany()
-                    .HasForeignKey(d => d.Idrole)
-                    .HasConstraintName("FK_RoleWash_Roles");
-
-                entity.HasOne(d => d.IdwashNavigation)
-                    .WithMany()
-                    .HasForeignKey(d => d.Idwash)
-                    .HasConstraintName("FK_RoleWash_Wash");
-            });
-
             modelBuilder.Entity<Roles>(entity =>
             {
                 entity.HasKey(e => e.Idrole)
@@ -251,26 +230,26 @@ namespace Backend.Models
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(20);
+                    .HasMaxLength(50);
             });
 
-            modelBuilder.Entity<UserRole>(entity =>
+            modelBuilder.Entity<UserWash>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.Property(e => e.Idrole).HasColumnName("IDRole");
-
                 entity.Property(e => e.Iduser).HasColumnName("IDUser");
 
-                entity.HasOne(d => d.IdroleNavigation)
-                    .WithMany()
-                    .HasForeignKey(d => d.Idrole)
-                    .HasConstraintName("FK_UserRole_Roles");
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
 
                 entity.HasOne(d => d.IduserNavigation)
                     .WithMany()
                     .HasForeignKey(d => d.Iduser)
-                    .HasConstraintName("FK_UserRole_Users");
+                    .HasConstraintName("FK_UserWash_Users");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_UserWash_Wash");
             });
 
             modelBuilder.Entity<Users>(entity =>
@@ -285,6 +264,8 @@ namespace Backend.Models
                     .IsRequired()
                     .HasMaxLength(50);
 
+                entity.Property(e => e.Idrole).HasColumnName("IDRole");
+
                 entity.Property(e => e.Login)
                     .IsRequired()
                     .HasMaxLength(50);
@@ -292,6 +273,11 @@ namespace Backend.Models
                 entity.Property(e => e.Password)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.HasOne(d => d.IdroleNavigation)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.Idrole)
+                    .HasConstraintName("FK_Users_Roles");
             });
 
             modelBuilder.Entity<Wash>(entity =>

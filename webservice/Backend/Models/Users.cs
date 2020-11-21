@@ -10,5 +10,8 @@ namespace Backend.Models
         public string Password { get; set; }
         public string Email { get; set; }
         public string Description { get; set; }
+        public int Idrole { get; set; }
+
+        public virtual Roles IdroleNavigation { get; set; }
     }
 }
