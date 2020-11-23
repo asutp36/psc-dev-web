@@ -28,22 +28,19 @@ namespace Backend.Controllers.Supplies
 
             foreach (Claim c in claims)
             {
-                if (c.Type == ClaimsIdentity.DefaultRoleClaimType)
+                if (c.Type == "Wash")
                 {
-                    List<RoleWash> availableWashes = _model.RoleWash.Where(rw => rw.Idrole.Equals(_model.Roles.Where(r => r.Code.Equals(c.Value)).FirstOrDefault().Idrole)).ToList();
-                    foreach (RoleWash rw in availableWashes)
+                    Wash w = _model.Wash.Where(w => w.Code == c.Value).FirstOrDefault();
+                    result.Add(new WashViewModel()
                     {
-                        Wash w = _model.Wash.Find(rw.Idwash);
-                        result.Add(new WashViewModel()
-                        {
-                            idWash = w.Idwash,
-                            code = w.Code,
-                            name = w.Name,
-                            idRegion = w.Idregion
-                        });
-                    }
+                        idWash = w.Idwash,
+                        code = w.Code,
+                        name = w.Name,
+                        idRegion = w.Idregion
+                    });
                 }
             }
+
             _washes = result;
             return result;
         }

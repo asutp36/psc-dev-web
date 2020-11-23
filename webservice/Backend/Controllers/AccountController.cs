@@ -64,12 +64,14 @@ namespace Backend.Controllers
                 Claim c1 = new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login);
                 claims.Add(c1);
 
-                List<UserRole> roles = _model.UserRole.Where(ur => ur.Iduser.Equals(_model.Users.Where(u => u.Login.Equals(user.Login)).FirstOrDefault().Iduser)).ToList();
+                Claim c = new Claim(ClaimsIdentity.DefaultRoleClaimType, _model.Roles.Find(user.Idrole).Code);
+                claims.Add(c);
 
-                foreach(UserRole ur in roles)
+                List<UserWash> washes = _model.UserWash.Where(uw => uw.Iduser == user.Iduser).ToList();
+                foreach(UserWash w in washes)
                 {
-                    Claim c = new Claim(ClaimsIdentity.DefaultRoleClaimType, _model.Roles.Find(ur.Idrole).Code);
-                    claims.Add(c);
+                    string washCode = _model.Wash.Find(w.Idwash).Code;
+                    claims.Add(new Claim("Wash", washCode));
                 }
 
                 ClaimsIdentity claimsIdentity =
