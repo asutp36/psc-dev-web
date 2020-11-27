@@ -15,8 +15,8 @@ namespace LeikaIntegration.Controllers
             {
                 dtime = "2020-08-07 12:27:00",
                 hash = "$2a$07$30ydOQDXv5akDSajgDaSjubWyGrfbeTjI9BKwBU2kKtEdZd5O1.rC",
-                post = "1111",
-                amount = 100,
+                post = "qr1111",
+                amount = 40,
                 clientID = ""
             };
         }
