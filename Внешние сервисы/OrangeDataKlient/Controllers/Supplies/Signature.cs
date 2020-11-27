@@ -10,13 +10,13 @@ namespace OrangeDataKlient.Controllers.Supplies
 {
     public class Signature
     {
-        public string ComputeSignature(string document)
+        public static string ComputeSignature(string document)
         {
             var data = Encoding.UTF8.GetBytes(document);
 
             using (var rsa = RSA.Create())
             {
-                rsa.FromXmlString(File.ReadAllText("rsa_2048_private_key.xml"));
+                rsa.FromXmlString(File.ReadAllText("private_key_test.xml"));
                 return Convert.ToBase64String(rsa.SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
             }
         }
