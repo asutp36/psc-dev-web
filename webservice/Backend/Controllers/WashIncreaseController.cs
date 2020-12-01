@@ -20,6 +20,7 @@ namespace Backend.Controllers
     {
         ModelDbContext _model = new ModelDbContext();
 
+        [SwaggerOperation(Summary = "Данные для страницы внесений по мойкам")]
         [SwaggerResponse(200, Type = typeof(GetIncreaseByWashs_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
@@ -44,6 +45,7 @@ namespace Backend.Controllers
             }
         }
 
+        [SwaggerOperation(Summary = "Данные для страницы внесений по постам")]
         [SwaggerResponse(200, Type = typeof(GetIncreaseByPosts_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
@@ -68,6 +70,7 @@ namespace Backend.Controllers
             }
         }
 
+        [SwaggerOperation(Summary = "Данные для страницы внесений по событиям")]
         [SwaggerResponse(200, Type = typeof(GetIncreaseByEvents_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]

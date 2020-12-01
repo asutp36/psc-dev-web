@@ -18,6 +18,7 @@ namespace Backend.Controllers
     {
         ModelDbContext _model = new ModelDbContext();
 
+        [SwaggerOperation(Summary = "Получить все роли")]
         [SwaggerResponse(200, Type = typeof(List<RoleViewModel>))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]

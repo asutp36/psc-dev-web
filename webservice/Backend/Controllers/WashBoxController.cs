@@ -20,6 +20,7 @@ namespace Backend.Controllers
     {
         ModelDbContext _model = new ModelDbContext();
 
+        [SwaggerOperation(Summary = "Данные для страницы наличия в боксах по мойкам")]
         [SwaggerResponse(200, Type = typeof(GetBoxByWashs_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
@@ -42,6 +43,7 @@ namespace Backend.Controllers
             }
         }
 
+        [SwaggerOperation(Summary = "Данные для страницы наличия в боксах по постам")]
         [SwaggerResponse(200, Type = typeof(GetBoxByPosts_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]

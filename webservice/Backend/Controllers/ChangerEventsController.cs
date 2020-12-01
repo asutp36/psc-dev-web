@@ -20,6 +20,7 @@ namespace Backend.Controllers
     {
         ModelDbContext _model = new ModelDbContext();
 
+        [SwaggerOperation(Summary = "Данные для страницы событий на разменнике")]
         [SwaggerResponse(200, Type = typeof(GetEventsByChangerViewModel))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]

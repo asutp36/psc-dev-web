@@ -16,6 +16,7 @@ namespace Backend.Controllers
     [ApiController]
     public class ChangerMonitoringController : ControllerBase
     {
+        [SwaggerOperation(Summary = "Мониторинг разменника")]
         [SwaggerResponse(200, "Ок", Type = typeof(ChangerState))]
         [SwaggerResponse(424, "Проблема со связью", Type = typeof(Error))]
         [SwaggerResponse(500, "Внутренняя ошибка сервера", Type = typeof(Error))]

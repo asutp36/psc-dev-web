@@ -20,7 +20,8 @@ namespace Backend.Controllers
     {
         ModelDbContext _model = new ModelDbContext();
 
-        [SwaggerResponse(200, Type = typeof(GetIncreaseByWashs_Result))]
+        [SwaggerOperation(Summary = "Данные для страницы инкассации по мойкам")]
+        [SwaggerResponse(200, Type = typeof(GetCollectByWashs_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
         [HttpGet("washs")]
@@ -44,6 +45,7 @@ namespace Backend.Controllers
             }
         }
 
+        [SwaggerOperation(Summary = "Данные для страницы инкассации по постам")]
         [SwaggerResponse(200, Type = typeof(GetCollectByPosts_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
@@ -68,6 +70,7 @@ namespace Backend.Controllers
             }
         }
 
+        [SwaggerOperation(Summary = "Данные для страницы инкассации по дням")]
         [SwaggerResponse(200, Type = typeof(GetCollectByDays_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
