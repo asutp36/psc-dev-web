@@ -13,5 +13,6 @@ namespace Backend.Controllers.Supplies
         public List<PostViewModel> posts { get; set; }
         public List<ChangerViewModel> changers { get; set; }
         public List<OperationTypeViewModel> operationTypes { get; set; }
+        public List<EventChangerKindViewModel> eventChangerKinds { get; set; }
     }
 }

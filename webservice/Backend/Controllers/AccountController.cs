@@ -112,7 +112,8 @@ namespace Backend.Controllers
                     washes = uInfo.GetWashes(),
                     posts = uInfo.GetPosts(),
                     changers = uInfo.GetChangers(),
-                    operationTypes = uInfo.GetOperationTypes()
+                    operationTypes = uInfo.GetOperationTypes(),
+                    eventChangerKinds = uInfo.GetEventChangerKinds()
                 };
 
                 return Ok(filters);

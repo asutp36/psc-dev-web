@@ -129,5 +129,18 @@ namespace Backend.Controllers.Supplies
 
             return result;
         }
+
+        public List<EventChangerKindViewModel> GetEventChangerKinds()
+        {
+            List<EventChangerKindViewModel> result = new List<EventChangerKindViewModel>();
+
+            List<EventChangerKind> kinds = _model.EventChangerKind.ToList();
+            foreach(EventChangerKind eck in kinds)
+            {
+                result.Add(new EventChangerKindViewModel { code = eck.Code, name = eck.Name });
+            }
+
+            return result;
+        }
     }
 }

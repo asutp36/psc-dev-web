@@ -21,6 +21,9 @@ namespace Backend.Models
         public virtual DbSet<Changers> Changers { get; set; }
         public virtual DbSet<Device> Device { get; set; }
         public virtual DbSet<DeviceTypes> DeviceTypes { get; set; }
+        public virtual DbSet<Event> Event { get; set; }
+        public virtual DbSet<EventChangerKind> EventChangerKind { get; set; }
+        public virtual DbSet<EventIncrease> EventIncrease { get; set; }
         public virtual DbSet<OperationTypes> OperationTypes { get; set; }
         public virtual DbSet<Posts> Posts { get; set; }
         public virtual DbSet<Regions> Regions { get; set; }
@@ -162,6 +165,72 @@ namespace Backend.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<Event>(entity =>
+            {
+                entity.HasKey(e => e.Idevent);
+
+                entity.Property(e => e.Idevent).HasColumnName("IDEvent");
+
+                entity.Property(e => e.Dtime)
+                    .HasColumnName("DTime")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IdeventKind).HasColumnName("IDEventKind");
+
+                entity.Property(e => e.IdeventPost).HasColumnName("IDEventPost");
+
+                entity.Property(e => e.Idpost).HasColumnName("IDPost");
+
+                entity.HasOne(d => d.IdpostNavigation)
+                    .WithMany(p => p.Event)
+                    .HasForeignKey(d => d.Idpost)
+                    .HasConstraintName("FK_Event_Point");
+            });
+
+            modelBuilder.Entity<EventChangerKind>(entity =>
+            {
+                entity.HasKey(e => e.IdeventChangerKind);
+
+                entity.Property(e => e.IdeventChangerKind).HasColumnName("IDEventChangerKind");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<EventIncrease>(entity =>
+            {
+                entity.HasKey(e => e.Idevent)
+                    .HasName("PK_EventCash");
+
+                entity.Property(e => e.Idevent)
+                    .HasColumnName("IDEvent")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Amount).HasColumnName("amount");
+
+                entity.Property(e => e.B10).HasColumnName("b10");
+
+                entity.Property(e => e.B100).HasColumnName("b100");
+
+                entity.Property(e => e.B200).HasColumnName("b200");
+
+                entity.Property(e => e.B50).HasColumnName("b50");
+
+                entity.Property(e => e.Balance).HasColumnName("balance");
+
+                entity.Property(e => e.M10).HasColumnName("m10");
+
+                entity.HasOne(d => d.IdeventNavigation)
+                    .WithOne(p => p.EventIncrease)
+                    .HasForeignKey<EventIncrease>(d => d.Idevent)
+                    .HasConstraintName("FK_EventCash_Event");
             });
 
             modelBuilder.Entity<OperationTypes>(entity =>
