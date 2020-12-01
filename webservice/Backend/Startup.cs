@@ -82,6 +82,7 @@ namespace Backend
                     Description = "Бэкенд сайта",
                 });
 
+                c.EnableAnnotations();
 
                 c.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
                 {

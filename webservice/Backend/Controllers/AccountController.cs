@@ -84,6 +84,7 @@ namespace Backend.Controllers
             return null;
         }
 
+        [SwaggerOperation(Summary = "Залогиниться")]
         [SwaggerResponse(200, Type = typeof(Token))]
         [SwaggerResponse(400, Type = typeof(Error))]
         [HttpPost("login")]
@@ -94,6 +95,7 @@ namespace Backend.Controllers
             return Token(login);
         }
 
+        [SwaggerOperation(Summary = "Получить доступные значения фильтров")]
         [SwaggerResponse(200, Type = typeof(DashboardFilters))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
@@ -121,6 +123,7 @@ namespace Backend.Controllers
             }
         }
 
+        [SwaggerOperation(Summary = "Записать нового пользователя")]
         [SwaggerResponse(201, Description = "Создан пользователь")]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize(Roles = "admin, dev")]
@@ -148,6 +151,7 @@ namespace Backend.Controllers
             }
         }
 
+        [SwaggerOperation(Summary = "Получить всех пользователей")]
         [SwaggerResponse(200, Type = typeof(List<AccountViewModel>))]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize]
