@@ -68,7 +68,7 @@ namespace Backend.Controllers
                 claims.Add(c);
 
                 List<UserWash> washes = _model.UserWash.Where(uw => uw.Iduser == user.Iduser).ToList();
-                foreach(UserWash w in washes)
+                foreach (UserWash w in washes)
                 {
                     string washCode = _model.Wash.Find(w.Idwash).Code;
                     claims.Add(new Claim("Wash", washCode));
@@ -86,7 +86,7 @@ namespace Backend.Controllers
 
         [SwaggerResponse(200, Type = typeof(Token))]
         [SwaggerResponse(400, Type = typeof(Error))]
-        [HttpPost]
+        [HttpPost("login")]
         public IActionResult Login(LoginModel login)
         {
             if (!ModelState.IsValid)
@@ -115,8 +115,35 @@ namespace Backend.Controllers
 
                 return Ok(filters);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        [SwaggerResponse(201, Description = "Создан пользователь")]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        [Authorize(Roles = "admin, dev")]
+        [HttpPost]
+        public IActionResult Register(AccountRequestModel account)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(new Error("Модель не прошла валидацию", "model"));
+
+                ModelHelper.WriteUser(account);
+
+                return Created("", null);
+            }
+            catch (Exception e)
+            {
+                if (e.Message == "command") // ошибка в выполнении команды к бд
+                { }
+
+                if (e.Message == "connection") // ошибка подключения к бд
+                { }
+
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
