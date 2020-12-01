@@ -147,5 +147,42 @@ namespace Backend.Controllers
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
+
+        [SwaggerResponse(200, Type = typeof(List<AccountViewModel>))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        [Authorize]
+        [HttpGet]
+        public IActionResult Get()
+        {
+            try
+            {
+                List<AccountViewModel> result = new List<AccountViewModel>();
+
+                List<Users> users = _model.Users.ToList();
+                foreach(Users u in users)
+                {
+                    List<string> washes = new List<string>();
+
+                    List<UserWash> washIDs = _model.UserWash.Where(uw => uw.Iduser == u.Iduser).ToList();
+                    foreach(UserWash w in washIDs)
+                        washes.Add(_model.Wash.Find(w.Idwash).Code);
+
+                    result.Add(new AccountViewModel
+                    {
+                        login = u.Login,
+                        email = u.Email,
+                        description = u.Description,
+                        role = _model.Roles.Find(u.Idrole).Code,
+                        washes = washes
+                    });
+                }
+
+                return Ok(result);
+            }
+            catch(Exception e)
+            {
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
     }
 }
