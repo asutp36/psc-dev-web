@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -22,6 +23,13 @@ namespace Backend.Controllers
     public class AccountController : ControllerBase
     {
         ModelDbContext _model = new ModelDbContext();
+
+        private readonly ILogger<AccountController> _logger;
+
+        public AccountController(ILogger<AccountController> logger)
+        {
+            _logger = logger;
+        }
 
         private IActionResult Token(LoginModel login)
         {
@@ -164,6 +172,7 @@ namespace Backend.Controllers
                 List<AccountViewModel> result = new List<AccountViewModel>();
 
                 List<Users> users = _model.Users.ToList();
+                _logger.LogInformation("users.Count == " + users.Count);
                 foreach(Users u in users)
                 {
                     List<string> washes = new List<string>();
@@ -186,7 +195,8 @@ namespace Backend.Controllers
             }
             catch(Exception e)
             {
-                return StatusCode(500, new Error(e.Message, "unexpected"));
+                _logger.LogError(e.Message + Environment.NewLine + e.InnerException.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message + Environment.NewLine + e.StackTrace, "unexpected"));
             }
         }
     }
