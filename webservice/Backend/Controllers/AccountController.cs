@@ -151,11 +151,18 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 if (e.Message == "command") // ошибка в выполнении команды к бд
-                { }
+                {
+                    _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                    return StatusCode(500, new Error(e.Message, "command"));
+                }
 
                 if (e.Message == "connection") // ошибка подключения к бд
-                { }
+                {
+                    _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                    return StatusCode(500, new Error(e.Message, "connection"));
+                }
 
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
@@ -172,7 +179,6 @@ namespace Backend.Controllers
                 List<AccountViewModel> result = new List<AccountViewModel>();
 
                 List<Users> users = _model.Users.ToList();
-                _logger.LogInformation("users.Count == " + users.Count);
                 foreach(Users u in users)
                 {
                     List<string> washes = new List<string>();
@@ -184,8 +190,9 @@ namespace Backend.Controllers
                     result.Add(new AccountViewModel
                     {
                         login = u.Login,
+                        name = u.Name,
                         email = u.Email,
-                        description = u.Description,
+                        phone = u.Phone,
                         role = _model.Roles.Find(u.Idrole).Code,
                         washes = washes
                     });
@@ -195,7 +202,7 @@ namespace Backend.Controllers
             }
             catch(Exception e)
             {
-                _logger.LogError(e.Message + Environment.NewLine + e.InnerException.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500, new Error(e.Message + Environment.NewLine + e.StackTrace, "unexpected"));
             }
         }

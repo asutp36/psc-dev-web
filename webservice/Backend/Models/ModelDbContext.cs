@@ -328,11 +328,7 @@ namespace Backend.Models
 
                 entity.Property(e => e.Iduser).HasColumnName("IDUser");
 
-                entity.Property(e => e.Description).HasMaxLength(200);
-
-                entity.Property(e => e.Email)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                entity.Property(e => e.Email).HasMaxLength(50);
 
                 entity.Property(e => e.Idrole).HasColumnName("IDRole");
 
@@ -340,9 +336,15 @@ namespace Backend.Models
                     .IsRequired()
                     .HasMaxLength(50);
 
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
                 entity.Property(e => e.Password)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.Property(e => e.Phone).HasMaxLength(20);
 
                 entity.HasOne(d => d.IdroleNavigation)
                     .WithMany(p => p.Users)
