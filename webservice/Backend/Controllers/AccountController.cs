@@ -206,5 +206,41 @@ namespace Backend.Controllers
                 return StatusCode(500, new Error(e.Message + Environment.NewLine + e.StackTrace, "unexpected"));
             }
         }
+
+        [Authorize(Roles = "admin, dev")]
+        [HttpDelete("{login}")]
+        public IActionResult Delete(string login)
+        {
+            try
+            {
+                if (login == null)
+                    return BadRequest(new Error("Не задано имя пользователя", "model"));
+
+                if (_model.Users.Where(u => u.Login == login).FirstOrDefault() == null)
+                    return NotFound(new Error("Пользователь с таким логином не найден", "not found"));
+
+                SqlHelper.DeleteUser(login);
+                _logger.LogInformation($"Удалён {login} пользователем {User.Identity.Name}");
+
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                if (e.Message == "command") // ошибка в выполнении команды к бд
+                {
+                    _logger.LogError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
+                    return StatusCode(500, new Error(e.Message, "command"));
+                }
+
+                if (e.Message == "connection") // ошибка подключения к бд
+                {
+                    _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                    return StatusCode(500, new Error(e.Message, "connection"));
+                }
+
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
     }
 }

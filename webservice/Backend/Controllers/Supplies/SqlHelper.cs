@@ -57,5 +57,30 @@ namespace Backend.Controllers.Supplies
             else
                 throw new Exception("connection");
         }
+
+        public static void DeleteUser(string login)
+        {
+            ModelDbContext context = new ModelDbContext();
+
+            if (context.Database.CanConnect())
+            {
+                context.Database.OpenConnection();
+                try
+                {
+                    string command = $"delete from Users where Login = '{login}'";
+                    context.Database.ExecuteSqlRaw(command);
+                    context.Database.CloseConnection();
+                }
+                catch (Exception e)
+                {
+                    if (context.Database.GetDbConnection().State == System.Data.ConnectionState.Open)
+                        context.Database.CloseConnection();
+
+                    throw new Exception("command", e);
+                }
+            }
+            else
+                throw new Exception("connection");
+        }
     }
 }
