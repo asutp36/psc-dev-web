@@ -8,10 +8,16 @@ using System.Threading.Tasks;
 
 namespace Backend.Controllers.Supplies
 {
-    public class ModelHelper
+    public class SqlHelper
     {
         public static void WriteUser(AccountRequestModel model)
         {
+            PhoneFormatter formattedPhone = new PhoneFormatter(model.phone);
+
+            string email = "'null'";
+            if (model.email != null)
+                email = $"'{model.email}'";
+
             ModelDbContext context = new ModelDbContext();
 
             if (context.Database.CanConnect())
@@ -20,10 +26,11 @@ namespace Backend.Controllers.Supplies
                 try
                 {
                     context.Database.BeginTransaction();
+                    string command = "";
 
-                    string command = $"insert into Users (Login, Password, Email, Description, IDRole) " +
-                        $"values ('{model.login}', '{model.password}', '{model.email}', '{model.description}', " +
-                        $"(select IDRole from Roles where Code = '{model.role}'))";
+                    command = $"insert into Users (Login, Password, Name, Email, Phone, PhoneInt, IDRole) " +
+                        $"values ('{model.login}', '{model.password}', '{model.name}', {email}, {formattedPhone.phone}, " +
+                        $"{formattedPhone.phoneInt}, (select IDRole from Roles where Code = '{model.role}'))";
                     context.Database.ExecuteSqlRaw(command);
 
                     foreach (string w in model.washes)
@@ -44,7 +51,7 @@ namespace Backend.Controllers.Supplies
                     if (context.Database.GetDbConnection().State == System.Data.ConnectionState.Open)
                         context.Database.CloseConnection();
 
-                    throw new Exception("command");
+                    throw new Exception("command", e);
                 }
             }
             else

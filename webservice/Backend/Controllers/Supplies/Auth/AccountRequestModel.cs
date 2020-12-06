@@ -13,8 +13,9 @@ namespace Backend.Controllers.Supplies.Auth
         [Required]
         public string password { get; set; }
         [Required]
+        public string name { get; set; }
+        public string phone { get; set; }
         public string email { get; set; }
-        public string description { get; set; }
         [Required]
         public string role { get; set; }
         [Required]

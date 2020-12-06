@@ -144,7 +144,7 @@ namespace Backend.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(new Error("Модель не прошла валидацию", "model"));
 
-                ModelHelper.WriteUser(account);
+                SqlHelper.WriteUser(account);
 
                 return Created("", null);
             }
@@ -152,7 +152,7 @@ namespace Backend.Controllers
             {
                 if (e.Message == "command") // ошибка в выполнении команды к бд
                 {
-                    _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                    _logger.LogError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
                     return StatusCode(500, new Error(e.Message, "command"));
                 }
 
