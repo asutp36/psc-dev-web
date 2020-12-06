@@ -134,6 +134,7 @@ namespace Backend.Controllers
 
         [SwaggerOperation(Summary = "Записать нового пользователя")]
         [SwaggerResponse(201, Description = "Создан пользователь")]
+        [SwaggerResponse(409, Type = typeof(Error), Description = "Пользователь с таким логином уже существует")]
         [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize(Roles = "admin, dev")]
         [HttpPost]
@@ -143,6 +144,9 @@ namespace Backend.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(new Error("Модель не прошла валидацию", "model"));
+
+                if (_model.Users.Where(u => u.Login == account.login).FirstOrDefault() != null)
+                    return Conflict(new Error("Пользователь с таким логином уже существует", "user data"));
 
                 SqlHelper.WriteUser(account);
 
@@ -207,6 +211,10 @@ namespace Backend.Controllers
             }
         }
 
+        [SwaggerOperation(Summary = "Удалить пользователя")]
+        [SwaggerResponse(200)]
+        [SwaggerResponse(404, Type = typeof(Error), Description = "Не найден пользователь")]
+        [SwaggerResponse(500, Type = typeof(Error))]
         [Authorize(Roles = "admin, dev")]
         [HttpDelete("{login}")]
         public IActionResult Delete(string login)
