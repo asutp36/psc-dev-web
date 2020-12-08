@@ -308,6 +308,39 @@ namespace CardsMobileService.Controllers
             return result;
         }
 
+        public TechCards GetTechCards(string washCode)
+        {
+            TechCards result = new TechCards();
+
+            int idService = GetIDCardType("service");
+            int idClean = GetIDCardType("clean");
+            int idDoors = GetIDCardType("doors");
+            int idCollect = GetIDCardType("collect");
+
+            int x = _model.Washes.Where(w => w.Code == washCode).FirstOrDefault().Idwash;
+
+            List<int> groupsIDs = _model.WashGroups.Include(wg => wg.IdgroupNavigation).Where(wg => wg.Idwash == _model.Washes.Where(w => w.Code == washCode).FirstOrDefault().Idwash).Select(r => r.Idgroup).ToList();
+            List<Card> cards = new List<Card>();
+            foreach(int groupID in groupsIDs)
+            {
+                cards.AddRange(_model.CardGroups.Where(cg => cg.Idgroup == groupID).Select(r => r.IdcardNavigation).ToList());
+            }
+
+            foreach (Card c in cards)
+            {
+                if (c.IdcardType == idClean)
+                    result.cleanUp.Add(c.CardNum);
+                if (c.IdcardType == idCollect)
+                    result.collect.Add(c.CardNum);
+                if (c.IdcardType == idDoors)
+                    result.doors.Add(c.CardNum);
+                if (c.IdcardType == idService)
+                    result.service.Add(c.CardNum);
+            }
+
+            return result;
+        }
+
         private int GetIDCardType(string typeCode)
         {
             return _model.CardTypes.Where(ct => ct.Code.Equals(typeCode)).FirstOrDefault().IdcardType;

@@ -28,6 +28,7 @@ namespace CardsMobileService.Controllers
             _postApi = postApi;
         }
 
+        #region Swagger Descrition
         [SwaggerOperation(Summary = "Запуск поста")]
         [SwaggerResponse(200, Description = "Успешно")]
         [SwaggerResponse(400, Description = "Модель не прошла валидацию")]
@@ -39,6 +40,7 @@ namespace CardsMobileService.Controllers
         [SwaggerResponse(423, Description = "Пост занят")]
         [SwaggerResponse(424, Description = "Нет связи с постом")]
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
+        #endregion
         [HttpPost("start")]
         public IActionResult Start(PostActionModel model)
         {
@@ -87,11 +89,13 @@ namespace CardsMobileService.Controllers
             }
         }
 
+        #region Swagger Descrition
         [SwaggerOperation(Summary = "Отправка конца мойки на мобильное приложение")]
         [SwaggerResponse(200, Description = "Удачно отправлено")]
         [SwaggerResponse(400, Description = "Модель не прошла валидацию")]
         [SwaggerResponse(404, Description = "Не найдена такая карта")]
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
+        #endregion
         [HttpPost("stop")]
         public IActionResult Stop(PostActionModel model)
         {
@@ -143,10 +147,12 @@ namespace CardsMobileService.Controllers
             return StatusCode((int)response.StatusCode, response.ResultMessage);
         }
 
+        #region Swagger Descrition
         [SwaggerOperation(Summary = "Получить номер карты по номеру владельца")]
         [SwaggerResponse(200, Description = "Успешно", Type = typeof(List<string>))]
         [SwaggerResponse(404, Description = "Не найдены карты")]
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
+        #endregion
         [HttpGet]
         [Route("cards/{phone}")]
         public IActionResult GetCards(string phone)
@@ -168,6 +174,7 @@ namespace CardsMobileService.Controllers
             }
         }
 
+        #region Swagger Descrition
         [SwaggerOperation(Summary = "Новая карта с разменника")]
         [SwaggerResponse(201, Description = "Успешно")]
         [SwaggerResponse(400, Description = "Модель не прошла валидацию")]
@@ -175,6 +182,7 @@ namespace CardsMobileService.Controllers
         [SwaggerResponse(417, Description = "Ошибка при записи в базу")]
         [SwaggerResponse(500, Description = "Не удалось записать карту")]
         [SwaggerResponse(503, Description = "Не удалось записать пополнение")]
+        #endregion
         [HttpPost("card")]
         public IActionResult NewCard(NewCardFromChanger model)
         {
@@ -251,9 +259,11 @@ namespace CardsMobileService.Controllers
             }
         }
 
+        #region Swagger Descrition
         [SwaggerOperation(Summary = "Получить номер телефона и баланс по номеру карты")]
         [SwaggerResponse(200, Description = "Успешно", Type = typeof(GetPhoneByCardNum))]
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервиса")]
+        #endregion
         [HttpGet("phone/{cardNum}")]
         public IActionResult GetPhoneByCardNum(string cardNum)
         {
@@ -275,10 +285,12 @@ namespace CardsMobileService.Controllers
                 return StatusCode(500);
             }
         }
-
-        [SwaggerOperation(Summary = "Получить номера технических карт")]
+        
+        #region Swagger Descrition
+        [SwaggerOperation(Summary = "Получить номера всех технических карт")]
         [SwaggerResponse(200, Description = "Успешно", Type = typeof(TechCards))]
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервиса")]
+        #endregion
         [HttpGet("cards/tech")]
         public IActionResult GetTechCards()
         {
@@ -293,12 +305,39 @@ namespace CardsMobileService.Controllers
             }
         }
 
+        #region Swagger Descrition
+        [SwaggerOperation(Summary = "Получить номера технических карт по коду поста")]
+        [SwaggerResponse(200, Description = "Успешно", Type = typeof(TechCards))]
+        [SwaggerResponse(404, Description = "Не найден пост")]
+        [SwaggerResponse(500, Description = "Внутренняя ошибка сервиса")]
+        #endregion
+        [HttpGet("cards/tech/{post}")]
+        public IActionResult GetTechCards(string post)
+        {
+            try
+            {
+                if (!_postApi.IsExist(post))
+                    return NotFound();
+
+                string washCode = _postApi.GetWashCode(post);
+
+                return Ok(_cardsApi.GetTechCards(washCode));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500);
+            }
+        }
+
+        #region Swagger Descrition
         [SwaggerOperation(Summary = "Изменить номер карты")]
         [SwaggerResponse(200, Description = "Успешно")]
         [SwaggerResponse(400, Description = "Модель не прошла валидацию")]
         [SwaggerResponse(404, Description = "не найдена карта")]
         [SwaggerResponse(409, Description = "Карта с таким номером уже существует")]
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервиса")]
+        #endregion
         [HttpPut("card")]
         public IActionResult ChangeCardNum(ChangeCardNumModel model)
         {
