@@ -328,13 +328,13 @@ namespace CardsMobileService.Controllers
 
             foreach (Card c in cards)
             {
-                if (c.IdcardType == idClean)
+                if (c.IdcardType == idClean && !result.cleanUp.Contains(c.CardNum))
                     result.cleanUp.Add(c.CardNum);
-                if (c.IdcardType == idCollect)
+                if (c.IdcardType == idCollect && !result.collect.Contains(c.CardNum))
                     result.collect.Add(c.CardNum);
-                if (c.IdcardType == idDoors)
+                if (c.IdcardType == idDoors && !result.doors.Contains(c.CardNum))
                     result.doors.Add(c.CardNum);
-                if (c.IdcardType == idService)
+                if (c.IdcardType == idService && !result.service.Contains(c.CardNum))
                     result.service.Add(c.CardNum);
             }
 
