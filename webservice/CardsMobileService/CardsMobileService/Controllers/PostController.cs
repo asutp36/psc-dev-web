@@ -321,7 +321,8 @@ namespace CardsMobileService.Controllers
 
                 string washCode = _postApi.GetWashCode(post);
 
-                return Ok(_cardsApi.GetTechCards(washCode));
+                TechCards res = _cardsApi.GetTechCards(washCode);
+                return Ok(res);
             }
             catch (Exception e)
             {
