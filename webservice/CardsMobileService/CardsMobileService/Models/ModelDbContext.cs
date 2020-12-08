@@ -18,11 +18,13 @@ namespace CardsMobileService.Models
         }
 
         public virtual DbSet<Card> Cards { get; set; }
+        public virtual DbSet<CardGroup> CardGroups { get; set; }
         public virtual DbSet<CardStatus> CardStatuses { get; set; }
         public virtual DbSet<CardType> CardTypes { get; set; }
         public virtual DbSet<Changer> Changers { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<DeviceType> DeviceTypes { get; set; }
+        public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<NumsMobileCard> NumsMobileCards { get; set; }
         public virtual DbSet<Operation> Operations { get; set; }
         public virtual DbSet<OperationType> OperationTypes { get; set; }
@@ -30,6 +32,7 @@ namespace CardsMobileService.Models
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Wash> Washes { get; set; }
+        public virtual DbSet<WashGroup> WashGroups { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -74,6 +77,27 @@ namespace CardsMobileService.Models
                     .WithMany(p => p.Cards)
                     .HasForeignKey(d => d.Idowner)
                     .HasConstraintName("FK_Cards_Owners");
+            });
+
+            modelBuilder.Entity<CardGroup>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("CardGroup");
+
+                entity.Property(e => e.Idcard).HasColumnName("IDCard");
+
+                entity.Property(e => e.Idgroup).HasColumnName("IDGroup");
+
+                entity.HasOne(d => d.IdcardNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idcard)
+                    .HasConstraintName("FK_CardGroup_Cards");
+
+                entity.HasOne(d => d.IdgroupNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idgroup)
+                    .HasConstraintName("FK_CardGroup_Group");
             });
 
             modelBuilder.Entity<CardStatus>(entity =>
@@ -170,6 +194,23 @@ namespace CardsMobileService.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<Group>(entity =>
+            {
+                entity.HasKey(e => e.Idgroup);
+
+                entity.ToTable("Group");
+
+                entity.Property(e => e.Idgroup).HasColumnName("IDGroup");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(25);
             });
 
             modelBuilder.Entity<NumsMobileCard>(entity =>
@@ -308,6 +349,27 @@ namespace CardsMobileService.Models
                     .WithMany(p => p.Washes)
                     .HasForeignKey(d => d.Idregion)
                     .HasConstraintName("FK_Wash_Regions");
+            });
+
+            modelBuilder.Entity<WashGroup>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("WashGroup");
+
+                entity.Property(e => e.Idgroup).HasColumnName("IDGroup");
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.HasOne(d => d.IdgroupNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idgroup)
+                    .HasConstraintName("FK_WashGroup_Group");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_WashGroup_Wash");
             });
 
             OnModelCreatingPartial(modelBuilder);
