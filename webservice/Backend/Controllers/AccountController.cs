@@ -267,6 +267,8 @@ namespace Backend.Controllers
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Изменить данные пользоателя")]
         [SwaggerResponse(200)]
+        [SwaggerResponse(404, Type = typeof(Error))]
+        [SwaggerResponse(409, Type = typeof(Error))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [Authorize]
@@ -277,10 +279,10 @@ namespace Backend.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest();
+                    return BadRequest(new Error("Модель не прошла валидацию", "model"));
                 }
 
-                if (_model.Users.Where(u => u.Login == account.login).FirstOrDefault() == null)
+                if (_model.Users.Where(u => u.Login == account.oldLogin).FirstOrDefault() == null)
                 {
                     return NotFound(new Error("Пользователь с таким логином не найден", "not found"));
                 }
