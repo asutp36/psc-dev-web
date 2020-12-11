@@ -93,9 +93,11 @@ namespace Backend.Controllers
             return null;
         }
 
+        #region Swagger Annotations
         [SwaggerOperation(Summary = "Залогиниться")]
         [SwaggerResponse(200, Type = typeof(Token))]
         [SwaggerResponse(400, Type = typeof(Error))]
+        #endregion
         [HttpPost("login")]
         public IActionResult Login(LoginModel login)
         {
@@ -104,9 +106,11 @@ namespace Backend.Controllers
             return Token(login);
         }
 
+        #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить доступные значения фильтров")]
         [SwaggerResponse(200, Type = typeof(DashboardFilters))]
         [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
         [Authorize]
         [HttpGet("filters")]
         public IActionResult GetFilters()
@@ -133,10 +137,12 @@ namespace Backend.Controllers
             }
         }
 
+        #region Swagger Annotations
         [SwaggerOperation(Summary = "Записать нового пользователя")]
         [SwaggerResponse(201, Description = "Создан пользователь")]
         [SwaggerResponse(409, Type = typeof(Error), Description = "Пользователь с таким логином уже существует")]
         [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
         [Authorize(Roles = "admin, dev")]
         [HttpPost]
         public IActionResult Register(AccountRequestModel account)
@@ -165,7 +171,7 @@ namespace Backend.Controllers
 
                 if (e.Message == "connection") // ошибка подключения к бд
                 {
-                    _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                    _logger.LogError("не удалось подключиться к базе данных" + Environment.NewLine);
                     return StatusCode(500, new Error(e.Message, "connection"));
                 }
 
@@ -174,9 +180,11 @@ namespace Backend.Controllers
             }
         }
 
+        #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить всех пользователей")]
         [SwaggerResponse(200, Type = typeof(List<AccountViewModel>))]
         [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
         [Authorize]
         [HttpGet]
         public IActionResult Get()
@@ -186,12 +194,12 @@ namespace Backend.Controllers
                 List<AccountViewModel> result = new List<AccountViewModel>();
 
                 List<Users> users = _model.Users.ToList();
-                foreach(Users u in users)
+                foreach (Users u in users)
                 {
                     List<string> washes = new List<string>();
 
                     List<UserWash> washIDs = _model.UserWash.Where(uw => uw.Iduser == u.Iduser).ToList();
-                    foreach(UserWash w in washIDs)
+                    foreach (UserWash w in washIDs)
                         washes.Add(_model.Wash.Find(w.Idwash).Code);
 
                     result.Add(new AccountViewModel
@@ -207,17 +215,19 @@ namespace Backend.Controllers
 
                 return Ok(result);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500, new Error(e.Message + Environment.NewLine + e.StackTrace, "unexpected"));
             }
         }
 
+        #region Swagger Annotations
         [SwaggerOperation(Summary = "Удалить пользователя")]
         [SwaggerResponse(200)]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найден пользователь")]
         [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
         [Authorize(Roles = "admin, dev")]
         [HttpDelete("{login}")]
         public IActionResult Delete(string login)
@@ -235,7 +245,7 @@ namespace Backend.Controllers
 
                 return Ok();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 if (e.Message == "command") // ошибка в выполнении команды к бд
                 {
@@ -252,6 +262,50 @@ namespace Backend.Controllers
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
+        }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Изменить данные пользоателя")]
+        [SwaggerResponse(200)]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpPut]
+        public IActionResult Update(UpdateAccountRequestModel account)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
+
+                if (_model.Users.Where(u => u.Login == account.login).FirstOrDefault() == null)
+                {
+                    return NotFound(new Error("Пользователь с таким логином не найден", "not found"));
+                }
+
+                SqlHelper.UpdateUser(account);
+                _logger.LogInformation($"пользователь {User.Identity.Name} изменил пользователя: " + JsonConvert.SerializeObject(account));
+            }
+            catch (Exception e)
+            {
+                if (e.Message == "command") // ошибка в выполнении команды к бд
+                {
+                    _logger.LogError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
+                    return StatusCode(500, new Error(e.Message, "command"));
+                }
+
+                if (e.Message == "connection") // ошибка подключения к бд
+                {
+                    _logger.LogError("не удалось подключиться к базе данных" + Environment.NewLine);
+                    return StatusCode(500, new Error(e.Message, "connection"));
+                }
+
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+            return Ok();
         }
     }
 }
