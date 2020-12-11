@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Backend.Controllers
@@ -147,6 +148,8 @@ namespace Backend.Controllers
 
                 if (_model.Users.Where(u => u.Login == account.login).FirstOrDefault() != null)
                     return Conflict(new Error("Пользователь с таким логином уже существует", "user data"));
+
+                _logger.LogInformation("запуск с параметрами: " + JsonConvert.SerializeObject(account));
 
                 SqlHelper.WriteUser(account);
 

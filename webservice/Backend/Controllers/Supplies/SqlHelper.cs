@@ -1,6 +1,7 @@
 ﻿using Backend.Controllers.Supplies.Auth;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;

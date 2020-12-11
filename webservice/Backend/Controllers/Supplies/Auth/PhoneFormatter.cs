@@ -18,9 +18,9 @@ namespace Backend.Controllers.Supplies.Auth
                 this.phone = "'null'";
                 return;
             }
-            this.phoneInt = long.Parse(string.Join("", phone.Where(c => char.IsDigit(c)))).ToString();
+            this.phoneInt = "7" + string.Join("", phone.Where(c => char.IsDigit(c)));
 
-            this.phone = String.Format("{0:+#-###-###-##-##}", this.phoneInt);
+            this.phone = String.Format("'{0:+#-###-###-##-##}'", long.Parse(this.phoneInt));
         }
     }
 }
