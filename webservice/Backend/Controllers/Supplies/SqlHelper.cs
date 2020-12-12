@@ -101,7 +101,7 @@ namespace Backend.Controllers.Supplies
                 {
                     context.Database.BeginTransaction();
 
-                    string command = $"update Users set Login = '{model.login}', Password = '{model.password}', Name = '{model.name}', " +
+                    string command = $"update Users set Login = '{model.login}', Name = '{model.name}', " +
                         $"Email = {email}, Phone = {formattedPhone.phone}, PhoneInt = {formattedPhone.phoneInt}, " +
                         $"IDRole = (select IDRole from Roles where Code = '{model.role}') where Login = '{model.oldLogin}';";
                     context.Database.ExecuteSqlRaw(command);
