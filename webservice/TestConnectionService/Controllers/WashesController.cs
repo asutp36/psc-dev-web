@@ -19,17 +19,21 @@ namespace TestConnectionService.Controllers
         {
             try
             {
+                DateTime now = DateTime.Now;
                 List<string> result = new List<string>();
-                List<string> ips = GetIPs("М 202");
-                foreach(string ip in ips)
+                for (int i = 0; i < 100; i++)
                 {
-                    if (ip == null)
-                        continue;
-                    HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/heartbeat");
-                    result.Add(response.StatusCode.ToString());
+                    List<string> ips = GetIPs("М13");
+                    foreach (string ip in ips)
+                    {
+                        if (ip == null)
+                            continue;
+                        HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/heartbeat");
+                        result.Add(response.StatusCode.ToString());
+                    }
                 }
 
-                return Ok(result);
+                return Ok((DateTime.Now - now).ToString());
             }
             catch(Exception e)
             {
