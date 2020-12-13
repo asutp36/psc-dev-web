@@ -14,6 +14,7 @@ namespace TestConnectionService.Controllers
     [ApiController]
     public class WashesController : ControllerBase
     {
+
         [HttpGet]
         public IActionResult GetConnection()
         {
