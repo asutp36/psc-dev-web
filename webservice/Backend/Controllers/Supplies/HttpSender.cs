@@ -125,27 +125,54 @@ namespace Backend.Controllers.Supplies
             try
             {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                string result = "";
-                if (response.ContentType != null)
+                if (response.StatusCode != HttpStatusCode.OK)
                 {
-
+                    return new HttpResponse
+                    {
+                        StatusCode = response.StatusCode,
+                        ResultMessage = response.ToString()
+                    };
+                }
+                else
+                {
+                    string result;
                     using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
                     {
                         result = rdr.ReadToEnd();
                     }
+
+                    return new HttpResponse
+                    {
+                        StatusCode = response.StatusCode,
+                        ResultMessage = result
+                    };
                 }
-                return new HttpResponse { StatusCode = response.StatusCode, ResultMessage = result };
             }
             catch (WebException ex)
             {
+                if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException != null &&
+                    typeof(SocketException) == ex.InnerException.InnerException.GetType())
+                {
+                    SocketException se = (SocketException)ex.InnerException.InnerException;
+
+                    if (se.ErrorCode == 10060)
+                        return new HttpResponse { StatusCode = 0 };
+
+                    return new HttpResponse { ResultMessage = ex.Message };
+                }
                 HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
+
                 string result;
                 using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))
                 {
                     result = rdr.ReadToEnd();
                 }
 
-                return new HttpResponse{StatusCode = webResponse.StatusCode, ResultMessage = result};
+                return new HttpResponse
+                {
+                    StatusCode = webResponse.StatusCode,
+                    ResultMessage = result
+                };
             }
         }
     }
