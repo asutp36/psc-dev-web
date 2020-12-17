@@ -20,17 +20,13 @@ namespace TestConnectionService.Controllers.Supplies
             string lastConnection = null;
             if (!_cache.TryGetValue(post, out lastConnection))
             {
-                UpdateCache();
-                _cache.TryGetValue(post, out lastConnection);
+                HttpResponse response = HttpSender.SendGet("https://yandex.com/time/sync.json?geo=213");
+
+                _cache.Set(post, response.ResultMessage);
+                lastConnection = response.ResultMessage;
             }
 
             return lastConnection;
         }
-
-        public void UpdateCache()
-        {
-
-        }
-
     }
 }

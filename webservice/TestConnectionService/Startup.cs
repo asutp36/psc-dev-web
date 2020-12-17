@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TestConnectionService.Controllers.Supplies;
 
 namespace TestConnectionService
 {
@@ -26,6 +27,8 @@ namespace TestConnectionService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddTransient<CacheService>();
 
             services.AddMemoryCache();
         }

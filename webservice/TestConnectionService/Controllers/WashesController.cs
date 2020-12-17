@@ -15,6 +15,12 @@ namespace TestConnectionService.Controllers
     public class WashesController : ControllerBase
     {
 
+        private CacheService _cache;
+        public WashesController(CacheService cache)
+        {
+            _cache = cache;
+        }
+
         [HttpGet]
         public IActionResult GetConnection()
         {
@@ -22,19 +28,20 @@ namespace TestConnectionService.Controllers
             {
                 DateTime now = DateTime.Now;
                 List<string> result = new List<string>();
-                for (int i = 0; i < 100; i++)
-                {
-                    List<string> ips = GetIPs("М13");
-                    foreach (string ip in ips)
-                    {
-                        if (ip == null)
-                            continue;
-                        HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/heartbeat");
-                        result.Add(response.StatusCode.ToString());
-                    }
-                }
+                //for (int i = 0; i < 100; i++)
+                //{
+                //    List<string> ips = GetIPs("М13");
+                //    foreach (string ip in ips)
+                //    {
+                //        if (ip == null)
+                //            continue;
+                //        HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/heartbeat");
+                //        result.Add(response.StatusCode.ToString());
+                //    }
+                //}
+                string res = _cache.GetLastConnection("13-1");
 
-                return Ok((DateTime.Now - now).ToString());
+                return Ok(res);
             }
             catch(Exception e)
             {
