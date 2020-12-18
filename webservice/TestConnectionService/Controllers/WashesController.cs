@@ -13,8 +13,8 @@ namespace TestConnectionService.Controllers
     [ApiController]
     public class WashesController : ControllerBase
     {
-
         private CacheService _cache;
+
         public WashesController(CacheService cache)
         {
             _cache = cache;
