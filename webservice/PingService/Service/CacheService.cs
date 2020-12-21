@@ -9,12 +9,13 @@ namespace PingService.Service
 {
     class CacheService
     {
-        private IMemoryCache _cache;
+        private Dictionary<string, string> _cache;
         private object locker;
 
-        public CacheService (IMemoryCache cache)
+        public CacheService ()
         {
-            _cache = cache;
+            _cache = new Dictionary<string, string>();
+            locker = new object();
         }
 
         public async Task UpdateCacheAsync()
@@ -25,10 +26,11 @@ namespace PingService.Service
                 {
                     HttpResponse response = HttpSender.SendGet("https://yandex.com/time/sync.json?geo=213");
 
-                    _cache.Set("13-1", response.ResultMessage);
+                    _cache.Remove("13-1");
+                    _cache.Add("13-1", response.ResultMessage);
                 }
 
-                await Task.Delay(10000);
+                await Task.Delay(3000);
             }
         }
 
@@ -41,7 +43,9 @@ namespace PingService.Service
                 {
                     HttpResponse response = HttpSender.SendGet("https://yandex.com/time/sync.json?geo=213");
 
-                    _cache.Set("13-1", response.ResultMessage);
+                    //_cache.Set("13-1", response.ResultMessage);
+                    _cache.Remove("13-1");
+                    _cache.Add("13-1", response.ResultMessage);
                     lastConnection = response.ResultMessage;
                 }
 
