@@ -28,7 +28,7 @@ namespace TestConnectionService
         {
             services.AddControllers();
 
-            services.AddTransient<CacheService>();
+            services.AddSingleton<CacheService>();
 
             services.AddMemoryCache();
         }
