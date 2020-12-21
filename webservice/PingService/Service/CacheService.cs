@@ -31,5 +31,22 @@ namespace PingService.Service
                 await Task.Delay(10000);
             }
         }
+
+        public string GetLastPing()
+        {
+            lock (locker)
+            {
+                string lastConnection = null;
+                if (!_cache.TryGetValue("13-1", out lastConnection))
+                {
+                    HttpResponse response = HttpSender.SendGet("https://yandex.com/time/sync.json?geo=213");
+
+                    _cache.Set("13-1", response.ResultMessage);
+                    lastConnection = response.ResultMessage;
+                }
+
+                return lastConnection;
+            }
+        }
     }
 }
