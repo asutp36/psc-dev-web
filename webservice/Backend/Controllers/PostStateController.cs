@@ -1,8 +1,10 @@
 ﻿using Backend.Controllers.Supplies;
+using Backend.Controllers.Supplies.ViewModels;
 using Backend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,25 +14,35 @@ namespace Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostMonitoringController : ControllerBase
+    public class PostStateController : ControllerBase
     {
         private ModelDbContext _model;
-        private readonly ILogger<PostMonitoringController> _logger;
+        private readonly ILogger<PostStateController> _logger;
 
-        public PostMonitoringController(ILogger<PostMonitoringController> logger)
+        public PostStateController(ILogger<PostStateController> logger)
         {
             _logger = logger;
             _model = new ModelDbContext();
         }
 
         #region Swagger Annotations
+        [SwaggerOperation(Summary = "Данные для страницы статистики поста")]
+        [SwaggerResponse(200, Type = typeof(PostStateViewModel))]
+        [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [HttpGet("{postCode}")]
         public IActionResult Get(string postCode)
         {
             try
             {
-                return Ok();
+                PostStateViewModel result = new PostStateViewModel();
+                result.lastSync = SqlHelper.GetLastPostSync(postCode).ToString("yyyy-MM-dd HH:mm:ss");
+
+                // сервис пинга
+                result.lastPing = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+
+                return Ok(result);
             }
             catch(Exception e)
             {

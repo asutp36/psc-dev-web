@@ -186,5 +186,31 @@ namespace Backend.Controllers.Supplies
             else
                 throw new Exception("connection");
         }
+
+        public static DateTime GetLastPostSync(string postCode)
+        {
+            ModelDbContext context = new ModelDbContext();
+
+            if (context.Database.CanConnect()) 
+            {
+                try
+                {
+                    DateTime result = context.Event.Include(e => e.IdpostNavigation).ThenInclude(p => p.IddeviceNavigation)
+                                       .Where(res => res.IdpostNavigation.IddeviceNavigation.Code == postCode).Max(e => e.Dtime);
+
+                    return result;
+                }
+                catch(Exception e)
+                {
+                    throw new Exception("command", e);
+                }
+            }
+            else
+                throw new Exception("connection");
+
+            
+        }
+
+        
     }
 }
