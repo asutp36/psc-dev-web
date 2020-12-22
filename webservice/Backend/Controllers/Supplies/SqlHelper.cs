@@ -1,5 +1,7 @@
 ﻿using Backend.Controllers.Supplies.Auth;
+using Backend.Controllers.Supplies.Stored_Procedures;
 using Backend.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -127,6 +129,57 @@ namespace Backend.Controllers.Supplies
                     if (context.Database.GetDbConnection().State == System.Data.ConnectionState.Open)
                         context.Database.CloseConnection();
 
+                    throw new Exception("command", e);
+                }
+            }
+            else
+                throw new Exception("connection");
+        }
+
+        public static GetBoxByPosts_Result GetBoxByPosts(string reportDate, int regionCode, string washCode, string postCode)
+        {
+            ModelDbContext context = new ModelDbContext();
+
+            if (context.Database.CanConnect())
+            {
+                try
+                {
+                    SqlParameter p_ReportDate = new SqlParameter("@p_ReportDate", reportDate);
+                    SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                    SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+                    SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
+
+                    GetBoxByPosts_Result result = context.Set<GetBoxByPosts_Result>().FromSqlRaw("GetBoxByPosts @p_ReportDate, @p_RegionCode, @p_WashCode, @p_PostCode", p_ReportDate, p_RegionCode, p_WashCode, p_PostCode).AsEnumerable().FirstOrDefault();
+                    return result;
+                }
+                catch(Exception e)
+                {
+                    throw new Exception("command", e);
+                }
+            }
+            else
+                throw new Exception("connection");
+        }
+
+        public static GetIncreaseByPosts_Result GetIncreaseByPosts(string startDate, string endDate, int regionCode, string washCode, string postCode)
+        {
+            ModelDbContext context = new ModelDbContext();
+
+            if (context.Database.CanConnect())
+            {
+                try
+                {
+                    SqlParameter p_dateBeg = new SqlParameter("@p_DateBeg", startDate);
+                    SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", endDate);
+                    SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                    SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+                    SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
+
+                    GetIncreaseByPosts_Result result = context.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPosts @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode).AsEnumerable().FirstOrDefault();
+                    return result;
+                }
+                catch (Exception e)
+                {
                     throw new Exception("command", e);
                 }
             }
