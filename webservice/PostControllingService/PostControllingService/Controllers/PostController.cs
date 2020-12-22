@@ -440,6 +440,37 @@ namespace PostControllingService.Controllers
             }
         }
 
+        [HttpGet]
+        [ActionName("state")]
+        public IHttpActionResult GetState(string postCode)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if(postCode == null)
+                {
+                    return BadRequest();
+                }
+
+                string ip = GetPostIp(postCode);
+                if(ip == null)
+                {
+                    return NotFound();
+                }
+
+                GetScalarResponse response = HttpSender.GetScalar("http://" + ip + "/api/post/func/get");
+                if (true) { }
+
+                return Ok(ip);
+            }
+            catch(Exception e)
+            {
+                Logger.Log.Error("GetState: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(HttpStatusCode.InternalServerError);
+            }
+        }
+
         private string GetPostIp(string code)
         {
             Device device = _model.Device.Where(d => d.Code.Equals(code)).FirstOrDefault();
