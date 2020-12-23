@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Web;
 
@@ -108,6 +109,16 @@ namespace PostControllingService.Controllers.Supplies
             }
             catch (WebException ex)
             {
+                if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException != null &&
+                    typeof(SocketException) == ex.InnerException.InnerException.GetType())
+                {
+                    SocketException se = (SocketException)ex.InnerException.InnerException;
+
+                    if (se.ErrorCode == 10060)
+                        return new HttpSenderResponse(0, null);
+
+                    throw ex;
+                }
                 HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
                 string result;
                 using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))

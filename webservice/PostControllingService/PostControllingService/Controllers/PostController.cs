@@ -459,10 +459,16 @@ namespace PostControllingService.Controllers
                     return NotFound();
                 }
 
-                GetScalarResponse response = HttpSender.GetScalar("http://" + ip + "/api/post/func/get");
-                if (true) { }
-
-                return Ok(ip);
+                GetScalarResponse response = HttpSender.GetScalar("http://" + ip + "/api/post/monitoring");
+                if (response.StatusCode == HttpStatusCode.OK) 
+                {
+                    return Ok(response.Result);
+                }
+                else
+                {
+                    Logger.Log.Info("GetState: ответ от поста неудачный: " + Environment.NewLine + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                    return StatusCode((HttpStatusCode)424);
+                }
             }
             catch(Exception e)
             {
