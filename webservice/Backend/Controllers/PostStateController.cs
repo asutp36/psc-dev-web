@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HttpResponse = Backend.Controllers.Supplies.HttpResponse;
 
 namespace Backend.Controllers
 {
@@ -36,7 +37,10 @@ namespace Backend.Controllers
             try
             {
                 PostStateViewModel result = new PostStateViewModel();
+                result.washCode = SqlHelper.GetWashCode(postCode);
                 result.lastSync = SqlHelper.GetLastPostSync(postCode).ToString("yyyy-MM-dd HH:mm:ss");
+
+                HttpResponse response = HttpSender.SendGet("");
 
                 // сервис пинга
                 result.lastPing = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");

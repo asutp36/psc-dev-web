@@ -211,6 +211,13 @@ namespace Backend.Controllers.Supplies
             
         }
 
-        
+        public static string GetWashCode(string postCode)
+        {
+            ModelDbContext context = new ModelDbContext();
+
+            return context.Posts.Include(p => p.IdwashNavigation)
+                                .Include(p => p.IddeviceNavigation)
+                                .Where(d => d.IddeviceNavigation.Code == postCode).FirstOrDefault().IdwashNavigation.Code;
+        }
     }
 }
