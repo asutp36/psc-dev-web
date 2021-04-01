@@ -14,9 +14,6 @@ namespace ReportNotificationWhattsapp.Models
     public partial class GetDayReportIncrease_Result
     {
         public string msg { get; set; }
-        public string Wash { get; set; }
-        public string ss { get; set; }
-        public string bs { get; set; }
-        public string ms { get; set; }
+       
     }
 }

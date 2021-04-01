@@ -30,17 +30,34 @@ namespace ReportNotificationWhattsapp
                 // номер списка получателей
                 String recipientsGroup = args[0];
                 // код мойки
-                String washCode = "М" + (int.Parse(args[0]) / 10).ToString();
+                //String washCode = "М" + (int.Parse(args[0]) / 10).ToString();
 
                 // Если определены все аргументы
                 if (!String.IsNullOrEmpty(recipientsGroup))
                 {
                     // Определить получателей
                     String smsRecipients = ConfigurationManager.AppSettings["waRecipients" + recipientsGroup];
+                    // Определить код мойки 
+                    String washCode = ConfigurationManager.AppSettings["washCode" + recipientsGroup];
+                    // Определить хранимую процедуру
+                    String storedProcedure = ConfigurationManager.AppSettings["storedProcedure" + recipientsGroup];
+
                     if (String.IsNullOrEmpty(smsRecipients))
                     {
                         // не найден список получателей
                         Logger.Log.Error(String.Format("{0} Не определены получатели group = {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), recipientsGroup));
+                    }
+
+                    if (String.IsNullOrEmpty(washCode))
+                    {
+                        // не найден список получателей
+                        Logger.Log.Error(String.Format("{0} Не определена мойка = {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), recipientsGroup));
+                    }
+
+                    if (String.IsNullOrEmpty(storedProcedure))
+                    {
+                        // не найден список получателей
+                        Logger.Log.Error(String.Format("{0} Не определена хранимая процедура = {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), recipientsGroup));
                     }
 
                     String[] recipients = smsRecipients.Split(new Char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -48,14 +65,26 @@ namespace ReportNotificationWhattsapp
 
                     using (ModelDb model = new ModelDb())
                     {
+                        try
+                        {
+                            model.Database.Connection.Open();
+                            SqlParameter wash = new SqlParameter("@wash", System.Data.SqlDbType.NVarChar);
+                            wash.Value = washCode;
+                            //wash.Value = "R48-M1";
+                            SqlParameter date = new SqlParameter("@date", System.Data.SqlDbType.DateTime);
+                            date.Value = DateTime.Now.AddDays(-1).Date;
 
-                        SqlParameter wash = new SqlParameter("@wash", System.Data.SqlDbType.NVarChar);
-                        wash.Value = washCode;
-                        SqlParameter date = new SqlParameter("@date", System.Data.SqlDbType.DateTime);
-                        date.Value = DateTime.Now.AddDays(-1).Date;
-
-                        mtext = model.Database.SqlQuery<GetDayReportIncrease_Result>("GetDayReportIncrease @wash, @date", wash, date).ToList();
+                            mtext = model.Database.SqlQuery<GetDayReportIncrease_Result>($"{storedProcedure} @wash, @date", wash, date).ToList();
+                            model.Database.Connection.Close();
+                        }
+                        catch (Exception e)
+                        {
+                            if (model.Database.Connection.State == System.Data.ConnectionState.Open)
+                                model.Database.Connection.Close();
+                            Logger.Log.Error("Ошибка при обращении к бд: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                        }
                     }
+                    
 
                     string body = mtext[0].msg.Replace(" П", "\nП").Replace(": ", ":\n").Insert(mtext[0].msg.IndexOf("за ") + 14, "\n");
 
@@ -83,6 +112,7 @@ namespace ReportNotificationWhattsapp
             }
             catch (Exception e)
             {
+
                 Logger.Log.Error(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
             }
         }
