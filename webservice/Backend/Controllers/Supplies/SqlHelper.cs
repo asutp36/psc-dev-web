@@ -161,6 +161,31 @@ namespace Backend.Controllers.Supplies
                 throw new Exception("connection");
         }
 
+        public static GetBoxByWashs_Result GetBoxByWashs(string reportDate, int regionCode, string washCode)
+        {
+            ModelDbContext context = new ModelDbContext();
+
+            if (context.Database.CanConnect())
+            {
+                try
+                {
+                    SqlParameter p_ReportDate = new SqlParameter("@p_ReportDate", reportDate);
+                    SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                    SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+
+                    GetBoxByWashs_Result result = context.Set<GetBoxByWashs_Result>().FromSqlRaw("GetBoxByWashs @p_ReportDate, @p_RegionCode, @p_WashCode", p_ReportDate, p_RegionCode, p_WashCode).AsEnumerable().FirstOrDefault();
+
+                    return result;
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("command", e);
+                }
+            }
+            else
+                throw new Exception("connection");
+        }
+
         public static GetIncreaseByPosts_Result GetIncreaseByPosts(string startDate, string endDate, int regionCode, string washCode, string postCode)
         {
             ModelDbContext context = new ModelDbContext();
