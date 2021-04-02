@@ -136,5 +136,41 @@ namespace NotificationService.Controllers
             Logger.Log.Error("SendMessage (from post): телефон пустой");
             return Request.CreateResponse(HttpStatusCode.NoContent);
         }
+
+        /// <summary>
+        /// Отправка сообщения по chatID
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <returns></returns>
+        /// <response code="200">Ок</response>
+        /// <response code="424">Сообщение не отправлено</response>
+        /// <response code="204">ChatID пустой</response>
+        [HttpPost]
+        [ActionName("message-group")]
+        public HttpResponseMessage SendMessageGroup([FromBody] MessageChatID msg)
+        {
+            Logger.InitLogger();
+
+            Logger.Log.Debug("SendMessage (from post): запуск с параметрами:\n" + JsonConvert.SerializeObject(msg));
+
+            if (!msg.chatId.Equals(""))
+            {
+                ResponseSendMessage resp = JsonConvert.DeserializeObject<ResponseSendMessage>(WhattsAppSender.SendMessage(JsonConvert.SerializeObject(msg), "https://eu33.chat-api.com/instance27633/sendMessage?token=0qgid5wjmhb8vw7d"));
+
+                if (resp.sent)
+                {
+                    Logger.Log.Debug("SendMessage (from post): сообщение отправлено");
+                    return Request.CreateResponse(HttpStatusCode.OK);
+                }
+                else
+                {
+                    Logger.Log.Debug("SendMessage (from post): сообщение не отправлено.\n" + resp.message);
+                    return Request.CreateResponse((HttpStatusCode)424);
+                }
+            }
+
+            Logger.Log.Error("SendMessage (from post): chatID пустой");
+            return Request.CreateResponse(HttpStatusCode.NoContent);
+        }
     }
 }
