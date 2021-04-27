@@ -753,13 +753,13 @@ namespace MobileIntegration.Controllers
                             }
 
                             DbCommand command = _model.Database.Connection.CreateCommand();
-                            command.CommandText = "select " +
-                                "min(v.Num) " +
-                                "from NumsMobileCards v " +
-                                "left join Cards c on c.CardNum = v.Num " +
-                                "where c.CardNum is null";
+                            //command.CommandText = "select " +
+                            //    "min(v.Num) " +
+                            //    "from NumsMobileCards v " +
+                            //    "left join Cards c on c.CardNum = v.Num " +
+                            //    "where c.CardNum is null";
 
-                            var cardNum = command.ExecuteScalar();
+                            //var cardNum = command.ExecuteScalar();
 
                             PhoneFormatter formattedPhone = new PhoneFormatter(newCard.phone);
 
@@ -770,7 +770,7 @@ namespace MobileIntegration.Controllers
                             {
                                 command.CommandText = $"insert into Owners (Phone, PhoneInt, LocalizedBy, LocalizedID) values ('{formattedPhone.phone}', {formattedPhone.phoneInt}, 0, 0)";
                                 command.ExecuteNonQuery();
-                                command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) values (scope_identity(), '{cardNum}', 1, 4, 0, 0)";
+                                command.CommandText = $"insert into Cards (IDOwner, CardNum,  IDCardStatus, IDCardType, LocalizedBy, LocalizedID) values (scope_identity(), '{formattedPhone.phoneInt}', 1, 4, 0, 0)";
                                 command.ExecuteNonQuery();
                                 command.CommandText = $"insert into Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                                        $"values ((select IDDevice from Device where Code = 'MOB-EM'), " +
@@ -779,7 +779,7 @@ namespace MobileIntegration.Controllers
                                        $"0, 0, (select IDDevice from Device where Code = 'MOB-EM'), 0);";
                                 command.ExecuteNonQuery();
 
-                                Logger.Log.Debug($"NewCard: добавлены Owner и Card. CardNum = {cardNum.ToString()}" + Environment.NewLine);
+                                Logger.Log.Debug($"NewCard: добавлены Owner и Card. CardNum = {formattedPhone.phoneInt.ToString()}" + Environment.NewLine);
                                 tran.Commit();
                             }
                             catch (Exception e)
@@ -794,7 +794,7 @@ namespace MobileIntegration.Controllers
                             var response = Request.CreateResponse();
 
                             response.StatusCode = HttpStatusCode.OK;
-                            response.Headers.Add("CardNum", cardNum.ToString());
+                            response.Headers.Add("CardNum", formattedPhone.phoneInt.ToString());
 
                             _model.Database.Connection.Close();
 

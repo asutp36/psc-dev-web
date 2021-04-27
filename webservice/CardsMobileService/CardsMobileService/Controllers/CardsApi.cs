@@ -145,6 +145,7 @@ namespace CardsMobileService.Controllers
             if (_model.Database.CanConnect())
             {
                 PhoneFormatter formattedPhone = new PhoneFormatter(model.phone);
+                model.cardNum = formattedPhone.phoneInt.ToString();
 
                 _model.Database.OpenConnection();
 
