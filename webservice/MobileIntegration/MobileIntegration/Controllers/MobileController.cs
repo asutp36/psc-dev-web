@@ -681,9 +681,10 @@ namespace MobileIntegration.Controllers
                     Logger.Log.Error("StopPostDev: ошибка при записи операции в базу.\n" + e.Message + Environment.NewLine + e.StackTrace);
                 }
 
+            string qrCode = "";
             try 
             {
-                string qrCode = _model.Posts.Where(p => p.IDDevice == _model.Device.Where(d => d.Code.Equals(model.post)).FirstOrDefault().IDDevice).FirstOrDefault().QRCode;
+                qrCode = _model.Posts.Where(p => p.IDDevice == _model.Device.Where(d => d.Code.Equals(model.post)).FirstOrDefault().IDDevice).FirstOrDefault().QRCode;
             }
             catch(Exception e)
             {
@@ -693,7 +694,7 @@ namespace MobileIntegration.Controllers
 
             Logger.Log.Debug("StopPostDev: отправка конца мойки");
 
-            HttpResponse resp = Sender.SendPost("http://188.225.79.69/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), model.post, model.balance)));
+            HttpResponse resp = Sender.SendPost("http://188.225.79.69/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), /*model.post*/ qrCode, model.balance)));
 
             Logger.Log.Debug("StopPostDev: Ответ от их сервера: " + resp.ResultMessage);
 
