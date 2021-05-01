@@ -763,8 +763,10 @@ namespace MobileIntegration.Controllers
                             if (cards.Count > 0)
                             {
                                 _model.Database.Connection.Close();
-                                Logger.Log.Error("NewCard: У пользователя есть карта" + Environment.NewLine);
-                                return Request.CreateErrorResponse(HttpStatusCode.Conflict, new Exception("У пользователя уже есть карта"));
+                                Logger.Log.Error($"NewCard: У пользователя есть карта: {cards.FirstOrDefault().CardNum}" + Environment.NewLine);
+                                //return Request.CreateErrorResponse(HttpStatusCode.Conflict, new Exception(cards.FirstOrDefault().CardNum));
+                                return Request.CreateResponse(HttpStatusCode.Conflict, cards.FirstOrDefault().CardNum);
+
                             }
 
                             DbCommand command = _model.Database.Connection.CreateCommand();
