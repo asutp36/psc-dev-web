@@ -619,7 +619,7 @@ namespace MobileIntegration.Controllers
             
             Logger.Log.Debug($"StopPost: отправка списания по карте {model.card}");
 
-            string washCode = "";
+            string washCode = PrepareWashCodeForMobile(model.post);
 
             if (model.balance > 0)
                 try
@@ -628,17 +628,6 @@ namespace MobileIntegration.Controllers
                     {
                         _model.Database.Connection.Open();
                         Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
-
-                        DbCommand commandWashCode = _model.Database.Connection.CreateCommand();
-                        commandWashCode.CommandText = "select " +
-                            "replace(w.Code, 'М', 'm')" +
-                            "from " +
-                            "Device d " +
-                            "join Posts p on p.IDDevice = d.IDDevice " +
-                            "join Wash w on w.IDWash = p.IDWash " +
-                            "where 1 = 1 " +
-                            $"and d.Code = '{model.post}'";
-                        washCode = commandWashCode.ExecuteScalar().ToString();
 
                         DbCommand commandBalance = _model.Database.Connection.CreateCommand();
                         commandBalance.CommandText = $"select top 1 " +
@@ -713,6 +702,43 @@ namespace MobileIntegration.Controllers
             Logger.Log.Debug("StopPostDev: Ответ от их сервера: " + resp.ResultMessage);
 
             return Request.CreateErrorResponse(resp.StatusCode, resp.ResultMessage);
+        }
+
+        private string PrepareWashCodeForMobile(string code)
+        {
+            string washCode = "";
+
+            try
+            {
+                if (_model.Database.Exists())
+                {
+                    _model.Database.Connection.Open();
+
+                    DbCommand commandWashCode = _model.Database.Connection.CreateCommand();
+                    commandWashCode.CommandText = "select " +
+                        "replace(w.Code, 'М', 'm')" +
+                        "from " +
+                        "Device d " +
+                        "join Posts p on p.IDDevice = d.IDDevice " +
+                        "join Wash w on w.IDWash = p.IDWash " +
+                        "where 1 = 1 " +
+                        $"and d.Code = '{code}'";
+                    washCode = commandWashCode.ExecuteScalar().ToString();
+
+                    _model.Database.Connection.Close();
+                }
+            }
+            catch(Exception e)
+            {
+                if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    _model.Database.Connection.Close();
+                }
+
+                Logger.Log.Error("Ошибка при преведении кода поста к коду мойки для отправки мобильному приложению.\n" + e.Message + Environment.NewLine);
+            }
+
+            return washCode;
         }
 
         private string GetPostIp(string qrCode)
