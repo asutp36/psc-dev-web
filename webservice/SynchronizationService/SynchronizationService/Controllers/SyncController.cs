@@ -499,5 +499,95 @@ namespace SynchronizationService.Controllers
                     _model.Database.Connection.Close();
             }
         }
+
+        /// <summary>
+        /// Снхронизация клиентской сессии робота
+        /// </summary>
+        /// <param name="data">Данные клиентской сессии</param>
+        /// <returns>ServerID в заголовках при удачной записи</returns>
+        /// <response code="200">ОК, ServerID в заголовке</response>
+        /// <response code="204">Входные данные = null</response>
+        /// <response code="500">Внутренняя ошибка, читать тело ответа</response>
+        /// <response code="409">Есть операция с таким же временем</response>
+        [HttpPost]
+        [ActionName("rsession")]
+        public HttpResponseMessage RobotEventSession([FromBody] DataRobotSession data)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if (data != null)
+                {
+                    Logger.Log.Debug("RobotEventSession: Запуск с параметрами:\n" + JsonConvert.SerializeObject(data));
+
+                    if (_model.Database.Exists())
+                    {
+                        _model.Database.Connection.Open();
+                        //Logger.Log.Debug("RobotEventSession: Соединение с БД: " + _model.Database.Connection.State);
+
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+                        command.CommandText = $@"
+                            BEGIN TRANSACTION;
+                            INSERT INTO RobotSession(IDPost, DTime, IDRobotProgram, IDSessionPost)
+                            select
+                            p.IDPost
+                            , '{data.DTime.ToString("yyyy-MM-dd HH:mm:ss")}'
+                            , (select IDRobotProgram from RobotProgram p where p.Code = '{data.ProgramCode}')
+                            , {data.IDSessionPost}
+                            from
+                            Device d
+                            join Posts p on p.IDDevice = d.IDDevice
+                            where d.Code = '{data.DeviceCode}';
+                            SELECT IDENT_CURRENT('RobotSession');
+                            COMMIT;
+                        ";
+
+                        Logger.Log.Debug("Command is: " + command.CommandText);
+
+                        var id = command.ExecuteScalar();
+                        _model.Database.Connection.Close();
+
+                        Int32 serverID = Convert.ToInt32(id.ToString());
+
+                        Logger.Log.Debug("PostEventIncrease: Session добавлен, inserted id=" + serverID.ToString() + Environment.NewLine);
+
+                        var response = Request.CreateResponse(HttpStatusCode.OK);
+                        response.Headers.Add("ServerID", serverID.ToString());
+                        return response;
+                    }
+                    else
+                    {
+                        Logger.Log.Error("RobotEventSession: База данных не найдена!" + Environment.NewLine);
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    }
+                }
+                else
+                {
+                    Logger.Log.Error("RobotEventSession: data == null. Нет данных запроса." + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                }
+            }
+            catch (SqlException e)
+            {
+                if (e.Number == 2627)
+                {
+                    Logger.Log.Error("RobotEventSession: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.Conflict);
+                }
+                Logger.Log.Error("RobotEventSession: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("RobotEventSession: " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            finally
+            {
+                if (_model.Database.Connection.State != System.Data.ConnectionState.Closed)
+                    _model.Database.Connection.Close();
+            }
+        }
     }
 }
