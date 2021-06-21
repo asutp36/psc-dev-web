@@ -614,7 +614,6 @@ namespace SynchronizationService.Controllers
             if (data != null)
             {
                 _model.Database.Connection.Open();
-
                 using (var transaction = _model.Database.Connection.BeginTransaction())
                 {
                     try
@@ -672,7 +671,6 @@ namespace SynchronizationService.Controllers
                         Logger.Log.Debug("RobotEventIncrease добавлен, inserted id=" + serverID.ToString() + Environment.NewLine);
 
                         // Сохрнить EventIncrease
-                        command.Transaction = transaction;
                         command.CommandText = $@"
                             insert into RobotEventIncrease(IDRobotEvent, amount, m10, b50, b100, b200, b500, b1000, b2000)
                             values({serverID}, {data.amount}, {data.m10}, {data.b50}, {data.b100}, {data.b200}, {data.b500}, {data.b1000}, {data.b2000})
@@ -680,7 +678,7 @@ namespace SynchronizationService.Controllers
                         //Logger.Log.Debug("Command is: " + command.CommandText);
                         if (command.ExecuteNonQuery() < 1)
                         {
-                            Logger.Log.Error("RobotEventIncrease: Данные EventIncrease не добавлены" + Environment.NewLine);
+                            Logger.Log.Error("RobotEventIncrease: Данные не добавлены" + Environment.NewLine);
                             return Request.CreateResponse(HttpStatusCode.ServiceUnavailable);
                         }
 
@@ -727,6 +725,143 @@ namespace SynchronizationService.Controllers
             else
             {
                 Logger.Log.Error("RobotEventIncrease: data == null. Нет данных запроса." + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.NoContent);
+            }
+        }
+
+        /// <summary>
+        /// Снхронизация выдачи сдачи на роботе
+        /// </summary>
+        /// <param name="data">Данные сдачи</param>
+        /// <returns>ServerID в заголовках при удачной записи</returns>
+        /// <response code="200">ОК, ServerID в заголовке</response>
+        /// <response code="204">Входные данные = null</response>
+        /// <response code="500">Внутренняя ошибка, читать тело ответа</response>
+        /// <response code="406">Не найдены зависимые объекты</response>
+        /// <response code="409">Есть операция с таким же временем</response>
+        [HttpPost]
+        [ActionName("rpayout")]
+        public HttpResponseMessage RobotEventPayout([FromBody] DataRobotPayout data)
+        {
+            Logger.InitLogger();
+            //Logger.Log.Debug("RobotEventPayout: Запуск с параметрами:\n" + JsonConvert.SerializeObject(data));
+
+            bool transaction_success = false;
+
+            if (data != null)
+            {
+                _model.Database.Connection.Open();
+                using (var transaction = _model.Database.Connection.BeginTransaction())
+                {
+                    try
+                    {
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+                        command.Transaction = transaction;
+
+                        command.CommandText = $@"select IDPost from Posts where Code = '{data.DeviceCode}'";
+                        //Logger.Log.Debug("Command is: " + command.CommandText);
+                        var id = command.ExecuteScalar();
+                        if (id == DBNull.Value)
+                        {
+                            Logger.Log.Debug("RobotEventPayout: Не найден IDPost по DeviceCode " + data.DeviceCode + Environment.NewLine);
+                            return Request.CreateResponse(HttpStatusCode.NotAcceptable);
+                        }
+                        Int32 IDPost = Convert.ToInt32(id.ToString());
+                        //Logger.Log.Debug("RobotEventPayout: IDPost=" + IDPost.ToString() + Environment.NewLine);
+
+                        command.CommandText = $@"select IDRobotSession from RobotSession where IDSessionPost = {data.IDSessionPost}";
+                        //Logger.Log.Debug("Command is: " + command.CommandText);
+                        id = command.ExecuteScalar();
+                        if (id == DBNull.Value)
+                        {
+                            Logger.Log.Debug("RobotEventPayout: Не найден IDRobotSession по IDSessionPost " + data.IDSessionPost + Environment.NewLine);
+                            return Request.CreateResponse(HttpStatusCode.NotAcceptable);
+                        }
+                        Int32 IDRobotSession = Convert.ToInt32(id.ToString());
+                        //Logger.Log.Debug("RobotEventPayout: IDSession=" + IDRobotSession.ToString() + Environment.NewLine);
+
+                        command.CommandText = $@"select IDEventKind from EventKind where Code = '{data.EventKindCode}'";
+                        //Logger.Log.Debug("Command is: " + command.CommandText);
+                        id = command.ExecuteScalar();
+                        if (id == DBNull.Value)
+                        {
+                            Logger.Log.Debug("RobotEventPayout: Не найден IDEventKind по EventKindCode " + data.EventKindCode + Environment.NewLine);
+                            return Request.CreateResponse(HttpStatusCode.NotAcceptable);
+                        }
+                        Int32 IDEventKind = Convert.ToInt32(id.ToString());
+                        //Logger.Log.Debug("RobotEventPayout: IDEventKind=" + IDEventKind.ToString() + Environment.NewLine);
+
+                        // Сохранить Event
+                        command.CommandText = $@"
+                            insert into RobotEvent(IDRobotSession, IDPost, IDEventKind, DTime, IDEventPost)
+                            values({IDRobotSession}, {IDPost}, {IDEventKind}, '{data.DTime.ToString("yyyy-MM-dd HH:mm:ss")}', {data.IDEventPost});
+                            SELECT IDENT_CURRENT('RobotEvent');
+                        ";
+                        //Logger.Log.Debug("Command is: " + command.CommandText);
+                        id = command.ExecuteScalar();
+                        if (id == DBNull.Value)
+                        {
+                            Logger.Log.Error("RobotEventPayout: Данные Event не добавлены" + Environment.NewLine);
+                            return Request.CreateResponse(HttpStatusCode.ServiceUnavailable);
+                        }
+                        Int32 serverID = Convert.ToInt32(id.ToString());
+                        Logger.Log.Debug("RobotEventPayout добавлен, inserted id=" + serverID.ToString() + Environment.NewLine);
+
+                        // Сохранить EventPayout
+                        command.CommandText = $@"
+                            insert into RobotEventPayout(IDRobotEvent, amount, b50, b100, storage_b50, storage_b100)
+                            values({serverID}, {data.amount}, {data.b50}, {data.b100}, {data.storage_b50}, {data.storage_b100})
+                        ";
+                        //Logger.Log.Debug("Command is: " + command.CommandText);
+                        if (command.ExecuteNonQuery() < 1)
+                        {
+                            Logger.Log.Error("RobotEventPayout: Данные не добавлены" + Environment.NewLine);
+                            return Request.CreateResponse(HttpStatusCode.ServiceUnavailable);
+                        }
+
+
+                        transaction_success = true;
+
+                        var response = Request.CreateResponse(HttpStatusCode.OK);
+                        response.Headers.Add("ServerID", serverID.ToString());
+                        return response;
+                    }
+                    catch (SqlException e)
+                    {
+                        if (e.Number == 2627)
+                        {
+                            Logger.Log.Error("RobotEventPayout: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                            return Request.CreateResponse(HttpStatusCode.Conflict);
+                        }
+                        else
+                        {
+                            Logger.Log.Error("RobotEventPayout: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                            return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log.Error("RobotEventPayout: " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    }
+                    finally
+                    {
+                        if (transaction_success)
+                            transaction.Commit();
+                        else
+                            transaction.Rollback();
+
+                        if (_model.Database.Connection.State != System.Data.ConnectionState.Closed)
+                        {
+                            //Logger.Log.Error("RobotEventPayout: Connection.Close" + Environment.NewLine);
+                            _model.Database.Connection.Close();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Logger.Log.Error("RobotEventPayout: data == null. Нет данных запроса." + Environment.NewLine);
                 return Request.CreateResponse(HttpStatusCode.NoContent);
             }
         }

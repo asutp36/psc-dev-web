@@ -151,6 +151,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\Supplies\DataRobotIncrease.cs" />
+    <Compile Include="Controllers\Supplies\DataRobotPayout.cs" />
     <Compile Include="Controllers\Supplies\DataRobotSession.cs" />
     <Compile Include="Controllers\Supplies\ECollectFromRequest.cs" />
     <Compile Include="Controllers\Supplies\EIncreaseFromRequest.cs" />
