@@ -632,7 +632,7 @@ namespace SynchronizationService.Controllers
                         Int32 IDPost = Convert.ToInt32(id.ToString());
                         //Logger.Log.Debug("RobotEventIncrease: IDPost=" + IDPost.ToString() + Environment.NewLine);
 
-                        command.CommandText = $@"select IDRobotSession from RobotSession where IDSessionPost = {data.IDSessionPost}";
+                        command.CommandText = $@"select IDRobotSession from RobotSession where IDpost = {IDPost} and IDSessionPost = {data.IDSessionPost}";
                         //Logger.Log.Debug("Command is: " + command.CommandText);
                         id = command.ExecuteScalar();
                         if (id == DBNull.Value)
@@ -769,7 +769,7 @@ namespace SynchronizationService.Controllers
                         Int32 IDPost = Convert.ToInt32(id.ToString());
                         //Logger.Log.Debug("RobotEventPayout: IDPost=" + IDPost.ToString() + Environment.NewLine);
 
-                        command.CommandText = $@"select IDRobotSession from RobotSession where IDSessionPost = {data.IDSessionPost}";
+                        command.CommandText = $@"select IDRobotSession from RobotSession where IDpost = {IDPost} and IDSessionPost = {data.IDSessionPost}";
                         //Logger.Log.Debug("Command is: " + command.CommandText);
                         id = command.ExecuteScalar();
                         if (id == DBNull.Value)
