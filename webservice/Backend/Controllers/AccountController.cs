@@ -143,7 +143,7 @@ namespace Backend.Controllers
         [SwaggerResponse(409, Type = typeof(Error), Description = "Пользователь с таким логином уже существует")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        [Authorize(Roles = "admin, dev")]
+        [Authorize(Roles = "dev")]
         [HttpPost]
         public IActionResult Register(AccountRequestModel account)
         {
@@ -228,7 +228,7 @@ namespace Backend.Controllers
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найден пользователь")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        [Authorize(Roles = "admin, dev")]
+        [Authorize(Roles = "dev")]
         [HttpDelete("{login}")]
         public IActionResult Delete(string login)
         {
@@ -271,7 +271,7 @@ namespace Backend.Controllers
         [SwaggerResponse(409, Type = typeof(Error))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        [Authorize]
+        [Authorize(Roles = "dev")]
         [HttpPut]
         public IActionResult Update(UpdateAccountRequestModel account)
         {
