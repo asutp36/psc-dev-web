@@ -83,6 +83,7 @@ namespace Backend.Controllers
             }
         }
 
+        [HttpGet("get1")]
         public IActionResult Get1(int regionCode = 0, string washCode = "", string postCode = "")
         {
             try
