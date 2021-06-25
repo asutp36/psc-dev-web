@@ -185,7 +185,7 @@ namespace Backend.Controllers
         [SwaggerResponse(200, Type = typeof(List<AccountViewModel>))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        [Authorize]
+        [Authorize(Roles = "dev")]
         [HttpGet]
         public IActionResult Get()
         {
