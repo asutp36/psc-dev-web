@@ -20,9 +20,11 @@ namespace Backend.Controllers
     {
         ModelDbContext _model = new ModelDbContext();
 
+        #region Swagger description
         [SwaggerOperation(Summary = "Данные для страницы внесений по мойкам")]
         [SwaggerResponse(200, Type = typeof(GetIncreaseByWashs_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
         [Authorize]
         [HttpGet("washs")]
         public IActionResult GetByWashs(string startDate, string endDate, int regionCode = 0, string washCode = "")
@@ -45,9 +47,11 @@ namespace Backend.Controllers
             }
         }
 
+        #region Swagger description
         [SwaggerOperation(Summary = "Данные для страницы внесений по постам")]
         [SwaggerResponse(200, Type = typeof(GetIncreaseByPosts_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
         [Authorize]
         [HttpGet("posts")]
         public IActionResult GetByPosts(string startDate, string endDate, int regionCode = 0, string washCode = "", string postCode = "")
@@ -70,9 +74,11 @@ namespace Backend.Controllers
             }
         }
 
+        #region Swagger description
         [SwaggerOperation(Summary = "Данные для страницы внесений по событиям")]
         [SwaggerResponse(200, Type = typeof(GetIncreaseByEvents_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
         [Authorize]
         [HttpGet("events")]
         public IActionResult GetByEvents(string startDate, string endDate, int regionCode = 0, string washCode = "", string postCode = "")

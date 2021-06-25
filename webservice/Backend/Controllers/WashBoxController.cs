@@ -20,9 +20,11 @@ namespace Backend.Controllers
     {
         ModelDbContext _model = new ModelDbContext();
 
+        #region Swagger description
         [SwaggerOperation(Summary = "Данные для страницы наличия в боксах по мойкам")]
         [SwaggerResponse(200, Type = typeof(GetBoxByWashs_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
         [Authorize]
         [HttpGet("washs")]
         public IActionResult ByWashs(string reportDate, int regionCode = 0, string washCode = "")
@@ -43,9 +45,11 @@ namespace Backend.Controllers
             }
         }
 
+        #region Swagger description
         [SwaggerOperation(Summary = "Данные для страницы наличия в боксах по постам")]
         [SwaggerResponse(200, Type = typeof(GetBoxByPosts_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
         [Authorize]
         [HttpGet("posts")]
         public IActionResult ByPosts(string reportDate, int regionCode = 0, string washCode = "", string postCode = "")
