@@ -31,6 +31,21 @@ namespace Backend.Controllers
         {
             try
             {
+                if (washCode == "")
+                {
+                    UserInfo uInfo = new UserInfo(User.Claims.ToList());
+                    List<WashViewModel> washes = uInfo.GetWashes();
+
+                    for(int i = 0; i < washes.Count; i++)
+                    {
+                        washCode += washes.ElementAt(i).code + ", ";
+
+                        if (i == washes.Count - 1)
+                            washCode += washes.ElementAt(i).code;
+                    }
+                }
+                
+
                 SqlParameter p_dateBeg = new SqlParameter("@p_DateBeg", startDate);
                 SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", endDate);
                 SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
