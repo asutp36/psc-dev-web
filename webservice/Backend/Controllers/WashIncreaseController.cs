@@ -38,10 +38,13 @@ namespace Backend.Controllers
 
                     for(int i = 0; i < washes.Count; i++)
                     {
-                        washCode += washes.ElementAt(i).code + ", ";
-
                         if (i == washes.Count - 1)
+                        {
                             washCode += washes.ElementAt(i).code;
+                            continue;
+                        }
+
+                        washCode += washes.ElementAt(i).code + ", ";                        
                     }
                 }
                 
