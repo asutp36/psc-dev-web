@@ -14,5 +14,11 @@
     <PackageReference Include="Hangfire.SqlServer" Version="1.7.24" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="ReportNotificationWhattsapp">
+      <HintPath>..\..\..\service\ReportNotificationWhattsapp\ReportNotificationWhattsapp\bin\Release\ReportNotificationWhattsapp.exe</HintPath>
+    </Reference>
+  </ItemGroup>
+
 
 </Project>

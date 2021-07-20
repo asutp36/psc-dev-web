@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Hangfire.SqlServer;
+using HangFireTest.JobHelpers.WhattAppReportSender;
 
 namespace HangFireTest
 {
@@ -63,6 +64,7 @@ namespace HangFireTest
 
             app.UseHangfireDashboard();
             backgroundJobs.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
+            backgroundJobs.Enqueue(() => WhattsAppReportSender.CreateReportJob(8));
 
             app.UseEndpoints(endpoints =>
             {
