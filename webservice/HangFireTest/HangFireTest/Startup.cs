@@ -63,7 +63,7 @@ namespace HangFireTest
             app.UseAuthorization();
 
             app.UseHangfireDashboard();
-            backgroundJobs.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
+
             backgroundJobs.Enqueue(() => WhattsAppReportSender.CreateReportJob(8));
 
             app.UseEndpoints(endpoints =>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using HangFireTest.JobHelpers.Models;
 
 namespace HangFireTest.JobHelpers.WhattAppReportSender
 {
@@ -13,6 +14,21 @@ namespace HangFireTest.JobHelpers.WhattAppReportSender
     {
         public static void CreateReportJob(int recipient)
         {
+            using (ModelDbContext context = new ModelDbContext())
+            {
+                var waRecipientData = context.WhattsAppRecipients.Where(r => r.WaRecipients == recipient).FirstOrDefault();
+
+                String[] chats = waRecipientData.ChatId.Split(new Char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach(string chat in chats)
+                {
+                    MessageToSend message = new MessageToSend();
+
+                }
+            };
+
+            
+
             string data = $"this is bacground job at {DateTime.Now} with recipient = {recipient}!";
 
             Console.WriteLine("result is " + SendReport(data).ToString());
