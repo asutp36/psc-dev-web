@@ -24,14 +24,17 @@ namespace HangFireTest.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "Создать немедленную задачу")]
-        [SwaggerResponse(200, Description = "Задача создана")]
+        [SwaggerOperation(Summary = "Создать и добавить в очередь немедленную задачу")]
+        [SwaggerResponse(200, Description = "Задача создана и добавлена в очередь")]
         #endregion
         [HttpPost("imidiate")]
         public async Task<IActionResult> CreateImidiateJobAsync(WhattsAppReportImidateJobModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
+
+            WhattsAppReportSender.AddRecipient(model.recipient, model.chatId, model.washCode);
+            _backgroundJobs.Enqueue(() => WhattsAppReportSender.CreateReportJob(model.recipient));
 
             return Ok();
         }
