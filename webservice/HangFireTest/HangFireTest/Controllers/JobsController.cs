@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HangFireTest.Controllers.Models;
+using Hangfire;
+using Hangfire.SqlServer;
+using HangFireTest.JobHelpers.WhattAppReportSender;
 
 namespace HangFireTest.Controllers
 {
@@ -13,6 +16,13 @@ namespace HangFireTest.Controllers
     [ApiController]
     public class JobsController : ControllerBase
     {
+        private IBackgroundJobClient _backgroundJobs;
+
+        public JobsController(IBackgroundJobClient backgroundJobs)
+        {
+            this._backgroundJobs = backgroundJobs;
+        }
+
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Создать немедленную задачу")]
         [SwaggerResponse(200, Description = "Задача создана")]
@@ -35,6 +45,8 @@ namespace HangFireTest.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
+
+            _backgroundJobs.Enqueue(() => WhattsAppReportSender.CreateReportJob(recipient));
 
             return Ok();
         }
