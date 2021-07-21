@@ -23,7 +23,7 @@ namespace HangFireTest.JobHelpers.WhattAppReportSender
                 foreach(string chat in chats)
                 {
                     MessageToSend message = new MessageToSend();
-
+                    message.chatId = chat;
                 }
             };
 
