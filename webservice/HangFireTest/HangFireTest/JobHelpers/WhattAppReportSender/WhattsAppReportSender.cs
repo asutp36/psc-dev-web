@@ -7,6 +7,8 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using HangFireTest.JobHelpers.Models;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace HangFireTest.JobHelpers.WhattAppReportSender
 {
@@ -17,6 +19,18 @@ namespace HangFireTest.JobHelpers.WhattAppReportSender
             using (HangfireDbContext context = new HangfireDbContext())
             {
                 var waRecipientData = context.WhattsAppRecipients.Where(r => r.WaRecipients == recipient).FirstOrDefault();
+                string msg = "";
+
+                using (WashCompanyDbContext wcContext = new WashCompanyDbContext())
+                {
+                    SqlParameter wash = new SqlParameter("@wash", System.Data.SqlDbType.NVarChar);
+                    wash.Value = waRecipientData.WashCode;
+                    SqlParameter date = new SqlParameter("@date", System.Data.SqlDbType.DateTime);
+                    date.Value = DateTime.Now.AddDays(-1).Date.ToString("yyyy-MM-dd HH:mm:ss");
+
+                    var sp_result = wcContext.Set<GetDayReportIncrease_Result>().FromSqlRaw("GetDayReportIncrease @wash, @date", wash, date).ToList();
+                    msg = sp_result[0].msg.Replace(" П", "\nП").Replace(": ", ":\n").Insert(sp_result[0].msg.IndexOf("за ") + 14, "\n");
+                };
 
                 String[] chats = waRecipientData.ChatId.Split(new Char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -24,6 +38,9 @@ namespace HangFireTest.JobHelpers.WhattAppReportSender
                 {
                     MessageToSend message = new MessageToSend();
                     message.chatId = chat;
+                    message.body = msg;
+
+                    bool sendResult = SendReport(JsonConvert.SerializeObject(message));
                 }
             };
 
@@ -31,7 +48,7 @@ namespace HangFireTest.JobHelpers.WhattAppReportSender
 
             string data = $"this is bacground job at {DateTime.Now} with recipient = {recipient}!";
 
-            Console.WriteLine("result is " + SendReport(data).ToString());
+            //Console.WriteLine("result is " + SendReport(data).ToString());
         }
 
         private static bool SendReport(string json)
