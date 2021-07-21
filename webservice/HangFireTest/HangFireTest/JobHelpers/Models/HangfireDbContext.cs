@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace HangFireTest.JobHelpers.Models
 {
-    public partial class ModelDbContext : DbContext
+    public partial class HangfireDbContext : DbContext
     {
-        public ModelDbContext()
+        public HangfireDbContext()
         {
         }
 
-        public ModelDbContext(DbContextOptions<ModelDbContext> options)
+        public HangfireDbContext(DbContextOptions<HangfireDbContext> options)
             : base(options)
         {
         }

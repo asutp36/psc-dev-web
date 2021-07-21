@@ -14,20 +14,20 @@ namespace HangFireTest.JobHelpers.WhattAppReportSender
     {
         public static void CreateReportJob(int recipient)
         {
-            using (ModelDbContext context = new ModelDbContext())
+            using (HangfireDbContext context = new HangfireDbContext())
             {
                 var waRecipientData = context.WhattsAppRecipients.Where(r => r.WaRecipients == recipient).FirstOrDefault();
 
                 String[] chats = waRecipientData.ChatId.Split(new Char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-                foreach(string chat in chats)
+                foreach (string chat in chats)
                 {
                     MessageToSend message = new MessageToSend();
                     message.chatId = chat;
                 }
             };
 
-            
+
 
             string data = $"this is bacground job at {DateTime.Now} with recipient = {recipient}!";
 
