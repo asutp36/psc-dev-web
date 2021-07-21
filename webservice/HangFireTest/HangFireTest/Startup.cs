@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Hangfire;
 using Hangfire.SqlServer;
 using HangFireTest.JobHelpers.WhattAppReportSender;
+using Microsoft.OpenApi.Models;
 
 namespace HangFireTest
 {
@@ -45,6 +46,19 @@ namespace HangFireTest
             // Add the processing server as IHostedService
             services.AddHangfireServer();
 
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Hangfire",
+                    Description = "Создание задач для Hangfire",
+                });
+
+                c.EnableAnnotations();
+            });
+
             services.AddControllers();
         }
 
@@ -56,6 +70,17 @@ namespace HangFireTest
                 app.UseDeveloperExceptionPage();
             }
 
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("./swagger/v1/swagger.json", "hangfire");
+                c.RoutePrefix = string.Empty;
+            });
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -64,7 +89,7 @@ namespace HangFireTest
 
             app.UseHangfireDashboard();
 
-            backgroundJobs.Enqueue(() => WhattsAppReportSender.CreateReportJob(2221));
+            //backgroundJobs.Enqueue(() => WhattsAppReportSender.CreateReportJob(2221));
 
             app.UseEndpoints(endpoints =>
             {
