@@ -93,5 +93,14 @@ namespace HangFireTest.JobHelpers.WhattAppReportSender
                 return false;
             }
         }
+
+        public static void AddRecipient(int recipient, string chatId, string washCode)
+        {
+            using(HangfireDbContext context = new HangfireDbContext())
+            {
+                context.WhattsAppRecipients.Add(new WhattsAppRecipient { WaRecipients = recipient, ChatId = chatId, WashCode = washCode });
+                context.SaveChanges();
+            };
+        }
     }
 }
