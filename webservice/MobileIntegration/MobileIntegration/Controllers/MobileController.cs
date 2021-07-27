@@ -63,7 +63,7 @@ namespace MobileIntegration.Controllers
 
                             command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                             $"VALUES ((select IDDevice from Device where Code = 'MOB-EM'), (select IDOperationType from OperationTypes where Code = 'increase'), " +
-                            $"(select IDCard from Cards where CardNum = '{increase.card}'), '{increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {increase.value}, ({commandBalance.CommandText}) + {increase.value}, " +
+                            $"(select min(IDCard) as IDCard from Cards where CardNum = '{increase.card}'), '{increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {increase.value}, ({commandBalance.CommandText}) + {increase.value}, " +
                             $"(select IDDevice from Device where Code = 'MOB-EM'), 0);";
                             Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
                             command.ExecuteNonQuery();
@@ -171,7 +171,7 @@ namespace MobileIntegration.Controllers
 
                                 command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                                 $"VALUES ((select IDDevice from Device where Code = 'MOB-EM'), (select IDOperationType from OperationTypes where Code = 'increase'), " +
-                                $"(select IDCard from Cards where CardNum = '{increase.card}'), '{increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {increase.value}, ({commandBalance.CommandText}) + {increase.value}, " +
+                                $"(select min(IDCard) as IDCard from Cards where CardNum = '{increase.card}'), '{increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {increase.value}, ({commandBalance.CommandText}) + {increase.value}, " +
                                 $"(select IDDevice from Device where Code = 'MOB-EM'), 0);";
                                 Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
                                 command.ExecuteNonQuery();
@@ -650,7 +650,7 @@ namespace MobileIntegration.Controllers
 
                             command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                             $"VALUES ((select IDDevice from Device where Code = '{model.post}'), (select IDOperationType from OperationTypes where Code = 'decrease'), " +
-                            $"(select IDCard from Cards where CardNum = '{model.card}'), '{model.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {model.balance}, ({commandBalance.CommandText}) - {model.balance}, " +
+                            $"(select min(IDCard) as IDCard from Cards where CardNum = '{model.card}'), '{model.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {model.balance}, ({commandBalance.CommandText}) - {model.balance}, " +
                             $"(select IDDevice from Device where Code = '{model.post}'), 0);";
                             Logger.Log.Debug("StopPost: command is: " + command.CommandText);
                             command.ExecuteNonQuery();
@@ -997,7 +997,7 @@ namespace MobileIntegration.Controllers
 
                             command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                             $"VALUES ((select IDDevice from Device where Code = '{newCard.changer}'), (select IDOperationType from OperationTypes where Code = 'increase'), " +
-                            $"(select IDCard from Cards where CardNum = '{newCard.card}'), '{newCard.time_send}', {newCard.value}, {newCard.value}, " +
+                            $"(select min(IDCard) as IDCard from Cards where CardNum = '{newCard.card}'), '{newCard.time_send}', {newCard.value}, {newCard.value}, " +
                             $"(select IDDevice from Device where Code = '{newCard.changer}'), 0);";
                             Logger.Log.Debug("SendNewCardDev: command is: " + command.CommandText);
                             command.ExecuteNonQuery();

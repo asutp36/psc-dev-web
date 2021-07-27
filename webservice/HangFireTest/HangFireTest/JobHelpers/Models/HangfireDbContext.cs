@@ -25,6 +25,7 @@ namespace HangFireTest.JobHelpers.Models
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=HangfireTest;Trusted_Connection=True;");
+                //optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Initial Catalog=HangfireTest;User Id=sa; Password=ora4paSS");
             }
         }
 
@@ -34,14 +35,16 @@ namespace HangFireTest.JobHelpers.Models
 
             modelBuilder.Entity<WhattsAppRecipient>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.WaRecipients);
+
+                entity.Property(e => e.WaRecipients)
+                    .ValueGeneratedNever()
+                    .HasColumnName("waRecipients");
 
                 entity.Property(e => e.ChatId)
                     .IsRequired()
                     .HasMaxLength(80)
                     .HasColumnName("chatID");
-
-                entity.Property(e => e.WaRecipients).HasColumnName("waRecipients");
 
                 entity.Property(e => e.WashCode)
                     .IsRequired()

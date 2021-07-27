@@ -24,11 +24,26 @@ namespace HangFireTest.Controllers
         }
 
         #region Swagger Annotations
+        [SwaggerOperation(Summary = "Тест")]
+        [SwaggerResponse(200, Description = "Тест")]
+        #endregion
+        [HttpGet("test")]
+        public async Task<IActionResult> TestAsync()
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            _backgroundJobs.Enqueue(() => Console.WriteLine("tested"));
+
+            return Ok();
+        }
+
+        #region Swagger Annotations
         [SwaggerOperation(Summary = "Создать и добавить в очередь немедленную задачу")]
         [SwaggerResponse(200, Description = "Задача создана и добавлена в очередь")]
         #endregion
         [HttpPost("imidiate")]
-        public async Task<IActionResult> CreateImidiateJobAsync(WhattsAppReportImidateJobModel model)
+        public async Task<IActionResult> CreateImidiateJobAsync(WhattsAppReportJobModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -50,6 +65,23 @@ namespace HangFireTest.Controllers
                 return BadRequest();
 
             _backgroundJobs.Enqueue(() => WhattsAppReportSender.CreateReportJob(recipient));
+
+            return Ok();
+        }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Спланировать задачу")]
+        [SwaggerResponse(200, Description = "Задача запланрована")]
+        #endregion
+        [HttpPost("schedule")]
+        public async Task<IActionResult> ScheduleJobAsync(WhattsAppReportScheduleJobModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            WhattsAppReportSender.AddRecipient(model.recipient, model.chatId, model.washCode);
+
+            RecurringJob.AddOrUpdate($"{model.recipient}_{model.washCode}_ptsv2", () => WhattsAppReportSender.CreateReportJob(model.recipient), model.cronString);
 
             return Ok();
         }
