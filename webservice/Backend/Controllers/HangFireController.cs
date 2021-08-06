@@ -30,25 +30,31 @@ namespace Backend.Controllers
         [SwaggerResponse(424, Type = typeof(Error), Description = "Не удалось получить список чатов из сервиса HangFire")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        [Authorize]
+        //[Authorize]
         [HttpGet("chat")]
         public IActionResult GetChat()
         {
-            Supplies.HttpResponse response = HttpSender.SendGet("");
-
-            if(response.StatusCode == System.Net.HttpStatusCode.OK)
+            try
             {
-                List<WhattsAppChatModel> chats = JsonConvert.DeserializeObject<List<WhattsAppChatModel>>(response.ResultMessage);
+                Supplies.HttpResponse response = HttpSender.SendGet("https://cwmon.ru/hangfire/api/Chats");
 
-                return Ok(chats);
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    List<WhattsAppChatModel> chats = JsonConvert.DeserializeObject<List<WhattsAppChatModel>>(response.ResultMessage);
+
+                    return Ok(chats);
+                }
+                else
+                {
+                    _logger.LogError("От сервиса hangfire пришёл ответ: " + response.ResultMessage + Environment.NewLine);
+                    return StatusCode(424, new Error("Не удалось получить список чатов", "dependency"));
+                }
             }
-            else
+            catch(Exception e)
             {
-                _logger.LogError("От сервиса hangfire пришёл ответ: " + response.ResultMessage + Environment.NewLine);
-                return StatusCode(424, new Error("Не удалось получить список чатов", "dependency"));
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
             }
-
-            
         }
     }
 }
