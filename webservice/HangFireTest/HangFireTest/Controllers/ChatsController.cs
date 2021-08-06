@@ -21,7 +21,7 @@ namespace HangFireTest.Controllers
 
             if(response.StatusCode != System.Net.HttpStatusCode.OK)
             {
-                return StatusCode(424, response.ResultMessage);
+                return StatusCode(424, "Ответ WhattsApp API: " + response.ResultMessage);
             }
 
             WhattsAppChatList list = JsonConvert.DeserializeObject<WhattsAppChatList>(response.ResultMessage);
