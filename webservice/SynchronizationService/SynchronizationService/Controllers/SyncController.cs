@@ -253,19 +253,27 @@ namespace SynchronizationService.Controllers
         /// <response code="204">Входные данные = null</response>
         /// <response code="500">Внутренняя ошибка, читать тело ответа</response>
         /// <response code="409">Есть операция с таким же временем</response>
+        /// <response code="400">Не найдена сессия для этого внесения</response>
         [HttpPost]
         [ActionName("eincrease")]
         public HttpResponseMessage PostEventIncrease([FromBody]EIncreaseFromRequest increase)
         {
             Logger.InitLogger();
-
+            
             try
             {
-                if(increase != null)
+                
+                if (increase != null)
                 {
                     Logger.Log.Debug("PostEventIncrease: Запуск с параметрами:\n" + JsonConvert.SerializeObject(increase));
 
-                    if (_model.Database.Exists())
+                    if (!CheckSessionExists(increase.IDPostSession, increase.Device))
+                    {
+                        Logger.Log.Debug($"PostEventIncrease: не найдена сессия id={increase.IDPostSession} на посте {increase.Device}");
+                        return Request.CreateResponse(HttpStatusCode.BadRequest);
+                    }
+
+                        if (_model.Database.Exists())
                     {
                         _model.Database.Connection.Open();
                         Logger.Log.Debug("PostEventIncrease: Соединение с БД: " + _model.Database.Connection.State);
@@ -275,9 +283,9 @@ namespace SynchronizationService.Controllers
                             "INSERT INTO Event (IDPost, IDEventKind, DTime, IDEventPost) " +
                             $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{increase.Device}\')), " +
                             $"(select ek.IDEventKind from EventKind ek where ek.Code = \'{increase.Kind}\'), \'{increase.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\', {increase.IDEventPost}); " +
-                            "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, balance) " +
+                            "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, balance, IDPostSession) " +
                             $"VALUES ((SELECT SCOPE_IDENTITY()), {increase.Amount}, {increase.m10}, {increase.b10}, {increase.b50}, {increase.b100},{increase.b200}, " +
-                            $"{increase.Balance}); " +
+                            $"{increase.Balance}, {increase.IDPostSession}); " +
                             "SELECT IDENT_CURRENT(\'Event\')" +
                             "COMMIT;";
 
@@ -326,6 +334,32 @@ namespace SynchronizationService.Controllers
                 if (_model.Database.Connection.State != System.Data.ConnectionState.Closed)
                     _model.Database.Connection.Close();
             }
+        }
+
+        private bool CheckSessionExists(int idSession, string postCode)
+        {
+            Logger.InitLogger();
+
+            if (_model.Database.Exists()) 
+            {
+                _model.Database.Connection.Open();
+
+                DbCommand command = _model.Database.Connection.CreateCommand();
+                command.CommandText = $@"select ps.IDPostSession
+                                        from PostSession ps
+                                        where ps.IDSessionOnPost = {idSession}
+                                        and ps.IDPost = (select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = '{postCode}'))";
+                var id = command.ExecuteScalar();
+                _model.Database.Connection.Close();
+
+                return id != null;
+            }
+            else
+            {
+                Logger.Log.Error("CheckSessionExists: база данных не найдена");
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -491,6 +525,89 @@ namespace SynchronizationService.Controllers
             catch (Exception ex)
             {
                 Logger.Log.Error("PostEventCollect: " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            finally
+            {
+                if (_model.Database.Connection.State != System.Data.ConnectionState.Closed)
+                    _model.Database.Connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// Синхронзация таблицы PostSession
+        /// </summary>
+        /// <param name="session">Данные сессии</param>
+        /// <returns>ServerID в заголовках при удачной записи</returns>
+        /// <response code="200">ОК, ServerID в заголовке</response>
+        /// <response code="204">Входные данные = null</response>
+        /// <response code="500">Внутренняя ошибка, читать тело ответа</response>  
+        [HttpPost]
+        [ActionName("psession")]
+        public HttpResponseMessage PostSession([FromBody]PostSessionData session)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if (session != null)
+                {
+                    Logger.Log.Debug("PostSession: Запуск с параметрами:\n" + JsonConvert.SerializeObject(session));
+
+                    if (_model.Database.Exists())
+                    {
+                        _model.Database.Connection.Open();
+                        Logger.Log.Debug("PostSession: Соединение с БД: " + _model.Database.Connection.State);
+
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+                        command.CommandText = "BEGIN TRANSACTION; " +
+                            "INSERT INTO PostSession (IDPost, IDSessionOnPost, StartDTime, QR, FiscalError, StopDTime, AmountCash, AmountBank) " +
+                            $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{session.postCode}\')), " +
+                            $@"{session.idSessionOnPost}, '{session.startDTime.ToString("yyyyMMdd HH:mm:ss.fff")}', '{session.qr}', '{session.fiscalError}', " +
+                            $@"'{session.startDTime.ToString("yyyyMMdd HH:mm: ss.fff")}', {session.amountCash}, {session.amountBank}); " +
+                            "SELECT IDENT_CURRENT(\'PostSession\')" +
+                            "COMMIT;";
+
+                        Logger.Log.Debug("Command is: " + command.CommandText);
+
+                        var id = command.ExecuteScalar();
+                        _model.Database.Connection.Close();
+
+                        Int32 serverID = Convert.ToInt32(id.ToString());
+
+                        Logger.Log.Debug("PostSession: Sesiont добавлена. IDSesion: " + serverID.ToString() + Environment.NewLine);
+
+                        var response = Request.CreateResponse(HttpStatusCode.OK);
+                        response.Headers.Add("ServerID", serverID.ToString());
+                        return response;
+                    }
+                    else
+                    {
+                        Logger.Log.Error("PostSession: База данных не найдена!" + Environment.NewLine);
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    }
+                }
+                else
+                {
+                    Logger.Log.Error("PostSession: session == null. Ошибка в данных запроса." + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                }
+
+            }
+            catch (SqlException e)
+            {
+                // это исключение, если на уровне бд будет ограничение на уникальные время+пост
+                if (e.Number == 2627)
+                {
+                    Logger.Log.Error("PostSession: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.Conflict);
+                }
+                Logger.Log.Error("PostSession: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("PostSession: " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
             finally

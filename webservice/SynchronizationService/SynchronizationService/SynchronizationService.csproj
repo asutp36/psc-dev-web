@@ -159,6 +159,7 @@
     <Compile Include="Controllers\Supplies\FinanceFromRequest.cs" />
     <Compile Include="Controllers\Supplies\Logger.cs" />
     <Compile Include="Controllers\Supplies\OperationFromRequest.cs" />
+    <Compile Include="Controllers\Supplies\PostSessionData.cs" />
     <Compile Include="Controllers\SyncController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
