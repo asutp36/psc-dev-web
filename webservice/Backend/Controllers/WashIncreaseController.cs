@@ -263,5 +263,57 @@ namespace Backend.Controllers
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
+
+        #region Swagger description
+        [SwaggerOperation(Summary = "Данные для страницы внесений по событиям после последней инкассации")]
+        [SwaggerResponse(200, Type = typeof(GetIncreaseByPosts_Result))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpGet("events/after_collect")]
+        public IActionResult GetByEventsAfterLastCollect(int regionCode = 0, string washCode = "", string postCode = "")
+        {
+            try
+            {
+                SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+                SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
+
+                var pocedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByEventsAfterLastCollect @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
+
+                return Ok(pocedureResult);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        #region Swagger description
+        [SwaggerOperation(Summary = "Данные для страницы внесений по событиям между двумя последними инкассациями")]
+        [SwaggerResponse(200, Type = typeof(GetIncreaseByPosts_Result))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpGet("events/between2last")]
+        public IActionResult GetByEventsBetweenTwoLastCollects(int regionCode = 0, string washCode = "", string postCode = "")
+        {
+            try
+            {
+                SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+                SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
+
+                var pocedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByEventsBetweenTwoLastCollects @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
+
+                return Ok(pocedureResult);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
     }
 }
