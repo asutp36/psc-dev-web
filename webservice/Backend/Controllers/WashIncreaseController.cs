@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Backend.Controllers
@@ -18,7 +19,15 @@ namespace Backend.Controllers
     [ApiController]
     public class WashIncreaseController : ControllerBase
     {
-        ModelDbContext _model = new ModelDbContext();
+        private readonly ILogger<WashIncreaseController> _logger;
+        private ModelDbContext _model;
+
+        public WashIncreaseController(ILogger<WashIncreaseController> logger)
+        {
+            _logger = logger;
+            _model = new ModelDbContext();
+        }
+        
 
         #region Swagger description
         [SwaggerOperation(Summary = "Данные для страницы внесений по мойкам")]
@@ -60,7 +69,91 @@ namespace Backend.Controllers
             }
             catch (Exception e)
             {
-                //_logger.LogError("GetByWashs: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        #region Swagger description
+        [SwaggerOperation(Summary = "Данные для страницы внесений по мойкам после последней инкассации")]
+        [SwaggerResponse(200, Type = typeof(GetIncreaseByWashs_Result))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpGet("washs/after_collect")]
+        public IActionResult GetByWashsAfterLastCollect(int regionCode = 0, string washCode = "")
+        {
+            try
+            {
+                if (washCode == "")
+                {
+                    UserInfo uInfo = new UserInfo(User.Claims.ToList());
+                    List<WashViewModel> washes = uInfo.GetWashes();
+
+                    for (int i = 0; i < washes.Count; i++)
+                    {
+                        if (i == washes.Count - 1)
+                        {
+                            washCode += washes.ElementAt(i).code;
+                            continue;
+                        }
+
+                        washCode += washes.ElementAt(i).code + ", ";
+                    }
+                }
+
+                SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+
+                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashsAfterLastCollect @p_RegionCode, @p_WashCode", p_RegionCode, p_WashCode);
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        #region Swagger description
+        [SwaggerOperation(Summary = "Данные для страницы внесений по мойкам между двумя последними инкассациями")]
+        [SwaggerResponse(200, Type = typeof(GetIncreaseByWashs_Result))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpGet("washs/between2last")]
+        public IActionResult GetByWashsBetweenTwoLastCollects(int regionCode = 0, string washCode = "")
+        {
+            try
+            {
+                if (washCode == "")
+                {
+                    UserInfo uInfo = new UserInfo(User.Claims.ToList());
+                    List<WashViewModel> washes = uInfo.GetWashes();
+
+                    for (int i = 0; i < washes.Count; i++)
+                    {
+                        if (i == washes.Count - 1)
+                        {
+                            washCode += washes.ElementAt(i).code;
+                            continue;
+                        }
+
+                        washCode += washes.ElementAt(i).code + ", ";
+                    }
+                }
+
+                SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+
+                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashsBetweenTwoLastCollects @p_RegionCode, @p_WashCode", p_RegionCode, p_WashCode);
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
@@ -88,6 +181,58 @@ namespace Backend.Controllers
             }
             catch(Exception e)
             {
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        #region Swagger description
+        [SwaggerOperation(Summary = "Данные для страницы внесений по постам после последней инкассации")]
+        [SwaggerResponse(200, Type = typeof(GetIncreaseByPosts_Result))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpGet("posts/after_collect")]
+        public IActionResult GetByPostsAfterLastCollect(int regionCode = 0, string washCode = "", string postCode = "")
+        {
+            try
+            {
+                SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+                SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
+
+                var pocedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPostsAfterLastCollect @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
+
+                return Ok(pocedureResult);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        #region Swagger description
+        [SwaggerOperation(Summary = "Данные для страницы внесений по постам между двумя последними инкассациями")]
+        [SwaggerResponse(200, Type = typeof(GetIncreaseByPosts_Result))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpGet("posts/between2last")]
+        public IActionResult GetByPostsBetweenTwoLastCollects(int regionCode = 0, string washCode = "", string postCode = "")
+        {
+            try
+            {
+                SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+                SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
+
+                var pocedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPostsBetweenTwoLastCollects @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
+
+                return Ok(pocedureResult);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
