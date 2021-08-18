@@ -245,7 +245,7 @@ namespace SynchronizationService.Controllers
         }
 
         /// <summary>
-        /// Снхронизация таблицы EventIncrease
+        /// Снхронизация таблицы EventIncrease без id сессии
         /// </summary>
         /// <param name="increase">Данные внесения</param>
         /// <returns>ServerID в заголовках при удачной записи</returns>
@@ -253,7 +253,6 @@ namespace SynchronizationService.Controllers
         /// <response code="204">Входные данные = null</response>
         /// <response code="500">Внутренняя ошибка, читать тело ответа</response>
         /// <response code="409">Есть операция с таким же временем</response>
-        /// <response code="400">Не найдена сессия для этого внесения</response>
         [HttpPost]
         [ActionName("eincrease")]
         public HttpResponseMessage PostEventIncrease([FromBody]EIncreaseFromRequest increase)
@@ -267,13 +266,99 @@ namespace SynchronizationService.Controllers
                 {
                     Logger.Log.Debug("PostEventIncrease: Запуск с параметрами:\n" + JsonConvert.SerializeObject(increase));
 
+                    if (_model.Database.Exists())
+                    {
+                        _model.Database.Connection.Open();
+                        Logger.Log.Debug("PostEventIncrease: Соединение с БД: " + _model.Database.Connection.State);
+
+                        DbCommand command = _model.Database.Connection.CreateCommand();
+                        command.CommandText = "BEGIN TRANSACTION; " +
+                            "INSERT INTO Event (IDPost, IDEventKind, DTime, IDEventPost) " +
+                            $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{increase.Device}\')), " +
+                            $"(select ek.IDEventKind from EventKind ek where ek.Code = \'{increase.Kind}\'), \'{increase.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\', {increase.IDEventPost}); " +
+                            "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, balance) " +
+                            $"VALUES ((SELECT SCOPE_IDENTITY()), {increase.Amount}, {increase.m10}, {increase.b10}, {increase.b50}, {increase.b100},{increase.b200}, " +
+                            $"{increase.Balance}); " +
+                            "SELECT IDENT_CURRENT(\'Event\')" +
+                            "COMMIT;";
+
+                        Logger.Log.Debug("Command is: " + command.CommandText);
+
+                        var id = command.ExecuteScalar();
+                        _model.Database.Connection.Close();
+
+                        Int32 serverID = Convert.ToInt32(id.ToString());
+
+                        Logger.Log.Debug("PostEventIncrease: Event добавлен. IDEvent: " + serverID.ToString() + Environment.NewLine);
+
+                        var response = Request.CreateResponse(HttpStatusCode.OK);
+                        response.Headers.Add("ServerID", serverID.ToString());
+                        return response;
+                    }
+                    else
+                    {
+                        Logger.Log.Error("PostEventIncrease: База данных не найдена!" + Environment.NewLine);
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    }
+                }
+                else
+                {
+                    Logger.Log.Error("PostEventIncrease: increase == null. Ошибка в данных запроса." + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                }
+            }
+            catch (SqlException e)
+            {
+                if(e.Number == 2627)
+                {
+                    Logger.Log.Error("PostEventIncrease: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.Conflict);
+                }
+                Logger.Log.Error("PostEventIncrease: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error("PostEventIncrease: " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            finally
+            {
+                if (_model.Database.Connection.State != System.Data.ConnectionState.Closed)
+                    _model.Database.Connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// Снхронизация таблицы EventIncrease с записью id сессии
+        /// </summary>
+        /// <param name="increase">Данные внесения</param>
+        /// <returns>ServerID в заголовках при удачной записи</returns>
+        /// <response code="200">ОК, ServerID в заголовке</response>
+        /// <response code="204">Входные данные = null</response>
+        /// <response code="500">Внутренняя ошибка, читать тело ответа</response>
+        /// <response code="409">Есть операция с таким же временем</response>
+        /// <response code="400">Не найдена сессия для этого внесения</response>
+        [HttpPost]
+        [ActionName("eincrease-w-session")]
+        public HttpResponseMessage PostEventIncreaseWithSession([FromBody] EIncreaseFromRequest increase)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+
+                if (increase != null)
+                {
+                    Logger.Log.Debug("PostEventIncrease: Запуск с параметрами:\n" + JsonConvert.SerializeObject(increase));
+
                     if (!CheckSessionExists(increase.IDPostSession, increase.Device))
                     {
                         Logger.Log.Debug($"PostEventIncrease: не найдена сессия id={increase.IDPostSession} на посте {increase.Device}");
                         return Request.CreateResponse(HttpStatusCode.BadRequest);
                     }
 
-                        if (_model.Database.Exists())
+                    if (_model.Database.Exists())
                     {
                         _model.Database.Connection.Open();
                         Logger.Log.Debug("PostEventIncrease: Соединение с БД: " + _model.Database.Connection.State);
@@ -316,7 +401,7 @@ namespace SynchronizationService.Controllers
             }
             catch (SqlException e)
             {
-                if(e.Number == 2627)
+                if (e.Number == 2627)
                 {
                     Logger.Log.Error("PostEventIncrease: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.Conflict);
@@ -533,6 +618,8 @@ namespace SynchronizationService.Controllers
                     _model.Database.Connection.Close();
             }
         }
+
+
 
         /// <summary>
         /// Синхронзация таблицы PostSession
