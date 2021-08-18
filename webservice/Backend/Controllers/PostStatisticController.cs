@@ -38,29 +38,56 @@ namespace Backend.Controllers
         {
             try
             {
-                PostStatisticViewModel result = new PostStatisticViewModel();
+                List<PostStatisticViewModel> result = new List<PostStatisticViewModel>();
 
-                GetBoxByPosts_Result getBoxByPosts_Result = SqlHelper.GetBoxByPosts(DateTime.Now.Date.ToString("yyyy-MM-dd"), regionCode, washCode, postCode);
-                result.postCode = getBoxByPosts_Result.PostCode;
-                result.washCode = getBoxByPosts_Result.WashCode;
-                result.sumall = getBoxByPosts_Result.sumall;
-                result.sumofm = getBoxByPosts_Result.sumofm;
-                result.sumofb = getBoxByPosts_Result.sumofb;
+                List<GetBoxByPosts_Result> getBoxByPosts_Result = SqlHelper.GetBoxByPosts(DateTime.Now.Date.ToString("yyyy-MM-dd"), regionCode, washCode, postCode);
 
-                GetIncreaseByPosts_Result getIncreaseByPosts_Result = SqlHelper.GetIncreaseByPosts(DateTime.Now.ToString("yyyy-MM-dd 00:00:00"), DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), regionCode, washCode, postCode);
-                if(getIncreaseByPosts_Result == null)
+                //foreach(GetBoxByPosts_Result box in getBoxByPosts_Result)
+                //{
+                //    result.Add(new PostStatisticViewModel
+                //    {
+                //        postCode = box.PostCode,
+                //        washCode = box.WashCode,
+                //        sumall = box.sumall,
+                //        sumofm = box.sumofm,
+                //        sumofb = box.sumofb,
+                //    });
+                //}
+                //result.postCode = getBoxByPosts_Result.PostCode;
+                //result.washCode = getBoxByPosts_Result.WashCode;
+                //result.sumall = getBoxByPosts_Result.sumall;
+                //result.sumofm = getBoxByPosts_Result.sumofm;
+                //result.sumofb = getBoxByPosts_Result.sumofb;
+
+                List<GetIncreaseByPosts_Result> getIncreaseByPosts_Result = SqlHelper.GetIncreaseByPosts(DateTime.Now.ToString("yyyy-MM-dd 00:00:00"), DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), regionCode, washCode, postCode);
+                //if(getIncreaseByPosts_Result == null)
+                //{
+                //    result.sumIncrease = 0;
+                //}
+                //else
+                //{
+                //    result.sumIncrease = getIncreaseByPosts_Result.sumall;
+                //} 
+
+                //// реализовать запрос к последнему пингу
+                //result.lastPing = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                //// узнать как брать минуты мойки
+                //result.washMins = 100;
+
+                for(int i = 0; i < getBoxByPosts_Result.Count; i++)
                 {
-                    result.sumIncrease = 0;
+                    result.Add(new PostStatisticViewModel
+                    {
+                        postCode = getBoxByPosts_Result[i].PostCode,
+                        washCode = getBoxByPosts_Result[i].WashCode,
+                        sumall = getBoxByPosts_Result[i].sumall,
+                        sumofm = getBoxByPosts_Result[i].sumofm,
+                        sumofb = getBoxByPosts_Result[i].sumofb,
+                        sumIncrease = getIncreaseByPosts_Result[i] == null ? 0 : getIncreaseByPosts_Result[i].sumall,
+                        lastPing = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                        washMins = 777
+                    });
                 }
-                else
-                {
-                    result.sumIncrease = getIncreaseByPosts_Result.sumall;
-                } 
-
-                // реализовать запрос к последнему пингу
-                result.lastPing = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                // узнать как брать минуты мойки
-                result.washMins = 100;
 
                 return Ok(result);
             }
@@ -90,14 +117,14 @@ namespace Backend.Controllers
             {
                 PostStatisticViewModel result = new PostStatisticViewModel();
 
-                GetBoxByPosts_Result getBoxByPosts_Result = SqlHelper.GetBoxByPosts(DateTime.Now.Date.ToString("yyyy-MM-dd"), regionCode, washCode, postCode);
+                GetBoxByPosts_Result getBoxByPosts_Result = SqlHelper.GetBoxByPosts(DateTime.Now.Date.ToString("yyyy-MM-dd"), regionCode, washCode, postCode).FirstOrDefault();
                 result.postCode = getBoxByPosts_Result.PostCode;
                 result.washCode = getBoxByPosts_Result.WashCode;
                 result.sumall = getBoxByPosts_Result.sumall;
                 result.sumofm = getBoxByPosts_Result.sumofm;
                 result.sumofb = getBoxByPosts_Result.sumofb;
 
-                GetIncreaseByPosts_Result getIncreaseByPosts_Result = SqlHelper.GetIncreaseByPosts(DateTime.Now.ToString("yyyy-MM-dd 00:00:00"), DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), regionCode, washCode, postCode);
+                GetIncreaseByPosts_Result getIncreaseByPosts_Result = SqlHelper.GetIncreaseByPosts(DateTime.Now.ToString("yyyy-MM-dd 00:00:00"), DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), regionCode, washCode, postCode).FirstOrDefault();
                 if (getIncreaseByPosts_Result == null)
                 {
                     result.sumIncrease = 0;

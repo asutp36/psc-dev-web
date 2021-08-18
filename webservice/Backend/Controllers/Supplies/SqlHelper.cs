@@ -136,7 +136,7 @@ namespace Backend.Controllers.Supplies
                 throw new Exception("connection");
         }
 
-        public static GetBoxByPosts_Result GetBoxByPosts(string reportDate, int regionCode, string washCode, string postCode)
+        public static List<GetBoxByPosts_Result> GetBoxByPosts(string reportDate, int regionCode, string washCode, string postCode)
         {
             ModelDbContext context = new ModelDbContext();
 
@@ -149,7 +149,7 @@ namespace Backend.Controllers.Supplies
                     SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                     SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                    GetBoxByPosts_Result result = context.Set<GetBoxByPosts_Result>().FromSqlRaw("GetBoxByPosts @p_ReportDate, @p_RegionCode, @p_WashCode, @p_PostCode", p_ReportDate, p_RegionCode, p_WashCode, p_PostCode).AsEnumerable().FirstOrDefault();
+                    List<GetBoxByPosts_Result> result = context.Set<GetBoxByPosts_Result>().FromSqlRaw("GetBoxByPosts @p_ReportDate, @p_RegionCode, @p_WashCode, @p_PostCode", p_ReportDate, p_RegionCode, p_WashCode, p_PostCode).ToList();
                     return result;
                 }
                 catch(Exception e)
@@ -186,7 +186,7 @@ namespace Backend.Controllers.Supplies
                 throw new Exception("connection");
         }
 
-        public static GetIncreaseByPosts_Result GetIncreaseByPosts(string startDate, string endDate, int regionCode, string washCode, string postCode)
+        public static List<GetIncreaseByPosts_Result> GetIncreaseByPosts(string startDate, string endDate, int regionCode, string washCode, string postCode)
         {
             ModelDbContext context = new ModelDbContext();
 
@@ -200,7 +200,7 @@ namespace Backend.Controllers.Supplies
                     SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                     SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                    GetIncreaseByPosts_Result result = context.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPosts @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode).AsEnumerable().FirstOrDefault();
+                    List<GetIncreaseByPosts_Result> result = context.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPosts @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode).ToList();
                     return result;
                 }
                 catch (Exception e)
