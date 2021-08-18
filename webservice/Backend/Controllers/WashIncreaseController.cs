@@ -266,7 +266,7 @@ namespace Backend.Controllers
 
         #region Swagger description
         [SwaggerOperation(Summary = "Данные для страницы внесений по событиям после последней инкассации")]
-        [SwaggerResponse(200, Type = typeof(GetIncreaseByPosts_Result))]
+        [SwaggerResponse(200, Type = typeof(GetIncreaseByEvents_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [Authorize]
@@ -279,7 +279,7 @@ namespace Backend.Controllers
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                 SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                var pocedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByEventsAfterLastCollect @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
+                var pocedureResult = _model.Set<GetIncreaseByEvents_Result>().FromSqlRaw("GetIncreaseByEventsAfterLastCollect @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
 
                 return Ok(pocedureResult);
             }
@@ -292,7 +292,7 @@ namespace Backend.Controllers
 
         #region Swagger description
         [SwaggerOperation(Summary = "Данные для страницы внесений по событиям между двумя последними инкассациями")]
-        [SwaggerResponse(200, Type = typeof(GetIncreaseByPosts_Result))]
+        [SwaggerResponse(200, Type = typeof(GetIncreaseByEvents_Result))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [Authorize]
@@ -305,7 +305,7 @@ namespace Backend.Controllers
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                 SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                var pocedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByEventsBetweenTwoLastCollects @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
+                var pocedureResult = _model.Set<GetIncreaseByEvents_Result>().FromSqlRaw("GetIncreaseByEventsBetweenTwoLastCollects @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
 
                 return Ok(pocedureResult);
             }
