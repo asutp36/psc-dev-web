@@ -260,8 +260,7 @@ namespace SynchronizationService.Controllers
             Logger.InitLogger();
             
             try
-            {
-                
+            {           
                 if (increase != null)
                 {
                     Logger.Log.Debug("PostEventIncrease: Запуск с параметрами:\n" + JsonConvert.SerializeObject(increase));
@@ -347,7 +346,6 @@ namespace SynchronizationService.Controllers
 
             try
             {
-
                 if (increase != null)
                 {
                     Logger.Log.Debug("PostEventIncrease: Запуск с параметрами:\n" + JsonConvert.SerializeObject(increase));
@@ -364,16 +362,19 @@ namespace SynchronizationService.Controllers
                         Logger.Log.Debug("PostEventIncrease: Соединение с БД: " + _model.Database.Connection.State);
 
                         DbCommand command = _model.Database.Connection.CreateCommand();
+                        
                         command.CommandText = "BEGIN TRANSACTION; " +
                             "INSERT INTO Event (IDPost, IDEventKind, DTime, IDEventPost) " +
                             $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{increase.Device}\')), " +
                             $"(select ek.IDEventKind from EventKind ek where ek.Code = \'{increase.Kind}\'), \'{increase.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\', {increase.IDEventPost}); " +
                             "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, balance, IDPostSession) " +
                             $"VALUES ((SELECT SCOPE_IDENTITY()), {increase.Amount}, {increase.m10}, {increase.b10}, {increase.b50}, {increase.b100},{increase.b200}, " +
-                            $"{increase.Balance}, {increase.IDPostSession}); " +
+                            $@"{increase.Balance}, (select ps.IDPostSession
+                                        from PostSession ps
+                                        where ps.IDSessionOnPost = {increase.IDPostSession}
+                                        and ps.IDPost = (select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = '{increase.Device}')))); " +
                             "SELECT IDENT_CURRENT(\'Event\')" +
                             "COMMIT;";
-
                         Logger.Log.Debug("Command is: " + command.CommandText);
 
                         var id = command.ExecuteScalar();
@@ -618,8 +619,6 @@ namespace SynchronizationService.Controllers
                     _model.Database.Connection.Close();
             }
         }
-
-
 
         /// <summary>
         /// Синхронзация таблицы PostSession
