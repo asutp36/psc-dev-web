@@ -38,6 +38,23 @@ namespace Backend.Controllers
         {
             try
             {
+                if (washCode == "")
+                {
+                    UserInfo uInfo = new UserInfo(User.Claims.ToList());
+                    List<WashViewModel> washes = uInfo.GetWashes();
+
+                    for (int i = 0; i < washes.Count; i++)
+                    {
+                        if (i == washes.Count - 1)
+                        {
+                            washCode += washes.ElementAt(i).code;
+                            continue;
+                        }
+
+                        washCode += washes.ElementAt(i).code + ", ";
+                    }
+                }
+
                 List<PostStatisticViewModel> result = new List<PostStatisticViewModel>();
 
                 List<GetBoxByPosts_Result> getBoxByPosts_Result = SqlHelper.GetBoxByPosts(DateTime.Now.Date.ToString("yyyy-MM-dd"), regionCode, washCode, postCode);
