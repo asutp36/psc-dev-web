@@ -58,7 +58,8 @@ namespace Backend.Controllers
             {
                 accessToken = encodedJwt,
                 login = identity.Name,
-                role = identity.Claims.Where(c => c.Type == ClaimsIdentity.DefaultRoleClaimType).FirstOrDefault().Value
+                role = identity.Claims.Where(c => c.Type == ClaimsIdentity.DefaultRoleClaimType).FirstOrDefault().Value,
+                name = identity.Claims.Where(c => c.Type == "UserName").FirstOrDefault().Value
             };
 
             return Ok(response);
@@ -82,6 +83,8 @@ namespace Backend.Controllers
                     string washCode = _model.Wash.Find(w.Idwash).Code;
                     claims.Add(new Claim("Wash", washCode));
                 }
+
+                claims.Add(new Claim("UserName", user.Name));
 
                 ClaimsIdentity claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,

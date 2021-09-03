@@ -14,5 +14,7 @@ namespace Backend.Controllers.Supplies
         public string login { get; set; }
         [Required]
         public string role { get; set; }
+        [Required]
+        public string name { get; set; }
     }
 }
