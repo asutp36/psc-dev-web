@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace Backend.Controllers.Supplies
 {
-    public class Summary
+    public class SummaryWash
     {
-        public string Code { get; set; }
-        public string Name { get; set; }
+        public string code { get; set; }
+        public string name { get; set; }
         public int increaseAllTime { get; set; }
         public int increaseThisMonth { get; set; }
         public int increaseYesterday { get; set; }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Backend.Controllers.Supplies;
 using Backend.Controllers.Supplies.Stored_Procedures;
+using Backend.Controllers.Supplies.ViewModels;
 using Backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -158,10 +159,11 @@ namespace Backend.Controllers
                 UserInfo uInfo = new UserInfo(User.Claims.ToList());
 
                 List<WashViewModel> washes = uInfo.GetWashes();
-                List<Summary> result = new List<Summary>();
+                var result = new SummaryManyWashes();
+                result.washesSummaries = new List<SummaryWash>();
 
                 foreach (WashViewModel w in washes)
-                    result.Add(GetSummary(w));
+                    result.washesSummaries.Add(GetSummary(w));
 
                 return Ok(result);
             }
@@ -172,15 +174,15 @@ namespace Backend.Controllers
             }
         }
 
-        private Summary GetSummary(WashViewModel wash)
+        private SummaryWash GetSummary(WashViewModel wash)
         {
-            Summary result = null;
+            SummaryWash result = null;
             if (!_cache.TryGetValue(wash.code, out result))
             {
-                result = new Summary();
+                result = new SummaryWash();
 
-                result.Code = wash.code;
-                result.Name = wash.name;
+                result.code = wash.code;
+                result.name = wash.name;
 
                 GetIncreaseByWashs_Result incr = SqlHelper.GetIncreaseByWashs("2009-01-01", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), 0, wash.code).FirstOrDefault();
                 result.increaseAllTime = incr.sumall;
