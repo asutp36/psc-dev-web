@@ -146,6 +146,29 @@ namespace Backend.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet("manywashes")]
+        public IActionResult GetManyWashes()
+        {
+            try
+            {
+                UserInfo uInfo = new UserInfo(User.Claims.ToList());
+
+                List<WashViewModel> washes = uInfo.GetWashes();
+                List<Summary> result = new List<Summary>();
+
+                foreach (WashViewModel w in washes)
+                    result.Add(GetSummary(w));
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
         private Summary GetSummary(WashViewModel wash)
         {
             Summary result = new Summary();
