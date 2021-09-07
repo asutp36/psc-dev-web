@@ -212,6 +212,79 @@ namespace Backend.Controllers.Supplies
                 throw new Exception("connection");
         }
 
+        public static List<GetIncreaseByWashs_Result> GetIncreaseByWashs(string startDate, string endDate, int regionCode, string washCode)
+        {
+            ModelDbContext context = new ModelDbContext();
+
+            if (context.Database.CanConnect())
+            {
+                try
+                {
+                    SqlParameter p_dateBeg = new SqlParameter("@p_DateBeg", startDate);
+                    SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", endDate);
+                    SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                    SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+
+                    List<GetIncreaseByWashs_Result> result = context.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashs @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode).ToList();
+                    return result;
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("command", e);
+                }
+            }
+            else
+                throw new Exception("connection");
+        }
+
+        public static List<GetIncreaseByWashs_Result> GetIncreaseByWashsAfterLastCollect(int regionCode, string washCode)
+        {
+            ModelDbContext context = new ModelDbContext();
+
+            if (context.Database.CanConnect())
+            {
+                try
+                {
+                    SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                    SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+
+                    List<GetIncreaseByWashs_Result> result = context.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashsAfterLastCollect @p_RegionCode, @p_WashCode", p_RegionCode, p_WashCode).ToList();
+                    return result;
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("command", e);
+                }
+            }
+            else
+                throw new Exception("connection");
+        }
+
+        public static List<GetCollectByDays_Result> GetCollectByDays(string startDate, string endDate, int regionCode, string washCode)
+        {
+            ModelDbContext context = new ModelDbContext();
+
+            if (context.Database.CanConnect())
+            {
+                try
+                {
+                    SqlParameter p_dateBeg = new SqlParameter("@p_DateBeg", startDate);
+                    SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", endDate);
+                    SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                    SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+
+                    List<GetCollectByDays_Result> result = context.Set<GetCollectByDays_Result>().FromSqlRaw("GetCollectByDays @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode).ToList();
+                    return result;
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("command", e);
+                }
+            }
+            else
+                throw new Exception("connection");
+        }
+
         public static DateTime GetLastPostSync(string postCode)
         {
             ModelDbContext context = new ModelDbContext();
