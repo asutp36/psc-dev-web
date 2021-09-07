@@ -135,35 +135,7 @@ namespace Backend.Controllers
 
                 WashViewModel wash = uInfo.GetWashes().FirstOrDefault();
 
-                Summary result = new Summary();
-                result.Code = wash.code;
-                result.Name = wash.name;
-
-                GetIncreaseByWashs_Result incr = SqlHelper.GetIncreaseByWashs("2009-01-01", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), 0, wash.code).FirstOrDefault();
-                result.increaseAllTime = incr.sumall;
-
-                incr = SqlHelper.GetIncreaseByWashs($"{DateTime.Today.Year}-{DateTime.Today.Month}-01 00:00:00",
-                    $"{DateTime.Today.Year}-{DateTime.Today.Month}-{DateTime.DaysInMonth(DateTime.Today.Year, DateTime.Today.Month)} 23:59:59", 0, wash.code).FirstOrDefault();
-                result.increaseThisMonth = incr.sumall;
-
-                incr = SqlHelper.GetIncreaseByWashs($"{DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd")} 00:00:00", $"{DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd")} 23:59:59",
-                    0, wash.code).FirstOrDefault();
-                result.increaseYesterday = incr.sumall;
-
-                incr = SqlHelper.GetIncreaseByWashs($"{DateTime.Today.ToString("yyyy-MM-dd")} 00:00:00", $"{DateTime.Today.ToString("yyyy-MM-dd")} 23:59:59",
-                    0, wash.code).FirstOrDefault();
-                result.increaseToday = incr.sumall;
-
-                incr = SqlHelper.GetIncreaseByWashsAfterLastCollect(0, wash.code).FirstOrDefault();
-                result.increaseAfterCollect = incr.sumall;
-
-                var now = DateTime.Now;
-                var firstDayCurrentMonth = new DateTime(now.Year, now.Month, 1);
-                var lastDayLastMonth = firstDayCurrentMonth.AddDays(-1);
-                var firstDayLastMonth = new DateTime(now.Year, now.Month - 1, 1);
-                List<GetCollectByDays_Result> collect = SqlHelper.GetCollectByDays(firstDayLastMonth.ToString("yyyy-MM-dd 00:00:00"), lastDayLastMonth.ToString("yyyy-MM-dd 23:59:59"), 0, wash.code).ToList();
-                foreach (GetCollectByDays_Result c in collect)
-                    result.collectLastMonth += c.sumall;
+                var result = GetSummary(wash);
 
                 return Ok(result);
             }
@@ -174,6 +146,40 @@ namespace Backend.Controllers
             }
         }
 
+        private Summary GetSummary(WashViewModel wash)
+        {
+            Summary result = new Summary();
+            result.Code = wash.code;
+            result.Name = wash.name;
+
+            GetIncreaseByWashs_Result incr = SqlHelper.GetIncreaseByWashs("2009-01-01", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), 0, wash.code).FirstOrDefault();
+            result.increaseAllTime = incr.sumall;
+
+            incr = SqlHelper.GetIncreaseByWashs($"{DateTime.Today.Year}-{DateTime.Today.Month}-01 00:00:00",
+                $"{DateTime.Today.Year}-{DateTime.Today.Month}-{DateTime.DaysInMonth(DateTime.Today.Year, DateTime.Today.Month)} 23:59:59", 0, wash.code).FirstOrDefault();
+            result.increaseThisMonth = incr.sumall;
+
+            incr = SqlHelper.GetIncreaseByWashs($"{DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd")} 00:00:00", $"{DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd")} 23:59:59",
+                0, wash.code).FirstOrDefault();
+            result.increaseYesterday = incr.sumall;
+
+            incr = SqlHelper.GetIncreaseByWashs($"{DateTime.Today.ToString("yyyy-MM-dd")} 00:00:00", $"{DateTime.Today.ToString("yyyy-MM-dd")} 23:59:59",
+                0, wash.code).FirstOrDefault();
+            result.increaseToday = incr.sumall;
+
+            incr = SqlHelper.GetIncreaseByWashsAfterLastCollect(0, wash.code).FirstOrDefault();
+            result.increaseAfterCollect = incr.sumall;
+
+            var now = DateTime.Now;
+            var firstDayCurrentMonth = new DateTime(now.Year, now.Month, 1);
+            var lastDayLastMonth = firstDayCurrentMonth.AddDays(-1);
+            var firstDayLastMonth = new DateTime(now.Year, now.Month - 1, 1);
+            List<GetCollectByDays_Result> collect = SqlHelper.GetCollectByDays(firstDayLastMonth.ToString("yyyy-MM-dd 00:00:00"), lastDayLastMonth.ToString("yyyy-MM-dd 23:59:59"), 0, wash.code).ToList();
+            foreach (GetCollectByDays_Result c in collect)
+                result.collectLastMonth += c.sumall;
+
+            return result;
+        }
         
     }
 }
