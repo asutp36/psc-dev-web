@@ -60,6 +60,7 @@ namespace Backend.Controllers
         [SwaggerResponse(200, Type = typeof(SetRateResultPost))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
+        [Authorize]
         [HttpPost("post")]
         public IActionResult SetRatePost(ChangeRatePostViewModel model)
         {
