@@ -317,5 +317,38 @@ namespace Backend.Controllers.Supplies
                                 .Include(p => p.IddeviceNavigation)
                                 .Where(d => d.IddeviceNavigation.Code == postCode).FirstOrDefault().IdwashNavigation.Code;
         }
+
+        public static List<WashViewModel> GetWashesByRegion(int regionCode)
+        {
+            try
+            {
+                using (ModelDbContext context = new ModelDbContext())
+                {
+                    List<WashViewModel> result = context.Wash.Include(w => w.IdregionNavigation)
+                                                             .Where(r => r.IdregionNavigation.Code == regionCode)
+                                                             .Select(w => new WashViewModel { 
+                                                                  idWash = w.Idwash,
+                                                                  code = w.Code,
+                                                                  name = w.Name,
+                                                                  idRegion = w.Idregion
+                                                              }).ToList();
+                    return result;
+                }
+            }
+            catch(Exception e)
+            {
+                throw new Exception("command", e);
+            }
+        }
+
+        public static bool IsWashExists(string wash)
+        {
+            using (ModelDbContext context = new ModelDbContext())
+            {
+                Wash w = context.Wash.Where(w => w.Code == wash).FirstOrDefault();
+
+                return w != null;
+            }
+        }
     }
 }
