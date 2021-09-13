@@ -28,11 +28,28 @@ namespace Backend.Controllers
             _config = config;
         }
 
-        [SwaggerResponse(200)]
+        [SwaggerResponse(200, Type = typeof(List<SetRateResult>))]
         [HttpPost]
         public IActionResult SetRates(ChangeRateViewModel model)
         {
-            return Ok();
+            try
+            {
+                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/post/rate", JsonConvert.SerializeObject(model));
+                if(response.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    _logger.LogError("postrc response: " + response.ResultMessage);
+                    return StatusCode(424, new Error("Не удалось подключиться к сервису управления постами", "service"));
+                }
+
+                List<SetRateResult> result = JsonConvert.DeserializeObject<List<SetRateResult>>(response.ResultMessage);
+
+                return Ok(result);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
         }
 
         #region Swagger Annotations
