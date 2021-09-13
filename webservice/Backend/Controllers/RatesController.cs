@@ -1,5 +1,6 @@
 ﻿using Backend.Controllers.Supplies;
 using Backend.Controllers.Supplies.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -36,13 +37,18 @@ namespace Backend.Controllers
 
         [SwaggerResponse(200, Type = typeof(WashRatesViewModel))]
         [SwaggerResponse(500, Type = typeof(Error))]
+        [Authorize]
         [HttpGet]
         public IActionResult Get()
         {
             try
             {
+                UserInfo uInfo = new UserInfo(User.Claims.ToList());
+
+                List<WashViewModel> washes = uInfo.GetWashes();
                 List<string> washCodes = new List<string>();
-                washCodes.Add("R48-M1");
+                foreach (WashViewModel w in washes)
+                    washCodes.Add(w.code);
 
                 HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/post/getrate", JsonConvert.SerializeObject(washCodes));
                 if(response.StatusCode != System.Net.HttpStatusCode.OK)
