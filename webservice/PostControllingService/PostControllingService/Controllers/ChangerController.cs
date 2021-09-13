@@ -56,7 +56,7 @@ namespace PostControllingService.Controllers
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    ChangerState state = JsonConvert.DeserializeObject<ChangerState>(response.Message);
+                    ChangerState state = JsonConvert.DeserializeObject<ChangerState>(response.ResultMessage);
                     return Request.CreateResponse(HttpStatusCode.OK, state);
                 }
 

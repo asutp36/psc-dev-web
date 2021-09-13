@@ -54,14 +54,14 @@ namespace PostControllingService.Controllers
 
                             if (response.StatusCode != HttpStatusCode.OK)
                             {
-                                Logger.Log.Error("GetCurrentRate: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message) + Environment.NewLine);
+                                Logger.Log.Error("GetCurrentRate: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.ResultMessage) + Environment.NewLine);
                                 continue;
                             }
 
                             postsRates.Add(new RatesWPostCode
                             {
                                 Post = p.Code,
-                                Prices = JsonConvert.DeserializeObject<List<FunctionRate>>(response.Message)
+                                Prices = JsonConvert.DeserializeObject<List<FunctionRate>>(response.ResultMessage)
                             });
                         }
 
@@ -125,7 +125,7 @@ namespace PostControllingService.Controllers
 
                             if (response.StatusCode != HttpStatusCode.OK)
                             {
-                                Logger.Log.Error("SendRates: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message) + Environment.NewLine);
+                                Logger.Log.Error("SendRates: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.ResultMessage) + Environment.NewLine);
 
                                 //return Request.CreateResponse(HttpStatusCode.Conflict);
                             }
@@ -185,7 +185,7 @@ namespace PostControllingService.Controllers
 
                         if (response.StatusCode != HttpStatusCode.OK)
                         {
-                            Logger.Log.Error("IncreaseBalace: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message) + Environment.NewLine);
+                            Logger.Log.Error("IncreaseBalace: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.ResultMessage) + Environment.NewLine);
                             return Request.CreateResponse(HttpStatusCode.Conflict, "Не удалось установить связь с постом");
                         }
 
@@ -368,7 +368,7 @@ namespace PostControllingService.Controllers
 
                         if (response.StatusCode != HttpStatusCode.OK)
                         {
-                            Logger.Log.Error("SetFunction: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message) + Environment.NewLine);
+                            Logger.Log.Error("SetFunction: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.ResultMessage) + Environment.NewLine);
 
                             return Request.CreateResponse(HttpStatusCode.Conflict);
                         }
