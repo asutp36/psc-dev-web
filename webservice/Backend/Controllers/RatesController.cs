@@ -35,8 +35,11 @@ namespace Backend.Controllers
             return Ok();
         }
 
-        [SwaggerResponse(200, Type = typeof(WashRatesViewModel))]
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить текущие тарифы на мойках пользователя")]
+        [SwaggerResponse(200, Type = typeof(List<WashRatesViewModel>))]
         [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
         [Authorize]
         [HttpGet]
         public IActionResult Get()
@@ -68,11 +71,14 @@ namespace Backend.Controllers
             }
         }
 
-        [SwaggerResponse(200, Type = typeof(WashRatesViewModel))]
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить текущие тарифы на мойке по коду")]
+        [SwaggerResponse(200, Type = typeof(List<WashRatesViewModel>))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
         [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
         [Authorize]
-        [HttpGet("bywash/{wash}")]
+        [HttpGet("wash/{wash}")]
         public IActionResult GetByWash(string wash)
         {
             try
@@ -103,11 +109,14 @@ namespace Backend.Controllers
             }
         }
 
-        [SwaggerResponse(200, Type = typeof(WashRatesViewModel))]
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить текущие тарифы на мойках по коду региона")]
+        [SwaggerResponse(200, Type = typeof(List<WashRatesViewModel>))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдены мойки по коду региона")]
         [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
         [Authorize]
-        [HttpGet("byregion/{region}")]
+        [HttpGet("region/{region}")]
         public IActionResult GetByRegion(int region)
         {
             try
