@@ -157,6 +157,60 @@ namespace PostControllingService.Controllers
         }
 
         /// <summary>
+        /// Отправка новых тарифов на пост
+        /// </summary>
+        /// <param name="change">Новые тарифы</param>
+        /// <returns></returns>
+        /// <response code="200">Ок</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="204">Ошибка во входных данных</response>
+        /// <response code="409">Код ответа поста был не 200</response>
+        [HttpPost]
+        [ActionName("rate/post")]
+        public HttpResponseMessage SendRatePost([FromBody] ChangeRatesPost change)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if (change != null)
+                {
+                    ChangeRateResultPost result = new ChangeRateResultPost();
+                    result.postCode = change.PostCode;
+
+                    Logger.Log.Debug("SendRatesPost: запуск с параметрами:\n" + JsonConvert.SerializeObject(change));
+
+                    Logger.Log.Debug("SendRatesPost: Отправка на пост: " + change.PostCode);
+
+                    HttpSenderResponse response = HttpSender.SendPost("http://" + GetPostIp(change.PostCode) + "/api/post/rate", JsonConvert.SerializeObject(change.Rates));
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        Logger.Log.Error("SendRatesPost: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.ResultMessage) + Environment.NewLine);
+
+                        //return Request.CreateResponse(HttpStatusCode.Conflict);
+                    }
+
+
+                    result.result = response;
+
+                    Logger.Log.Debug("SendRatesPost: " + String.Format("{0} : {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), "Отправлено успешно") + Environment.NewLine);
+
+                    return Request.CreateResponse(HttpStatusCode.OK, result);
+                }
+                Logger.Log.Error("SendRatesPost: change == null. Ошибка в данных запроса." + Environment.NewLine);
+                var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
+                return responseBad;
+            }
+            catch (Exception e)
+            {
+                Logger.Log.Error("SendRatesPost: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
+
+        /// <summary>
         /// Пополнить баланс поста
         /// </summary>
         /// <param name="balance"></param>
