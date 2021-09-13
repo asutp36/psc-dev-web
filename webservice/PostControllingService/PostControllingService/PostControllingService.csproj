@@ -146,6 +146,8 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ChangerController.cs" />
     <Compile Include="Controllers\PostController.cs" />
+    <Compile Include="Controllers\Supplies\ChangeRateResult.cs" />
+    <Compile Include="Controllers\Supplies\ChangeRateResultPost.cs" />
     <Compile Include="Controllers\Supplies\ChangerDevice.cs" />
     <Compile Include="Controllers\Supplies\ChangerState.cs" />
     <Compile Include="Controllers\Supplies\GetScalarResponse.cs" />

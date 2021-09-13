@@ -108,8 +108,13 @@ namespace PostControllingService.Controllers
                 {
                     Logger.Log.Debug("SendRates: запуск с параметрами:\n" + JsonConvert.SerializeObject(change));
 
+                    List<ChangeRateResult> result = new List<ChangeRateResult>();
                     foreach(String washCode in change.Washes)
                     {
+                        ChangeRateResult washResult = new ChangeRateResult();
+                        washResult.washCode = washCode;
+                        washResult.posts = new List<ChangeRateResultPost>();
+
                         List<Posts> posts = _model.Posts.Where(p => p.IDWash == _model.Wash.Where(w => w.Code == washCode).FirstOrDefault().IDWash).ToList();
 
                         foreach (Posts p in posts)
@@ -122,14 +127,22 @@ namespace PostControllingService.Controllers
                             {
                                 Logger.Log.Error("SendRates: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.Message) + Environment.NewLine);
 
-                                return Request.CreateResponse(HttpStatusCode.Conflict);
+                                //return Request.CreateResponse(HttpStatusCode.Conflict);
                             }
+
+                            washResult.posts.Add(new ChangeRateResultPost
+                            {
+                                postCode = p.Code,
+                                result = response
+                            });
                         }
+
+                        result.Add(washResult);
                     }
 
                     Logger.Log.Debug("SendRates: " + String.Format("{0} : {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"), "Отправлено успешно") + Environment.NewLine);
 
-                    return Request.CreateResponse(HttpStatusCode.OK);
+                    return Request.CreateResponse(HttpStatusCode.OK, result);
                 }
                 Logger.Log.Error("SendRates: change == null. Ошибка в данных запроса." + Environment.NewLine);
                 var responseBad = Request.CreateResponse(HttpStatusCode.NoContent);
