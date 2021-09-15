@@ -111,5 +111,54 @@ namespace Backend.Controllers
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить текущие скидки на мойках по коду региона")]
+        [SwaggerResponse(200, Type = typeof(List<WashRatesViewModel>))]
+        [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдены мойки по коду региона")]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpGet("region/{region}")]
+        public IActionResult GetByRegion(int region)
+        {
+            try
+            {
+                List<WashViewModel> washes = SqlHelper.GetWashesByRegion(region);
+                if (washes.Count <= 0)
+                {
+                    _logger.LogError($"Не найдены коды моек в регионе {region}" + Environment.NewLine);
+                    return NotFound(new Error("Не найдены мойки", "badvalue"));
+                }
+
+                List<WashDiscountViewModel> result = new List<WashDiscountViewModel>();
+                foreach (WashViewModel w in washes)
+                {
+                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/get", JsonConvert.SerializeObject(w.code));
+
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    {
+                        _logger.LogError($"По мойке {w.code} не удалось получить текущие скидки. postrc response: " + response.ResultMessage);
+                        //return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
+                    }
+
+                    string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
+                    var posts = JsonConvert.DeserializeObject<List<PostDiscountViewModel>>(str);
+
+                    result.Add(new WashDiscountViewModel
+                    {
+                        Wash = w.code,
+                        Posts = posts
+                    });
+                }    
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
     }
 }
