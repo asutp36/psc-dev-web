@@ -146,12 +146,14 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ChangerController.cs" />
     <Compile Include="Controllers\PostController.cs" />
+    <Compile Include="Controllers\PostDiscountController.cs" />
     <Compile Include="Controllers\Supplies\ChangeRateResult.cs" />
     <Compile Include="Controllers\Supplies\ChangeRateResultPost.cs" />
     <Compile Include="Controllers\Supplies\ChangeRatesPost.cs" />
     <Compile Include="Controllers\Supplies\ChangerDevice.cs" />
     <Compile Include="Controllers\Supplies\ChangerState.cs" />
     <Compile Include="Controllers\Supplies\GetScalarResponse.cs" />
+    <Compile Include="Controllers\Supplies\PostDiscount.cs" />
     <Compile Include="Controllers\Supplies\PostFunction.cs" />
     <Compile Include="Controllers\Supplies\FunctionRate.cs" />
     <Compile Include="Controllers\Supplies\RatesWPostCode.cs" />
