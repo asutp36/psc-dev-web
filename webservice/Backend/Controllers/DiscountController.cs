@@ -160,5 +160,31 @@ namespace Backend.Controllers
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
+
+        [Authorize]
+        [HttpPost("post")]
+        public IActionResult Set(List<PostDiscountViewModel> model)
+        {
+            try
+            {
+                List<SetRateResultPost> result = new List<SetRateResultPost>();
+                foreach(PostDiscountViewModel discount in model)
+                {
+                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/set", JsonConvert.SerializeObject(discount));
+                    result.Add(new SetRateResultPost
+                    {
+                        postCode = discount.Post,
+                        result = response
+                    });
+                }
+
+                return Ok(result);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
     }
 }
