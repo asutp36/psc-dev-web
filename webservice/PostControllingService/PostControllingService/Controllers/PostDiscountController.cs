@@ -59,6 +59,37 @@ namespace PostControllingService.Controllers
             }
         }
 
+        [HttpPost]
+        public IHttpActionResult Set([FromBody]PostDiscount model)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if(!ModelState.IsValid)
+                {
+                    Logger.Log.Error("PostDiscount.Set: входные параметры некорректные: " + JsonConvert.SerializeObject(model) + Environment.NewLine);
+                    return BadRequest();
+                }
+
+                string postIp = GetPostIp(model.Post);
+                if(postIp == null || postIp == "")
+                {
+                    Logger.Log.Error($"PostDiscount.Set: не найден ip поста {model.Post}" + Environment.NewLine);
+                    return NotFound();
+                }
+
+                HttpSenderResponse response = HttpSender.SendPost("http://" + postIp + "api/post/set/happyhours", JsonConvert.SerializeObject(model));
+
+                return StatusCode(response.StatusCode);
+            }
+            catch(Exception e)
+            {
+                Logger.Log.Error("PostDiscount.Get: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return InternalServerError();
+            }
+        }
+
         private string GetPostIp(string code)
         {
             Device device = _model.Device.Where(d => d.Code.Equals(code)).FirstOrDefault();
