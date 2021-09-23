@@ -78,7 +78,7 @@ namespace Backend.Controllers
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        [Authorize]
+        //[Authorize]
         [HttpGet("wash/{wash}")]
         public IActionResult GetByWash(string wash)
         {
@@ -90,14 +90,14 @@ namespace Backend.Controllers
                     return NotFound(new Error("Не найдена мойка", "badvalue"));
                 }
 
-                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/get", JsonConvert.SerializeObject(wash));
+                HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/{wash}");
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     _logger.LogError("postrc response: " + response.ResultMessage);
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                 }
-                string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                var result = JsonConvert.DeserializeObject<List<PostAcquiringViewModel>>(str);
+                //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
+                var result = JsonConvert.DeserializeObject<PostAcquiringViewModel>(response.ResultMessage);
 
                 return Ok(new WashAcquiringViewModel
                 {

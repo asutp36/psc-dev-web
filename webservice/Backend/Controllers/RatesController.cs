@@ -37,7 +37,7 @@ namespace Backend.Controllers
         {
             try
             {
-                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/post/rate", JsonConvert.SerializeObject(model));
+                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/change/wash", JsonConvert.SerializeObject(model));
                 if(response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     _logger.LogError("postrc response: " + response.ResultMessage);
@@ -66,7 +66,7 @@ namespace Backend.Controllers
         {
             try
             {
-                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/post/rate/post", JsonConvert.SerializeObject(model));
+                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/post/rate/change/post", JsonConvert.SerializeObject(model));
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     _logger.LogError("postrc response: " + response.ResultMessage);
@@ -102,7 +102,7 @@ namespace Backend.Controllers
                 foreach (WashViewModel w in washes)
                     washCodes.Add(w.code);
 
-                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/post/getrate", JsonConvert.SerializeObject(washCodes));
+                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/manywash", JsonConvert.SerializeObject(washCodes));
                 if(response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     _logger.LogError("postrc response: " + response.ResultMessage);
@@ -132,22 +132,20 @@ namespace Backend.Controllers
         {
             try
             {
-                //if (!SqlHelper.IsWashExists(wash))
-                //{
-                //    _logger.LogError($"Не найдена мойка {wash}" + Environment.NewLine);
-                //    return NotFound(new Error("Не найдена мойка", "badvalue"));
-                //}
-                List<string> washCodes = new List<string>();
-                washCodes.Add(wash);
+                if (!SqlHelper.IsWashExists(wash))
+                {
+                    _logger.LogError($"Не найдена мойка {wash}" + Environment.NewLine);
+                    return NotFound(new Error("Не найдена мойка", "badvalue"));
+                }
 
-                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/post/getrate", JsonConvert.SerializeObject(washCodes));
+                HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/rates/wash/{wash}");
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     _logger.LogError("postrc response: " + response.ResultMessage);
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                 }
                 string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                var result = JsonConvert.DeserializeObject<List<WashRatesViewModel>>(str);
+                var result = JsonConvert.DeserializeObject<WashRatesViewModel>(response.ResultMessage);
 
                 return Ok(result);
             }
@@ -181,7 +179,7 @@ namespace Backend.Controllers
                 foreach(WashViewModel w in washes)
                     washCodes.Add(w.code);
 
-                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/post/getrate", JsonConvert.SerializeObject(washCodes));
+                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/manywash", JsonConvert.SerializeObject(washCodes));
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     _logger.LogError("postrc response: " + response.ResultMessage);
