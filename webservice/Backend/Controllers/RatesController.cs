@@ -126,17 +126,17 @@ namespace Backend.Controllers
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        [Authorize]
+        //[Authorize]
         [HttpGet("wash/{wash}")]
         public IActionResult GetByWash(string wash)
         {
             try
             {
-                if (!SqlHelper.IsWashExists(wash))
-                {
-                    _logger.LogError($"Не найдена мойка {wash}" + Environment.NewLine);
-                    return NotFound(new Error("Не найдена мойка", "badvalue"));
-                }
+                //if (!SqlHelper.IsWashExists(wash))
+                //{
+                //    _logger.LogError($"Не найдена мойка {wash}" + Environment.NewLine);
+                //    return NotFound(new Error("Не найдена мойка", "badvalue"));
+                //}
                 List<string> washCodes = new List<string>();
                 washCodes.Add(wash);
 
