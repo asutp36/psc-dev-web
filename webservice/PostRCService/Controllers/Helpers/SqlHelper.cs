@@ -19,6 +19,16 @@ namespace PostRCService.Controllers.Helpers
             }
         }
 
+        public static bool IsPostExists(string postCode)
+        {
+            using (ModelDbContext model = new ModelDbContext())
+            {
+                var post = model.Devices.Where(d => d.Code == postCode).FirstOrDefault();
+
+                return post != null;
+            }
+        }
+
         public static string GetPostIp(string postCode)
         {
             using(ModelDbContext model = new ModelDbContext())

@@ -59,7 +59,8 @@ namespace PostRCService.Controllers
                         continue;
                     }
 
-                    HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/get/happyhours");
+                    //HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/get/happyhours");
+                    HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/get/happyhours");
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
@@ -128,7 +129,9 @@ namespace PostRCService.Controllers
                             continue;
                         }
 
-                        HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/set/happyhours", JsonConvert.SerializeObject(change.happyHour));
+                        //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/set/happyhours", JsonConvert.SerializeObject(change.happyHour));
+                        HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/set/happyhours", JsonConvert.SerializeObject(change.happyHour));
+
                         if (response.StatusCode != System.Net.HttpStatusCode.OK)
                             if (response.StatusCode == 0)
                                 _logger.LogInformation($"Нет соединения с постом {post}");

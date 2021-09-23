@@ -59,7 +59,8 @@ namespace PostRCService.Controllers
                         continue;
                     }
 
-                    HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/get/acquiring");
+                    //HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/get/acquiring");
+                    HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/get/acquiring");
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
@@ -92,10 +93,9 @@ namespace PostRCService.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "Получить текущие настройки эквайринга мойке по коду")]
-        [SwaggerResponse(200, Type = typeof(WashAcquiring))]
-        [SwaggerResponse(404, Description = "Не найдена мойка")]
-        [SwaggerResponse(424, Description = "Нет связи ни с одним постом на мойке")]
+        [SwaggerOperation(Summary = "Изменить настройки эквайринга на мойках по коду")]
+        [SwaggerResponse(200, Type = typeof(List<ChangeParameterWashResult>))]
+        [SwaggerResponse(424, Description = "Нет связи ни с одной мойкой")]
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
         [HttpPost("changebywash")]
@@ -128,7 +128,8 @@ namespace PostRCService.Controllers
                             continue;
                         }
 
-                        HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/set/acquiring", JsonConvert.SerializeObject(change.acquiring));
+                        //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/set/acquiring", JsonConvert.SerializeObject(change.acquiring));
+                        HttpResponse response = HttpSender.SendPost("http://192.168.201.5:5000/api/post/set/acquiring", JsonConvert.SerializeObject(change.acquiring));
                         if (response.StatusCode != System.Net.HttpStatusCode.OK)
                             if (response.StatusCode == 0)
                                 _logger.LogInformation($"Нет соединения с постом {post}");

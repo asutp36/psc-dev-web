@@ -31,7 +31,7 @@ namespace PostRCService.Controllers
         [SwaggerResponse(424, Description = "Нет связи с мойкой")]
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
-        [HttpGet("bywash/{washCode}")]
+        [HttpGet("wash/{washCode}")]
         public IActionResult GetByWash(string washCode)
         {
             try
@@ -59,7 +59,8 @@ namespace PostRCService.Controllers
                         continue;
                     }
 
-                    HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
+                    //HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
+                    HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/rate/get");
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
@@ -99,7 +100,7 @@ namespace PostRCService.Controllers
         [SwaggerResponse(424, Description = "Нет связи ни с одной мойкой")]
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
-        [HttpPost("bymanywash")]
+        [HttpPost("manywash")]
         public IActionResult GetByManyWash([FromBody]string[] washes)
         {
             try
@@ -132,7 +133,8 @@ namespace PostRCService.Controllers
                             continue;
                         }
 
-                        HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
+                        //HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
+                        HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/rate/get");
 
                         if (response.StatusCode != System.Net.HttpStatusCode.OK)
                         {
@@ -174,13 +176,64 @@ namespace PostRCService.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "")]
-        [SwaggerResponse(200, Type = typeof(int))]
-        [SwaggerResponse(404, Description = "")]
-        [SwaggerResponse(424, Description = "")]
+        [SwaggerOperation(Summary = "Изменене тарифов на посту по коду")]
+        [SwaggerResponse(200, Type = typeof(ChangeParameterResult))]
+        [SwaggerResponse(404, Description = "Не найден пост")]
+        [SwaggerResponse(424, Description = "Нет связи с постом")]
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
-        [HttpPost("changebywash")]
+        [HttpPost("change/post")]
+        public IActionResult ChangeRatesByPost(ChangeRatesPost change)
+        {
+            try
+            {
+                if (!SqlHelper.IsPostExists(change.postCode))
+                {
+                    _logger.LogError($"Не найден пост {change.postCode}" + Environment.NewLine);
+                    return NotFound();
+                }
+
+                ChangeParameterResult result = new ChangeParameterResult();
+                result.post = change.postCode;
+
+                string ip = SqlHelper.GetPostIp(change.postCode);
+                if (ip == null)
+                {
+                    _logger.LogError($"Не найден ip поста {change.postCode}");
+                    return NotFound();
+                }
+
+                //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
+                HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/rate", JsonConvert.SerializeObject(change.rates));
+
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    if (response.StatusCode == 0)
+                        _logger.LogInformation($"Нет соединения с постом {change.postCode}");
+                    else
+                        _logger.LogError($"Ответ поста {change.postCode}: {JsonConvert.SerializeObject(response)}");
+
+                    return StatusCode(424, "Нет связи с постом");
+                }
+
+                result.result = response;
+
+                return Ok(result);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500);
+            }
+        }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Изменение тарифов по кодам моек")]
+        [SwaggerResponse(200, Type = typeof(List<ChangeParameterWashResult>))]
+        [SwaggerResponse(424, Description = "Нет связи ни с одной мойкой")]
+        [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
+        #endregion
+        [HttpPost("change/wash")]
         public IActionResult ChangeRatesByWash(ChangeRatesWash change)
         {
             try
@@ -210,8 +263,10 @@ namespace PostRCService.Controllers
                             continue;
                         }
 
-                        HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
-                        if(response.StatusCode != System.Net.HttpStatusCode.OK)
+                        //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
+                        HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/rate", JsonConvert.SerializeObject(change.rates));
+
+                        if (response.StatusCode != System.Net.HttpStatusCode.OK)
                             if (response.StatusCode == 0)
                                 _logger.LogInformation($"Нет соединения с постом {post}");
                             else
