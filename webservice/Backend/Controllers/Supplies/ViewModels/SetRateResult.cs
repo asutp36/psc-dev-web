@@ -7,7 +7,7 @@ namespace Backend.Controllers.Supplies.ViewModels
 {
     public class SetRateResult
     {
-        public string washCode { get; set; }
+        public string wash { get; set; }
         public List<SetRateResultPost> posts { get; set; }
     }
 }

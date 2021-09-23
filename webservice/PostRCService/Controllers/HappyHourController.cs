@@ -49,8 +49,8 @@ namespace PostRCService.Controllers
                 List<string> postCodes = SqlHelper.GetPostCodes(washCode);
                 foreach (string p in postCodes)
                 {
-                    PostHappyHour oostHappyHour = new PostHappyHour();
-                    oostHappyHour.post = p;
+                    PostHappyHour postHappyHour = new PostHappyHour();
+                    postHappyHour.post = p;
 
                     string ip = SqlHelper.GetPostIp(p);
                     if (ip == null)
@@ -74,8 +74,8 @@ namespace PostRCService.Controllers
                         continue;
                     }
 
-                    oostHappyHour.happyHour = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
-                    result.posts.Add(oostHappyHour);
+                    postHappyHour.happyHour = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
+                    result.posts.Add(postHappyHour);
                 }
                 if (result.posts.Count < 1)
                 {

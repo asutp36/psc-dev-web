@@ -7,7 +7,7 @@ namespace Backend.Controllers.Supplies.ViewModels
 {
     public class RateWPostCode
     {
-        public string Post { get; set; }
-        public List<RateViewModel> Prices { get; set; }
+        public string post { get; set; }
+        public List<RateViewModel> prices { get; set; }
     }
 }

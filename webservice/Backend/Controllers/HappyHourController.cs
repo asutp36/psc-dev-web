@@ -17,12 +17,12 @@ namespace Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DiscountController : ControllerBase
+    public class HappyHourController : ControllerBase
     {
-        ILogger<DiscountController> _logger;
+        ILogger<HappyHourController> _logger;
         IConfiguration _config;
 
-        public DiscountController(ILogger<DiscountController> logger, IConfiguration config)
+        public HappyHourController(ILogger<HappyHourController> logger, IConfiguration config)
         {
             _logger = logger;
             _config = config;
@@ -30,7 +30,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие скидки на мойках пользователя")]
-        [SwaggerResponse(200, Type = typeof(List<WashDiscountViewModel>))]
+        [SwaggerResponse(200, Type = typeof(List<WashHappyHourViewModel>))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [Authorize]
@@ -42,7 +42,7 @@ namespace Backend.Controllers
                 UserInfo uInfo = new UserInfo(User.Claims.ToList());
 
                 List<WashViewModel> washes = uInfo.GetWashes();
-                List<WashDiscountViewModel> result = new List<WashDiscountViewModel>();
+                List<WashHappyHourViewModel> result = new List<WashHappyHourViewModel>();
                 foreach (WashViewModel w in washes)
                 {
                     HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/get", JsonConvert.SerializeObject(w.code));
@@ -54,12 +54,12 @@ namespace Backend.Controllers
                     }
 
                     string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                    var posts = JsonConvert.DeserializeObject<List<PostDiscountViewModel>>(str);
+                    var posts = JsonConvert.DeserializeObject<List<PostHappyHourViewModel>>(str);
 
-                    result.Add(new WashDiscountViewModel
+                    result.Add(new WashHappyHourViewModel
                     {
-                        Wash = w.code,
-                        Posts = posts
+                        wash = w.code,
+                        posts = posts
                     });
                 }
 
@@ -97,12 +97,12 @@ namespace Backend.Controllers
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                 }
                 //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                var result = JsonConvert.DeserializeObject<List<PostDiscountViewModel>>(response.ResultMessage);
+                var result = JsonConvert.DeserializeObject<List<PostHappyHourViewModel>>(response.ResultMessage);
 
-                return Ok(new WashDiscountViewModel 
+                return Ok(new WashHappyHourViewModel 
                 {
-                    Wash = wash,
-                    Posts = result
+                    wash = wash,
+                    posts = result
                 });
             }
             catch (Exception e)
@@ -131,7 +131,7 @@ namespace Backend.Controllers
                     return NotFound(new Error("Не найдены мойки", "badvalue"));
                 }
 
-                List<WashDiscountViewModel> result = new List<WashDiscountViewModel>();
+                List<WashHappyHourViewModel> result = new List<WashHappyHourViewModel>();
                 foreach (WashViewModel w in washes)
                 {
                     HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/get", JsonConvert.SerializeObject(w.code));
@@ -143,12 +143,12 @@ namespace Backend.Controllers
                     }
 
                     string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                    var posts = JsonConvert.DeserializeObject<List<PostDiscountViewModel>>(str);
+                    var posts = JsonConvert.DeserializeObject<List<PostHappyHourViewModel>>(str);
 
-                    result.Add(new WashDiscountViewModel
+                    result.Add(new WashHappyHourViewModel
                     {
-                        Wash = w.code,
-                        Posts = posts
+                        wash = w.code,
+                        posts = posts
                     });
                 }    
 
@@ -163,17 +163,17 @@ namespace Backend.Controllers
 
         [Authorize]
         [HttpPost("post")]
-        public IActionResult Set(List<PostDiscountViewModel> model)
+        public IActionResult Set(List<PostHappyHourViewModel> model)
         {
             try
             {
                 List<SetRateResultPost> result = new List<SetRateResultPost>();
-                foreach(PostDiscountViewModel discount in model)
+                foreach(PostHappyHourViewModel discount in model)
                 {
                     HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/set", JsonConvert.SerializeObject(discount));
                     result.Add(new SetRateResultPost
                     {
-                        postCode = discount.Post,
+                        postCode = discount.post,
                         result = response
                     });
                 }

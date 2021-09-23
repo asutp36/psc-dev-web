@@ -30,7 +30,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на мойках пользователя")]
-        [SwaggerResponse(200, Type = typeof(List<WashDiscountViewModel>))]
+        [SwaggerResponse(200, Type = typeof(List<WashHappyHourViewModel>))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [Authorize]
@@ -54,13 +54,9 @@ namespace Backend.Controllers
                     }
 
                     string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                    var posts = JsonConvert.DeserializeObject<List<PostAcquiringViewModel>>(str);
+                    var washResult = JsonConvert.DeserializeObject<WashAcquiringViewModel>(str);
 
-                    result.Add(new WashAcquiringViewModel
-                    {
-                        Wash = w.code,
-                        Posts = posts
-                    });
+                    result.Add(washResult);
                 }
 
                 return Ok(result);
@@ -97,13 +93,9 @@ namespace Backend.Controllers
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                 }
                 //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                var result = JsonConvert.DeserializeObject<PostAcquiringViewModel>(response.ResultMessage);
+                var result = JsonConvert.DeserializeObject<WashAcquiringViewModel>(response.ResultMessage);
 
-                return Ok(new WashAcquiringViewModel
-                {
-                    Wash = wash,
-                    Posts = result
-                });
+                return Ok(result);
             }
             catch (Exception e)
             {
@@ -134,7 +126,7 @@ namespace Backend.Controllers
                 List<WashAcquiringViewModel> result = new List<WashAcquiringViewModel>();
                 foreach (WashViewModel w in washes)
                 {
-                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/get", JsonConvert.SerializeObject(w.code));
+                    HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/{w.code}");
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
@@ -143,13 +135,9 @@ namespace Backend.Controllers
                     }
 
                     string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                    var posts = JsonConvert.DeserializeObject<List<PostAcquiringViewModel>>(str);
+                    var washResult = JsonConvert.DeserializeObject<WashAcquiringViewModel>(str);
 
-                    result.Add(new WashAcquiringViewModel
-                    {
-                        Wash = w.code,
-                        Posts = posts
-                    });
+                    result.Add(washResult);
                 }
 
                 return Ok(result);
@@ -167,7 +155,7 @@ namespace Backend.Controllers
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [Authorize]
-        [HttpPost("post")]
+        [HttpPost()]
         public IActionResult Set(List<PostAcquiringViewModel> model)
         {
             try
@@ -178,7 +166,7 @@ namespace Backend.Controllers
                     HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/set", JsonConvert.SerializeObject(discount));
                     result.Add(new SetRateResultPost
                     {
-                        postCode = discount.Post,
+                        postCode = discount.post,
                         result = response
                     });
                 }

@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Backend.Controllers.Supplies.ViewModels
 {
-    public class WashRatesViewModel
+    public class WashHappyHourViewModel
     {
         public string wash { get; set; }
-        public List<RateWPostCode> rates { get; set; }
+        public List<PostHappyHourViewModel> posts { get; set; }
     }
 }

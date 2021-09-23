@@ -7,7 +7,7 @@ namespace Backend.Controllers.Supplies.ViewModels
 {
     public class WashAcquiringViewModel
     {
-        public string Wash { get; set; }
-        public List<PostAcquiringViewModel> Posts { get; set; }
+        public string wash { get; set; }
+        public List<PostAcquiringViewModel> posts { get; set; }
     }
 }

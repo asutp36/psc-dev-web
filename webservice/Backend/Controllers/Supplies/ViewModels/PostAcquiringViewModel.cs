@@ -7,9 +7,7 @@ namespace Backend.Controllers.Supplies.ViewModels
 {
     public class PostAcquiringViewModel
     {
-        public string Post { get; set; }
-        public int BankAmountMin { get; set; }
-        public int BankAmountMax { get; set; }
-        public int BankAmountStep { get; set; }
+        public string post { get; set; }
+        public AcquiringModel acquiring { get; set; }
     }
 }
