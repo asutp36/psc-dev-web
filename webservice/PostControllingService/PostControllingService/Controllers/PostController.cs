@@ -38,38 +38,39 @@ namespace PostControllingService.Controllers
                     List<WashRates> washRates = new List<WashRates>();
                     foreach (string washCode in washes)
                     {
-                        List<Posts> posts = _model.Posts.Where(p => p.IDWash == _model.Wash.Where(w => w.Code == washCode).FirstOrDefault().IDWash && !p.Code.Contains("V")).ToList();
+                        List<string> codes = _model.Device.Where(d => d.IDDevice == _model.Posts.Where(p => p.IDWash == _model.Wash.Where(w => w.Code == washCode).FirstOrDefault().IDWash).FirstOrDefault().IDDevice).Select(x => x.Code).ToList();
+                        //List<Posts> posts = _model.Posts.Where(p => p.IDWash == _model.Wash.Where(w => w.Code == washCode).FirstOrDefault().IDWash && !p.Code.Contains("V")).ToList();
 
-                        List<RatesWPostCode> postsRates = new List<RatesWPostCode>();
-                        foreach (Posts p in posts)
-                        {
-                            string ip = GetPostIp(p.Code);
-                            if (ip == null || ip.Equals(""))
-                            {
-                                Logger.Log.Error("GetCurrentRate: не найден ip адрес поста " + p.Code);
-                                continue;
-                            }
+                        //List<RatesWPostCode> postsRates = new List<RatesWPostCode>();
+                        //foreach (Posts p in posts)
+                        //{
+                        //    string ip = GetPostIp(p.Code);
+                        //    if (ip == null || ip.Equals(""))
+                        //    {
+                        //        Logger.Log.Error("GetCurrentRate: не найден ip адрес поста " + p.Code);
+                        //        continue;
+                        //    }
                                
-                            HttpSenderResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
+                        //    HttpSenderResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
 
-                            if (response.StatusCode != HttpStatusCode.OK)
-                            {
-                                Logger.Log.Error("GetCurrentRate: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.ResultMessage) + Environment.NewLine);
-                                continue;
-                            }
+                        //    if (response.StatusCode != HttpStatusCode.OK)
+                        //    {
+                        //        Logger.Log.Error("GetCurrentRate: " + String.Format("Ответ сервера: {0}\n{1}", response.StatusCode, response.ResultMessage) + Environment.NewLine);
+                        //        continue;
+                        //    }
 
-                            postsRates.Add(new RatesWPostCode
-                            {
-                                Post = p.Code,
-                                Prices = JsonConvert.DeserializeObject<List<FunctionRate>>(response.ResultMessage)
-                            });
-                        }
+                        //    postsRates.Add(new RatesWPostCode
+                        //    {
+                        //        Post = p.Code,
+                        //        Prices = JsonConvert.DeserializeObject<List<FunctionRate>>(response.ResultMessage)
+                        //    });
+                        //}
 
-                        washRates.Add(new WashRates
-                        {
-                            Wash = washCode,
-                            Rates = postsRates
-                        });
+                        //washRates.Add(new WashRates
+                        //{
+                        //    Wash = washCode,
+                        //    Rates = postsRates
+                        //});
                     }
 
                     return Request.CreateResponse(HttpStatusCode.OK, JsonConvert.SerializeObject(washRates));
@@ -82,7 +83,7 @@ namespace PostControllingService.Controllers
             }
             catch (Exception e)
             {
-                Logger.Log.Error("GetCurrentRate: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                Logger.Log.Error("GetCurrentRate: " + e.InnerException.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
