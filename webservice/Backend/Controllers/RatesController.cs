@@ -58,9 +58,11 @@ namespace Backend.Controllers
         #region Swagger Annotation
         [SwaggerOperation(Summary = "Отправка новых тарифов на один пост")]
         [SwaggerResponse(200, Type = typeof(SetRateResultPost))]
+        [SwaggerResponse(404, Type = typeof(Error))]
+        [SwaggerResponse(424, Type = typeof(Error))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        [Authorize]
+        //[Authorize]
         [HttpPost("post")]
         public IActionResult SetRatePost(ChangeRatePostViewModel model)
         {
@@ -69,6 +71,22 @@ namespace Backend.Controllers
                 HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/post/rate/change/post", JsonConvert.SerializeObject(model));
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
+                    switch (response.StatusCode) 
+                    {
+                        case System.Net.HttpStatusCode.NotFound:
+                            _logger.LogError($"Не найден пост {model.PostCode}" + Environment.NewLine);
+                            return NotFound(new Error($"Пост {model.PostCode} не найден", "badvalue"));
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                            break;
+                        case (System.Net.HttpStatusCode)424:
+                            _logger.LogError($"Не удалось соединиться с постом {model.PostCode}" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с постом", "connection "));
+                        case (System.Net.HttpStatusCode)0:
+                            _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Не удалось подключиться к сервису управления постами", "connection"));
+                    }
+
                     _logger.LogError("postrc response: " + response.ResultMessage);
                     return StatusCode(424, new Error("Не удалось подключиться к сервису управления постами", "service"));
                 }
