@@ -53,8 +53,8 @@ namespace Backend.Controllers
                         //return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                     }
 
-                    string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                    var posts = JsonConvert.DeserializeObject<List<PostHappyHourViewModel>>(str);
+                    //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
+                    var posts = JsonConvert.DeserializeObject<List<PostHappyHourViewModel>>(response.ResultMessage);
 
                     result.Add(new WashHappyHourViewModel
                     {
@@ -74,7 +74,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие скидки на мойке по коду")]
-        [SwaggerResponse(200, Type = typeof(List<WashRatesViewModel>))]
+        [SwaggerResponse(200, Type = typeof(WashHappyHourViewModel))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
@@ -97,13 +97,9 @@ namespace Backend.Controllers
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                 }
                 //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                var result = JsonConvert.DeserializeObject<List<PostHappyHourViewModel>>(response.ResultMessage);
+                var result = JsonConvert.DeserializeObject<WashHappyHourViewModel>(response.ResultMessage);
 
-                return Ok(new WashHappyHourViewModel 
-                {
-                    wash = wash,
-                    posts = result
-                });
+                return Ok(result);
             }
             catch (Exception e)
             {
@@ -142,8 +138,8 @@ namespace Backend.Controllers
                         //return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                     }
 
-                    string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                    var posts = JsonConvert.DeserializeObject<List<PostHappyHourViewModel>>(str);
+                    //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
+                    var posts = JsonConvert.DeserializeObject<List<PostHappyHourViewModel>>(response.ResultMessage);
 
                     result.Add(new WashHappyHourViewModel
                     {

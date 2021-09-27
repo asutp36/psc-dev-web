@@ -53,8 +53,8 @@ namespace Backend.Controllers
                         //return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                     }
 
-                    string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                    var washResult = JsonConvert.DeserializeObject<WashAcquiringViewModel>(str);
+                    //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
+                    var washResult = JsonConvert.DeserializeObject<WashAcquiringViewModel>(response.ResultMessage);
 
                     result.Add(washResult);
                 }
@@ -70,7 +70,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на мойке по коду")]
-        [SwaggerResponse(200, Type = typeof(List<WashRatesViewModel>))]
+        [SwaggerResponse(200, Type = typeof(WashAcquiringViewModel))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
@@ -134,8 +134,8 @@ namespace Backend.Controllers
                         //return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                     }
 
-                    string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                    var washResult = JsonConvert.DeserializeObject<WashAcquiringViewModel>(str);
+                    //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
+                    var washResult = JsonConvert.DeserializeObject<WashAcquiringViewModel>(response.ResultMessage);
 
                     result.Add(washResult);
                 }

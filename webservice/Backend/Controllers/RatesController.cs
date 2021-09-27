@@ -108,8 +108,8 @@ namespace Backend.Controllers
                     _logger.LogError("postrc response: " + response.ResultMessage);
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                 }
-                string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                var result = JsonConvert.DeserializeObject<List<WashRatesViewModel>>(str);
+                //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
+                var result = JsonConvert.DeserializeObject<List<WashRatesViewModel>>(response.ResultMessage);
 
                 return Ok(result);
             }
@@ -144,7 +144,7 @@ namespace Backend.Controllers
                     _logger.LogError("postrc response: " + response.ResultMessage);
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                 }
-                string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
+                //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
                 var result = JsonConvert.DeserializeObject<WashRatesViewModel>(response.ResultMessage);
 
                 return Ok(result);
@@ -185,8 +185,8 @@ namespace Backend.Controllers
                     _logger.LogError("postrc response: " + response.ResultMessage);
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                 }
-                string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                var result = JsonConvert.DeserializeObject<List<WashRatesViewModel>>(str);
+                //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
+                var result = JsonConvert.DeserializeObject<List<WashRatesViewModel>>(response.ResultMessage);
 
                 return Ok(result);
             }
