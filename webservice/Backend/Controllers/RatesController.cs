@@ -30,7 +30,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotation
         [SwaggerOperation(Summary = "Отправка новых тарифов на мойки")]
-        [SwaggerResponse(200, Type = typeof(List<SetRateResult>))]
+        [SwaggerResponse(200, Type = typeof(List<SetParameterResult>))]
         #endregion
         [HttpPost]
         public IActionResult SetRates(ChangeRateViewModel model)
@@ -44,7 +44,7 @@ namespace Backend.Controllers
                     return StatusCode(424, new Error("Не удалось подключиться к сервису управления постами", "service"));
                 }
 
-                List<SetRateResult> result = JsonConvert.DeserializeObject<List<SetRateResult>>(response.ResultMessage);
+                List<SetParameterResult> result = JsonConvert.DeserializeObject<List<SetParameterResult>>(response.ResultMessage);
 
                 return Ok(result);
             }
@@ -57,18 +57,18 @@ namespace Backend.Controllers
 
         #region Swagger Annotation
         [SwaggerOperation(Summary = "Отправка новых тарифов на один пост")]
-        [SwaggerResponse(200, Type = typeof(SetRateResultPost))]
+        [SwaggerResponse(200, Type = typeof(SetParameterResultPost))]
         [SwaggerResponse(404, Type = typeof(Error))]
         [SwaggerResponse(424, Type = typeof(Error))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        //[Authorize]
+        [Authorize]
         [HttpPost("post")]
         public IActionResult SetRatePost(ChangeRatePostViewModel model)
         {
             try
             {
-                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/post/rate/change/post", JsonConvert.SerializeObject(model));
+                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/change/post", JsonConvert.SerializeObject(model));
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     switch (response.StatusCode) 
@@ -91,7 +91,7 @@ namespace Backend.Controllers
                     return StatusCode(424, new Error("Не удалось подключиться к сервису управления постами", "service"));
                 }
 
-                SetRateResultPost result = JsonConvert.DeserializeObject<SetRateResultPost>(response.ResultMessage);
+                SetParameterResultPost result = JsonConvert.DeserializeObject<SetParameterResultPost>(response.ResultMessage);
 
                 return Ok(result);
             }

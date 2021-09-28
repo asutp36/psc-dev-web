@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Backend.Controllers.Supplies.ViewModels
 {
-    public class SetRateResultPost
+    public class SetParameterResult
     {
-        public string postCode { get; set; }
-        public HttpResponse result { get; set; }
+        public string wash { get; set; }
+        public List<SetParameterResultPost> posts { get; set; }
     }
 }

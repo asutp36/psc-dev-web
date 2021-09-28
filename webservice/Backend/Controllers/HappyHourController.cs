@@ -163,13 +163,13 @@ namespace Backend.Controllers
         {
             try
             {
-                List<SetRateResultPost> result = new List<SetRateResultPost>();
+                List<SetParameterResultPost> result = new List<SetParameterResultPost>();
                 foreach(PostHappyHourViewModel discount in model)
                 {
                     HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/set", JsonConvert.SerializeObject(discount));
-                    result.Add(new SetRateResultPost
+                    result.Add(new SetParameterResultPost
                     {
-                        postCode = discount.post,
+                        post = discount.post,
                         result = response
                     });
                 }
