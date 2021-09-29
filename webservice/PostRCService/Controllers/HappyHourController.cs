@@ -100,7 +100,7 @@ namespace PostRCService.Controllers
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
         [HttpPost("change/post")]
-        public IActionResult ChangeRatesByPost(PostHappyHour change)
+        public IActionResult ChangeByPost(PostHappyHour change)
         {
             try
             {
@@ -152,7 +152,7 @@ namespace PostRCService.Controllers
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
         [HttpPost("change/wash")]
-        public IActionResult Set(ChangeHappyHourWash change)
+        public IActionResult ChangeByWash(ChangeHappyHourWash change)
         {
             try
             {
