@@ -25,7 +25,7 @@ namespace PostRCService.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "Получить текущие настройки эквайринга мойке по коду")]
+        [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на мойке по коду")]
         [SwaggerResponse(200, Type = typeof(WashAcquiring))]
         [SwaggerResponse(404, Description = "Не найдена мойка")]
         [SwaggerResponse(424, Description = "Нет связи ни с одним постом на мойке")]
