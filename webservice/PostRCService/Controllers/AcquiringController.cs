@@ -31,8 +31,8 @@ namespace PostRCService.Controllers
         [SwaggerResponse(424, Description = "Нет связи ни с одним постом на мойке")]
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
-        [HttpGet("{washCode}")]
-        public IActionResult Get(string washCode)
+        [HttpGet("wash/{washCode}")]
+        public IActionResult GetByWash(string washCode)
         {
             try
             {
@@ -93,13 +93,65 @@ namespace PostRCService.Controllers
         }
 
         #region Swagger Annotations
+        [SwaggerOperation(Summary = "Изменене настоек эквайринга на посту по коду")]
+        [SwaggerResponse(200, Type = typeof(ChangeParameterResult))]
+        [SwaggerResponse(404, Description = "Не найден пост")]
+        [SwaggerResponse(424, Description = "Нет связи с постом")]
+        [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
+        #endregion
+        [HttpPost("change/post")]
+        public IActionResult ChangeRatesByPost(PostAcquiring change)
+        {
+            try
+            {
+                if (!SqlHelper.IsPostExists(change.post))
+                {
+                    _logger.LogError($"Не найден пост {change.post}" + Environment.NewLine);
+                    return NotFound();
+                }
+
+                ChangeParameterResult result = new ChangeParameterResult();
+                result.post = change.post;
+
+                string ip = SqlHelper.GetPostIp(change.post);
+                if (ip == null)
+                {
+                    _logger.LogError($"Не найден ip поста {change.post}");
+                    return NotFound();
+                }
+
+                //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/set/acquiring", JsonConvert.SerializeObject(change.rates));
+                HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/set/acquiring", JsonConvert.SerializeObject(change.acquiring));
+
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    if (response.StatusCode == 0)
+                        _logger.LogInformation($"Нет соединения с постом {change.post}");
+                    else
+                        _logger.LogError($"Ответ поста {change.post}: {JsonConvert.SerializeObject(response)}");
+
+                    return StatusCode(424, "Нет связи с постом");
+                }
+
+                result.result = response;
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500);
+            }
+        }
+
+        #region Swagger Annotations
         [SwaggerOperation(Summary = "Изменить настройки эквайринга на мойках по коду")]
         [SwaggerResponse(200, Type = typeof(List<ChangeParameterWashResult>))]
         [SwaggerResponse(424, Description = "Нет связи ни с одной мойкой")]
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
-        [HttpPost("changebywash")]
-        public IActionResult Set(ChangeAcquiringWash change)
+        [HttpPost("change/wash")]
+        public IActionResult ChangeByWash(ChangeAcquiringWash change)
         {
             try
             {
