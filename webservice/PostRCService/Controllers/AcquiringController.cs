@@ -93,6 +93,87 @@ namespace PostRCService.Controllers
         }
 
         #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на нескольких мойках по кодам")]
+        [SwaggerResponse(200, Type = typeof(List<WashAcquiring>))]
+        [SwaggerResponse(424, Description = "Нет связи ни с одной мойкой")]
+        [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
+        #endregion
+        [HttpPost("manywash")]
+        public IActionResult GetByManyWash([FromBody]string[] washes)
+        {
+            try
+            {
+                List<WashAcquiring> result = new List<WashAcquiring>();
+
+                foreach (string wash in washes)
+                {
+                    if (!SqlHelper.IsWashExists(wash))
+                    {
+                        _logger.LogError($"Не найдена мойка {wash}" + Environment.NewLine);
+                        continue;
+                    }
+
+                    WashAcquiring washAcquiring = new WashAcquiring();
+                    washAcquiring.wash = wash;
+                    washAcquiring.posts = new List<PostAcquiring>();
+
+                    List<string> postCodes = SqlHelper.GetPostCodes(wash);
+                    foreach (string p in postCodes)
+                    {
+                        PostAcquiring postAcquiring = new PostAcquiring();
+                        postAcquiring.post = p;
+                        postAcquiring.acquiring = new AcquiringModel();
+
+                        string ip = SqlHelper.GetPostIp(p);
+                        if (ip == null)
+                        {
+                            _logger.LogError($"Не найден ip поста {p}");
+                            continue;
+                        }
+
+                        //HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/get/acquiring");
+                        HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/get/acquiring");
+
+                        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                        {
+                            if (response.StatusCode == 0)
+                            {
+                                _logger.LogInformation($"Нет соединения с постом {p}");
+                                continue;
+                            }
+
+                            _logger.LogError($"Ответ поста {p}: {JsonConvert.SerializeObject(response)}");
+                            continue;
+                        }
+
+                        postAcquiring.acquiring = JsonConvert.DeserializeObject<AcquiringModel>(response.ResultMessage);
+                        washAcquiring.posts.Add(postAcquiring);
+                    }
+
+                    if (washAcquiring.posts.Count < 1)
+                    {
+                        _logger.LogInformation($"Нет связи с мойкой {wash}" + Environment.NewLine);
+                    }
+
+                    result.Add(washAcquiring);
+                }
+
+                if (result.Count < 1)
+                {
+                    _logger.LogInformation($"Нет связи ни с одной из моек ({JsonConvert.SerializeObject(washes)})" + Environment.NewLine);
+                    return StatusCode(424);
+                }
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500);
+            }
+        }
+
+        #region Swagger Annotations
         [SwaggerOperation(Summary = "Изменене настоек эквайринга на посту по коду")]
         [SwaggerResponse(200, Type = typeof(ChangeParameterResult))]
         [SwaggerResponse(404, Description = "Не найден пост")]
