@@ -32,7 +32,7 @@ namespace PostRCService.Controllers
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
         [HttpGet("wash/{washCode}")]
-        public IActionResult Get(string washCode)
+        public IActionResult GetByWash(string washCode)
         {
             try
             {
@@ -80,6 +80,88 @@ namespace PostRCService.Controllers
                 if (result.posts.Count < 1)
                 {
                     _logger.LogError($"Нет связи с мойкой {washCode}" + Environment.NewLine);
+                    return StatusCode(424);
+                }
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500);
+            }
+        }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить текущие тарифы на нескольких мойках по кодам")]
+        [SwaggerResponse(200, Type = typeof(List<WashRates>))]
+        [SwaggerResponse(404, Description = "Не найдена мойка")]
+        [SwaggerResponse(424, Description = "Нет связи ни с одной мойкой")]
+        [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
+        #endregion
+        [HttpPost("manywash")]
+        public IActionResult GetByManyWash([FromBody] string[] washes)
+        {
+            try
+            {
+                List<WashHappyHour> result = new List<WashHappyHour>();
+
+                foreach (string wash in washes)
+                {
+                    if (!SqlHelper.IsWashExists(wash))
+                    {
+                        _logger.LogError($"Не найдена мойка {wash}" + Environment.NewLine);
+                        continue;
+                    }
+
+                    WashHappyHour washHH = new WashHappyHour();
+                    washHH.wash = wash;
+                    washHH.posts= new List<PostHappyHour>();
+
+                    List<string> postCodes = SqlHelper.GetPostCodes(wash);
+                    foreach (string p in postCodes)
+                    {
+                        PostHappyHour postHH = new PostHappyHour();
+                        postHH.post = p;
+                        postHH.happyHour = new HappyHourModel();
+
+                        string ip = SqlHelper.GetPostIp(p);
+                        if (ip == null)
+                        {
+                            _logger.LogError($"Не найден ip поста {p}");
+                            continue;
+                        }
+
+                        //HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
+                        HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/get/happyhours");
+
+                        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                        {
+                            if (response.StatusCode == 0)
+                            {
+                                _logger.LogInformation($"Нет соединения с постом {p}");
+                                continue;
+                            }
+
+                            _logger.LogError($"Ответ поста {p}: {JsonConvert.SerializeObject(response)}");
+                            continue;
+                        }
+
+                        postHH.happyHour = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
+                        washHH.posts.Add(postHH);
+                    }
+
+                    if (washHH.posts.Count < 1)
+                    {
+                        _logger.LogInformation($"Нет связи с мойкой {wash}" + Environment.NewLine);
+                    }
+
+                    result.Add(washHH);
+                }
+
+                if (result.Count < 1)
+                {
+                    _logger.LogInformation($"Нет связи ни с одной из моек ({JsonConvert.SerializeObject(washes)})" + Environment.NewLine);
                     return StatusCode(424);
                 }
 
