@@ -105,6 +105,7 @@ namespace Backend.Controllers
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие тарифы на мойках пользователя")]
         [SwaggerResponse(200, Type = typeof(List<WashRatesViewModel>))]
+        [SwaggerResponse(424, Type = typeof(Error), Description = "Не удалось получить данные ни с одной мойки")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [Authorize]
@@ -116,18 +117,42 @@ namespace Backend.Controllers
                 UserInfo uInfo = new UserInfo(User.Claims.ToList());
 
                 List<WashViewModel> washes = uInfo.GetWashes();
-                List<string> washCodes = new List<string>();
-                foreach (WashViewModel w in washes)
-                    washCodes.Add(w.code);
+                List<WashRatesViewModel> result = new List<WashRatesViewModel>();
 
-                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/manywash", JsonConvert.SerializeObject(washCodes));
-                if(response.StatusCode != System.Net.HttpStatusCode.OK)
+                foreach (WashViewModel w in washes)
                 {
-                    _logger.LogError("postrc response: " + response.ResultMessage);
-                    return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
+                    HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/rates/wash/{w.code}");
+
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                        switch (response.StatusCode)
+                        {
+                            case System.Net.HttpStatusCode.NotFound:
+                                _logger.LogError($"postrc не нашёл мойку {w.code}" + Environment.NewLine);
+                                continue;
+                            case System.Net.HttpStatusCode.InternalServerError:
+                                _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                                continue;
+                            case (System.Net.HttpStatusCode)424:
+                                _logger.LogError($"Не удалось соединиться с мойкой {w.code}" + Environment.NewLine);
+                                continue;
+                            case (System.Net.HttpStatusCode)0:
+                                _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                                continue;
+                            default:
+                                _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                                continue;
+                        }
+
+                    var washResult = JsonConvert.DeserializeObject<WashRatesViewModel>(response.ResultMessage);
+
+                    result.Add(washResult);
                 }
-                //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                var result = JsonConvert.DeserializeObject<List<WashRatesViewModel>>(response.ResultMessage);
+
+                if (result.Count < 1)
+                {
+                    _logger.LogError($"Ни с одной мойки не получилось получить текущие тарифы для пользователя {User.Identity.Name}" + Environment.NewLine);
+                    return StatusCode(424, new Error("Не удалось получить текущие тарифы с моек", "fail"));
+                }
 
                 return Ok(result);
             }
