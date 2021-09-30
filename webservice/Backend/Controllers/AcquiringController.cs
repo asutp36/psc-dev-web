@@ -92,6 +92,7 @@ namespace Backend.Controllers
         [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на мойке по коду")]
         [SwaggerResponse(200, Type = typeof(WashAcquiringViewModel))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
+        [SwaggerResponse(424, Type = typeof(Error), Description = "Не удалось получить данные с мойки")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         //[Authorize]
@@ -109,10 +110,26 @@ namespace Backend.Controllers
                 HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/{wash}");
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    _logger.LogError("postrc response: " + response.ResultMessage);
-                    return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
+                    switch (response.StatusCode)
+                    {
+                        case System.Net.HttpStatusCode.NotFound:
+                            _logger.LogError($"postrc не нашёл мойку {wash}" + Environment.NewLine);
+                            return NotFound(new Error("Не найдена мойка", "badvalue"));
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Не удалось получить настройки эквайринга с мойки", "service"));
+                        case (System.Net.HttpStatusCode)424:
+                            _logger.LogError($"Не удалось соединиться с мойкой {wash}" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с мойкой", "connection"));
+                        case (System.Net.HttpStatusCode)0:
+                            _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом", "connection"));
+                        default:
+                            _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                            return StatusCode(424, new Error("Не удалось получить настройки эквайринга с мойки", "unexpected"));
+                    }
                 }
-                //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
+
                 var result = JsonConvert.DeserializeObject<WashAcquiringViewModel>(response.ResultMessage);
 
                 return Ok(result);
