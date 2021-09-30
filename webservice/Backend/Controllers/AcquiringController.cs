@@ -31,6 +31,7 @@ namespace Backend.Controllers
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на мойках пользователя")]
         [SwaggerResponse(200, Type = typeof(List<WashHappyHourViewModel>))]
+        [SwaggerResponse(424, Type = typeof(Error), Description = "Не удалось получить данные ни с одной мойки")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [Authorize]
@@ -45,20 +46,39 @@ namespace Backend.Controllers
                 List<WashAcquiringViewModel> result = new List<WashAcquiringViewModel>();
                 foreach (WashViewModel w in washes)
                 {
-                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/get", JsonConvert.SerializeObject(w.code));
+                    HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/{w.code}");
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                    {
-                        _logger.LogError($"По мойке {w.code} не удалось получить текущие скидки. postrc response: " + response.ResultMessage);
-                        //return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
-                    }
+                        switch (response.StatusCode)
+                        {
+                            case System.Net.HttpStatusCode.NotFound:
+                                _logger.LogError($"postrc не нашёл мойку {w.code}" + Environment.NewLine);
+                                continue;
+                            case System.Net.HttpStatusCode.InternalServerError:
+                                _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                                continue;
+                            case (System.Net.HttpStatusCode)424:
+                                _logger.LogError($"Не удалось соединиться с мойкой {w.code}" + Environment.NewLine);
+                                continue;
+                            case (System.Net.HttpStatusCode)0:
+                                _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                                continue;
+                            default:
+                                _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                                continue;
+                        }
 
-                    //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
                     var washResult = JsonConvert.DeserializeObject<WashAcquiringViewModel>(response.ResultMessage);
 
                     result.Add(washResult);
                 }
 
+                if (result.Count < 1)
+                {
+                    _logger.LogError($"Ни с одной мойки не получилось получить настройки эквайринга для пользователя {User.Identity.Name}" + Environment.NewLine);
+                    return StatusCode(424, new Error("Не удалось получить настройки эквайринга с моек", "fail"));
+                }
+                    
                 return Ok(result);
             }
             catch (Exception e)
