@@ -1267,5 +1267,46 @@ namespace MobileIntegration.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, "Внутренняя ошибка сервера");
             }
         }
+
+        /// <summary>
+        /// Проверка на существование карты
+        /// </summary>
+        /// <param name="cardNum">Номер карты</param>
+        /// <returns></returns>
+        /// <response code="200">Есть такая карта</response>
+        /// <response code="404">Нет такой карты</response>
+        /// <response code="400">Некорректные входные данные</response>
+        /// <response code="500">Внутренняя ошибка</response>
+        [HttpGet]
+        [ActionName("card_exists")]
+        public HttpResponseMessage IsCardExists(string cardNum)
+        {
+            try
+            {
+                if(cardNum != null && cardNum != "")
+                {
+                    if (CardIsExists(cardNum))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, true);
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.NotFound, false);
+                    }
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, true);
+            }
+            catch(Exception e)
+            {
+                if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                    _model.Database.Connection.Close();
+                Logger.Log.Error("ChangeCard: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Внутренняя ошибка сервера");
+            }
+        }
     }
 }
