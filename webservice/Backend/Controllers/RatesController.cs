@@ -118,6 +118,7 @@ namespace Backend.Controllers
 
                 List<WashViewModel> washes = uInfo.GetWashes();
                 List<WashRatesViewModel> result = new List<WashRatesViewModel>();
+                List<RegionRatesModel> result1 = new List<RegionRatesModel>();
                 bool returnError = true;
 
                 foreach (WashViewModel w in washes)
@@ -162,7 +163,7 @@ namespace Backend.Controllers
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы с моек", "fail"));
                 }
 
-                return Ok(result);
+                return Ok(ToRegionRateModel(result));
             }
             catch(Exception e)
             {
@@ -293,5 +294,36 @@ namespace Backend.Controllers
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
+
+        private List<RegionRatesModel> ToRegionRateModel(List<WashRatesViewModel> washes)
+        {
+            List<RegionRatesModel> result = new List<RegionRatesModel>();
+
+            foreach (WashRatesViewModel w in washes)
+            {
+                RegionViewModel region = SqlHelper.GetRegionByWash(w.wash);
+                RegionRatesModel rrm = result.Find(x => x.regionCode == region.code);
+
+                if (rrm == null)
+                {
+                    rrm = new RegionRatesModel
+                    {
+                        regionCode = region.code,
+                        regionName = region.name,
+                        washes = new List<WashRatesViewModel>()
+                    };
+
+                    rrm.washes.Add(w);
+                }
+                else
+                {
+                    result.Remove(rrm);
+                    rrm.washes.Add(w);
+                }
+
+                result.Add(rrm);
+            }
+            return result;
+        }        
     }
 }
