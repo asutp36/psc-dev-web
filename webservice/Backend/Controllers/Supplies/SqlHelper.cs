@@ -350,5 +350,50 @@ namespace Backend.Controllers.Supplies
                 return w != null;
             }
         }
+
+        public static RegionViewModel GetRegionByPost(string post)
+        {
+            using (ModelDbContext context = new ModelDbContext())
+            {
+                RegionViewModel region = context.Posts.Include(p => p.IddeviceNavigation).Where(d => d.IddeviceNavigation.Code == post)
+                                                      .Include(p => p.IdwashNavigation).ThenInclude(w => w.IdregionNavigation)
+                                                      .Select(r => new RegionViewModel
+                                                      {
+                                                          code = r.IdwashNavigation.IdregionNavigation.Code,
+                                                          name = r.IdwashNavigation.IdregionNavigation.Name
+                                                      }).FirstOrDefault();
+
+                return region;
+            }
+        }
+
+        public static RegionViewModel GetRegionByWash(string wash)
+        {
+            using (ModelDbContext context = new ModelDbContext())
+            {
+                RegionViewModel region = context.Wash.Where(w => w.Code == wash).Include(w => w.IdregionNavigation)
+                                                      .Select(r => new RegionViewModel
+                                                      {
+                                                          code = r.IdregionNavigation.Code,
+                                                          name = r.IdregionNavigation.Name
+                                                      }).FirstOrDefault();
+
+                return region;
+            }
+        }
+
+        public static WashViewModel GetWashByPost(string post)
+        {
+            using (ModelDbContext context = new ModelDbContext())
+            {
+                WashViewModel wash = context.Posts.Include(p => p.IddeviceNavigation).Where(d => d.IddeviceNavigation.Code == post)
+                                                  .Include(p => p.IdwashNavigation).Select(w => new WashViewModel
+                                                  {
+                                                      code = w.IdwashNavigation.Code,
+                                                      name = w.IdwashNavigation.Name
+                                                  }).FirstOrDefault();
+                return wash;
+            }
+        }
     }
 }
