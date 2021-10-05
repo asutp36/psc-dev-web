@@ -118,37 +118,45 @@ namespace Backend.Controllers
 
                 List<WashViewModel> washes = uInfo.GetWashes();
                 List<WashRatesViewModel> result = new List<WashRatesViewModel>();
+                bool returnError = true;
 
                 foreach (WashViewModel w in washes)
                 {
                     HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/rates/wash/{w.code}");
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    {
+                        var emptyWash = new WashRatesViewModel { wash = w.code };
                         switch (response.StatusCode)
                         {
                             case System.Net.HttpStatusCode.NotFound:
                                 _logger.LogError($"postrc не нашёл мойку {w.code}" + Environment.NewLine);
-                                continue;
+                                break;
                             case System.Net.HttpStatusCode.InternalServerError:
                                 _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
-                                continue;
+                                break;
                             case (System.Net.HttpStatusCode)424:
                                 _logger.LogError($"Не удалось соединиться с мойкой {w.code}" + Environment.NewLine);
-                                continue;
+                                break;
                             case (System.Net.HttpStatusCode)0:
                                 _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
-                                continue;
+                                break;
                             default:
                                 _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
-                                continue;
+                                break;
                         }
+
+                        result.Add(emptyWash);
+                        continue;
+                    }
 
                     var washResult = JsonConvert.DeserializeObject<WashRatesViewModel>(response.ResultMessage);
 
                     result.Add(washResult);
+                    returnError = false;
                 }
 
-                if (result.Count < 1)
+                if (returnError)
                 {
                     _logger.LogError($"Ни с одной мойки не получилось получить текущие тарифы для пользователя {User.Identity.Name}" + Environment.NewLine);
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы с моек", "fail"));
@@ -169,9 +177,9 @@ namespace Backend.Controllers
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найден пост")]
         [SwaggerResponse(424, Type = typeof(Error), Description = "Нет связи с постом")]
         [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
         //[Authorize]
         [HttpGet("post/{post}")]
-        #endregion
         public IActionResult GetByPost(string post)
         {
             try

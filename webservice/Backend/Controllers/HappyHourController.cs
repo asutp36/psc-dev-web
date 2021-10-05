@@ -45,7 +45,7 @@ namespace Backend.Controllers
                 List<WashHappyHourViewModel> result = new List<WashHappyHourViewModel>();
                 foreach (WashViewModel w in washes)
                 {
-                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/get", JsonConvert.SerializeObject(w.code));
+                    HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/happyhour/wash/{w.code}");
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
@@ -54,13 +54,9 @@ namespace Backend.Controllers
                     }
 
                     //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                    var posts = JsonConvert.DeserializeObject<List<PostHappyHourViewModel>>(response.ResultMessage);
+                    var washResult = JsonConvert.DeserializeObject<WashHappyHourViewModel>(response.ResultMessage);
 
-                    result.Add(new WashHappyHourViewModel
-                    {
-                        wash = w.code,
-                        posts = posts
-                    });
+                    result.Add(washResult);
                 }
 
                 return Ok(result);
@@ -90,7 +86,7 @@ namespace Backend.Controllers
                     return NotFound(new Error("Не найдена мойка", "badvalue"));
                 }
 
-                HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/happyhour/{wash}");
+                HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/happyhour/wash/{wash}");
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     _logger.LogError("postrc response: " + response.ResultMessage);
@@ -130,7 +126,7 @@ namespace Backend.Controllers
                 List<WashHappyHourViewModel> result = new List<WashHappyHourViewModel>();
                 foreach (WashViewModel w in washes)
                 {
-                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/get", JsonConvert.SerializeObject(w.code));
+                    HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/happyhour/wash/{w.code}");
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
