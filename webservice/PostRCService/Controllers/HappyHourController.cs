@@ -25,6 +25,59 @@ namespace PostRCService.Controllers
         }
 
         #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить текущие скидки на посту по коду")]
+        [SwaggerResponse(200, Type = typeof(PostAcquiring))]
+        [SwaggerResponse(404, Description = "Не найден пост")]
+        [SwaggerResponse(424, Description = "Нет связи с постом")]
+        [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
+        #endregion
+        [HttpGet("post/{post}")]
+        public IActionResult GetByPost(string post)
+        {
+            try
+            {
+                if (!SqlHelper.IsPostExists(post))
+                {
+                    _logger.LogError($"Не найден пост {post}" + Environment.NewLine);
+                    return NotFound();
+                }
+
+                string ip = SqlHelper.GetPostIp(post);
+                if (ip == null)
+                {
+                    _logger.LogError($"Не найден ip поста {post}");
+                    return NotFound();
+                }
+
+                PostHappyHour result = new PostHappyHour();
+                result.post = post;
+
+                //HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
+                HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/rate/get");
+
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    if (response.StatusCode == 0)
+                    {
+                        _logger.LogInformation($"Нет соединения с постом {post}");
+                        return StatusCode(424);
+                    }
+
+                    _logger.LogError($"Ответ поста {post}: {JsonConvert.SerializeObject(response)}");
+                    return StatusCode(424);
+                }
+
+                result.happyHour = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500);
+            }
+        }
+
+        #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие скидки на мойке по коду")]
         [SwaggerResponse(200, Type = typeof(WashHappyHour))]
         [SwaggerResponse(404, Description = "Не найдена мойка")]
