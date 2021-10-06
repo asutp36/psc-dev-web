@@ -204,7 +204,7 @@ namespace Backend.Controllers
                             return StatusCode(424, new Error("Нет связи с сервисом", "connection"));
                         default:
                             _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
-                            return StatusCode(424, new Error("Не удалось получить настройки эквайринга с поста", "unexpected"));
+                            return StatusCode(424, new Error("Не удалось получить тарифы с поста", "unexpected"));
                     }
 
                 PostRatesModel result = JsonConvert.DeserializeObject<PostRatesModel>(response.ResultMessage);
