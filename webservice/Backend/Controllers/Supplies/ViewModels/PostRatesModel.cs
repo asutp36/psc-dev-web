@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Backend.Controllers.Supplies.ViewModels
 {
-    public class RateWPostCode
+    public class PostRatesModel
     {
         public string post { get; set; }
         public List<RateViewModel> prices { get; set; }

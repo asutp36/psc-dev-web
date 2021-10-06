@@ -8,6 +8,6 @@ namespace Backend.Controllers.Supplies.ViewModels
     public class WashRatesViewModel
     {
         public string wash { get; set; }
-        public List<RateWPostCode> rates { get; set; }
+        public List<PostRatesModel> rates { get; set; }
     }
 }

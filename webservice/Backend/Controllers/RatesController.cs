@@ -104,7 +104,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие тарифы на мойках пользователя")]
-        [SwaggerResponse(200, Type = typeof(List<WashRatesViewModel>))]
+        [SwaggerResponse(200, Type = typeof(List<RegionRatesModel>))]
         [SwaggerResponse(424, Type = typeof(Error), Description = "Не удалось получить данные ни с одной мойки")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
@@ -163,7 +163,7 @@ namespace Backend.Controllers
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы с моек", "fail"));
                 }
 
-                return Ok(ToRegionRateModel(result));
+                return Ok(WashesToRegionRateModel(result));
             }
             catch(Exception e)
             {
@@ -174,7 +174,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие тарифы на посте по коду")]
-        [SwaggerResponse(200, Type = typeof(RateWPostCode))]
+        [SwaggerResponse(200, Type = typeof(RegionRatesModel))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найден пост")]
         [SwaggerResponse(424, Type = typeof(Error), Description = "Нет связи с постом")]
         [SwaggerResponse(500, Type = typeof(Error))]
@@ -207,9 +207,9 @@ namespace Backend.Controllers
                             return StatusCode(424, new Error("Не удалось получить настройки эквайринга с поста", "unexpected"));
                     }
 
-                RateWPostCode result = JsonConvert.DeserializeObject<RateWPostCode>(response.ResultMessage);
+                PostRatesModel result = JsonConvert.DeserializeObject<PostRatesModel>(response.ResultMessage);
 
-                return Ok(result);
+                return Ok(PostToRegionRateModel(result));
             }
             catch(Exception e)
             {
@@ -220,7 +220,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие тарифы на мойке по коду")]
-        [SwaggerResponse(200, Type = typeof(WashRatesViewModel))]
+        [SwaggerResponse(200, Type = typeof(RegionRatesModel))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
@@ -245,7 +245,7 @@ namespace Backend.Controllers
                 //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
                 var result = JsonConvert.DeserializeObject<WashRatesViewModel>(response.ResultMessage);
 
-                return Ok(result);
+                return Ok(WashToRegionRateModel(result));
             }
             catch (Exception e)
             {
@@ -256,7 +256,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие тарифы на мойках по коду региона")]
-        [SwaggerResponse(200, Type = typeof(List<WashRatesViewModel>))]
+        [SwaggerResponse(200, Type = typeof(List<RegionRatesModel>))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдены мойки по коду региона")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
@@ -286,7 +286,7 @@ namespace Backend.Controllers
                 //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
                 var result = JsonConvert.DeserializeObject<List<WashRatesViewModel>>(response.ResultMessage);
 
-                return Ok(result);
+                return Ok(WashesToRegionRateModel(result));
             }
             catch (Exception e)
             {
@@ -295,7 +295,7 @@ namespace Backend.Controllers
             }
         }
 
-        private List<RegionRatesModel> ToRegionRateModel(List<WashRatesViewModel> washes)
+        private List<RegionRatesModel> WashesToRegionRateModel(List<WashRatesViewModel> washes)
         {
             List<RegionRatesModel> result = new List<RegionRatesModel>();
 
@@ -325,5 +325,43 @@ namespace Backend.Controllers
             }
             return result;
         }        
+
+        private RegionRatesModel WashToRegionRateModel(WashRatesViewModel wash)
+        {
+            RegionViewModel region = SqlHelper.GetRegionByWash(wash.wash);
+            RegionRatesModel result = new RegionRatesModel
+            {
+                regionCode = region.code,
+                regionName = region.name,
+                washes = new List<WashRatesViewModel>()
+            };
+
+            result.washes.Add(wash);
+
+            return result;
+        }
+
+        private RegionRatesModel PostToRegionRateModel(PostRatesModel post)
+        {
+            RegionViewModel region = SqlHelper.GetRegionByPost(post.post);
+            WashViewModel wash = SqlHelper.GetWashByPost(post.post);
+            RegionRatesModel result = new RegionRatesModel
+            {
+                regionCode = region.code,
+                regionName = region.name,
+                washes = new List<WashRatesViewModel>()
+            };
+
+            WashRatesViewModel wrm = new WashRatesViewModel
+            {
+                wash = wash.code,
+                rates = new List<PostRatesModel>()
+            };
+
+            wrm.rates.Add(post);
+            result.washes.Add(wrm);
+
+            return result;
+        }
     }
 }
