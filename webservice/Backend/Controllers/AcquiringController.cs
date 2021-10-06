@@ -46,9 +46,11 @@ namespace Backend.Controllers
                 List<WashAcquiringViewModel> result = new List<WashAcquiringViewModel>();
                 foreach (WashViewModel w in washes)
                 {
-                    HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/{w.code}");
+                    HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/wash/{w.code}");
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    {
+                        result.Add(new WashAcquiringViewModel { wash = w.code });
                         switch (response.StatusCode)
                         {
                             case System.Net.HttpStatusCode.NotFound:
@@ -67,6 +69,8 @@ namespace Backend.Controllers
                                 _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
                                 continue;
                         }
+                    }
+
 
                     var washResult = JsonConvert.DeserializeObject<WashAcquiringViewModel>(response.ResultMessage);
 
@@ -79,7 +83,7 @@ namespace Backend.Controllers
                     return StatusCode(424, new Error("Не удалось получить настройки эквайринга с моек", "fail"));
                 }
                     
-                return Ok(result);
+                return Ok(WashesToRegionRateModel(result));
             }
             catch (Exception e)
             {
@@ -97,7 +101,6 @@ namespace Backend.Controllers
         #endregion
         //[Authorize]
         [HttpGet("post/{post}")]
-
         public IActionResult GetByPost(string post)
         {
             try
@@ -126,7 +129,7 @@ namespace Backend.Controllers
 
                 PostAcquiringViewModel result = JsonConvert.DeserializeObject<PostAcquiringViewModel>(response.ResultMessage);
 
-                return Ok(result);
+                return Ok(PostToRegionRateModel(result));
             }
             catch(Exception e)
             {
@@ -154,7 +157,7 @@ namespace Backend.Controllers
                     return NotFound(new Error("Не найдена мойка", "badvalue"));
                 }
 
-                HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/{wash}");
+                HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/wash/{wash}");
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     switch (response.StatusCode)
@@ -179,7 +182,7 @@ namespace Backend.Controllers
 
                 var result = JsonConvert.DeserializeObject<WashAcquiringViewModel>(response.ResultMessage);
 
-                return Ok(result);
+                return Ok(WashToRegionRateModel(result));
             }
             catch (Exception e)
             {
@@ -190,11 +193,11 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на мойках по коду региона")]
-        [SwaggerResponse(200, Type = typeof(List<WashRatesViewModel>))]
+        [SwaggerResponse(200, Type = typeof(List<RegionAcquiringModel>))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдены мойки по коду региона")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        [Authorize]
+        //[Authorize]
         [HttpGet("region/{region}")]
         public IActionResult GetByRegion(int region)
         {
@@ -210,11 +213,13 @@ namespace Backend.Controllers
                 List<WashAcquiringViewModel> result = new List<WashAcquiringViewModel>();
                 foreach (WashViewModel w in washes)
                 {
-                    HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/{w.code}");
+                    HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/wash/{w.code}");
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
                         _logger.LogError($"По мойке {w.code} не удалось получить текущие скидки. postrc response: " + response.ResultMessage);
+                        result.Add(new WashAcquiringViewModel { wash = w.code });
+                        continue;
                         //return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                     }
 
@@ -224,7 +229,7 @@ namespace Backend.Controllers
                     result.Add(washResult);
                 }
 
-                return Ok(result);
+                return Ok(WashesToRegionRateModel(result));
             }
             catch (Exception e)
             {
@@ -262,6 +267,75 @@ namespace Backend.Controllers
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
+        }
+
+        private List<RegionAcquiringModel> WashesToRegionRateModel(List<WashAcquiringViewModel> washes)
+        {
+            List<RegionAcquiringModel> result = new List<RegionAcquiringModel>();
+
+            foreach (WashAcquiringViewModel w in washes)
+            {
+                RegionViewModel region = SqlHelper.GetRegionByWash(w.wash);
+                RegionAcquiringModel ram = result.Find(x => x.regionCode == region.code);
+
+                if (ram == null)
+                {
+                    ram = new RegionAcquiringModel
+                    {
+                        regionCode = region.code,
+                        regionName = region.name,
+                        washes = new List<WashAcquiringViewModel>()
+                    };
+
+                    ram.washes.Add(w);
+                }
+                else
+                {
+                    result.Remove(ram);
+                    ram.washes.Add(w);
+                }
+
+                result.Add(ram);
+            }
+            return result;
+        }
+
+        private RegionAcquiringModel WashToRegionRateModel(WashAcquiringViewModel wash)
+        {
+            RegionViewModel region = SqlHelper.GetRegionByWash(wash.wash);
+            RegionAcquiringModel result = new RegionAcquiringModel
+            {
+                regionCode = region.code,
+                regionName = region.name,
+                washes = new List<WashAcquiringViewModel>()
+            };
+
+            result.washes.Add(wash);
+
+            return result;
+        }
+
+        private RegionAcquiringModel PostToRegionRateModel(PostAcquiringViewModel post)
+        {
+            RegionViewModel region = SqlHelper.GetRegionByPost(post.post);
+            WashViewModel wash = SqlHelper.GetWashByPost(post.post);
+            RegionAcquiringModel result = new RegionAcquiringModel
+            {
+                regionCode = region.code,
+                regionName = region.name,
+                washes = new List<WashAcquiringViewModel>()
+            };
+
+            WashAcquiringViewModel wam = new WashAcquiringViewModel
+            {
+                wash = wash.code,
+                posts = new List<PostAcquiringViewModel>()
+            };
+
+            wam.posts.Add(post);
+            result.washes.Add(wam);
+
+            return result;
         }
     }
 }
