@@ -30,7 +30,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на мойках пользователя")]
-        [SwaggerResponse(200, Type = typeof(List<WashHappyHourViewModel>))]
+        [SwaggerResponse(200, Type = typeof(List<RegionAcquiringModel>))]
         [SwaggerResponse(424, Type = typeof(Error), Description = "Не удалось получить данные ни с одной мойки")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
@@ -94,7 +94,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на посту по коду")]
-        [SwaggerResponse(200, Type = typeof(PostAcquiringViewModel))]
+        [SwaggerResponse(200, Type = typeof(RegionAcquiringModel))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найден пост")]
         [SwaggerResponse(424, Type = typeof(Error), Description = "Нет связи с постом")]
         [SwaggerResponse(500, Type = typeof(Error))]
@@ -140,7 +140,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на мойке по коду")]
-        [SwaggerResponse(200, Type = typeof(WashAcquiringViewModel))]
+        [SwaggerResponse(200, Type = typeof(RegionAcquiringModel))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
         [SwaggerResponse(424, Type = typeof(Error), Description = "Не удалось получить данные с мойки")]
         [SwaggerResponse(500, Type = typeof(Error))]
