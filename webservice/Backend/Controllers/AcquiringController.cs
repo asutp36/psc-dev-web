@@ -89,6 +89,53 @@ namespace Backend.Controllers
         }
 
         #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на посту по коду")]
+        [SwaggerResponse(200, Type = typeof(PostAcquiringViewModel))]
+        [SwaggerResponse(404, Type = typeof(Error), Description = "Не найден пост")]
+        [SwaggerResponse(424, Type = typeof(Error), Description = "Нет связи с постом")]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        //[Authorize]
+        [HttpGet("post/{post}")]
+
+        public IActionResult GetByPost(string post)
+        {
+            try
+            {
+                HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/post/{post}");
+
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    switch (response.StatusCode)
+                    {
+                        case System.Net.HttpStatusCode.NotFound:
+                            _logger.LogError($"postrc не нашёл пост {post}" + Environment.NewLine);
+                            return NotFound(new Error("Не найден пост", "badvalue"));
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Не удалось получить текущие настройки эквайринга с поста", "service"));
+                        case (System.Net.HttpStatusCode)424:
+                            _logger.LogError($"Не удалось соединиться с постом {post}" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с постом", "connection"));
+                        case (System.Net.HttpStatusCode)0:
+                            _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом", "connection"));
+                        default:
+                            _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                            return StatusCode(424, new Error("Не удалось получить настройки эквайринга с поста", "unexpected"));
+                    }
+
+                PostAcquiringViewModel result = JsonConvert.DeserializeObject<PostAcquiringViewModel>(response.ResultMessage);
+
+                return Ok(result);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на мойке по коду")]
         [SwaggerResponse(200, Type = typeof(WashAcquiringViewModel))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
