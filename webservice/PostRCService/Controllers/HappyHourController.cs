@@ -53,7 +53,7 @@ namespace PostRCService.Controllers
                 result.post = post;
 
                 //HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
-                HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/rate/get");
+                HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/get/happyhours");
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
