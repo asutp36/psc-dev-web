@@ -26,7 +26,7 @@ namespace PostRCService.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие скидки на посту по коду")]
-        [SwaggerResponse(200, Type = typeof(PostAcquiring))]
+        [SwaggerResponse(200, Type = typeof(PostHappyHour))]
         [SwaggerResponse(404, Description = "Не найден пост")]
         [SwaggerResponse(424, Description = "Нет связи с постом")]
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
