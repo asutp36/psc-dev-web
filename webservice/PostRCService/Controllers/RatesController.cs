@@ -118,13 +118,16 @@ namespace PostRCService.Controllers
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
+                        var emptyPost = new PostRates { post = p };
                         if (response.StatusCode == 0)
                         {
                             _logger.LogInformation($"Нет соединения с постом {p}");
+                            result.rates.Add(emptyPost);
                             continue;
                         }
 
                         _logger.LogError($"Ответ поста {p}: {JsonConvert.SerializeObject(response)}");
+                        result.rates.Add(emptyPost);
                         continue;
                     }
 
@@ -192,13 +195,16 @@ namespace PostRCService.Controllers
 
                         if (response.StatusCode != System.Net.HttpStatusCode.OK)
                         {
+                            var emptyPost = new PostRates { post = p };
                             if (response.StatusCode == 0)
                             {
                                 _logger.LogInformation($"Нет соединения с постом {p}");
+                                washRate.rates.Add(emptyPost);
                                 continue;
                             }
 
                             _logger.LogError($"Ответ поста {p}: {JsonConvert.SerializeObject(response)}");
+                            washRate.rates.Add(emptyPost);
                             continue;
                         }
 
