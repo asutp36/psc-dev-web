@@ -181,7 +181,7 @@ namespace PostRCService.Controllers
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
         #endregion
         [HttpPost("change/post")]
-        public IActionResult ChangeRatesByPost(PostAcquiring change)
+        public IActionResult ChangeByPost(PostAcquiring change)
         {
             try
             {

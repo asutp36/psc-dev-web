@@ -243,7 +243,7 @@ namespace PostRCService.Controllers
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
         [HttpPost("change/post")]
-        public IActionResult ChangeRatesByPost(ChangeRatesPost change)
+        public IActionResult ChangeByPost(ChangeRatesPost change)
         {
             try
             {
@@ -294,7 +294,7 @@ namespace PostRCService.Controllers
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
         [HttpPost("change/wash")]
-        public IActionResult ChangeRatesByWash(ChangeRatesWash change)
+        public IActionResult ChangeByWash(ChangeRatesWash change)
         {
             try
             {
