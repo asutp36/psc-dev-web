@@ -100,6 +100,8 @@ namespace PostRCService.Controllers
                 result.rates = new List<PostRates>();
 
                 List<string> postCodes = SqlHelper.GetPostCodes(washCode);
+                bool returnError = true;
+
                 foreach(string p in postCodes)
                 {
                     PostRates postRates = new PostRates();
@@ -133,9 +135,10 @@ namespace PostRCService.Controllers
 
                     postRates.prices = JsonConvert.DeserializeObject<List<FunctionRate>>(response.ResultMessage);
                     result.rates.Add(postRates);
+                    returnError = false;
                 }
 
-                if(result.rates.Count < 1)
+                if(returnError)
                 {
                     _logger.LogInformation($"Нет связи с мойкой {washCode}" + Environment.NewLine);
                     return StatusCode(424);
