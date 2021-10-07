@@ -100,6 +100,10 @@ namespace PostRCService.Controllers.Helpers
                     return new HttpResponse { ResultMessage = ex.Message };
                 }
                 HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
+                if (ex.Response == null)
+                {
+                    return new HttpResponse { StatusCode = HttpStatusCode.RequestTimeout, ResultMessage = "Request timeout" };
+                }
 
                 string result;
                 using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))
@@ -161,6 +165,10 @@ namespace PostRCService.Controllers.Helpers
                     return new HttpResponse { ResultMessage = ex.Message };
                 }
                 HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
+                if (ex.Response == null)
+                {
+                    return new HttpResponse { StatusCode = HttpStatusCode.RequestTimeout, ResultMessage = "Request timeout" };
+                }
 
                 string result;
                 using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))
