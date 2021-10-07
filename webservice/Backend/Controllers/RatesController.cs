@@ -118,7 +118,6 @@ namespace Backend.Controllers
 
                 List<WashViewModel> washes = uInfo.GetWashes();
                 List<WashRatesViewModel> result = new List<WashRatesViewModel>();
-                List<RegionRatesModel> result1 = new List<RegionRatesModel>();
                 bool returnError = true;
 
                 foreach (WashViewModel w in washes)
@@ -141,6 +140,9 @@ namespace Backend.Controllers
                                 break;
                             case (System.Net.HttpStatusCode)0:
                                 _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                                break;
+                            case System.Net.HttpStatusCode.RequestTimeout:
+                                _logger.LogError($"postrc Request timed out. wash = {w.code}" + Environment.NewLine);
                                 break;
                             default:
                                 _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
