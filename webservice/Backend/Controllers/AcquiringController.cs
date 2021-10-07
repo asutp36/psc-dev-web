@@ -44,6 +44,8 @@ namespace Backend.Controllers
 
                 List<WashViewModel> washes = uInfo.GetWashes();
                 List<WashAcquiringViewModel> result = new List<WashAcquiringViewModel>();
+                bool returnError = true;
+
                 foreach (WashViewModel w in washes)
                 {
                     HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/wash/{w.code}");
@@ -65,6 +67,9 @@ namespace Backend.Controllers
                             case (System.Net.HttpStatusCode)0:
                                 _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
                                 continue;
+                            case System.Net.HttpStatusCode.RequestTimeout:
+                                _logger.LogError($"postrc Request timed out. wash = {w.code}" + Environment.NewLine);
+                                break;
                             default:
                                 _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
                                 continue;
@@ -75,14 +80,15 @@ namespace Backend.Controllers
                     var washResult = JsonConvert.DeserializeObject<WashAcquiringViewModel>(response.ResultMessage);
 
                     result.Add(washResult);
+                    returnError = false;
                 }
 
-                if (result.Count < 1)
+                if (returnError)
                 {
-                    _logger.LogError($"Ни с одной мойки не получилось получить настройки эквайринга для пользователя {User.Identity.Name}" + Environment.NewLine);
-                    return StatusCode(424, new Error("Не удалось получить настройки эквайринга с моек", "fail"));
+                    _logger.LogError($"Ни с одной мойки не получилось получить текущие настройки эквайринга для пользователя {User.Identity.Name}" + Environment.NewLine);
+                    return StatusCode(424, new Error("Не удалось получить текущие настройки эквайринга с моек", "fail"));
                 }
-                    
+
                 return Ok(WashesToRegionRateModel(result));
             }
             catch (Exception e)
