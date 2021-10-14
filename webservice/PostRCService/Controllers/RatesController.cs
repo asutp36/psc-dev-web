@@ -50,8 +50,9 @@ namespace PostRCService.Controllers
                 }
 
                 PostRates result = new PostRates();
-                result.post = post;
-                result.prices = new List<FunctionRate>();
+                result.postCode = post;
+                result.value = new RatesModel();
+                result.value.rates = new List<FunctionRate>();
 
                 //HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
                 HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/rate/get");
@@ -68,7 +69,7 @@ namespace PostRCService.Controllers
                     return StatusCode(424);
                 }
 
-                result.prices = JsonConvert.DeserializeObject<List<FunctionRate>>(response.ResultMessage);
+                result.value.rates = JsonConvert.DeserializeObject<List<FunctionRate>>(response.ResultMessage);
                 return Ok(result);
             }
             catch (Exception e)
@@ -96,8 +97,8 @@ namespace PostRCService.Controllers
                     return NotFound();
                 }
                 WashRates result = new WashRates();
-                result.wash = washCode;
-                result.rates = new List<PostRates>();
+                result.washCode = washCode;
+                result.posts = new List<PostRates>();
 
                 List<string> postCodes = SqlHelper.GetPostCodes(washCode);
                 bool returnError = true;
@@ -105,8 +106,9 @@ namespace PostRCService.Controllers
                 foreach(string p in postCodes)
                 {
                     PostRates postRates = new PostRates();
-                    postRates.post = p;
-                    postRates.prices = new List<FunctionRate>();
+                    postRates.postCode = p;
+                    postRates.value = new RatesModel();
+                    postRates.value.rates = new List<FunctionRate>();
 
                     string ip = SqlHelper.GetPostIp(p);
                     if(ip == null)
@@ -120,21 +122,21 @@ namespace PostRCService.Controllers
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
-                        var emptyPost = new PostRates { post = p };
+                        var emptyPost = new PostRates { postCode = p };
                         if (response.StatusCode == 0)
                         {
                             _logger.LogInformation($"Нет соединения с постом {p}");
-                            result.rates.Add(emptyPost);
+                            result.posts.Add(emptyPost);
                             continue;
                         }
 
                         _logger.LogError($"Ответ поста {p}: {JsonConvert.SerializeObject(response)}");
-                        result.rates.Add(emptyPost);
+                        result.posts.Add(emptyPost);
                         continue;
                     }
 
-                    postRates.prices = JsonConvert.DeserializeObject<List<FunctionRate>>(response.ResultMessage);
-                    result.rates.Add(postRates);
+                    postRates.value.rates = JsonConvert.DeserializeObject<List<FunctionRate>>(response.ResultMessage);
+                    result.posts.Add(postRates);
                     returnError = false;
                 }
 
@@ -176,15 +178,16 @@ namespace PostRCService.Controllers
                     }
 
                     WashRates washRate = new WashRates();
-                    washRate.wash = wash;
-                    washRate.rates = new List<PostRates>();
+                    washRate.washCode = wash;
+                    washRate.posts = new List<PostRates>();
 
                     List<string> postCodes = SqlHelper.GetPostCodes(wash);
                     foreach (string p in postCodes)
                     {
                         PostRates postRates = new PostRates();
-                        postRates.post = p;
-                        postRates.prices = new List<FunctionRate>();
+                        postRates.postCode = p;
+                        postRates.value = new RatesModel();
+                        postRates.value.rates = new List<FunctionRate>();
 
                         string ip = SqlHelper.GetPostIp(p);
                         if (ip == null)
@@ -198,24 +201,24 @@ namespace PostRCService.Controllers
 
                         if (response.StatusCode != System.Net.HttpStatusCode.OK)
                         {
-                            var emptyPost = new PostRates { post = p };
+                            var emptyPost = new PostRates { postCode = p };
                             if (response.StatusCode == 0)
                             {
                                 _logger.LogInformation($"Нет соединения с постом {p}");
-                                washRate.rates.Add(emptyPost);
+                                washRate.posts.Add(emptyPost);
                                 continue;
                             }
 
                             _logger.LogError($"Ответ поста {p}: {JsonConvert.SerializeObject(response)}");
-                            washRate.rates.Add(emptyPost);
+                            washRate.posts.Add(emptyPost);
                             continue;
                         }
 
-                        postRates.prices = JsonConvert.DeserializeObject<List<FunctionRate>>(response.ResultMessage);
-                        washRate.rates.Add(postRates);
+                        postRates.value.rates = JsonConvert.DeserializeObject<List<FunctionRate>>(response.ResultMessage);
+                        washRate.posts.Add(postRates);
                     }
 
-                    if (washRate.rates.Count < 1)
+                    if (washRate.posts.Count < 1)
                     {
                         _logger.LogInformation($"Нет связи с мойкой {wash}" + Environment.NewLine);
                     }

@@ -104,7 +104,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие тарифы на мойках пользователя")]
-        [SwaggerResponse(200, Type = typeof(List<RegionRatesModel>))]
+        [SwaggerResponse(200, Type = typeof(List<RegionParameter<List<RateViewModel>>>))]
         [SwaggerResponse(424, Type = typeof(Error), Description = "Не удалось получить данные ни с одной мойки")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
@@ -117,7 +117,7 @@ namespace Backend.Controllers
                 UserInfo uInfo = new UserInfo(User.Claims.ToList());
 
                 List<WashViewModel> washes = uInfo.GetWashes();
-                List<WashRatesViewModel> result = new List<WashRatesViewModel>();
+                List<WashParameter<RatesModel>> result = new List<WashParameter<RatesModel>>();
                 bool returnError = true;
 
                 foreach (WashViewModel w in washes)
@@ -126,7 +126,7 @@ namespace Backend.Controllers
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
-                        var emptyWash = new WashRatesViewModel { wash = w.code };
+                        var emptyWash = new WashParameter<RatesModel> { washCode = w.code };
                         switch (response.StatusCode)
                         {
                             case System.Net.HttpStatusCode.NotFound:
@@ -153,7 +153,7 @@ namespace Backend.Controllers
                         continue;
                     }
 
-                    var washResult = JsonConvert.DeserializeObject<WashRatesViewModel>(response.ResultMessage);
+                    var washResult = JsonConvert.DeserializeObject<WashParameter<RatesModel>>(response.ResultMessage);
 
                     result.Add(washResult);
                     returnError = false;
@@ -165,7 +165,8 @@ namespace Backend.Controllers
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы с моек", "fail"));
                 }
 
-                return Ok(WashesToRegionRateModel(result));
+                //return Ok(WashesToRegionRateModel(result));
+                return Ok(WashesToRegion(result));
             }
             catch(Exception e)
             {
@@ -326,7 +327,38 @@ namespace Backend.Controllers
                 result.Add(rrm);
             }
             return result;
-        }        
+        }
+
+        private List<RegionParameter<RatesModel>> WashesToRegion(List<WashParameter<RatesModel>> washes)
+        {
+            List<RegionParameter<RatesModel>> result = new List<RegionParameter<RatesModel>>();
+
+            foreach (WashParameter<RatesModel> w in washes)
+            {
+                RegionViewModel region = SqlHelper.GetRegionByWash(w.washCode);
+                RegionParameter<RatesModel> rrm = result.Find(x => x.regionCode == region.code);
+
+                if (rrm == null)
+                {
+                    rrm = new RegionParameter<RatesModel>
+                    {
+                        regionCode = region.code,
+                        regionName = region.name,
+                        washes = new List<WashParameter<RatesModel>>()
+                    };
+
+                    rrm.washes.Add(w);
+                }
+                else
+                {
+                    result.Remove(rrm);
+                    rrm.washes.Add(w);
+                }
+
+                result.Add(rrm);
+            }
+            return result;
+        }
 
         private RegionRatesModel WashToRegionRateModel(WashRatesViewModel wash)
         {

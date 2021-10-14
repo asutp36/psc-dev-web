@@ -5,10 +5,15 @@ using System.Threading.Tasks;
 
 namespace Backend.Controllers.Supplies.ViewModels
 {
-    public class PostParameter<T>
+    public class PostParameter<T> : IEquatable<PostParameter<T>>
     {
-        public string code { get; set; }
+        public string postCode { get; set; }
         public T value { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as PostParameter<T>);
+        }
 
         public bool Equals(PostParameter<T> p)
         {

@@ -7,7 +7,7 @@ namespace PostRCService.Controllers.BindingModels
 {
     public class PostRates
     {
-        public string post { get; set; }
-        public List<FunctionRate> prices { get; set; }
+        public string postCode { get; set; }
+        public RatesModel value { get; set; }
     }
 }
