@@ -7,7 +7,7 @@ namespace PostRCService.Controllers.BindingModels
 {
     public class ChangeRatesWash
     {
-        public string[] washes { get; set; }
-        public FunctionRate[] rates { get; set; }
+        public string washCode { get; set; }
+        public RatesModel value { get; set; }
     }
 }

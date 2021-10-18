@@ -249,7 +249,7 @@ namespace PostRCService.Controllers
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
         [HttpPost("change/post")]
-        public IActionResult ChangeByPost(ChangeRatesPost change)
+        public IActionResult ChangeByPost(PostRates change)
         {
             try
             {
@@ -270,7 +270,7 @@ namespace PostRCService.Controllers
                 }
 
                 //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
-                HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/rate", JsonConvert.SerializeObject(change.rates));
+                HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/rate", JsonConvert.SerializeObject(change.value.rates));
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
@@ -304,53 +304,47 @@ namespace PostRCService.Controllers
         {
             try
             {
-                List<ChangeParameterWashResult> result = new List<ChangeParameterWashResult>();
-                foreach (string wash in change.washes)
+                if (!SqlHelper.IsWashExists(change.washCode))
                 {
-                    if (!SqlHelper.IsWashExists(wash))
+                    _logger.LogError($"Не найдена мойка {change.washCode}");
+                    return NotFound();
+                }
+
+                ChangeParameterWashResult washResult = new ChangeParameterWashResult
+                {
+                    wash = change.washCode,
+                    posts = new List<ChangeParameterResult>()
+                };
+
+                List<string> posts = SqlHelper.GetPostCodes(change.washCode);
+                foreach (string post in posts)
+                {
+                    string ip = SqlHelper.GetPostIp(post);
+                    if (ip == null)
                     {
-                        _logger.LogError($"Не найдена мойка {wash}");
+                        _logger.LogError($"Не найден ip поста {post}");
                         continue;
                     }
 
-                    ChangeParameterWashResult washResult = new ChangeParameterWashResult
+                    //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
+                    HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/rate", JsonConvert.SerializeObject(change.value.rates));
+
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                        if (response.StatusCode == 0)
+                            _logger.LogInformation($"Нет соединения с постом {post}");
+                        else
+                            _logger.LogError($"Ответ поста {post}: {JsonConvert.SerializeObject(response)}");
+
+                    washResult.posts.Add(new ChangeParameterResult
                     {
-                        wash = wash,
-                        posts = new List<ChangeParameterResult>()
-                    };
-
-                    List<string> posts = SqlHelper.GetPostCodes(wash);
-                    foreach(string post in posts)
-                    {
-                        string ip = SqlHelper.GetPostIp(post);
-                        if (ip == null)
-                        {
-                            _logger.LogError($"Не найден ip поста {post}");
-                            continue;
-                        }
-
-                        //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
-                        HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/rate", JsonConvert.SerializeObject(change.rates));
-
-                        if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                            if (response.StatusCode == 0)
-                                _logger.LogInformation($"Нет соединения с постом {post}");
-                            else
-                                _logger.LogError($"Ответ поста {post}: {JsonConvert.SerializeObject(response)}");
-
-                        washResult.posts.Add(new ChangeParameterResult
-                        {
-                            post = post,
-                            result = response
-                        });
-                    }
-
-                    result.Add(washResult);
+                        post = post,
+                        result = response
+                    });
                 }
 
-                return Ok(result);
+                return Ok(washResult);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500);
