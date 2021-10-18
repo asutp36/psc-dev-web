@@ -101,6 +101,162 @@ namespace Backend.Controllers
             }
         }
 
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить текущие тарифы на мойке по коду")]
+        [SwaggerResponse(200, Type = typeof(RegionParameter<RatesModel>))]
+        [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpGet("wash/{wash}")]
+        public IActionResult GetByWash(string wash)
+        {
+            try
+            {
+                if (!SqlHelper.IsWashExists(wash))
+                {
+                    _logger.LogError($"Не найдена мойка {wash}" + Environment.NewLine);
+                    return NotFound(new Error("Не найдена мойка", "badvalue"));
+                }
+
+                HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/rates/wash/{wash}");
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    switch (response.StatusCode)
+                    {
+                        case System.Net.HttpStatusCode.NotFound:
+                            _logger.LogError($"postrc не нашёл мойку {wash}" + Environment.NewLine);
+                            return NotFound(new Error("Не найдена мойка", "badvalue"));
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами", "service"));
+                        case (System.Net.HttpStatusCode)424:
+                            _logger.LogError($"Не удалось соединиться с мойкой {wash}" + Environment.NewLine);
+                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {wash}", "connection"));
+                        case (System.Net.HttpStatusCode)0:
+                            _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        case System.Net.HttpStatusCode.RequestTimeout:
+                            _logger.LogError($"postrc Request timed out. wash = {wash}" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        default:
+                            _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
+                    }
+                
+                var result = JsonConvert.DeserializeObject<WashParameter<RatesModel>>(response.ResultMessage);
+                result.washName = SqlHelper.GetWashByCode(wash).name;
+
+                return Ok(WashToRegion(result));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        #region Swagger Annotation
+        [SwaggerOperation(Summary = "Отправка новых тарифов на несколько постов")]
+        [SwaggerResponse(200, Type = typeof(List<SetParameterResultPost>))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpPost("set/posts")]
+        public IActionResult SetRateManyPosts(SetPostsParameter<RatesModel> model)
+        {
+            try
+            {
+                List<SetParameterResultPost> result = new List<SetParameterResultPost>();
+                foreach (string post in model.posts)
+                {
+                    PostParameter<RatesModel> param = new PostParameter<RatesModel> { postCode = post, value = model.value };
+
+                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/change/post", JsonConvert.SerializeObject(param));
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    {
+                        switch (response.StatusCode)
+                        {
+                            case System.Net.HttpStatusCode.NotFound:
+                                _logger.LogError($"Не найден пост {post}" + Environment.NewLine);
+                                break;
+                            case System.Net.HttpStatusCode.InternalServerError:
+                                _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                                break;
+                            case (System.Net.HttpStatusCode)424:
+                                _logger.LogError($"Не удалось соединиться с постом {post}" + Environment.NewLine);
+                                break;
+                            case (System.Net.HttpStatusCode)0:
+                                _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                                break;
+                            default:
+                                _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                                break;
+                        }
+                    }
+
+                    result.Add(new SetParameterResultPost { post = post, result = response });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        #region Swagger Annotation
+        [SwaggerOperation(Summary = "Отправка новых тарифов на несколько постов")]
+        [SwaggerResponse(200, Type = typeof(List<SetParameterResultPost>))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpPost("set/wash")]
+        public IActionResult SetRateWash(SetWashParameter<RatesModel> model)
+        {
+            try
+            {
+                SetParameterResult result = new SetParameterResult();
+                result.wash = model.washCode;
+
+                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/change/wash", JsonConvert.SerializeObject(model));
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    switch (response.StatusCode)
+                    {
+                        case System.Net.HttpStatusCode.NotFound:
+                            _logger.LogError($"Не найдена мойка {model.washCode}" + Environment.NewLine);
+                            return NotFound(new Error("Не найдена мойка", "badvalue"));
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами", "service"));
+                        case (System.Net.HttpStatusCode)424:
+                            _logger.LogError($"Не удалось соединиться с мойкой {model.washCode}" + Environment.NewLine);
+                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {model.washCode}", "connection"));
+                        case (System.Net.HttpStatusCode)0:
+                            _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        case System.Net.HttpStatusCode.RequestTimeout:
+                            _logger.LogError($"postrc Request timed out. wash = {model.washCode}" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        default:
+                            _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
+                    }
+                }
+
+                result = JsonConvert.DeserializeObject<SetParameterResult>(response.ResultMessage);
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+}
+
         [HttpGet("fake")]
         public IActionResult GetFake()
         {
@@ -264,162 +420,6 @@ namespace Backend.Controllers
 
             return Ok(new List<RegionParameter<RatesModel>> { r1, r2 });
         }
-
-        #region Swagger Annotations
-        [SwaggerOperation(Summary = "Получить текущие тарифы на мойке по коду")]
-        [SwaggerResponse(200, Type = typeof(RegionParameter<RatesModel>))]
-        [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
-        [SwaggerResponse(500, Type = typeof(Error))]
-        #endregion
-        [Authorize]
-        [HttpGet("wash/{wash}")]
-        public IActionResult GetByWash(string wash)
-        {
-            try
-            {
-                if (!SqlHelper.IsWashExists(wash))
-                {
-                    _logger.LogError($"Не найдена мойка {wash}" + Environment.NewLine);
-                    return NotFound(new Error("Не найдена мойка", "badvalue"));
-                }
-
-                HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/rates/wash/{wash}");
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                    switch (response.StatusCode)
-                    {
-                        case System.Net.HttpStatusCode.NotFound:
-                            _logger.LogError($"postrc не нашёл мойку {wash}" + Environment.NewLine);
-                            return NotFound(new Error("Не найдена мойка", "badvalue"));
-                        case System.Net.HttpStatusCode.InternalServerError:
-                            _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
-                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами", "service"));
-                        case (System.Net.HttpStatusCode)424:
-                            _logger.LogError($"Не удалось соединиться с мойкой {wash}" + Environment.NewLine);
-                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {wash}", "connection"));
-                        case (System.Net.HttpStatusCode)0:
-                            _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
-                        case System.Net.HttpStatusCode.RequestTimeout:
-                            _logger.LogError($"postrc Request timed out. wash = {wash}" + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
-                        default:
-                            _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
-                    }
-                
-                var result = JsonConvert.DeserializeObject<WashParameter<RatesModel>>(response.ResultMessage);
-                result.washName = SqlHelper.GetWashByCode(wash).name;
-
-                return Ok(WashToRegion(result));
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
-            }
-        }
-
-        #region Swagger Annotation
-        [SwaggerOperation(Summary = "Отправка новых тарифов на несколько постов")]
-        [SwaggerResponse(200, Type = typeof(List<SetParameterResultPost>))]
-        [SwaggerResponse(500, Type = typeof(Error))]
-        #endregion
-        [Authorize]
-        [HttpPost("set/posts")]
-        public IActionResult SetRateManyPosts(SetPostsParameter<RatesModel> model)
-        {
-            try
-            {
-                List<SetParameterResultPost> result = new List<SetParameterResultPost>();
-                foreach (string post in model.posts)
-                {
-                    PostParameter<RatesModel> param = new PostParameter<RatesModel> { postCode = post, value = model.value };
-
-                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/change/post", JsonConvert.SerializeObject(param));
-                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                    {
-                        switch (response.StatusCode)
-                        {
-                            case System.Net.HttpStatusCode.NotFound:
-                                _logger.LogError($"Не найден пост {post}" + Environment.NewLine);
-                                break;
-                            case System.Net.HttpStatusCode.InternalServerError:
-                                _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
-                                break;
-                            case (System.Net.HttpStatusCode)424:
-                                _logger.LogError($"Не удалось соединиться с постом {post}" + Environment.NewLine);
-                                break;
-                            case (System.Net.HttpStatusCode)0:
-                                _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
-                                break;
-                            default:
-                                _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
-                                break;
-                        }
-                    }
-
-                    result.Add(new SetParameterResultPost { post = post, result = response });
-                }
-
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
-            }
-        }
-
-        #region Swagger Annotation
-        [SwaggerOperation(Summary = "Отправка новых тарифов на несколько постов")]
-        [SwaggerResponse(200, Type = typeof(List<SetParameterResultPost>))]
-        [SwaggerResponse(500, Type = typeof(Error))]
-        #endregion
-        [Authorize]
-        [HttpPost("set/wash")]
-        public IActionResult SetRateWash(SetWashParameter<RatesModel> model)
-        {
-            try
-            {
-                SetParameterResult result = new SetParameterResult();
-                result.wash = model.washCode;
-
-                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/change/wash", JsonConvert.SerializeObject(model));
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                {
-                    switch (response.StatusCode)
-                    {
-                        case System.Net.HttpStatusCode.NotFound:
-                            _logger.LogError($"Не найдена мойка {model.washCode}" + Environment.NewLine);
-                            return NotFound(new Error("Не найдена мойка", "badvalue"));
-                        case System.Net.HttpStatusCode.InternalServerError:
-                            _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
-                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами", "service"));
-                        case (System.Net.HttpStatusCode)424:
-                            _logger.LogError($"Не удалось соединиться с мойкой {model.washCode}" + Environment.NewLine);
-                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {model.washCode}", "connection"));
-                        case (System.Net.HttpStatusCode)0:
-                            _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
-                        case System.Net.HttpStatusCode.RequestTimeout:
-                            _logger.LogError($"postrc Request timed out. wash = {model.washCode}" + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
-                        default:
-                            _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
-                    }
-                }
-
-                result = JsonConvert.DeserializeObject<SetParameterResult>(response.ResultMessage);
-
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
-            }
-}
 
         private List<RegionParameter<RatesModel>> WashesToRegion(List<WashParameter<RatesModel>> washes)
         {
