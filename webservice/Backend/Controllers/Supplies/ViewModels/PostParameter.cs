@@ -12,7 +12,7 @@ namespace Backend.Controllers.Supplies.ViewModels
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as PostParameter<T>);
+            return obj is PostParameter<T> && Equals(obj as PostParameter<T>);
         }
 
         public bool Equals(PostParameter<T> p)

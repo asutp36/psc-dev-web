@@ -102,6 +102,57 @@ namespace Backend.Controllers
             }
         }
 
+        #region Swagger Annotation
+        [SwaggerOperation(Summary = "Отправка новых тарифов на несколько постов")]
+        [SwaggerResponse(200, Type = typeof(List<SetParameterResultPost>))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        //[Authorize]
+        [HttpPost("manyposts")]
+        public IActionResult SetRateManyPosts(SetPostsParameter<RatesModel> model)
+        {
+            try
+            {
+                List<SetParameterResultPost> result = new List<SetParameterResultPost>();
+                foreach(string post in model.posts)
+                {
+                    PostParameter<RatesModel> param = new PostParameter<RatesModel> { postCode = post, value = model.value };
+
+                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/change/post", JsonConvert.SerializeObject(param));
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    {
+                        switch (response.StatusCode)
+                        {
+                            case System.Net.HttpStatusCode.NotFound:
+                                _logger.LogError($"Не найден пост {post}" + Environment.NewLine);
+                                break;
+                            case System.Net.HttpStatusCode.InternalServerError:
+                                _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                                break;
+                            case (System.Net.HttpStatusCode)424:
+                                _logger.LogError($"Не удалось соединиться с постом {post}" + Environment.NewLine);
+                                break;
+                            case (System.Net.HttpStatusCode)0:
+                                _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                                break;
+                            default:
+                                _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                                break;
+                        }
+                    }
+
+                    result.Add(new SetParameterResultPost { post = post, result = response });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие тарифы на мойках пользователя")]
         [SwaggerResponse(200, Type = typeof(List<RegionParameter<List<RateViewModel>>>))]
