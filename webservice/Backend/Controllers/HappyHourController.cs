@@ -106,7 +106,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие скидки на мойках по коду региона")]
-        [SwaggerResponse(200, Type = typeof(List<WashRatesViewModel>))]
+        [SwaggerResponse(200, Type = typeof(List<WashHappyHourViewModel>))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдены мойки по коду региона")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion

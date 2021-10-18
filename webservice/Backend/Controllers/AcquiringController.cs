@@ -246,7 +246,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Установить настройки эквайринга на мойках по постам")]
-        [SwaggerResponse(200, Type = typeof(List<WashRatesViewModel>))]
+        [SwaggerResponse(200, Type = typeof(List<WashAcquiringViewModel>))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [Authorize]
