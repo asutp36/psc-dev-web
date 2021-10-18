@@ -304,7 +304,7 @@ namespace Backend.Controllers
                             return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
                         default:
                             _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
                     }
                 
                 var result = JsonConvert.DeserializeObject<WashParameter<RatesModel>>(response.ResultMessage);
@@ -375,7 +375,7 @@ namespace Backend.Controllers
         [SwaggerResponse(200, Type = typeof(List<SetParameterResultPost>))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        //[Authorize]
+        [Authorize]
         [HttpPost("set/wash")]
         public IActionResult SetRateWash(SetWashParameter<RatesModel> model)
         {
@@ -391,19 +391,22 @@ namespace Backend.Controllers
                     {
                         case System.Net.HttpStatusCode.NotFound:
                             _logger.LogError($"Не найдена мойка {model.washCode}" + Environment.NewLine);
-                            return NotFound();
+                            return NotFound(new Error("Не найдена мойка", "badvalue"));
                         case System.Net.HttpStatusCode.InternalServerError:
                             _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
-                            return StatusCode(424);
+                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами", "service"));
                         case (System.Net.HttpStatusCode)424:
                             _logger.LogError($"Не удалось соединиться с мойкой {model.washCode}" + Environment.NewLine);
-                            return StatusCode(424);
+                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {model.washCode}", "connection"));
                         case (System.Net.HttpStatusCode)0:
                             _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
-                            return StatusCode(424);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        case System.Net.HttpStatusCode.RequestTimeout:
+                            _logger.LogError($"postrc Request timed out. wash = {model.washCode}" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
                         default:
                             _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
-                            return StatusCode(424);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
                     }
                 }
 
