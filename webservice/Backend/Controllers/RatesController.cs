@@ -126,7 +126,7 @@ namespace Backend.Controllers
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
-                        var emptyWash = new WashParameter<RatesModel> { washCode = w.code };
+                        var emptyWash = new WashParameter<RatesModel> { washCode = w.code, washName = w.name };
                         switch (response.StatusCode)
                         {
                             case System.Net.HttpStatusCode.NotFound:
@@ -154,6 +154,7 @@ namespace Backend.Controllers
                     }
 
                     var washResult = JsonConvert.DeserializeObject<WashParameter<RatesModel>>(response.ResultMessage);
+                    washResult.washName = w.name;
 
                     result.Add(washResult);
                     returnError = false;
@@ -277,6 +278,7 @@ namespace Backend.Controllers
             WashParameter<RatesModel> w13 = new WashParameter<RatesModel>
             {
                 washCode = "M13",
+                washName = "Мойка М13, всё норм на ней",
                 posts = new List<PostParameter<RatesModel>> { p131, p132, p133 },
                 value = new RatesModel()
             };
@@ -308,6 +310,7 @@ namespace Backend.Controllers
             WashParameter<RatesModel> w14 = new WashParameter<RatesModel>
             {
                 washCode = "M14",
+                washName = "Мойка М14, разные посты",
                 posts = new List<PostParameter<RatesModel>> { p141, p142, p143, p144 },
                 value = new RatesModel()
             };
@@ -315,6 +318,7 @@ namespace Backend.Controllers
             WashParameter<RatesModel> w15 = new WashParameter<RatesModel>
             {
                 washCode = "M15",
+                washName = "Мойка М15, пустые посты и тарифы",
                 posts = null,
                 value = null
             };
@@ -408,6 +412,7 @@ namespace Backend.Controllers
                 }
                 //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
                 var result = JsonConvert.DeserializeObject<WashParameter<RatesModel>>(response.ResultMessage);
+                result.washName = SqlHelper.GetWashByCode(wash).name;
 
                 return Ok(WashToRegion(result));
             }
@@ -448,9 +453,9 @@ namespace Backend.Controllers
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                 }
                 //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                var result = JsonConvert.DeserializeObject<List<WashRatesViewModel>>(response.ResultMessage);
+                var result = JsonConvert.DeserializeObject<List<WashParameter<RatesModel>>>(response.ResultMessage);
 
-                return Ok(WashesToRegionRateModel(result));
+                return Ok(WashesToRegion(result));
             }
             catch (Exception e)
             {
@@ -459,43 +464,14 @@ namespace Backend.Controllers
             }
         }
 
-        private List<RegionRatesModel> WashesToRegionRateModel(List<WashRatesViewModel> washes)
-        {
-            List<RegionRatesModel> result = new List<RegionRatesModel>();
-
-            foreach (WashRatesViewModel w in washes)
-            {
-                RegionViewModel region = SqlHelper.GetRegionByWash(w.wash);
-                RegionRatesModel rrm = result.Find(x => x.regionCode == region.code);
-
-                if (rrm == null)
-                {
-                    rrm = new RegionRatesModel
-                    {
-                        regionCode = region.code,
-                        regionName = region.name,
-                        washes = new List<WashRatesViewModel>()
-                    };
-
-                    rrm.washes.Add(w);
-                }
-                else
-                {
-                    result.Remove(rrm);
-                    rrm.washes.Add(w);
-                }
-
-                result.Add(rrm);
-            }
-            return result;
-        }
-
         private List<RegionParameter<RatesModel>> WashesToRegion(List<WashParameter<RatesModel>> washes)
         {
             List<RegionParameter<RatesModel>> result = new List<RegionParameter<RatesModel>>();
 
             foreach (WashParameter<RatesModel> w in washes)
             {
+                w.washName = SqlHelper.GetWashByCode(w.washCode).name;
+
                 RegionViewModel region = SqlHelper.GetRegionByWash(w.washCode);
                 RegionParameter<RatesModel> rrm = result.Find(x => x.regionCode == region.code);
 
@@ -529,21 +505,6 @@ namespace Backend.Controllers
                 regionCode = region.code,
                 regionName = region.name,
                 washes = new List<WashParameter<RatesModel>>()
-            };
-
-            result.washes.Add(wash);
-
-            return result;
-        }
-
-        private RegionRatesModel WashToRegionRateModel(WashRatesViewModel wash)
-        {
-            RegionViewModel region = SqlHelper.GetRegionByWash(wash.wash);
-            RegionRatesModel result = new RegionRatesModel
-            {
-                regionCode = region.code,
-                regionName = region.name,
-                washes = new List<WashRatesViewModel>()
             };
 
             result.washes.Add(wash);

@@ -9,6 +9,7 @@ namespace Backend.Controllers.Supplies.ViewModels
     public class WashParameter<T>
     {
         public string washCode { get; set; }
+        public string washName { get; set; }
         public T value { get 
             {
                 if (this.posts == null || this.posts.Count == 0)

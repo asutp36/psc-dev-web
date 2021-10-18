@@ -395,5 +395,21 @@ namespace Backend.Controllers.Supplies
                 return wash;
             }
         }
+
+        public static WashViewModel GetWashByCode(string code)
+        {
+            using (ModelDbContext context = new ModelDbContext())
+            {
+                WashViewModel wash = context.Wash.Where(w => w.Code == code).Select(w => new WashViewModel
+                {
+                    idWash = w.Idwash,
+                    code = w.Code,
+                    name = w.Name,
+                    idRegion = w.Idregion
+                }).FirstOrDefault();
+
+                return wash;
+            }
+        }
     }
 }
