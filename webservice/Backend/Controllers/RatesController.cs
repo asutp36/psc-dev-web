@@ -30,7 +30,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие тарифы на мойках пользователя")]
-        [SwaggerResponse(200, Type = typeof(List<RegionParameter<List<RateViewModel>>>))]
+        [SwaggerResponse(200, Type = typeof(List<RegionParameter<RatesModel>>))]
         [SwaggerResponse(424, Type = typeof(Error), Description = "Не удалось получить данные ни с одной мойки")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
@@ -207,8 +207,8 @@ namespace Backend.Controllers
         }
 
         #region Swagger Annotation
-        [SwaggerOperation(Summary = "Отправка новых тарифов на несколько постов")]
-        [SwaggerResponse(200, Type = typeof(List<SetParameterResultPost>))]
+        [SwaggerOperation(Summary = "Отправка новых тарифов на мойку")]
+        [SwaggerResponse(200, Type = typeof(SetParameterResultWash))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [Authorize]
@@ -217,7 +217,7 @@ namespace Backend.Controllers
         {
             try
             {
-                SetParameterResult result = new SetParameterResult();
+                SetParameterResultWash result = new SetParameterResultWash();
                 result.wash = model.washCode;
 
                 HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/change/wash", JsonConvert.SerializeObject(model));
@@ -246,7 +246,7 @@ namespace Backend.Controllers
                     }
                 }
 
-                result = JsonConvert.DeserializeObject<SetParameterResult>(response.ResultMessage);
+                result = JsonConvert.DeserializeObject<SetParameterResultWash>(response.ResultMessage);
 
                 return Ok(result);
             }

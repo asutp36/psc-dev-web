@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Backend.Controllers.Supplies.ViewModels
 {
-    public class SetParameterResult
+    public class SetParameterResultWash
     {
         public string wash { get; set; }
         public List<SetParameterResultPost> posts { get; set; }
