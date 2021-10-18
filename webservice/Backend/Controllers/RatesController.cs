@@ -175,6 +175,167 @@ namespace Backend.Controllers
             }
         }
 
+        [HttpGet("fake")]
+        public IActionResult GetFake()
+        {
+            RateViewModel intensive = new RateViewModel
+            {
+                Code = "intensive",
+                Func = "Мойка дисков",
+                Rate = 18
+            };
+
+            RateViewModel active = new RateViewModel
+            {
+                Code = "active",
+                Func = "Активная химия",
+                Rate = 20
+            };
+
+            RateViewModel foam = new RateViewModel
+            {
+                Code = "foam",
+                Func = "Пена",
+                Rate = 18
+            };
+
+            RateViewModel foam1 = new RateViewModel
+            {
+                Code = "foam",
+                Func = "Пена",
+                Rate = 14
+            };
+
+            RateViewModel shampoo = new RateViewModel
+            {
+                Code = "shampoo",
+                Func = "Вода-шампунь",
+                Rate = 16
+            };
+
+            RateViewModel brush = new RateViewModel
+            {
+                Code = "brush",
+                Func = "Щетка",
+                Rate = 16
+            };
+
+            RateViewModel brush1 = new RateViewModel
+            {
+                Code = "brush",
+                Func = "Щетка",
+                Rate = 10
+            };
+
+            RateViewModel water = new RateViewModel
+            {
+                Code = "water",
+                Func = "Вода",
+                Rate = 14
+            };
+
+            RateViewModel wax = new RateViewModel
+            {
+                Code = "wax",
+                Func = "Воск",
+                Rate = 20
+            };
+
+            RateViewModel osmosis = new RateViewModel
+            {
+                Code = "osmosis",
+                Func = "Осмос",
+                Rate = 20
+            };
+
+            RateViewModel stop = new RateViewModel
+            {
+                Code = "stop",
+                Func = "Пауза",
+                Rate = 2
+            };
+
+
+            PostParameter<RatesModel> p131 = new PostParameter<RatesModel>
+            {
+                postCode = "13-1",
+                value = new RatesModel() { rates = new List<RateViewModel> { intensive, active, foam, shampoo, brush, water, wax, osmosis, stop } }
+            };
+
+            PostParameter<RatesModel> p132 = new PostParameter<RatesModel>
+            {
+                postCode = "13-2",
+                value = new RatesModel() { rates = new List<RateViewModel> { intensive, active, foam, shampoo, brush, water, wax, osmosis, stop } }
+            };
+
+            PostParameter<RatesModel> p133 = new PostParameter<RatesModel>
+            {
+                postCode = "13-2",
+                value = new RatesModel() { rates = new List<RateViewModel> { intensive, active, foam, shampoo, brush, water, wax, osmosis, stop } }
+            };
+
+            WashParameter<RatesModel> w13 = new WashParameter<RatesModel>
+            {
+                washCode = "M13",
+                posts = new List<PostParameter<RatesModel>> { p131, p132, p133 },
+                value = new RatesModel()
+            };
+
+            PostParameter<RatesModel> p141 = new PostParameter<RatesModel>
+            {
+                postCode = "14-1",
+                value = new RatesModel() { rates = new List<RateViewModel> { intensive, active, foam, shampoo, brush, water, wax, osmosis, stop } }
+            };
+
+            PostParameter<RatesModel> p142 = new PostParameter<RatesModel>
+            {
+                postCode = "14-2",
+                value = new RatesModel() { rates = new List<RateViewModel> { intensive, active, foam, shampoo, brush1, water, wax, osmosis, stop } }
+            };
+
+            PostParameter<RatesModel> p143 = new PostParameter<RatesModel>
+            {
+                postCode = "14-2",
+                value = new RatesModel() { rates = new List<RateViewModel> { intensive, active, foam, shampoo, brush, water, wax, osmosis, stop } }
+            };
+
+            PostParameter<RatesModel> p144 = new PostParameter<RatesModel>
+            {
+                postCode = "14-2",
+                value = new RatesModel() { rates = new List<RateViewModel> { intensive, active, foam1, shampoo, brush1, water, wax, osmosis, stop } }
+            };
+
+            WashParameter<RatesModel> w14 = new WashParameter<RatesModel>
+            {
+                washCode = "M14",
+                posts = new List<PostParameter<RatesModel>> { p141, p142, p143, p144 },
+                value = new RatesModel()
+            };
+
+            WashParameter<RatesModel> w15 = new WashParameter<RatesModel>
+            {
+                washCode = "M15",
+                posts = null,
+                value = null
+            };
+
+            RegionParameter<RatesModel> r1 = new RegionParameter<RatesModel>
+            {
+                regionCode = 1,
+                regionName = "Первый регион",
+                washes = new List<WashParameter<RatesModel>> { w13 }
+            };
+
+            RegionParameter<RatesModel> r2 = new RegionParameter<RatesModel>
+            {
+                regionCode = 2,
+                regionName = "Второй регион",
+                washes = new List<WashParameter<RatesModel>> { w14, w15 }
+            };
+
+            return Ok(new List<RegionParameter<RatesModel>> { r1, r2 });
+        }
+
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие тарифы на посте по коду")]
         [SwaggerResponse(200, Type = typeof(RegionRatesModel))]
@@ -246,9 +407,9 @@ namespace Backend.Controllers
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
                 }
                 //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                var result = JsonConvert.DeserializeObject<WashRatesViewModel>(response.ResultMessage);
+                var result = JsonConvert.DeserializeObject<WashParameter<RatesModel>>(response.ResultMessage);
 
-                return Ok(WashToRegionRateModel(result));
+                return Ok(WashToRegion(result));
             }
             catch (Exception e)
             {
@@ -357,6 +518,21 @@ namespace Backend.Controllers
 
                 result.Add(rrm);
             }
+            return result;
+        }
+
+        private RegionParameter<RatesModel> WashToRegion(WashParameter<RatesModel> wash)
+        {
+            RegionViewModel region = SqlHelper.GetRegionByWash(wash.washCode);
+            RegionParameter<RatesModel> result = new RegionParameter<RatesModel>
+            {
+                regionCode = region.code,
+                regionName = region.name,
+                washes = new List<WashParameter<RatesModel>>()
+            };
+
+            result.washes.Add(wash);
+
             return result;
         }
 
