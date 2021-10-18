@@ -92,7 +92,7 @@ namespace Backend.Controllers
                     return StatusCode(424, new Error("Не удалось получить текущие тарифы с моек", "fail"));
                 }
 
-                return Ok(WashesToRegion(result));
+                return Ok(ParameterToRegion<RatesModel>.WashesToRegion(result));
             }
             catch (Exception e)
             {
@@ -146,7 +146,7 @@ namespace Backend.Controllers
                 var result = JsonConvert.DeserializeObject<WashParameter<RatesModel>>(response.ResultMessage);
                 result.washName = SqlHelper.GetWashByCode(wash).name;
 
-                return Ok(WashToRegion(result));
+                return Ok(ParameterToRegion<RatesModel>.WashToRegion(result));
             }
             catch (Exception e)
             {
@@ -419,54 +419,6 @@ namespace Backend.Controllers
             };
 
             return Ok(new List<RegionParameter<RatesModel>> { r1, r2 });
-        }
-
-        private List<RegionParameter<RatesModel>> WashesToRegion(List<WashParameter<RatesModel>> washes)
-        {
-            List<RegionParameter<RatesModel>> result = new List<RegionParameter<RatesModel>>();
-
-            foreach (WashParameter<RatesModel> w in washes)
-            {
-                w.washName = SqlHelper.GetWashByCode(w.washCode).name;
-
-                RegionViewModel region = SqlHelper.GetRegionByWash(w.washCode);
-                RegionParameter<RatesModel> rrm = result.Find(x => x.regionCode == region.code);
-
-                if (rrm == null)
-                {
-                    rrm = new RegionParameter<RatesModel>
-                    {
-                        regionCode = region.code,
-                        regionName = region.name,
-                        washes = new List<WashParameter<RatesModel>>()
-                    };
-
-                    rrm.washes.Add(w);
-                }
-                else
-                {
-                    result.Remove(rrm);
-                    rrm.washes.Add(w);
-                }
-
-                result.Add(rrm);
-            }
-            return result;
-        }
-
-        private RegionParameter<RatesModel> WashToRegion(WashParameter<RatesModel> wash)
-        {
-            RegionViewModel region = SqlHelper.GetRegionByWash(wash.washCode);
-            RegionParameter<RatesModel> result = new RegionParameter<RatesModel>
-            {
-                regionCode = region.code,
-                regionName = region.name,
-                washes = new List<WashParameter<RatesModel>>()
-            };
-
-            result.washes.Add(wash);
-
-            return result;
         }
     }
 
