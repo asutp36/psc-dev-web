@@ -154,6 +154,100 @@ namespace Backend.Controllers
             }
         }
 
+        [HttpGet("fake")]
+        public IActionResult GetFake()
+        {
+            HappyHourModel hh1 = new HappyHourModel { HappyHourBeg = 23, HappyHourEnd = 6, HappyHourSale = 0.3 };
+            HappyHourModel hh2 = new HappyHourModel { HappyHourBeg = 0, HappyHourEnd = 5, HappyHourSale = 0.25 };
+
+            PostParameter<HappyHourModel> p131 = new PostParameter<HappyHourModel>
+            {
+                postCode = "13-1",
+                value = hh1
+            };
+
+            PostParameter<HappyHourModel> p132 = new PostParameter<HappyHourModel>
+            {
+                postCode = "13-2",
+                value = hh1
+            };
+
+            PostParameter<HappyHourModel> p133 = new PostParameter<HappyHourModel>
+            {
+                postCode = "13-3",
+                value = hh1
+            };
+
+            PostParameter<HappyHourModel> p134 = new PostParameter<HappyHourModel>
+            {
+                postCode = "13-4",
+                value = hh1
+            };
+
+            WashParameter<HappyHourModel> w13 = new WashParameter<HappyHourModel>
+            {
+                washCode = "M13",
+                washName = "М13, всё как надо",
+                posts = new List<PostParameter<HappyHourModel>> { p131, p132, p133, p134 },
+                value = null
+            };
+
+            PostParameter<HappyHourModel> p141 = new PostParameter<HappyHourModel>
+            {
+                postCode = "14-1",
+                value = hh1
+            };
+
+            PostParameter<HappyHourModel> p142 = new PostParameter<HappyHourModel>
+            {
+                postCode = "14-2",
+                value = hh1
+            };
+
+            PostParameter<HappyHourModel> p143 = new PostParameter<HappyHourModel>
+            {
+                postCode = "14-3",
+                value = hh1
+            };
+
+            PostParameter<HappyHourModel> p144 = new PostParameter<HappyHourModel>
+            {
+                postCode = "14-4",
+                value = hh2
+            };
+
+            WashParameter<HappyHourModel> w14 = new WashParameter<HappyHourModel>
+            {
+                washCode = "M14",
+                washName = "М13, последний пост отличается",
+                posts = new List<PostParameter<HappyHourModel>> { p141, p142, p143, p144 },
+                value = new HappyHourModel()
+            };
+
+            WashParameter<HappyHourModel> w15 = new WashParameter<HappyHourModel>
+            {
+                washCode = "M15",
+                washName = "М15, пустая",
+                posts = null
+            };
+
+            RegionParameter<HappyHourModel> r1 = new RegionParameter<HappyHourModel>
+            {
+                regionCode = 1,
+                regionName = "Первый регион",
+                washes = new List<WashParameter<HappyHourModel>> { w13 }
+            };
+
+            RegionParameter<HappyHourModel> r2 = new RegionParameter<HappyHourModel>
+            {
+                regionCode = 2,
+                regionName = "Второй регион",
+                washes = new List<WashParameter<HappyHourModel>> { w14, w15 }
+            };
+
+            return Ok(new List<RegionParameter<HappyHourModel>> { r1, r2 });
+        }
+
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие скидки на мойках по коду региона")]
         [SwaggerResponse(200, Type = typeof(List<WashHappyHourViewModel>))]
