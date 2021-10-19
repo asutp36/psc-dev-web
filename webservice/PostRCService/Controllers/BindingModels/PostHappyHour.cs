@@ -7,7 +7,7 @@ namespace PostRCService.Controllers.BindingModels
 {
     public class PostHappyHour
     {
-        public string post { get; set; }
-        public HappyHourModel happyHour { get; set; }
+        public string postCode { get; set; }
+        public HappyHourModel value { get; set; }
     }
 }

@@ -50,7 +50,7 @@ namespace PostRCService.Controllers
                 }
 
                 PostHappyHour result = new PostHappyHour();
-                result.post = post;
+                result.postCode = post;
 
                 //HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
                 HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/get/happyhours");
@@ -67,7 +67,7 @@ namespace PostRCService.Controllers
                     return StatusCode(424);
                 }
 
-                result.happyHour = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
+                result.value = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
                 return Ok(result);
             }
             catch (Exception e)
@@ -96,14 +96,14 @@ namespace PostRCService.Controllers
                 }
 
                 WashHappyHour result = new WashHappyHour();
-                result.wash = washCode;
+                result.washCode = washCode;
                 result.posts = new List<PostHappyHour>();
 
                 List<string> postCodes = SqlHelper.GetPostCodes(washCode);
                 foreach (string p in postCodes)
                 {
                     PostHappyHour postHappyHour = new PostHappyHour();
-                    postHappyHour.post = p;
+                    postHappyHour.postCode = p;
 
                     string ip = SqlHelper.GetPostIp(p);
                     if (ip == null)
@@ -127,7 +127,7 @@ namespace PostRCService.Controllers
                         continue;
                     }
 
-                    postHappyHour.happyHour = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
+                    postHappyHour.value = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
                     result.posts.Add(postHappyHour);
                 }
                 if (result.posts.Count < 1)
@@ -167,15 +167,15 @@ namespace PostRCService.Controllers
                     }
 
                     WashHappyHour washHH = new WashHappyHour();
-                    washHH.wash = wash;
+                    washHH.washCode = wash;
                     washHH.posts= new List<PostHappyHour>();
 
                     List<string> postCodes = SqlHelper.GetPostCodes(wash);
                     foreach (string p in postCodes)
                     {
                         PostHappyHour postHH = new PostHappyHour();
-                        postHH.post = p;
-                        postHH.happyHour = new HappyHourModel();
+                        postHH.postCode = p;
+                        postHH.value = new HappyHourModel();
 
                         string ip = SqlHelper.GetPostIp(p);
                         if (ip == null)
@@ -199,7 +199,7 @@ namespace PostRCService.Controllers
                             continue;
                         }
 
-                        postHH.happyHour = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
+                        postHH.value = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
                         washHH.posts.Add(postHH);
                     }
 
@@ -238,31 +238,31 @@ namespace PostRCService.Controllers
         {
             try
             {
-                if (!SqlHelper.IsPostExists(change.post))
+                if (!SqlHelper.IsPostExists(change.postCode))
                 {
-                    _logger.LogError($"Не найден пост {change.post}" + Environment.NewLine);
+                    _logger.LogError($"Не найден пост {change.postCode}" + Environment.NewLine);
                     return NotFound();
                 }
 
                 ChangeParameterResult result = new ChangeParameterResult();
-                result.post = change.post;
+                result.post = change.postCode;
 
-                string ip = SqlHelper.GetPostIp(change.post);
+                string ip = SqlHelper.GetPostIp(change.postCode);
                 if (ip == null)
                 {
-                    _logger.LogError($"Не найден ip поста {change.post}");
+                    _logger.LogError($"Не найден ip поста {change.postCode}");
                     return NotFound();
                 }
 
                 //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
-                HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/set/happyhours", JsonConvert.SerializeObject(change.happyHour));
+                HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/set/happyhours", JsonConvert.SerializeObject(change.value));
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     if (response.StatusCode == 0)
-                        _logger.LogInformation($"Нет соединения с постом {change.post}");
+                        _logger.LogInformation($"Нет соединения с постом {change.postCode}");
                     else
-                        _logger.LogError($"Ответ поста {change.post}: {JsonConvert.SerializeObject(response)}");
+                        _logger.LogError($"Ответ поста {change.postCode}: {JsonConvert.SerializeObject(response)}");
 
                     return StatusCode(424, "Нет связи с постом");
                 }

@@ -7,7 +7,7 @@ namespace PostRCService.Controllers.BindingModels
 {
     public class WashHappyHour
     {
-        public string wash { get; set; }
+        public string washCode { get; set; }
         public List<PostHappyHour> posts { get; set; }
     }
 }
