@@ -81,8 +81,8 @@ namespace Backend.Controllers
 
                     var washResult = JsonConvert.DeserializeObject<WashParameter<RatesModel>>(response.ResultMessage);
                     washResult.washName = w.name;
-
                     result.Add(washResult);
+
                     returnError = false;
                 }
 

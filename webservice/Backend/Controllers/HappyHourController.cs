@@ -42,24 +42,55 @@ namespace Backend.Controllers
                 UserInfo uInfo = new UserInfo(User.Claims.ToList());
 
                 List<WashViewModel> washes = uInfo.GetWashes();
-                List<WashHappyHourViewModel> result = new List<WashHappyHourViewModel>();
+                List<WashParameter<HappyHourModel>> result = new List<WashParameter<HappyHourModel>>();
+                bool returnError = true;
+
                 foreach (WashViewModel w in washes)
                 {
                     HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/happyhour/wash/{w.code}");
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
-                        _logger.LogError($"По мойке {w.code} не удалось получить текущие скидки. postrc response: " + response.ResultMessage);
-                        //return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
+                        var emptyWash = new WashParameter<HappyHourModel> { washCode = w.code, washName = w.name };
+                        switch (response.StatusCode)
+                        {
+                            case System.Net.HttpStatusCode.NotFound:
+                                _logger.LogError($"postrc не нашёл мойку {w.code}" + Environment.NewLine);
+                                break;
+                            case System.Net.HttpStatusCode.InternalServerError:
+                                _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                                break;
+                            case (System.Net.HttpStatusCode)424:
+                                _logger.LogError($"Не удалось соединиться с мойкой {w.code}" + Environment.NewLine);
+                                break;
+                            case (System.Net.HttpStatusCode)0:
+                                _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                                break;
+                            case System.Net.HttpStatusCode.RequestTimeout:
+                                _logger.LogError($"postrc Request timed out. wash = {w.code}" + Environment.NewLine);
+                                break;
+                            default:
+                                _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                                break;
+                        }
+
+                        result.Add(emptyWash);
+                        continue;
                     }
 
-                    //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                    var washResult = JsonConvert.DeserializeObject<WashHappyHourViewModel>(response.ResultMessage);
-
+                    var washResult = JsonConvert.DeserializeObject<WashParameter<HappyHourModel>>(response.ResultMessage);
+                    washResult.washName = w.name;
                     result.Add(washResult);
+
+                    returnError = false;
+                }
+                if (returnError)
+                {
+                    _logger.LogError($"Ни с одной мойки не получилось получить настройки скидок для пользователя {User.Identity.Name}" + Environment.NewLine);
+                    return StatusCode(424, new Error("Не удалось получить настройки скидок с моек", "fail"));
                 }
 
-                return Ok(result);
+                return Ok(ParameterToRegion<HappyHourModel>.WashesToRegion(result));
             }
             catch (Exception e)
             {
