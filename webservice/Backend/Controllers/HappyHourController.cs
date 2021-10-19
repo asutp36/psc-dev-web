@@ -120,13 +120,32 @@ namespace Backend.Controllers
                 HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/happyhour/wash/{wash}");
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    _logger.LogError("postrc response: " + response.ResultMessage);
-                    return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
+                    switch (response.StatusCode)
+                    {
+                        case System.Net.HttpStatusCode.NotFound:
+                            _logger.LogError($"postrc не нашёл мойку {wash}" + Environment.NewLine);
+                            return NotFound(new Error("Не найдена мойка", "badvalue"));
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами", "service"));
+                        case (System.Net.HttpStatusCode)424:
+                            _logger.LogError($"Не удалось соединиться с мойкой {wash}" + Environment.NewLine);
+                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {wash}", "connection"));
+                        case (System.Net.HttpStatusCode)0:
+                            _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        case System.Net.HttpStatusCode.RequestTimeout:
+                            _logger.LogError($"postrc Request timed out. wash = {wash}" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        default:
+                            _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
+                    }
                 }
-                //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                var result = JsonConvert.DeserializeObject<WashHappyHourViewModel>(response.ResultMessage);
 
-                return Ok(result);
+                var result = JsonConvert.DeserializeObject<WashParameter<HappyHourModel>>(response.ResultMessage);
+
+                return Ok(ParameterToRegion<HappyHourModel>.WashToRegion(result));
             }
             catch (Exception e)
             {
