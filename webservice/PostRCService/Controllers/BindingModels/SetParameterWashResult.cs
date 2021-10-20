@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace PostRCService.Controllers.BindingModels
 {
-    public class ChangeParameterWashResult
+    public class SetParameterWashResult
     {
         public string wash { get; set; }
-        public List<ChangeParameterResult> posts { get; set; }
+        public List<SetParameterResult> posts { get; set; }
     }
 }

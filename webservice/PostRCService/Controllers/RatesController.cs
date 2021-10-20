@@ -102,7 +102,7 @@ namespace PostRCService.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Изменене тарифов на посту по коду")]
-        [SwaggerResponse(200, Type = typeof(ChangeParameterResult))]
+        [SwaggerResponse(200, Type = typeof(SetParameterResult))]
         [SwaggerResponse(404, Description = "Не найден пост")]
         [SwaggerResponse(424, Description = "Нет связи с постом")]
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
@@ -118,7 +118,7 @@ namespace PostRCService.Controllers
                     return NotFound();
                 }
 
-                ChangeParameterResult result = new ChangeParameterResult();
+                SetParameterResult result = new SetParameterResult();
                 result.post = parameter.postCode;
 
                 string ip = SqlHelper.GetPostIp(parameter.postCode);
@@ -154,28 +154,28 @@ namespace PostRCService.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Изменение тарифов по кодам моек")]
-        [SwaggerResponse(200, Type = typeof(List<ChangeParameterWashResult>))]
+        [SwaggerResponse(200, Type = typeof(List<SetParameterWashResult>))]
         [SwaggerResponse(424, Description = "Нет связи ни с одной мойкой")]
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
         [HttpPost("change/wash")]
-        public IActionResult ChangeByWash(ChangeRatesWash change)
+        public IActionResult ChangeByWash(SetParametersWash<RatesModel> parameter)
         {
             try
             {
-                if (!SqlHelper.IsWashExists(change.washCode))
+                if (!SqlHelper.IsWashExists(parameter.washCode))
                 {
-                    _logger.LogError($"Не найдена мойка {change.washCode}");
+                    _logger.LogError($"Не найдена мойка {parameter.washCode}");
                     return NotFound();
                 }
 
-                ChangeParameterWashResult washResult = new ChangeParameterWashResult
+                SetParameterWashResult washResult = new SetParameterWashResult
                 {
-                    wash = change.washCode,
-                    posts = new List<ChangeParameterResult>()
+                    wash = parameter.washCode,
+                    posts = new List<SetParameterResult>()
                 };
 
-                List<string> posts = SqlHelper.GetPostCodes(change.washCode);
+                List<string> posts = SqlHelper.GetPostCodes(parameter.washCode);
                 foreach (string post in posts)
                 {
                     string ip = SqlHelper.GetPostIp(post);
@@ -186,7 +186,7 @@ namespace PostRCService.Controllers
                     }
 
                     //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
-                    HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/rate", JsonConvert.SerializeObject(change.value.rates));
+                    HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/rate", JsonConvert.SerializeObject(parameter.value.rates));
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                         if (response.StatusCode == 0)
@@ -194,7 +194,7 @@ namespace PostRCService.Controllers
                         else
                             _logger.LogError($"Ответ поста {post}: {JsonConvert.SerializeObject(response)}");
 
-                    washResult.posts.Add(new ChangeParameterResult
+                    washResult.posts.Add(new SetParameterResult
                     {
                         post = post,
                         result = response
