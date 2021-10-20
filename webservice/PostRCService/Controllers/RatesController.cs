@@ -169,7 +169,7 @@ namespace PostRCService.Controllers
                     return NotFound();
                 }
 
-                SetParameterWashResult washResult = new SetParameterWashResult
+                SetParameterWashResult result = new SetParameterWashResult
                 {
                     wash = parameter.washCode,
                     posts = new List<SetParameterPostResult>()
@@ -194,14 +194,14 @@ namespace PostRCService.Controllers
                         else
                             _logger.LogError($"Ответ поста {post}: {JsonConvert.SerializeObject(response)}");
 
-                    washResult.posts.Add(new SetParameterPostResult
+                    result.posts.Add(new SetParameterPostResult
                     {
                         post = post,
                         result = response
                     });
                 }
 
-                return Ok(washResult);
+                return Ok(result);
             }
             catch (Exception e)
             {
