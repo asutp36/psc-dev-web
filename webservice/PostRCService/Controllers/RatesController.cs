@@ -41,16 +41,16 @@ namespace PostRCService.Controllers
                     _logger.LogError($"Не найдена мойка {washCode}" + Environment.NewLine);
                     return NotFound();
                 }
-                WashRates result = new WashRates();
+                WashParameter<RatesModel> result = new WashParameter<RatesModel>();
                 result.washCode = washCode;
-                result.posts = new List<PostRates>();
+                result.posts = new List<PostParameter<RatesModel>>();
 
                 List<string> postCodes = SqlHelper.GetPostCodes(washCode);
                 bool returnError = true;
 
                 foreach(string p in postCodes)
                 {
-                    PostRates postRates = new PostRates();
+                    PostParameter<RatesModel> postRates = new PostParameter<RatesModel>();
                     postRates.postCode = p;
                     postRates.value = new RatesModel();
                     postRates.value.rates = new List<FunctionRate>();
@@ -67,7 +67,7 @@ namespace PostRCService.Controllers
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
-                        var emptyPost = new PostRates { postCode = p };
+                        var emptyPost = new PostParameter<RatesModel> { postCode = p };
                         if (response.StatusCode == 0)
                         {
                             _logger.LogInformation($"Нет соединения с постом {p}");
