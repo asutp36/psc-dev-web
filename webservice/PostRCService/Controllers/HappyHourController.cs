@@ -42,14 +42,14 @@ namespace PostRCService.Controllers
                     return NotFound();
                 }
 
-                WashHappyHour result = new WashHappyHour();
+                WashParameter<HappyHourModel> result = new WashParameter<HappyHourModel>();
                 result.washCode = washCode;
-                result.posts = new List<PostHappyHour>();
+                result.posts = new List<PostParameter<HappyHourModel>>();
 
                 List<string> postCodes = SqlHelper.GetPostCodes(washCode);
                 foreach (string p in postCodes)
                 {
-                    PostHappyHour postHappyHour = new PostHappyHour();
+                    PostParameter<HappyHourModel> postHappyHour = new PostParameter<HappyHourModel>();
                     postHappyHour.postCode = p;
 
                     string ip = SqlHelper.GetPostIp(p);
