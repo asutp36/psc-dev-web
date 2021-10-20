@@ -228,7 +228,7 @@ namespace PostRCService.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Изменене настоек эквайринга на посту по коду")]
-        [SwaggerResponse(200, Type = typeof(SetParameterResult))]
+        [SwaggerResponse(200, Type = typeof(SetParameterPostResult))]
         [SwaggerResponse(404, Description = "Не найден пост")]
         [SwaggerResponse(424, Description = "Нет связи с постом")]
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
@@ -244,7 +244,7 @@ namespace PostRCService.Controllers
                     return NotFound();
                 }
 
-                SetParameterResult result = new SetParameterResult();
+                SetParameterPostResult result = new SetParameterPostResult();
                 result.post = change.post;
 
                 string ip = SqlHelper.GetPostIp(change.post);
@@ -301,7 +301,7 @@ namespace PostRCService.Controllers
                     SetParameterWashResult washResult = new SetParameterWashResult
                     {
                         wash = wash,
-                        posts = new List<SetParameterResult>()
+                        posts = new List<SetParameterPostResult>()
                     };
 
                     List<string> posts = SqlHelper.GetPostCodes(wash);
@@ -322,7 +322,7 @@ namespace PostRCService.Controllers
                             else
                                 _logger.LogError($"Ответ поста {post}: {JsonConvert.SerializeObject(response)}");
 
-                        washResult.posts.Add(new SetParameterResult
+                        washResult.posts.Add(new SetParameterPostResult
                         {
                             post = post,
                             result = response

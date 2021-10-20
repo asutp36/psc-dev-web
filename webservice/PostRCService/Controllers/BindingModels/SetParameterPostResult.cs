@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PostRCService.Controllers.BindingModels
 {
-    public class SetParameterResult
+    public class SetParameterPostResult
     {
         public string post { get; set; }
         public HttpResponse result { get; set; }

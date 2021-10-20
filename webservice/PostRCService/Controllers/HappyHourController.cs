@@ -94,41 +94,41 @@ namespace PostRCService.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Изменене настройки скидок на посту по коду")]
-        [SwaggerResponse(200, Type = typeof(SetParameterResult))]
+        [SwaggerResponse(200, Type = typeof(SetParameterPostResult))]
         [SwaggerResponse(404, Description = "Не найден пост")]
         [SwaggerResponse(424, Description = "Нет связи с постом")]
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
         #endregion
         [HttpPost("set/post")]
-        public IActionResult SetByPost(PostHappyHour change)
+        public IActionResult SetByPost(PostParameter<HappyHourModel> param)
         {
             try
             {
-                if (!SqlHelper.IsPostExists(change.postCode))
+                if (!SqlHelper.IsPostExists(param.postCode))
                 {
-                    _logger.LogError($"Не найден пост {change.postCode}" + Environment.NewLine);
+                    _logger.LogError($"Не найден пост {param.postCode}" + Environment.NewLine);
                     return NotFound();
                 }
 
-                SetParameterResult result = new SetParameterResult();
-                result.post = change.postCode;
+                SetParameterPostResult result = new SetParameterPostResult();
+                result.post = param.postCode;
 
-                string ip = SqlHelper.GetPostIp(change.postCode);
+                string ip = SqlHelper.GetPostIp(param.postCode);
                 if (ip == null)
                 {
-                    _logger.LogError($"Не найден ip поста {change.postCode}");
+                    _logger.LogError($"Не найден ip поста {param.postCode}");
                     return NotFound();
                 }
 
                 //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
-                HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/set/happyhours", JsonConvert.SerializeObject(change.value));
+                HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/set/happyhours", JsonConvert.SerializeObject(param.value));
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     if (response.StatusCode == 0)
-                        _logger.LogInformation($"Нет соединения с постом {change.postCode}");
+                        _logger.LogInformation($"Нет соединения с постом {param.postCode}");
                     else
-                        _logger.LogError($"Ответ поста {change.postCode}: {JsonConvert.SerializeObject(response)}");
+                        _logger.LogError($"Ответ поста {param.postCode}: {JsonConvert.SerializeObject(response)}");
 
                     return StatusCode(424, "Нет связи с постом");
                 }
@@ -167,7 +167,7 @@ namespace PostRCService.Controllers
                     SetParameterWashResult washResult = new SetParameterWashResult
                     {
                         wash = wash,
-                        posts = new List<SetParameterResult>()
+                        posts = new List<SetParameterPostResult>()
                     };
 
                     List<string> posts = SqlHelper.GetPostCodes(wash);
@@ -189,7 +189,7 @@ namespace PostRCService.Controllers
                             else
                                 _logger.LogError($"Ответ поста {post}: {JsonConvert.SerializeObject(response)}");
 
-                        washResult.posts.Add(new SetParameterResult
+                        washResult.posts.Add(new SetParameterPostResult
                         {
                             post = post,
                             result = response

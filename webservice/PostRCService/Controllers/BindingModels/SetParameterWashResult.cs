@@ -8,6 +8,6 @@ namespace PostRCService.Controllers.BindingModels
     public class SetParameterWashResult
     {
         public string wash { get; set; }
-        public List<SetParameterResult> posts { get; set; }
+        public List<SetParameterPostResult> posts { get; set; }
     }
 }
