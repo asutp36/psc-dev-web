@@ -25,59 +25,6 @@ namespace PostRCService.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "Получить текущие скидки на посту по коду")]
-        [SwaggerResponse(200, Type = typeof(PostHappyHour))]
-        [SwaggerResponse(404, Description = "Не найден пост")]
-        [SwaggerResponse(424, Description = "Нет связи с постом")]
-        [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
-        #endregion
-        [HttpGet("post/{post}")]
-        public IActionResult GetByPost(string post)
-        {
-            try
-            {
-                if (!SqlHelper.IsPostExists(post))
-                {
-                    _logger.LogError($"Не найден пост {post}" + Environment.NewLine);
-                    return NotFound();
-                }
-
-                string ip = SqlHelper.GetPostIp(post);
-                if (ip == null)
-                {
-                    _logger.LogError($"Не найден ip поста {post}");
-                    return NotFound();
-                }
-
-                PostHappyHour result = new PostHappyHour();
-                result.postCode = post;
-
-                //HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
-                HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/get/happyhours");
-
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                {
-                    if (response.StatusCode == 0)
-                    {
-                        _logger.LogInformation($"Нет соединения с постом {post}");
-                        return StatusCode(424);
-                    }
-
-                    _logger.LogError($"Ответ поста {post}: {JsonConvert.SerializeObject(response)}");
-                    return StatusCode(424);
-                }
-
-                result.value = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500);
-            }
-        }
-
-        #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие скидки на мойке по коду")]
         [SwaggerResponse(200, Type = typeof(WashHappyHour))]
         [SwaggerResponse(404, Description = "Не найдена мойка")]
@@ -146,95 +93,14 @@ namespace PostRCService.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "Получить текущие скидки на нескольких мойках по кодам")]
-        [SwaggerResponse(200, Type = typeof(List<WashRates>))]
-        [SwaggerResponse(424, Description = "Нет связи ни с одной мойкой")]
-        [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
-        #endregion
-        [HttpPost("manywash")]
-        public IActionResult GetByManyWash([FromBody] string[] washes)
-        {
-            try
-            {
-                List<WashHappyHour> result = new List<WashHappyHour>();
-
-                foreach (string wash in washes)
-                {
-                    if (!SqlHelper.IsWashExists(wash))
-                    {
-                        _logger.LogError($"Не найдена мойка {wash}" + Environment.NewLine);
-                        continue;
-                    }
-
-                    WashHappyHour washHH = new WashHappyHour();
-                    washHH.washCode = wash;
-                    washHH.posts= new List<PostHappyHour>();
-
-                    List<string> postCodes = SqlHelper.GetPostCodes(wash);
-                    foreach (string p in postCodes)
-                    {
-                        PostHappyHour postHH = new PostHappyHour();
-                        postHH.postCode = p;
-                        postHH.value = new HappyHourModel();
-
-                        string ip = SqlHelper.GetPostIp(p);
-                        if (ip == null)
-                        {
-                            _logger.LogError($"Не найден ip поста {p}");
-                            continue;
-                        }
-
-                        //HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
-                        HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/get/happyhours");
-
-                        if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                        {
-                            if (response.StatusCode == 0)
-                            {
-                                _logger.LogInformation($"Нет соединения с постом {p}");
-                                continue;
-                            }
-
-                            _logger.LogError($"Ответ поста {p}: {JsonConvert.SerializeObject(response)}");
-                            continue;
-                        }
-
-                        postHH.value = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
-                        washHH.posts.Add(postHH);
-                    }
-
-                    if (washHH.posts.Count < 1)
-                    {
-                        _logger.LogInformation($"Нет связи с мойкой {wash}" + Environment.NewLine);
-                    }
-
-                    result.Add(washHH);
-                }
-
-                if (result.Count < 1)
-                {
-                    _logger.LogInformation($"Нет связи ни с одной из моек ({JsonConvert.SerializeObject(washes)})" + Environment.NewLine);
-                    return StatusCode(424);
-                }
-
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500);
-            }
-        }
-
-        #region Swagger Annotations
         [SwaggerOperation(Summary = "Изменене настройки скидок на посту по коду")]
         [SwaggerResponse(200, Type = typeof(SetParameterResult))]
         [SwaggerResponse(404, Description = "Не найден пост")]
         [SwaggerResponse(424, Description = "Нет связи с постом")]
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
         #endregion
-        [HttpPost("change/post")]
-        public IActionResult ChangeByPost(PostHappyHour change)
+        [HttpPost("set/post")]
+        public IActionResult SetByPost(PostHappyHour change)
         {
             try
             {
@@ -284,8 +150,8 @@ namespace PostRCService.Controllers
         [SwaggerResponse(424, Description = "Нет связи ни с одной мойкой")]
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
         #endregion
-        [HttpPost("change/wash")]
-        public IActionResult ChangeByWash(ChangeHappyHourWash change)
+        [HttpPost("set/wash")]
+        public IActionResult SetByWash(ChangeHappyHourWash change)
         {
             try
             {
