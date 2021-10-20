@@ -171,7 +171,7 @@ namespace Backend.Controllers
                 {
                     PostParameter<RatesModel> param = new PostParameter<RatesModel> { postCode = post, value = model.value };
 
-                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/change/post", JsonConvert.SerializeObject(param));
+                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/set/post", JsonConvert.SerializeObject(param));
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
                         switch (response.StatusCode)
@@ -220,7 +220,7 @@ namespace Backend.Controllers
                 SetParameterResultWash result = new SetParameterResultWash();
                 result.wash = model.washCode;
 
-                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/change/wash", JsonConvert.SerializeObject(model));
+                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/rates/set/wash", JsonConvert.SerializeObject(model));
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     switch (response.StatusCode)

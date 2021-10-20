@@ -107,8 +107,8 @@ namespace PostRCService.Controllers
         [SwaggerResponse(424, Description = "Нет связи с постом")]
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
-        [HttpPost("change/post")]
-        public IActionResult ChangeByPost(PostParameter<RatesModel> parameter)
+        [HttpPost("set/post")]
+        public IActionResult SetByPost(PostParameter<RatesModel> parameter)
         {
             try
             {
@@ -158,8 +158,8 @@ namespace PostRCService.Controllers
         [SwaggerResponse(424, Description = "Нет связи ни с одной мойкой")]
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
-        [HttpPost("change/wash")]
-        public IActionResult ChangeByWash(SetParametersWash<RatesModel> parameter)
+        [HttpPost("set/wash")]
+        public IActionResult SetByWash(SetParametersWash<RatesModel> parameter)
         {
             try
             {
