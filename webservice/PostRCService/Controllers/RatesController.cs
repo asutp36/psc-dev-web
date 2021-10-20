@@ -25,11 +25,11 @@ namespace PostRCService.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "Получить текущие тарифы на мойках по коду мойки")]
-        [SwaggerResponse(200, Type = typeof(WashRates))]
+        [SwaggerOperation(Summary = "Получить текущие тарифы на мойке по коду")]
+        [SwaggerResponse(200, Type = typeof(WashParameter<RatesModel>))]
         [SwaggerResponse(404, Description = "Не найдена мойка")]
         [SwaggerResponse(424, Description = "Нет связи с мойкой")]
-        [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
+        [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
         #endregion
         [HttpGet("wash/{washCode}")]
         public IActionResult GetByWash(string washCode)
@@ -105,7 +105,7 @@ namespace PostRCService.Controllers
         [SwaggerResponse(200, Type = typeof(SetParameterPostResult))]
         [SwaggerResponse(404, Description = "Не найден пост")]
         [SwaggerResponse(424, Description = "Нет связи с постом")]
-        [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
+        [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
         #endregion
         [HttpPost("set/post")]
         public IActionResult SetByPost(PostParameter<RatesModel> param)
@@ -153,10 +153,10 @@ namespace PostRCService.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "Изменение тарифов по кодам моек")]
-        [SwaggerResponse(200, Type = typeof(List<SetParameterWashResult>))]
-        [SwaggerResponse(424, Description = "Нет связи ни с одной мойкой")]
-        [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
+        [SwaggerOperation(Summary = "Изменение тарифов на мойке по коду")]
+        [SwaggerResponse(200, Type = typeof(SetParameterWashResult))]
+        [SwaggerResponse(424, Description = "Нет связи с мойкой")]
+        [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
         #endregion
         [HttpPost("set/wash")]
         public IActionResult SetByWash(SetParametersWash<RatesModel> parameter)

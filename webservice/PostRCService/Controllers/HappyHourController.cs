@@ -26,7 +26,7 @@ namespace PostRCService.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие скидки на мойке по коду")]
-        [SwaggerResponse(200, Type = typeof(WashHappyHour))]
+        [SwaggerResponse(200, Type = typeof(WashParameter<HappyHourModel>))]
         [SwaggerResponse(404, Description = "Не найдена мойка")]
         [SwaggerResponse(424, Description = "Нет связи ни с одним постом на мойке")]
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
@@ -93,7 +93,7 @@ namespace PostRCService.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "Изменене настройки скидок на посту по коду")]
+        [SwaggerOperation(Summary = "Изменене настроек скидок на посту по коду")]
         [SwaggerResponse(200, Type = typeof(SetParameterPostResult))]
         [SwaggerResponse(404, Description = "Не найден пост")]
         [SwaggerResponse(424, Description = "Нет связи с постом")]
@@ -145,8 +145,8 @@ namespace PostRCService.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "Измненить настройки скидок на нескольких мойках по коду")]
-        [SwaggerResponse(200, Type = typeof(List<SetParameterWashResult>))]
+        [SwaggerOperation(Summary = "Измненить настройки скидок на мойке по коду")]
+        [SwaggerResponse(200, Type = typeof(SetParameterWashResult))]
         [SwaggerResponse(424, Description = "Нет связи ни с одной мойкой")]
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
         #endregion
