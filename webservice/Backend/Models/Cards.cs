@@ -5,6 +5,11 @@ namespace Backend.Models
 {
     public partial class Cards
     {
+        public Cards()
+        {
+            TechCardSync = new HashSet<TechCardSync>();
+        }
+
         public int Idcard { get; set; }
         public int Idowner { get; set; }
         public string CardNum { get; set; }
@@ -16,5 +21,6 @@ namespace Backend.Models
 
         public virtual CardStatuses IdcardStatusNavigation { get; set; }
         public virtual CardTypes IdcardTypeNavigation { get; set; }
+        public virtual ICollection<TechCardSync> TechCardSync { get; set; }
     }
 }

@@ -13,6 +13,7 @@ namespace Backend.Models
         public int? B100 { get; set; }
         public int? B200 { get; set; }
         public int? Balance { get; set; }
+        public int? IdpostSession { get; set; }
 
         public virtual Event IdeventNavigation { get; set; }
     }

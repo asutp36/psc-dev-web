@@ -15,6 +15,7 @@ namespace Backend.Models
         {
         }
 
+        public virtual DbSet<CardGroup> CardGroup { get; set; }
         public virtual DbSet<CardStatuses> CardStatuses { get; set; }
         public virtual DbSet<CardTypes> CardTypes { get; set; }
         public virtual DbSet<Cards> Cards { get; set; }
@@ -24,13 +25,16 @@ namespace Backend.Models
         public virtual DbSet<Event> Event { get; set; }
         public virtual DbSet<EventChangerKind> EventChangerKind { get; set; }
         public virtual DbSet<EventIncrease> EventIncrease { get; set; }
+        public virtual DbSet<Groups> Groups { get; set; }
         public virtual DbSet<OperationTypes> OperationTypes { get; set; }
         public virtual DbSet<Posts> Posts { get; set; }
         public virtual DbSet<Regions> Regions { get; set; }
         public virtual DbSet<Roles> Roles { get; set; }
+        public virtual DbSet<TechCardSync> TechCardSync { get; set; }
         public virtual DbSet<UserWash> UserWash { get; set; }
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<Wash> Wash { get; set; }
+        public virtual DbSet<WashGroup> WashGroup { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -38,12 +42,30 @@ namespace Backend.Models
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=WashCompany;Trusted_Connection=True;");
-                //optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Initial Catalog=WashCompany;User Id=sa; Password=ora4paSS");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CardGroup>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.Property(e => e.Idcard).HasColumnName("IDCard");
+
+                entity.Property(e => e.Idgroup).HasColumnName("IDGroup");
+
+                entity.HasOne(d => d.IdcardNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idcard)
+                    .HasConstraintName("FK_CardGroup_Cards");
+
+                entity.HasOne(d => d.IdgroupNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idgroup)
+                    .HasConstraintName("FK_CardGroup_Group");
+            });
+
             modelBuilder.Entity<CardStatuses>(entity =>
             {
                 entity.HasKey(e => e.IdcardStatus);
@@ -225,12 +247,30 @@ namespace Backend.Models
 
                 entity.Property(e => e.Balance).HasColumnName("balance");
 
+                entity.Property(e => e.IdpostSession).HasColumnName("IDPostSession");
+
                 entity.Property(e => e.M10).HasColumnName("m10");
 
                 entity.HasOne(d => d.IdeventNavigation)
                     .WithOne(p => p.EventIncrease)
                     .HasForeignKey<EventIncrease>(d => d.Idevent)
                     .HasConstraintName("FK_EventCash_Event");
+            });
+
+            modelBuilder.Entity<Groups>(entity =>
+            {
+                entity.HasKey(e => e.Idgroup)
+                    .HasName("PK_Group");
+
+                entity.Property(e => e.Idgroup).HasColumnName("IDGroup");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(25);
             });
 
             modelBuilder.Entity<OperationTypes>(entity =>
@@ -254,9 +294,13 @@ namespace Backend.Models
 
                 entity.Property(e => e.Idpost).HasColumnName("IDPost");
 
+                entity.Property(e => e.Code).HasMaxLength(20);
+
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 
                 entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.Property(e => e.Name).HasMaxLength(200);
 
                 entity.Property(e => e.Qrcode)
                     .HasColumnName("QRCode")
@@ -301,6 +345,38 @@ namespace Backend.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TechCardSync>(entity =>
+            {
+                entity.HasKey(e => e.IdtechCardSync);
+
+                entity.Property(e => e.IdtechCardSync).HasColumnName("IDTechCardSync");
+
+                entity.Property(e => e.Idcard).HasColumnName("IDCard");
+
+                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
+
+                entity.Property(e => e.Idgroup).HasColumnName("IDGroup");
+
+                entity.Property(e => e.LastSync).HasColumnType("datetime");
+
+                entity.Property(e => e.Result).HasMaxLength(150);
+
+                entity.HasOne(d => d.IdcardNavigation)
+                    .WithMany(p => p.TechCardSync)
+                    .HasForeignKey(d => d.Idcard)
+                    .HasConstraintName("FK_TechCardSync_Cards");
+
+                entity.HasOne(d => d.IddeviceNavigation)
+                    .WithMany(p => p.TechCardSync)
+                    .HasForeignKey(d => d.Iddevice)
+                    .HasConstraintName("FK_TechCardSync_Device");
+
+                entity.HasOne(d => d.IdgroupNavigation)
+                    .WithMany(p => p.TechCardSync)
+                    .HasForeignKey(d => d.Idgroup)
+                    .HasConstraintName("FK_TechCardSync_Group");
             });
 
             modelBuilder.Entity<UserWash>(entity =>
@@ -372,6 +448,25 @@ namespace Backend.Models
                     .WithMany(p => p.Wash)
                     .HasForeignKey(d => d.Idregion)
                     .HasConstraintName("FK_Wash_Regions");
+            });
+
+            modelBuilder.Entity<WashGroup>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.Property(e => e.Idgroup).HasColumnName("IDGroup");
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.HasOne(d => d.IdgroupNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idgroup)
+                    .HasConstraintName("FK_WashGroup_Group");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_WashGroup_Wash");
             });
 
             OnModelCreatingPartial(modelBuilder);
