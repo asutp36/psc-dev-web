@@ -108,35 +108,35 @@ namespace PostRCService.Controllers
         [SwaggerResponse(500, Description = "Внутренняя оибка сервера")]
         #endregion
         [HttpPost("set/post")]
-        public IActionResult SetByPost(PostParameter<RatesModel> parameter)
+        public IActionResult SetByPost(PostParameter<RatesModel> param)
         {
             try
             {
-                if (!SqlHelper.IsPostExists(parameter.postCode))
+                if (!SqlHelper.IsPostExists(param.postCode))
                 {
-                    _logger.LogError($"Не найден пост {parameter.postCode}" + Environment.NewLine);
+                    _logger.LogError($"Не найден пост {param.postCode}" + Environment.NewLine);
                     return NotFound();
                 }
 
                 SetParameterPostResult result = new SetParameterPostResult();
-                result.post = parameter.postCode;
+                result.post = param.postCode;
 
-                string ip = SqlHelper.GetPostIp(parameter.postCode);
+                string ip = SqlHelper.GetPostIp(param.postCode);
                 if (ip == null)
                 {
-                    _logger.LogError($"Не найден ip поста {parameter.postCode}");
+                    _logger.LogError($"Не найден ip поста {param.postCode}");
                     return NotFound();
                 }
 
                 //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
-                HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/rate", JsonConvert.SerializeObject(parameter.value.rates));
+                HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/rate", JsonConvert.SerializeObject(param.value.rates));
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     if (response.StatusCode == 0)
-                        _logger.LogInformation($"Нет соединения с постом {parameter.postCode}");
+                        _logger.LogInformation($"Нет соединения с постом {param.postCode}");
                     else
-                        _logger.LogError($"Ответ поста {parameter.postCode}: {JsonConvert.SerializeObject(response)}");
+                        _logger.LogError($"Ответ поста {param.postCode}: {JsonConvert.SerializeObject(response)}");
 
                     return StatusCode(424, "Нет связи с постом");
                 }
