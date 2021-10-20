@@ -42,15 +42,15 @@ namespace PostRCService.Controllers
                     return NotFound();
                 }
 
-                WashAcquiring result = new WashAcquiring();
-                result.wash = washCode;
-                result.posts = new List<PostAcquiring>();
+                WashParameter<AcquiringModel> result = new WashParameter<AcquiringModel>();
+                result.washCode = washCode;
+                result.posts = new List<PostParameter<AcquiringModel>>();
 
                 List<string> postCodes = SqlHelper.GetPostCodes(washCode);
                 foreach(string p in postCodes)
                 {
-                    PostAcquiring postAcquiring = new PostAcquiring();
-                    postAcquiring.post = p;
+                    PostParameter<AcquiringModel> postAcquiring = new PostParameter<AcquiringModel>();
+                    postAcquiring.postCode = p;
 
                     string ip = SqlHelper.GetPostIp(p);
                     if (ip == null)
@@ -74,7 +74,7 @@ namespace PostRCService.Controllers
                         continue;
                     }
 
-                    postAcquiring.acquiring = JsonConvert.DeserializeObject<AcquiringModel>(response.ResultMessage);
+                    postAcquiring.value = JsonConvert.DeserializeObject<AcquiringModel>(response.ResultMessage);
                     result.posts.Add(postAcquiring);
                 }
                 if(result.posts.Count < 1)
