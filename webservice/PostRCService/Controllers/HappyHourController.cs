@@ -151,52 +151,41 @@ namespace PostRCService.Controllers
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
         #endregion
         [HttpPost("set/wash")]
-        public IActionResult SetByWash(ChangeHappyHourWash change)
+        public IActionResult SetByWash(SetParametersWash<HappyHourModel> param)
         {
             try
             {
-                List<SetParameterWashResult> result = new List<SetParameterWashResult>();
-                foreach (string wash in change.washes)
+                if (!SqlHelper.IsWashExists(param.washCode))
                 {
-                    if (!SqlHelper.IsWashExists(wash))
+                    _logger.LogError($"Не найдена мойка {param.washCode}");
+                    return NotFound();
+                }
+
+                SetParameterWashResult result = new SetParameterWashResult { wash = param.washCode, posts = new List<SetParameterPostResult>() };
+                List<string> posts = SqlHelper.GetPostCodes(param.washCode);
+                foreach (string post in posts)
+                {
+                    string ip = SqlHelper.GetPostIp(post);
+                    if (ip == null)
                     {
-                        _logger.LogError($"Не найдена мойка {wash}");
+                        _logger.LogError($"Не найден ip поста {post}");
                         continue;
                     }
 
-                    SetParameterWashResult washResult = new SetParameterWashResult
+                    //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/set/happyhours", JsonConvert.SerializeObject(change.happyHour));
+                    HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/set/happyhours", JsonConvert.SerializeObject(param.happyHour));
+
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                        if (response.StatusCode == 0)
+                            _logger.LogInformation($"Нет соединения с постом {post}");
+                        else
+                            _logger.LogError($"Ответ поста {post}: {JsonConvert.SerializeObject(response)}");
+
+                    result.posts.Add(new SetParameterPostResult
                     {
-                        wash = wash,
-                        posts = new List<SetParameterPostResult>()
-                    };
-
-                    List<string> posts = SqlHelper.GetPostCodes(wash);
-                    foreach (string post in posts)
-                    {
-                        string ip = SqlHelper.GetPostIp(post);
-                        if (ip == null)
-                        {
-                            _logger.LogError($"Не найден ip поста {post}");
-                            continue;
-                        }
-
-                        //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/set/happyhours", JsonConvert.SerializeObject(change.happyHour));
-                        HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/set/happyhours", JsonConvert.SerializeObject(change.happyHour));
-
-                        if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                            if (response.StatusCode == 0)
-                                _logger.LogInformation($"Нет соединения с постом {post}");
-                            else
-                                _logger.LogError($"Ответ поста {post}: {JsonConvert.SerializeObject(response)}");
-
-                        washResult.posts.Add(new SetParameterPostResult
-                        {
-                            post = post,
-                            result = response
-                        });
-                    }
-
-                    result.Add(washResult);
+                        post = post,
+                        result = response
+                    });
                 }
 
                 return Ok(result);
