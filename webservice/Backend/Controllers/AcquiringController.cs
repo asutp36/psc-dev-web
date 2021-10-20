@@ -30,7 +30,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на мойках пользователя")]
-        [SwaggerResponse(200, Type = typeof(List<RegionAcquiringModel>))]
+        [SwaggerResponse(200, Type = typeof(List<RegionParameter<AcquiringModel>>))]
         [SwaggerResponse(424, Type = typeof(Error), Description = "Не удалось получить данные ни с одной мойки")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
@@ -43,7 +43,7 @@ namespace Backend.Controllers
                 UserInfo uInfo = new UserInfo(User.Claims.ToList());
 
                 List<WashViewModel> washes = uInfo.GetWashes();
-                List<WashAcquiringViewModel> result = new List<WashAcquiringViewModel>();
+                List<WashParameter<AcquiringModel>> result = new List<WashParameter<AcquiringModel>>();
                 bool returnError = true;
 
                 foreach (WashViewModel w in washes)
@@ -52,34 +52,37 @@ namespace Backend.Controllers
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
-                        result.Add(new WashAcquiringViewModel { wash = w.code });
+                        var emptyWash = new WashParameter<AcquiringModel> { washCode = w.code, washName = w.name };
                         switch (response.StatusCode)
                         {
                             case System.Net.HttpStatusCode.NotFound:
                                 _logger.LogError($"postrc не нашёл мойку {w.code}" + Environment.NewLine);
-                                continue;
+                                break;
                             case System.Net.HttpStatusCode.InternalServerError:
                                 _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
-                                continue;
+                                break;
                             case (System.Net.HttpStatusCode)424:
                                 _logger.LogError($"Не удалось соединиться с мойкой {w.code}" + Environment.NewLine);
-                                continue;
+                                break;
                             case (System.Net.HttpStatusCode)0:
                                 _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
-                                continue;
+                                break;
                             case System.Net.HttpStatusCode.RequestTimeout:
                                 _logger.LogError($"postrc Request timed out. wash = {w.code}" + Environment.NewLine);
                                 break;
                             default:
                                 _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
-                                continue;
+                                break;
                         }
+
+                        result.Add(emptyWash);
+                        continue;
                     }
 
-
-                    var washResult = JsonConvert.DeserializeObject<WashAcquiringViewModel>(response.ResultMessage);
-
+                    var washResult = JsonConvert.DeserializeObject<WashParameter<AcquiringModel>>(response.ResultMessage);
+                    washResult.washName = w.name;
                     result.Add(washResult);
+
                     returnError = false;
                 }
 
@@ -89,7 +92,7 @@ namespace Backend.Controllers
                     return StatusCode(424, new Error("Не удалось получить текущие настройки эквайринга с моек", "fail"));
                 }
 
-                return Ok(WashesToRegionRateModel(result));
+                return Ok(ParameterToRegion<AcquiringModel>.WashesToRegion(result));
             }
             catch (Exception e)
             {
@@ -99,56 +102,9 @@ namespace Backend.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на посту по коду")]
-        [SwaggerResponse(200, Type = typeof(RegionAcquiringModel))]
-        [SwaggerResponse(404, Type = typeof(Error), Description = "Не найден пост")]
-        [SwaggerResponse(424, Type = typeof(Error), Description = "Нет связи с постом")]
-        [SwaggerResponse(500, Type = typeof(Error))]
-        #endregion
-        //[Authorize]
-        [HttpGet("post/{post}")]
-        public IActionResult GetByPost(string post)
-        {
-            try
-            {
-                HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/post/{post}");
-
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                    switch (response.StatusCode)
-                    {
-                        case System.Net.HttpStatusCode.NotFound:
-                            _logger.LogError($"postrc не нашёл пост {post}" + Environment.NewLine);
-                            return NotFound(new Error("Не найден пост", "badvalue"));
-                        case System.Net.HttpStatusCode.InternalServerError:
-                            _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
-                            return StatusCode(424, new Error("Не удалось получить текущие настройки эквайринга с поста", "service"));
-                        case (System.Net.HttpStatusCode)424:
-                            _logger.LogError($"Не удалось соединиться с постом {post}" + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с постом", "connection"));
-                        case (System.Net.HttpStatusCode)0:
-                            _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом", "connection"));
-                        default:
-                            _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
-                            return StatusCode(424, new Error("Не удалось получить настройки эквайринга с поста", "unexpected"));
-                    }
-
-                PostAcquiringViewModel result = JsonConvert.DeserializeObject<PostAcquiringViewModel>(response.ResultMessage);
-
-                return Ok(PostToRegionRateModel(result));
-            }
-            catch(Exception e)
-            {
-                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
-            }
-        }
-
-        #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на мойке по коду")]
-        [SwaggerResponse(200, Type = typeof(RegionAcquiringModel))]
+        [SwaggerResponse(200, Type = typeof(RegionParameter<AcquiringModel>))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
-        [SwaggerResponse(424, Type = typeof(Error), Description = "Не удалось получить данные с мойки")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         //[Authorize]
@@ -165,7 +121,6 @@ namespace Backend.Controllers
 
                 HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/wash/{wash}");
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                {
                     switch (response.StatusCode)
                     {
                         case System.Net.HttpStatusCode.NotFound:
@@ -173,22 +128,25 @@ namespace Backend.Controllers
                             return NotFound(new Error("Не найдена мойка", "badvalue"));
                         case System.Net.HttpStatusCode.InternalServerError:
                             _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
-                            return StatusCode(424, new Error("Не удалось получить настройки эквайринга с мойки", "service"));
+                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами", "service"));
                         case (System.Net.HttpStatusCode)424:
                             _logger.LogError($"Не удалось соединиться с мойкой {wash}" + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с мойкой", "connection"));
+                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {wash}", "connection"));
                         case (System.Net.HttpStatusCode)0:
                             _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом", "connection"));
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        case System.Net.HttpStatusCode.RequestTimeout:
+                            _logger.LogError($"postrc Request timed out. wash = {wash}" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
                         default:
                             _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
-                            return StatusCode(424, new Error("Не удалось получить настройки эквайринга с мойки", "unexpected"));
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
                     }
-                }
 
-                var result = JsonConvert.DeserializeObject<WashAcquiringViewModel>(response.ResultMessage);
+                var result = JsonConvert.DeserializeObject<WashParameter<AcquiringModel>>(response.ResultMessage);
+                result.washName = SqlHelper.GetWashByCode(wash).name;
 
-                return Ok(WashToRegionRateModel(result));
+                return Ok(ParameterToRegion<AcquiringModel>.WashToRegion(result));
             }
             catch (Exception e)
             {
@@ -197,73 +155,46 @@ namespace Backend.Controllers
             }
         }
 
-        #region Swagger Annotations
-        [SwaggerOperation(Summary = "Получить текущие настройки эквайринга на мойках по коду региона")]
-        [SwaggerResponse(200, Type = typeof(List<RegionAcquiringModel>))]
-        [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдены мойки по коду региона")]
+        #region Swagger Annotation
+        [SwaggerOperation(Summary = "Отправка новых настроек эквайринга на несколько постов")]
+        [SwaggerResponse(200, Type = typeof(List<SetParameterResultPost>))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         //[Authorize]
-        [HttpGet("region/{region}")]
-        public IActionResult GetByRegion(int region)
-        {
-            try
-            {
-                List<WashViewModel> washes = SqlHelper.GetWashesByRegion(region);
-                if (washes.Count <= 0)
-                {
-                    _logger.LogError($"Не найдены коды моек в регионе {region}" + Environment.NewLine);
-                    return NotFound(new Error("Не найдены мойки", "badvalue"));
-                }
-
-                List<WashAcquiringViewModel> result = new List<WashAcquiringViewModel>();
-                foreach (WashViewModel w in washes)
-                {
-                    HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/wash/{w.code}");
-
-                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                    {
-                        _logger.LogError($"По мойке {w.code} не удалось получить текущие скидки. postrc response: " + response.ResultMessage);
-                        result.Add(new WashAcquiringViewModel { wash = w.code });
-                        continue;
-                        //return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
-                    }
-
-                    //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                    var washResult = JsonConvert.DeserializeObject<WashAcquiringViewModel>(response.ResultMessage);
-
-                    result.Add(washResult);
-                }
-
-                return Ok(WashesToRegionRateModel(result));
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
-            }
-        }
-
-        #region Swagger Annotations
-        [SwaggerOperation(Summary = "Установить настройки эквайринга на мойках по постам")]
-        [SwaggerResponse(200, Type = typeof(List<WashAcquiringViewModel>))]
-        [SwaggerResponse(500, Type = typeof(Error))]
-        #endregion
-        [Authorize]
-        [HttpPost()]
-        public IActionResult Set(List<PostAcquiringViewModel> model)
+        [HttpPost("set/posts")]
+        public IActionResult SetRateManyPosts(SetPostsParameter<AcquiringModel> model)
         {
             try
             {
                 List<SetParameterResultPost> result = new List<SetParameterResultPost>();
-                foreach (PostAcquiringViewModel discount in model)
+                foreach (string post in model.posts)
                 {
-                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/set", JsonConvert.SerializeObject(discount));
-                    result.Add(new SetParameterResultPost
+                    PostParameter<AcquiringModel> param = new PostParameter<AcquiringModel> { postCode = post, value = model.value };
+
+                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/acquiring/set/post", JsonConvert.SerializeObject(param));
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
-                        post = discount.post,
-                        result = response
-                    });
+                        switch (response.StatusCode)
+                        {
+                            case System.Net.HttpStatusCode.NotFound:
+                                _logger.LogError($"Не найден пост {post}" + Environment.NewLine);
+                                break;
+                            case System.Net.HttpStatusCode.InternalServerError:
+                                _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                                break;
+                            case (System.Net.HttpStatusCode)424:
+                                _logger.LogError($"Не удалось соединиться с постом {post}" + Environment.NewLine);
+                                break;
+                            case (System.Net.HttpStatusCode)0:
+                                _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                                break;
+                            default:
+                                _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                                break;
+                        }
+                    }
+
+                    result.Add(new SetParameterResultPost { post = post, result = response });
                 }
 
                 return Ok(result);
@@ -275,73 +206,113 @@ namespace Backend.Controllers
             }
         }
 
-        private List<RegionAcquiringModel> WashesToRegionRateModel(List<WashAcquiringViewModel> washes)
+        #region Swagger Annotation
+        [SwaggerOperation(Summary = "Отправка новых настрек эквайрнга на мойку")]
+        [SwaggerResponse(200, Type = typeof(SetParameterResultWash))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        //[Authorize]
+        [HttpPost("set/wash")]
+        public IActionResult SetRateWash(SetWashParameter<AcquiringModel> model)
         {
-            List<RegionAcquiringModel> result = new List<RegionAcquiringModel>();
-
-            foreach (WashAcquiringViewModel w in washes)
+            try
             {
-                RegionViewModel region = SqlHelper.GetRegionByWash(w.wash);
-                RegionAcquiringModel ram = result.Find(x => x.regionCode == region.code);
+                SetParameterResultWash result = new SetParameterResultWash();
+                result.wash = model.washCode;
 
-                if (ram == null)
+                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/acquiring/set/wash", JsonConvert.SerializeObject(model));
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    ram = new RegionAcquiringModel
+                    switch (response.StatusCode)
                     {
-                        regionCode = region.code,
-                        regionName = region.name,
-                        washes = new List<WashAcquiringViewModel>()
-                    };
-
-                    ram.washes.Add(w);
+                        case System.Net.HttpStatusCode.NotFound:
+                            _logger.LogError($"Не найдена мойка {model.washCode}" + Environment.NewLine);
+                            return NotFound(new Error("Не найдена мойка", "badvalue"));
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами", "service"));
+                        case (System.Net.HttpStatusCode)424:
+                            _logger.LogError($"Не удалось соединиться с мойкой {model.washCode}" + Environment.NewLine);
+                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {model.washCode}", "connection"));
+                        case (System.Net.HttpStatusCode)0:
+                            _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        case System.Net.HttpStatusCode.RequestTimeout:
+                            _logger.LogError($"postrc Request timed out. wash = {model.washCode}" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        default:
+                            _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
+                    }
                 }
-                else
-                {
-                    result.Remove(ram);
-                    ram.washes.Add(w);
-                }
 
-                result.Add(ram);
+                result = JsonConvert.DeserializeObject<SetParameterResultWash>(response.ResultMessage);
+
+                return Ok(result);
             }
-            return result;
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
         }
 
-        private RegionAcquiringModel WashToRegionRateModel(WashAcquiringViewModel wash)
+        [HttpGet("fake")]
+        public IActionResult GetFake()
         {
-            RegionViewModel region = SqlHelper.GetRegionByWash(wash.wash);
-            RegionAcquiringModel result = new RegionAcquiringModel
+            AcquiringModel a1 = new AcquiringModel { BankAmountMax = 700, BankAmountMin = 50, BankAmountStep = 10 };
+            AcquiringModel a2 = new AcquiringModel { BankAmountMax = 1000, BankAmountMin = 30, BankAmountStep = 10 };
+
+            PostParameter<AcquiringModel> p131 = new PostParameter<AcquiringModel> { postCode = "13-1", value = a1 };
+            PostParameter<AcquiringModel> p132 = new PostParameter<AcquiringModel> { postCode = "13-2", value = a1 };
+            PostParameter<AcquiringModel> p133 = new PostParameter<AcquiringModel> { postCode = "13-3", value = a1 };
+            PostParameter<AcquiringModel> p134 = new PostParameter<AcquiringModel> { postCode = "13-4", value = a1 };
+
+            WashParameter<AcquiringModel> w13 = new WashParameter<AcquiringModel>
             {
-                regionCode = region.code,
-                regionName = region.name,
-                washes = new List<WashAcquiringViewModel>()
+                washCode = "M13",
+                washName = "М13, всё как надо",
+                posts = new List<PostParameter<AcquiringModel>> { p131, p132, p133, p134 },
+                value = null
             };
 
-            result.washes.Add(wash);
+            PostParameter<AcquiringModel> p141 = new PostParameter<AcquiringModel> { postCode = "14-1", value = a1 };
+            PostParameter<AcquiringModel> p142 = new PostParameter<AcquiringModel> { postCode = "14-2", value = a2 };
+            PostParameter<AcquiringModel> p143 = new PostParameter<AcquiringModel> { postCode = "14-3", value = a1 };
+            PostParameter<AcquiringModel> p144 = new PostParameter<AcquiringModel> { postCode = "14-4", value = a1 };
 
-            return result;
+            WashParameter<AcquiringModel> w14 = new WashParameter<AcquiringModel>
+            {
+                washCode = "M14",
+                washName = "М14, второй пост отличается",
+                posts = new List<PostParameter<AcquiringModel>> { p141, p142, p143, p144 },
+                value = null
+            };
+
+            WashParameter<AcquiringModel> w15 = new WashParameter<AcquiringModel>
+            {
+                washCode = "M15",
+                washName = "М15, пустая",
+                posts = null,
+                value = null
+            };
+
+            RegionParameter<AcquiringModel> r1 = new RegionParameter<AcquiringModel>
+            {
+                regionCode = 1,
+                regionName = "Первый регион",
+                washes = new List<WashParameter<AcquiringModel>> { w13 }
+            };
+
+            RegionParameter<AcquiringModel> r2 = new RegionParameter<AcquiringModel>
+            {
+                regionCode = 2,
+                regionName = "Второй регион",
+                washes = new List<WashParameter<AcquiringModel>> { w14, w15 }
+            };
+
+            return Ok(new List<RegionParameter<AcquiringModel>> { r1, r2 });
         }
 
-        private RegionAcquiringModel PostToRegionRateModel(PostAcquiringViewModel post)
-        {
-            RegionViewModel region = SqlHelper.GetRegionByPost(post.post);
-            WashViewModel wash = SqlHelper.GetWashByPost(post.post);
-            RegionAcquiringModel result = new RegionAcquiringModel
-            {
-                regionCode = region.code,
-                regionName = region.name,
-                washes = new List<WashAcquiringViewModel>()
-            };
-
-            WashAcquiringViewModel wam = new WashAcquiringViewModel
-            {
-                wash = wash.code,
-                posts = new List<PostAcquiringViewModel>()
-            };
-
-            wam.posts.Add(post);
-            result.washes.Add(wam);
-
-            return result;
-        }
     }
 }
