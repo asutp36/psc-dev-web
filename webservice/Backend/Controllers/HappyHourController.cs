@@ -29,8 +29,9 @@ namespace Backend.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "Получить текущие скидки на мойках пользователя")]
-        [SwaggerResponse(200, Type = typeof(List<WashHappyHourViewModel>))]
+        [SwaggerOperation(Summary = "Получить текущие настройки скидок на мойках пользователя")]
+        [SwaggerResponse(200, Type = typeof(List<RegionParameter<HappyHourModel>>))]
+        [SwaggerResponse(424, Type = typeof(Error), Description = "Не удалось получить данные ни с одной мойки")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [Authorize]
@@ -84,10 +85,11 @@ namespace Backend.Controllers
 
                     returnError = false;
                 }
+
                 if (returnError)
                 {
-                    _logger.LogError($"Ни с одной мойки не получилось получить настройки скидок для пользователя {User.Identity.Name}" + Environment.NewLine);
-                    return StatusCode(424, new Error("Не удалось получить настройки скидок с моек", "fail"));
+                    _logger.LogError($"Ни с одной мойки не получилось получить текущие настройки скидок для пользователя {User.Identity.Name}" + Environment.NewLine);
+                    return StatusCode(424, new Error("Не удалось получить текущие настройки скидок с моек", "fail"));
                 }
 
                 return Ok(ParameterToRegion<HappyHourModel>.WashesToRegion(result));
@@ -100,8 +102,8 @@ namespace Backend.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "Получить текущие скидки на мойке по коду")]
-        [SwaggerResponse(200, Type = typeof(WashHappyHourViewModel))]
+        [SwaggerOperation(Summary = "Получить текущие настройки скидок на мойке по коду")]
+        [SwaggerResponse(200, Type = typeof(RegionParameter<HappyHourModel>))]
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
@@ -119,7 +121,6 @@ namespace Backend.Controllers
 
                 HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/happyhour/wash/{wash}");
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                {
                     switch (response.StatusCode)
                     {
                         case System.Net.HttpStatusCode.NotFound:
@@ -141,11 +142,113 @@ namespace Backend.Controllers
                             _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
                             return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
                     }
-                }
 
                 var result = JsonConvert.DeserializeObject<WashParameter<HappyHourModel>>(response.ResultMessage);
+                result.washName = SqlHelper.GetWashByCode(wash).name;
 
                 return Ok(ParameterToRegion<HappyHourModel>.WashToRegion(result));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        #region Swagger Annotation
+        [SwaggerOperation(Summary = "Изменение настроек скидок на нескольких постах")]
+        [SwaggerResponse(200, Type = typeof(List<SetParameterResultPost>))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        //[Authorize]
+        [HttpPost("set/posts")]
+        public IActionResult SetRateManyPosts(SetPostsParameter<HappyHourModel> model)
+        {
+            try
+            {
+                List<SetParameterResultPost> result = new List<SetParameterResultPost>();
+                foreach (string post in model.posts)
+                {
+                    PostParameter<HappyHourModel> param = new PostParameter<HappyHourModel> { postCode = post, value = model.value };
+
+                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/happyhour/set/post", JsonConvert.SerializeObject(param));
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    {
+                        switch (response.StatusCode)
+                        {
+                            case System.Net.HttpStatusCode.NotFound:
+                                _logger.LogError($"Не найден пост {post}" + Environment.NewLine);
+                                break;
+                            case System.Net.HttpStatusCode.InternalServerError:
+                                _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                                break;
+                            case (System.Net.HttpStatusCode)424:
+                                _logger.LogError($"Не удалось соединиться с постом {post}" + Environment.NewLine);
+                                break;
+                            case (System.Net.HttpStatusCode)0:
+                                _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                                break;
+                            default:
+                                _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                                break;
+                        }
+                    }
+
+                    result.Add(new SetParameterResultPost { post = post, result = response });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        #region Swagger Annotation
+        [SwaggerOperation(Summary = "изменение настроек скидок на мойке")]
+        [SwaggerResponse(200, Type = typeof(SetParameterResultWash))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        //[Authorize]
+        [HttpPost("set/wash")]
+        public IActionResult SetRateWash(SetWashParameter<HappyHourModel> model)
+        {
+            try
+            {
+                SetParameterResultWash result = new SetParameterResultWash();
+                result.wash = model.washCode;
+
+                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/happyhour/set/wash", JsonConvert.SerializeObject(model));
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    switch (response.StatusCode)
+                    {
+                        case System.Net.HttpStatusCode.NotFound:
+                            _logger.LogError($"Не найдена мойка {model.washCode}" + Environment.NewLine);
+                            return NotFound(new Error("Не найдена мойка", "badvalue"));
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами", "service"));
+                        case (System.Net.HttpStatusCode)424:
+                            _logger.LogError($"Не удалось соединиться с мойкой {model.washCode}" + Environment.NewLine);
+                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {model.washCode}", "connection"));
+                        case (System.Net.HttpStatusCode)0:
+                            _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        case System.Net.HttpStatusCode.RequestTimeout:
+                            _logger.LogError($"postrc Request timed out. wash = {model.washCode}" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        default:
+                            _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
+                    }
+                }
+
+                result = JsonConvert.DeserializeObject<SetParameterResultWash>(response.ResultMessage);
+
+                return Ok(result);
             }
             catch (Exception e)
             {
@@ -246,81 +349,6 @@ namespace Backend.Controllers
             };
 
             return Ok(new List<RegionParameter<HappyHourModel>> { r1, r2 });
-        }
-
-        #region Swagger Annotations
-        [SwaggerOperation(Summary = "Получить текущие скидки на мойках по коду региона")]
-        [SwaggerResponse(200, Type = typeof(List<WashHappyHourViewModel>))]
-        [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдены мойки по коду региона")]
-        [SwaggerResponse(500, Type = typeof(Error))]
-        #endregion
-        [Authorize]
-        [HttpGet("region/{region}")]
-        public IActionResult GetByRegion(int region)
-        {
-            try
-            {
-                List<WashViewModel> washes = SqlHelper.GetWashesByRegion(region);
-                if (washes.Count <= 0)
-                {
-                    _logger.LogError($"Не найдены коды моек в регионе {region}" + Environment.NewLine);
-                    return NotFound(new Error("Не найдены мойки", "badvalue"));
-                }
-
-                List<WashHappyHourViewModel> result = new List<WashHappyHourViewModel>();
-                foreach (WashViewModel w in washes)
-                {
-                    HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/happyhour/wash/{w.code}");
-
-                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                    {
-                        _logger.LogError($"По мойке {w.code} не удалось получить текущие скидки. postrc response: " + response.ResultMessage);
-                        //return StatusCode(424, new Error("Не удалось получить текущие тарифы", "service"));
-                    }
-
-                    //string str = response.ResultMessage.Substring(1, response.ResultMessage.Length - 2).Replace(@"\", "");
-                    var posts = JsonConvert.DeserializeObject<List<PostHappyHourViewModel>>(response.ResultMessage);
-
-                    result.Add(new WashHappyHourViewModel
-                    {
-                        wash = w.code,
-                        posts = posts
-                    });
-                }    
-
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
-            }
-        }
-
-        [Authorize]
-        [HttpPost("post")]
-        public IActionResult Set(List<PostHappyHourViewModel> model)
-        {
-            try
-            {
-                List<SetParameterResultPost> result = new List<SetParameterResultPost>();
-                foreach(PostHappyHourViewModel discount in model)
-                {
-                    HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/postdiscount/set", JsonConvert.SerializeObject(discount));
-                    result.Add(new SetParameterResultPost
-                    {
-                        post = discount.post,
-                        result = response
-                    });
-                }
-
-                return Ok(result);
-            }
-            catch(Exception e)
-            {
-                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
-            }
         }
     }
 }
