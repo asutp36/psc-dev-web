@@ -107,7 +107,7 @@ namespace Backend.Controllers
         [SwaggerResponse(404, Type = typeof(Error), Description = "Не найдена мойка")]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        //[Authorize]
+        [Authorize]
         [HttpGet("wash/{wash}")]
         public IActionResult GetByWash(string wash)
         {
@@ -160,7 +160,7 @@ namespace Backend.Controllers
         [SwaggerResponse(200, Type = typeof(List<SetParameterResultPost>))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        //[Authorize]
+        [Authorize]
         [HttpPost("set/posts")]
         public IActionResult SetRateManyPosts(SetPostsParameter<HappyHourModel> model)
         {
@@ -211,7 +211,7 @@ namespace Backend.Controllers
         [SwaggerResponse(200, Type = typeof(SetParameterResultWash))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
-        //[Authorize]
+        [Authorize]
         [HttpPost("set/wash")]
         public IActionResult SetRateWash(SetWashParameter<HappyHourModel> model)
         {

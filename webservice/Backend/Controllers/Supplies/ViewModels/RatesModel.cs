@@ -11,7 +11,7 @@ namespace Backend.Controllers.Supplies.ViewModels
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as RatesModel);
+            return obj is RatesModel && Equals(obj as RatesModel);
         }
 
         public bool Equals(RatesModel other)
