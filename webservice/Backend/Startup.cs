@@ -110,7 +110,7 @@ namespace Backend
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("./swagger/v1/swagger.json", "mobile-int");
+                c.SwaggerEndpoint("./swagger/v1/swagger.json", "backend");
                 c.RoutePrefix = string.Empty;
             });
 
