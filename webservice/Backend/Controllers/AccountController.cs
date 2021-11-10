@@ -122,8 +122,6 @@ namespace Backend.Controllers
             {
                 UserInfo uInfo = new UserInfo(User.Claims.ToList());
 
-                var groups = uInfo.GetGroups();
-
                 DashboardFilters filters = new DashboardFilters()
                 {
                     regions = uInfo.GetRegions(),
