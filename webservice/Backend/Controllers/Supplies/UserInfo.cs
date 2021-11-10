@@ -1,4 +1,5 @@
 ﻿using Backend.Controllers.Supplies.Filters;
+using Backend.Controllers.Supplies.ViewModels;
 using Backend.Models;
 using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.EntityFrameworkCore;
@@ -158,6 +159,30 @@ namespace Backend.Controllers.Supplies
             }
 
             return result;
+        }
+
+        public List<GroupViewModel> GetGroups()
+        {
+            if (_washes == null)
+                this.GetWashes();
+            List<GroupViewModel> result = new List<GroupViewModel>();
+
+            var name = this.claims.Where(c => c.Type == ClaimsIdentity.DefaultNameClaimType).FirstOrDefault().Value;
+
+            //_model.WashGroup.Include(g => g.IdgroupNavigation).Include(w => w.IdwashNavigation);
+            //_model.Users.Where(u => u.Login == this.claims.Where(c => c.Type == ClaimsIdentity.DefaultNameClaimType).FirstOrDefault().Value).Include(uw => );
+            var x = _model.UserWash.Include(u => u.IduserNavigation).Where(u => u.IduserNavigation.Login == name)
+                           .Include(w => w.IdwashNavigation).Join(_model.WashGroup.Include(g => g.IdgroupNavigation), w => w.IdwashNavigation.Idwash, wg => wg.Idwash,
+                           (w, wg) => new GroupViewModel { name = wg.IdgroupNavigation.Name, code = wg.IdgroupNavigation.Code }).ToList();
+
+            foreach(GroupViewModel g in x)
+                if (result.Where(xx => xx.code == g.code).FirstOrDefault() == null)
+                    result.Add(g);
+                                     //.Join(_washes, wg => wg.IdwashNavigation.Idwash, w => w.idWash, 
+                                     //(wg, w) => new GroupViewModel { 
+                                     //    name = wg.IdgroupNavigation.Name, 
+                                     //    code = wg.IdgroupNavigation.Code }).Select(g => new GroupViewModel { name = g.name, code = g.code }).ToList();
+            return result;                            
         }
     }
 }

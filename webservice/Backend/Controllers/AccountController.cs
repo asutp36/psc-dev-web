@@ -122,6 +122,8 @@ namespace Backend.Controllers
             {
                 UserInfo uInfo = new UserInfo(User.Claims.ToList());
 
+                var groups = uInfo.GetGroups();
+
                 DashboardFilters filters = new DashboardFilters()
                 {
                     regions = uInfo.GetRegions(),
@@ -136,6 +138,7 @@ namespace Backend.Controllers
             }
             catch (Exception e)
             {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
