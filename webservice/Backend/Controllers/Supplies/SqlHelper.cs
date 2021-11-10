@@ -1,5 +1,6 @@
 ﻿using Backend.Controllers.Supplies.Auth;
 using Backend.Controllers.Supplies.Stored_Procedures;
+using Backend.Controllers.Supplies.ViewModels;
 using Backend.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -409,6 +410,23 @@ namespace Backend.Controllers.Supplies
                 }).FirstOrDefault();
 
                 return wash;
+            }
+        }
+
+        public static List<CardViewModel> GetTechCardsByWash(string wash)
+        {
+            using (ModelDbContext context = new ModelDbContext())
+            {
+                List<CardViewModel> result = context.Wash.Where(w => w.Code == wash)
+                                                         .Join(context.WashGroup.Include(wg => wg.IdgroupNavigation),
+                                                               w => w.Idwash,
+                                                               wg => wg.Idwash,
+                                                               (w, wg) => wg.IdgroupNavigation)
+                                                         .Join(context.CardGroup.Include(cg => cg.IdcardNavigation).ThenInclude(c => c.IdcardTypeNavigation),
+                                                               g => g.Idgroup,
+                                                               cg => cg.Idgroup,
+                                                               (g, cg) => new CardViewModel { num = cg.IdcardNavigation.CardNum, type = cg.IdcardNavigation.IdcardTypeNavigation.Name }).OrderBy(c => c.type).OrderBy(c => c.num).ToList();
+                return result;
             }
         }
     }
