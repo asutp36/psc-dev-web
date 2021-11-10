@@ -617,7 +617,7 @@ namespace MobileIntegration.Controllers
         /// <response code="200">Удачно</response>
         [HttpPost]
         [ActionName("stop_post-dev")]
-        public HttpResponseMessage StopPostDev([FromBody]StartPostBindingModel model)
+        public HttpResponseMessage StopPostDev([FromBody]StopPostBindingModel model)
         {
             Logger.InitLogger();
             
@@ -699,9 +699,9 @@ namespace MobileIntegration.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Post not found");
             }
 
-            Logger.Log.Debug("StopPostDev: отправка конца мойки");
+            Logger.Log.Debug($"StopPostDev: отправка конца мойки. Баланс = {(int)model.balance}");
 
-            HttpResponse resp = Sender.SendPost("http://188.225.79.69/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), /*model.post*/ washCode, model.balance)));
+            HttpResponse resp = Sender.SendPost("http://188.225.79.69/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), /*model.post*/ washCode, (int)model.balance)));
 
             Logger.Log.Debug("StopPostDev: Ответ от их сервера: " + resp.ResultMessage);
 
