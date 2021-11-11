@@ -1,4 +1,5 @@
 ﻿using Backend.Controllers.Supplies;
+using Backend.Controllers.Supplies.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +27,7 @@ namespace Backend.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "получить технические карты по коду мойки")]
-        [SwaggerResponse(200)]
+        [SwaggerResponse(200, Type = typeof(List<GroupViewModel>))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [HttpGet("wash/{washCode}")]
