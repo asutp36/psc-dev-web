@@ -415,19 +415,42 @@ namespace Backend.Controllers.Supplies
 
         public static List<CardViewModel> GetTechCardsByWash(string wash)
         {
-            using (ModelDbContext context = new ModelDbContext())
+            using ModelDbContext context = new ModelDbContext();
+            List<CardViewModel> result = context.Wash.Where(w => w.Code == wash)
+                                                     .Join(context.WashGroup.Include(wg => wg.IdgroupNavigation),
+                                                           w => w.Idwash,
+                                                           wg => wg.Idwash,
+                                                           (w, wg) => wg.IdgroupNavigation)
+                                                     .Join(context.CardGroup.Include(cg => cg.IdcardNavigation).ThenInclude(c => c.IdcardTypeNavigation),
+                                                           g => g.Idgroup,
+                                                           cg => cg.Idgroup,
+                                                           (g, cg) => new CardViewModel { num = cg.IdcardNavigation.CardNum, type = cg.IdcardNavigation.IdcardTypeNavigation.Name })
+                                                     .OrderBy(c => c.type).OrderBy(c => c.num).ToList();
+            return result;
+        }
+
+        public static List<GroupViewModel> GetGroupsTechCardsByWash(string wash)
+        {
+            using ModelDbContext context = new ModelDbContext();
+            List<GroupViewModel> result = context.Wash.Where(w => w.Code == wash)
+                                                      .Join(context.WashGroup.Include(wg => wg.IdgroupNavigation),
+                                                            w => w.Idwash,
+                                                            wg => wg.Idwash,
+                                                            (w, wg) => new GroupViewModel { idGroup = wg.IdgroupNavigation.Idgroup, code = wg.IdgroupNavigation.Code, name = wg.IdgroupNavigation.Name })
+                                                      .ToList();
+
+            foreach(GroupViewModel group in result)
             {
-                List<CardViewModel> result = context.Wash.Where(w => w.Code == wash)
-                                                         .Join(context.WashGroup.Include(wg => wg.IdgroupNavigation),
-                                                               w => w.Idwash,
-                                                               wg => wg.Idwash,
-                                                               (w, wg) => wg.IdgroupNavigation)
-                                                         .Join(context.CardGroup.Include(cg => cg.IdcardNavigation).ThenInclude(c => c.IdcardTypeNavigation),
-                                                               g => g.Idgroup,
-                                                               cg => cg.Idgroup,
-                                                               (g, cg) => new CardViewModel { num = cg.IdcardNavigation.CardNum, type = cg.IdcardNavigation.IdcardTypeNavigation.Name }).OrderBy(c => c.type).OrderBy(c => c.num).ToList();
-                return result;
+                group.cards = context.Groups.Where(g => g.Idgroup == group.idGroup)
+                                                    .Join(context.CardGroup.Include(cg => cg.IdcardNavigation).ThenInclude(c => c.IdcardTypeNavigation),
+                                                          g => g.Idgroup,
+                                                          cg => cg.Idgroup,
+                                                          (g, cg) => new CardViewModel { num = cg.IdcardNavigation.CardNum, type = cg.IdcardNavigation.IdcardTypeNavigation.Name })
+                                                    .OrderBy(c => c.type).ThenBy(c => c.num)
+                                                    .ToList();
             }
+
+            return result;                                          
         }
     }
 }
