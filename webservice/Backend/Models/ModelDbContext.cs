@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Configuration;
 
 namespace Backend.Models
 {
@@ -31,7 +30,6 @@ namespace Backend.Models
         public virtual DbSet<Posts> Posts { get; set; }
         public virtual DbSet<Regions> Regions { get; set; }
         public virtual DbSet<Roles> Roles { get; set; }
-        public virtual DbSet<TechCardSync> TechCardSync { get; set; }
         public virtual DbSet<UserWash> UserWash { get; set; }
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<Wash> Wash { get; set; }
@@ -347,38 +345,6 @@ namespace Backend.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<TechCardSync>(entity =>
-            {
-                entity.HasKey(e => e.IdtechCardSync);
-
-                entity.Property(e => e.IdtechCardSync).HasColumnName("IDTechCardSync");
-
-                entity.Property(e => e.Idcard).HasColumnName("IDCard");
-
-                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
-
-                entity.Property(e => e.Idgroup).HasColumnName("IDGroup");
-
-                entity.Property(e => e.LastSync).HasColumnType("datetime");
-
-                entity.Property(e => e.Result).HasMaxLength(150);
-
-                entity.HasOne(d => d.IdcardNavigation)
-                    .WithMany(p => p.TechCardSync)
-                    .HasForeignKey(d => d.Idcard)
-                    .HasConstraintName("FK_TechCardSync_Cards");
-
-                entity.HasOne(d => d.IddeviceNavigation)
-                    .WithMany(p => p.TechCardSync)
-                    .HasForeignKey(d => d.Iddevice)
-                    .HasConstraintName("FK_TechCardSync_Device");
-
-                entity.HasOne(d => d.IdgroupNavigation)
-                    .WithMany(p => p.TechCardSync)
-                    .HasForeignKey(d => d.Idgroup)
-                    .HasConstraintName("FK_TechCardSync_Group");
             });
 
             modelBuilder.Entity<UserWash>(entity =>

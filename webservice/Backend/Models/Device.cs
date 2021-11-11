@@ -9,7 +9,6 @@ namespace Backend.Models
         {
             Changers = new HashSet<Changers>();
             Posts = new HashSet<Posts>();
-            TechCardSync = new HashSet<TechCardSync>();
         }
 
         public int Iddevice { get; set; }
@@ -22,6 +21,5 @@ namespace Backend.Models
         public virtual DeviceTypes IddeviceTypeNavigation { get; set; }
         public virtual ICollection<Changers> Changers { get; set; }
         public virtual ICollection<Posts> Posts { get; set; }
-        public virtual ICollection<TechCardSync> TechCardSync { get; set; }
     }
 }
