@@ -452,5 +452,11 @@ namespace Backend.Controllers.Supplies
 
             return result;                                          
         }
+
+        public static List<CardTypeViewModel> GetTechCardTypes()
+        {
+            using ModelDbContext context = new ModelDbContext();
+            return context.CardTypes.Where(t => t.Code != "client").Select(ct => new CardTypeViewModel { idCardType = ct.IdcardType, code = ct.Code, name = ct.Name }).ToList();
+        }
     }
 }

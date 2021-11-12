@@ -26,7 +26,7 @@ namespace Backend.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "получить технические карты по коду мойки")]
+        [SwaggerOperation(Summary = "Получить технические карты по коду мойки")]
         [SwaggerResponse(200, Type = typeof(List<GroupViewModel>))]
         [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
@@ -37,6 +37,26 @@ namespace Backend.Controllers
             {
                 var cards = SqlHelper.GetGroupsTechCardsByWash(washCode);
                 return Ok(cards);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить типы технических карт")]
+        [SwaggerResponse(200, Type = typeof(List<CardTypeViewModel>))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [HttpGet("types")]
+        public IActionResult GetCardTypes()
+        {
+            try
+            {
+                return Ok(SqlHelper.GetTechCardTypes());
             }
             catch(Exception e)
             {
