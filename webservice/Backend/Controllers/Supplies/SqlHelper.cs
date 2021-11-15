@@ -458,5 +458,36 @@ namespace Backend.Controllers.Supplies
             using ModelDbContext context = new ModelDbContext();
             return context.CardTypes.Where(t => t.Code != "client").Select(ct => new CardTypeViewModel { idCardType = ct.IdcardType, code = ct.Code, name = ct.Name }).ToList();
         }
+
+        public static void WriteTechCard(TechCardModel model)
+        {
+            using ModelDbContext context = new ModelDbContext();
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    context.Database.ExecuteSqlRaw($"insert into Cards(IDOwner, CardNum, IDCardStatus, IDCardType, LocalizedBy, LocalizedID) " +
+                        $"values((select IDOwner from Owners where PhoneInt = 0), '{model.num}', (select IDCardStatus from CardStatuses where Code = 'norm'), " +
+                        $"(select IDCardType from CardTypes where Code = '{model.typeCode}'), 0, 0)");
+
+                    foreach(string groupCode in model.groupCodes)
+                        context.Database.ExecuteSqlRaw($"insert into CardGroup(IDCard, IDGroup) values ((select IDCard from Cards where CardNum = '{model.num}'), (select IDGroup from Groups where Code = '{groupCode}'))");
+
+                    context.SaveChanges();
+                    transaction.Commit();
+                }
+                catch(Exception e)
+                {
+                    transaction.Rollback();
+                    throw new Exception("command", e);
+                }
+            }
+        }
+
+        public static bool IsCardExists(string cardNum)
+        {
+            using ModelDbContext context = new ModelDbContext();
+            return context.Cards.Where(c => c.CardNum == cardNum).FirstOrDefault() != null;
+        }
     }
 }

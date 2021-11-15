@@ -64,5 +64,40 @@ namespace Backend.Controllers
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Создать новую техническую карту")]
+        [SwaggerResponse(201)]
+        [SwaggerResponse(400, Type = typeof(Error), Description = "Некорректные входные параметры")]
+        [SwaggerResponse(409, Type = typeof(Error), Description = "Карта с таким номером уже существует")]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [HttpPost]
+        public IActionResult PostTechCard(TechCardModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(new Error("Некорректно заданы значения", "badvalue"));
+
+                if (SqlHelper.IsCardExists(model.num))
+                    return Conflict(new Error("Карта с таким номером уже существует", "badvalue"));
+
+                SqlHelper.WriteTechCard(model);
+
+                return StatusCode(201);
+            }
+            catch(Exception e)
+            {
+                if(e.Message == "command")
+                {
+                    _logger.LogError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
+                    return StatusCode(500, new Error("Произошла ошибка базы данных", "db"));
+                }
+
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
     }
 }
