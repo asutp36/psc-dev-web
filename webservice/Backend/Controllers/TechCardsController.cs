@@ -99,5 +99,30 @@ namespace Backend.Controllers
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Удалить техническую карту")]
+        [SwaggerResponse(200)]
+        [SwaggerResponse(404, Type = typeof(Error), Description = "Карта с таким номером не существует")]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [HttpDelete("{cardNum}")]
+        public IActionResult DeleteTechCard(string cardNum)
+        {
+            try
+            {
+                if (!SqlHelper.IsCardExists(cardNum))
+                    return NotFound(new Error("Карта с таким номером не найдена", "badvalue"));
+
+                SqlHelper.DeleteCard(cardNum);
+
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
     }
 }

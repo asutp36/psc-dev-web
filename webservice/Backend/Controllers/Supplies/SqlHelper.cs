@@ -489,5 +489,11 @@ namespace Backend.Controllers.Supplies
             using ModelDbContext context = new ModelDbContext();
             return context.Cards.Where(c => c.CardNum == cardNum).FirstOrDefault() != null;
         }
+
+        public static void DeleteCard(string cardNum)
+        {
+            using ModelDbContext context = new ModelDbContext();
+            context.Database.ExecuteSqlRaw($"delete from Cards where CardNum = '{cardNum}'");
+        }
     }
 }
