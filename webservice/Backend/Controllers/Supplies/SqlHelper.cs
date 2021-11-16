@@ -467,11 +467,11 @@ namespace Backend.Controllers.Supplies
                 try
                 {
                     context.Database.ExecuteSqlRaw($"insert into Cards(IDOwner, CardNum, IDCardStatus, IDCardType, LocalizedBy, LocalizedID) " +
-                        $"values((select IDOwner from Owners where PhoneInt = 0), '{model.num}', (select IDCardStatus from CardStatuses where Code = 'norm'), " +
+                        $"values((select IDOwner from Owners where PhoneInt = 0), '{model.cardNum}', (select IDCardStatus from CardStatuses where Code = 'norm'), " +
                         $"(select IDCardType from CardTypes where Code = '{model.typeCode}'), 0, 0)");
 
                     foreach(string groupCode in model.groupCodes)
-                        context.Database.ExecuteSqlRaw($"insert into CardGroup(IDCard, IDGroup) values ((select IDCard from Cards where CardNum = '{model.num}'), (select IDGroup from Groups where Code = '{groupCode}'))");
+                        context.Database.ExecuteSqlRaw($"insert into CardGroup(IDCard, IDGroup) values ((select IDCard from Cards where CardNum = '{model.cardNum}'), (select IDGroup from Groups where Code = '{groupCode}'))");
 
                     context.SaveChanges();
                     transaction.Commit();

@@ -9,7 +9,7 @@ namespace Backend.Controllers.Supplies.ViewModels
     public class TechCardModel
     {
         [Required]
-        public string num { get; set; }
+        public string cardNum { get; set; }
         [Required]
         public string typeCode { get; set; }
         [Required]

@@ -80,7 +80,7 @@ namespace Backend.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(new Error("Некорректно заданы значения", "badvalue"));
 
-                if (SqlHelper.IsCardExists(model.num))
+                if (SqlHelper.IsCardExists(model.cardNum))
                     return Conflict(new Error("Карта с таким номером уже существует", "badvalue"));
 
                 SqlHelper.WriteTechCard(model);
