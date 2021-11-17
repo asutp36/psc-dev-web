@@ -58,7 +58,7 @@ namespace PostRCService.Controllers
                     }
 
                     //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
-                    HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/rate", JsonConvert.SerializeObject(parameter.value));
+                    HttpResponse response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/create/washcard", JsonConvert.SerializeObject(parameter.value));
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                         if (response.StatusCode == 0)
@@ -81,5 +81,7 @@ namespace PostRCService.Controllers
                 return StatusCode(500);
             }
         }
+
+
     }
 }
