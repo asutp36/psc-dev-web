@@ -153,7 +153,7 @@ namespace Backend.Controllers.Supplies
                     List<GetBoxByPosts_Result> result = context.Set<GetBoxByPosts_Result>().FromSqlRaw("GetBoxByPosts @p_ReportDate, @p_RegionCode, @p_WashCode, @p_PostCode", p_ReportDate, p_RegionCode, p_WashCode, p_PostCode).ToList();
                     return result;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     throw new Exception("command", e);
                 }
@@ -290,7 +290,7 @@ namespace Backend.Controllers.Supplies
         {
             ModelDbContext context = new ModelDbContext();
 
-            if (context.Database.CanConnect()) 
+            if (context.Database.CanConnect())
             {
                 try
                 {
@@ -299,7 +299,7 @@ namespace Backend.Controllers.Supplies
 
                     return result;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     throw new Exception("command", e);
                 }
@@ -307,7 +307,7 @@ namespace Backend.Controllers.Supplies
             else
                 throw new Exception("connection");
 
-            
+
         }
 
         public static string GetWashCode(string postCode)
@@ -327,16 +327,16 @@ namespace Backend.Controllers.Supplies
                 {
                     List<WashViewModel> result = context.Wash.Include(w => w.IdregionNavigation)
                                                              .Where(r => r.IdregionNavigation.Code == regionCode)
-                                                             .Select(w => new WashViewModel { 
-                                                                  idWash = w.Idwash,
-                                                                  code = w.Code,
-                                                                  name = w.Name,
-                                                                  idRegion = w.Idregion
-                                                              }).ToList();
+                                                             .Select(w => new WashViewModel {
+                                                                 idWash = w.Idwash,
+                                                                 code = w.Code,
+                                                                 name = w.Name,
+                                                                 idRegion = w.Idregion
+                                                             }).ToList();
                     return result;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new Exception("command", e);
             }
@@ -439,7 +439,7 @@ namespace Backend.Controllers.Supplies
                                                             (w, wg) => new GroupViewModel { idGroup = wg.IdgroupNavigation.Idgroup, code = wg.IdgroupNavigation.Code, name = wg.IdgroupNavigation.Name })
                                                       .ToList();
 
-            foreach(GroupViewModel group in result)
+            foreach (GroupViewModel group in result)
             {
                 group.cards = context.Groups.Where(g => g.Idgroup == group.idGroup)
                                                     .Join(context.CardGroup.Include(cg => cg.IdcardNavigation).ThenInclude(c => c.IdcardTypeNavigation),
@@ -450,7 +450,7 @@ namespace Backend.Controllers.Supplies
                                                     .ToList();
             }
 
-            return result;                                          
+            return result;
         }
 
         public static List<CardTypeViewModel> GetTechCardTypes()
@@ -470,13 +470,13 @@ namespace Backend.Controllers.Supplies
                         $"values((select IDOwner from Owners where PhoneInt = 0), '{model.cardNum}', (select IDCardStatus from CardStatuses where Code = 'norm'), " +
                         $"(select IDCardType from CardTypes where Code = '{model.typeCode}'), 0, 0)");
 
-                    foreach(string groupCode in model.groupCodes)
+                    foreach (string groupCode in model.groupCodes)
                         context.Database.ExecuteSqlRaw($"insert into CardGroup(IDCard, IDGroup) values ((select IDCard from Cards where CardNum = '{model.cardNum}'), (select IDGroup from Groups where Code = '{groupCode}'))");
 
                     context.SaveChanges();
                     transaction.Commit();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     transaction.Rollback();
                     throw new Exception("command", e);
@@ -515,6 +515,19 @@ namespace Backend.Controllers.Supplies
                                     .ToList();
 
             return g;
+        }
+
+        public static void AddTechCardGroup(string cardNum, string groupCode)
+        {
+            using ModelDbContext context = new ModelDbContext();
+            context.Database.ExecuteSqlRaw($"insert into CardGroup(IDCard, IDGroup) values (" +
+                $"(select IDCard from Cards where CardNum = '{cardNum}'), (select IDGroup from Groups where Code = '{groupCode}'))");
+        }
+
+        public static bool IsGroupExists(string groupCode)
+        {
+            using ModelDbContext context = new ModelDbContext();
+            return context.Groups.Where(g => g.Code == groupCode).FirstOrDefault() != null;
         }
     }
 }

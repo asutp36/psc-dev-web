@@ -29,12 +29,16 @@ namespace Backend.Controllers
         [SwaggerOperation(Summary = "Получить технические карты по коду мойки")]
         [SwaggerResponse(200, Type = typeof(List<GroupViewModel>))]
         [SwaggerResponse(500, Type = typeof(Error))]
+        [SwaggerResponse(500, Type = typeof(Error))]
         #endregion
         [HttpGet("wash/{washCode}")]
         public IActionResult GetCardsByWash(string washCode)
         {
             try
             {
+                if (SqlHelper.IsWashExists(washCode))
+                    return NotFound(new Error("Мойка не найдена", "badvalue"));
+
                 var cards = SqlHelper.GetGroupsTechCardsByWash(washCode);
                 return Ok(cards);
             }
@@ -68,7 +72,6 @@ namespace Backend.Controllers
                 return StatusCode(500, new Error(e.Message, "unexpected"));
             }
         }
-
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить типы технических карт")]
@@ -139,6 +142,34 @@ namespace Backend.Controllers
                     return NotFound(new Error("Карта с таким номером не найдена", "badvalue"));
 
                 SqlHelper.DeleteCard(cardNum);
+
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Добавить группы в техническую карту")]
+        [SwaggerResponse(200)]
+        [SwaggerResponse(404, Type = typeof(Error), Description = "Карта с таким номером или группа не существует")]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [HttpPatch("{cardNum}/group/{groupCode}")]
+        public IActionResult UpdateTechCardGroups(string cardNum, string groupCode)
+        {
+            try
+            {
+                if (!SqlHelper.IsCardExists(cardNum))
+                    return NotFound(new Error("Карта с таким номером не найдена", "badvalue"));
+
+                if (!SqlHelper.IsGroupExists(groupCode))
+                    return NotFound(new Error("Группа не найдена", "badvalue"));
+
+                SqlHelper.AddTechCardGroup(cardNum, groupCode);
 
                 return Ok();
             }
