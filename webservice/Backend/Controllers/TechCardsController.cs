@@ -45,6 +45,30 @@ namespace Backend.Controllers
             }
         }
 
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить технические карты по коду группы")]
+        [SwaggerResponse(200, Type = typeof(GroupViewModel))]
+        [SwaggerResponse(404, Type = typeof(Error))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [HttpGet("group/{groupCode}")]
+        public IActionResult GetCardsByGroup(string groupCode)
+        {
+            try
+            {
+                var cards = SqlHelper.GetTechCardsByGroup(groupCode);
+                return Ok(cards);
+            }
+            catch (Exception e)
+            {
+                if (e.Message == "404")
+                    return NotFound(new Error("Не найдена группа", "badvalue"));
+
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить типы технических карт")]

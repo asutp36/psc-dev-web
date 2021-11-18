@@ -495,5 +495,26 @@ namespace Backend.Controllers.Supplies
             using ModelDbContext context = new ModelDbContext();
             context.Database.ExecuteSqlRaw($"delete from Cards where CardNum = '{cardNum}'");
         }
+
+        public static GroupViewModel GetTechCardsByGroup(string groupCode)
+        {
+            using ModelDbContext context = new ModelDbContext();
+
+            var group = context.Groups.Where(g => g.Code == groupCode).FirstOrDefault();
+
+            if (group == null)
+                throw new Exception("404");
+
+            GroupViewModel g = new GroupViewModel { idGroup = group.Idgroup, code = group.Code, name = group.Name };
+            g.cards = context.Groups.Where(g => g.Code == groupCode)
+                                    .Join(context.CardGroup.Include(cg => cg.IdcardNavigation).ThenInclude(c => c.IdcardTypeNavigation),
+                                          g => g.Idgroup,
+                                          cg => cg.Idgroup,
+                                          (g, cg) => new CardViewModel { num = cg.IdcardNavigation.CardNum, type = cg.IdcardNavigation.IdcardTypeNavigation.Name })
+                                    .OrderBy(c => c.type).ThenBy(c => c.num)
+                                    .ToList();
+
+            return g;
+        }
     }
 }
