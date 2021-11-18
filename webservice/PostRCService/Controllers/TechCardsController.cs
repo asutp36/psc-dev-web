@@ -30,8 +30,8 @@ namespace PostRCService.Controllers
         [SwaggerResponse(424, Description = "Нет связи с мойкой")]
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
         #endregion
-        [HttpPost("post/wash")]
-        public IActionResult SetByWash(SetParametersWash<TechCardModel> parameter)
+        [HttpPost("create/wash")]
+        public IActionResult SetOnWash(SetParametersWash<TechCardModel> parameter)
         {
             try
             {
@@ -82,6 +82,63 @@ namespace PostRCService.Controllers
             }
         }
 
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Удалить карту с мойки по коду")]
+        [SwaggerResponse(200, Type = typeof(SetParameterWashResult))]
+        [SwaggerResponse(424, Description = "Нет связи с мойкой")]
+        [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
+        #endregion
+        [HttpDelete("{washCode}/{cardNum}")]
+        public IActionResult DeleteOnWash(string washCode, string cardNum)
+        {
+            try
+            {
+                if (!SqlHelper.IsWashExists(washCode))
+                {
+                    _logger.LogError($"Не найдена мойка {washCode}");
+                    return NotFound();
+                }
+
+                SetParameterWashResult result = new SetParameterWashResult
+                {
+                    wash = washCode,
+                    posts = new List<SetParameterPostResult>()
+                };
+
+                List<string> posts = SqlHelper.GetPostCodes(washCode);
+                foreach (string post in posts)
+                {
+                    string ip = SqlHelper.GetPostIp(post);
+                    if (ip == null)
+                    {
+                        _logger.LogError($"Не найден ip поста {post}");
+                        continue;
+                    }
+
+                    //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
+                    HttpResponse response = HttpSender.SendDelete($"http://192.168.201.5:5000/api/post/delete/washcard/{cardNum}");
+
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                        if (response.StatusCode == 0)
+                            _logger.LogInformation($"Нет соединения с постом {post}");
+                        else
+                            _logger.LogError($"Ответ поста {post}: {JsonConvert.SerializeObject(response)}");
+
+                    result.posts.Add(new SetParameterPostResult
+                    {
+                        post = post,
+                        result = response
+                    });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500);
+            }
+        }
 
     }
 }
