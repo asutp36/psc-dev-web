@@ -470,8 +470,10 @@ namespace Backend.Controllers.Supplies
                         $"values((select IDOwner from Owners where PhoneInt = 0), '{model.cardNum}', (select IDCardStatus from CardStatuses where Code = 'norm'), " +
                         $"(select IDCardType from CardTypes where Code = '{model.typeCode}'), 0, 0)");
 
-                    foreach (string groupCode in model.groupCodes)
-                        context.Database.ExecuteSqlRaw($"insert into CardGroup(IDCard, IDGroup) values ((select IDCard from Cards where CardNum = '{model.cardNum}'), (select IDGroup from Groups where Code = '{groupCode}'))");
+
+                    context.Database.ExecuteSqlRaw($"insert into CardGroup(IDCard, IDGroup) " +
+                        $"values ((select IDCard from Cards where CardNum = '{model.cardNum}'), " +
+                        $"(select IDGroup from Groups where Code = '{model.groupCode}'))");
 
                     context.SaveChanges();
                     transaction.Commit();
@@ -519,9 +521,22 @@ namespace Backend.Controllers.Supplies
 
         public static void AddTechCardGroup(string cardNum, string groupCode)
         {
-            using ModelDbContext context = new ModelDbContext();
-            context.Database.ExecuteSqlRaw($"insert into CardGroup(IDCard, IDGroup) values (" +
-                $"(select IDCard from Cards where CardNum = '{cardNum}'), (select IDGroup from Groups where Code = '{groupCode}'))");
+            try
+            {
+                using ModelDbContext context = new ModelDbContext();
+                context.Database.ExecuteSqlRaw($"insert into CardGroup(IDCard, IDGroup) values (" +
+                    $"(select IDCard from Cards where CardNum = '{cardNum}'), (select IDGroup from Groups where Code = '{groupCode}'))");
+
+                context.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                if (e.HResult == -2146232060) // db contraint UNIQUE(IDCard, IDGroup)
+                    throw new Exception("constraint", e);
+
+                throw e;
+            }
+            
         }
 
         public static bool IsGroupExists(string groupCode)

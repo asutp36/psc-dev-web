@@ -13,6 +13,6 @@ namespace Backend.Controllers.Supplies.ViewModels
         [Required]
         public string typeCode { get; set; }
         [Required]
-        public List<string> groupCodes { get; set; }
+        public string groupCode { get; set; }
     }
 }

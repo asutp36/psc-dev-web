@@ -36,7 +36,7 @@ namespace Backend.Controllers
         {
             try
             {
-                if (SqlHelper.IsWashExists(washCode))
+                if (!SqlHelper.IsWashExists(washCode))
                     return NotFound(new Error("Мойка не найдена", "badvalue"));
 
                 var cards = SqlHelper.GetGroupsTechCardsByWash(washCode);
@@ -108,7 +108,7 @@ namespace Backend.Controllers
                     return BadRequest(new Error("Некорректно заданы значения", "badvalue"));
 
                 if (SqlHelper.IsCardExists(model.cardNum))
-                    return Conflict(new Error("Карта с таким номером уже существует", "badvalue"));
+                    return UpdateTechCardGroups(model.cardNum, model.groupCode);
 
                 SqlHelper.WriteTechCard(model);
 
@@ -120,6 +120,40 @@ namespace Backend.Controllers
                 {
                     _logger.LogError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
                     return StatusCode(500, new Error("Произошла ошибка базы данных", "db"));
+                }
+
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Добавить группы в техническую карту")]
+        [SwaggerResponse(200)]
+        [SwaggerResponse(404, Type = typeof(Error), Description = "Карта с таким номером или группа не существует")]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [HttpPatch("{cardNum}/group")]
+        public IActionResult UpdateTechCardGroups(string cardNum, string groupCode)
+        {
+            try
+            {
+                if (!SqlHelper.IsCardExists(cardNum))
+                    return NotFound(new Error("Карта с таким номером не найдена", "badvalue"));
+
+                if (!SqlHelper.IsGroupExists(groupCode))
+                    return NotFound(new Error("Группа не найдена", "badvalue"));
+
+                SqlHelper.AddTechCardGroup(cardNum, groupCode);
+
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                if (e.Message == "constraint")
+                {
+                    _logger.LogError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
+                    return Conflict(new Error($"Карта {cardNum} уже находится в группе {groupCode}", "badvalue"));
                 }
 
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
@@ -145,35 +179,7 @@ namespace Backend.Controllers
 
                 return Ok();
             }
-            catch(Exception e)
-            {
-                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
-            }
-        }
-
-        #region Swagger Annotations
-        [SwaggerOperation(Summary = "Добавить группы в техническую карту")]
-        [SwaggerResponse(200)]
-        [SwaggerResponse(404, Type = typeof(Error), Description = "Карта с таким номером или группа не существует")]
-        [SwaggerResponse(500, Type = typeof(Error))]
-        #endregion
-        [HttpPatch("{cardNum}/group/{groupCode}")]
-        public IActionResult UpdateTechCardGroups(string cardNum, string groupCode)
-        {
-            try
-            {
-                if (!SqlHelper.IsCardExists(cardNum))
-                    return NotFound(new Error("Карта с таким номером не найдена", "badvalue"));
-
-                if (!SqlHelper.IsGroupExists(groupCode))
-                    return NotFound(new Error("Группа не найдена", "badvalue"));
-
-                SqlHelper.AddTechCardGroup(cardNum, groupCode);
-
-                return Ok();
-            }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500, new Error(e.Message, "unexpected"));
