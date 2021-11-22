@@ -544,5 +544,23 @@ namespace Backend.Controllers.Supplies
             using ModelDbContext context = new ModelDbContext();
             return context.Groups.Where(g => g.Code == groupCode).FirstOrDefault() != null;
         }
+
+        public static List<WashViewModel> GetWashesByGroup(string groupCode)
+        {
+            using ModelDbContext context = new ModelDbContext();
+            var result = context.Groups.Where(g => g.Code == groupCode)
+                                       .Join(context.WashGroup.Include(wg => wg.IdwashNavigation),
+                                             g => g.Idgroup,
+                                             wg => wg.Idgroup,
+                                             (g, wg) => new WashViewModel 
+                                                        { 
+                                                            idWash = wg.IdwashNavigation.Idwash, 
+                                                            code = wg.IdwashNavigation.Code, 
+                                                            name = wg.IdwashNavigation.Name, 
+                                                            idRegion = wg.IdwashNavigation.Idregion 
+                                                        })
+                                       .ToList();
+            return result;
+        }
     }
 }
