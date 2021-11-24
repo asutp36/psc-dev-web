@@ -18,6 +18,7 @@ namespace Backend.Models
         public virtual DbSet<CardGroup> CardGroup { get; set; }
         public virtual DbSet<CardStatuses> CardStatuses { get; set; }
         public virtual DbSet<CardTypes> CardTypes { get; set; }
+        public virtual DbSet<CardWash> CardWash { get; set; }
         public virtual DbSet<Cards> Cards { get; set; }
         public virtual DbSet<Changers> Changers { get; set; }
         public virtual DbSet<Device> Device { get; set; }
@@ -50,6 +51,10 @@ namespace Backend.Models
             modelBuilder.Entity<CardGroup>(entity =>
             {
                 entity.HasNoKey();
+
+                entity.HasIndex(e => new { e.Idcard, e.Idgroup })
+                    .HasName("AK_CardGroupUnique")
+                    .IsUnique();
 
                 entity.Property(e => e.Idcard).HasColumnName("IDCard");
 
@@ -94,6 +99,19 @@ namespace Backend.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<CardWash>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.HasIndex(e => new { e.Idcard, e.Idwash })
+                    .HasName("AK_CardWashUnique")
+                    .IsUnique();
+
+                entity.Property(e => e.Idcard).HasColumnName("IDCard");
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
             });
 
             modelBuilder.Entity<Cards>(entity =>
