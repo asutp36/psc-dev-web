@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
@@ -105,9 +106,12 @@ namespace Backend.Controllers
             try
             {
                 if (!ModelState.IsValid)
+                {
+                    _logger.LogError("Model not valid: " + JsonConvert.SerializeObject(model) + Environment.NewLine);
                     return BadRequest(new Error("Некорректно заданы значения", "badvalue"));
+                }
 
-                if (SqlHelper.IsCardExists(model.cardNum))
+                    if (SqlHelper.IsCardExists(model.cardNum))
                     return UpdateTechCardGroups(model.cardNum, model.groupCode);
 
                 SqlHelper.WriteTechCard(model);
