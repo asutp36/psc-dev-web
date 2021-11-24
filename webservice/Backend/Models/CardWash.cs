@@ -7,5 +7,8 @@ namespace Backend.Models
     {
         public int Idcard { get; set; }
         public int Idwash { get; set; }
+
+        public virtual Cards IdcardNavigation { get; set; }
+        public virtual Wash IdwashNavigation { get; set; }
     }
 }

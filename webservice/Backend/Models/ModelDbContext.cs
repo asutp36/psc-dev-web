@@ -42,7 +42,6 @@ namespace Backend.Models
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=WashCompany;Trusted_Connection=True;");
-                //optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Initial Catalog=WashCompany;User Id=sa; Password=ora4paSS");
             }
         }
 
@@ -112,6 +111,16 @@ namespace Backend.Models
                 entity.Property(e => e.Idcard).HasColumnName("IDCard");
 
                 entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.HasOne(d => d.IdcardNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idcard)
+                    .HasConstraintName("FK_CardWash_Cards");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_CardWash_Wash");
             });
 
             modelBuilder.Entity<Cards>(entity =>
