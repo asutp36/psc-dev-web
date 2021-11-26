@@ -448,6 +448,8 @@ namespace Backend.Controllers.Supplies
                                                           (g, cg) => new CardViewModel { num = cg.IdcardNavigation.CardNum, type = cg.IdcardNavigation.IdcardTypeNavigation.Name })
                                                     .OrderBy(c => c.type).ThenBy(c => c.num)
                                                     .ToList();
+                foreach (CardViewModel c in group.cards)
+                    c.failedWashes = GetFailedWashes(c.num, group.code);
             }
 
             return result;
@@ -515,6 +517,8 @@ namespace Backend.Controllers.Supplies
                                           (g, cg) => new CardViewModel { num = cg.IdcardNavigation.CardNum, type = cg.IdcardNavigation.IdcardTypeNavigation.Name })
                                     .OrderBy(c => c.type).ThenBy(c => c.num)
                                     .ToList();
+            foreach (CardViewModel c in g.cards)
+                c.failedWashes = GetFailedWashes(c.num, g.code);
 
             return g;
         }
@@ -531,7 +535,7 @@ namespace Backend.Controllers.Supplies
             }
             catch(Exception e)
             {
-                if (e.HResult == -2146232060) // db contraint UNIQUE(IDCard, IDGroup)
+                if (e.HResult == -2146232060) // db contraint UNIQUE
                     throw new Exception("constraint", e);
 
                 throw e;
@@ -561,6 +565,47 @@ namespace Backend.Controllers.Supplies
                                                         })
                                        .ToList();
             return result;
+        }
+
+        public static List<string> GetFailedWashes(string cardNum, string groupCode)
+        {
+            using ModelDbContext context = new ModelDbContext();
+
+            var q = from g in context.Groups.Where(g => g.Code == groupCode)
+                    join cg in context.CardGroup.Include(c => c.IdcardNavigation).Where(c => c.IdcardNavigation.CardNum == cardNum) on g.Idgroup equals cg.Idgroup
+                    join wg in context.WashGroup.Include(w => w.IdwashNavigation) on g.Idgroup equals wg.Idgroup
+                    join cw in context.CardWash on new { wg.Idwash, cg.Idcard } equals new { cw.Idwash, cw.Idcard } into fw
+                    from failedWash in fw.DefaultIfEmpty()
+                    orderby wg.IdwashNavigation.Code
+                    select new { g.Code, cg.IdcardNavigation.CardNum, washCode = wg.IdwashNavigation.Code, failed = failedWash.IdwashNavigation.Code ?? String.Empty };
+
+            var w = q.ToList();
+
+            List<string> result = new List<string>();
+            foreach (var o in w)
+                if (o.failed == "")
+                    result.Add(o.washCode);
+
+            return result;
+        }
+
+        public static void WriteCardWash(string cardNum, string washCode)
+        {
+            using ModelDbContext context = new ModelDbContext();
+
+            try
+            {
+                context.Database.ExecuteSqlRaw($"insert into CardWash (IDCard, IDWash) values " +
+                    $"((select IDCard from Cards where CardNum = '{cardNum}'), (select IDWash from Wash where Code = '{washCode}'))");
+                context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                if (e.HResult == -2146232060) // db contraint UNIQUE
+                    throw new Exception("constraint", e);
+
+                throw e;
+            }
         }
     }
 }

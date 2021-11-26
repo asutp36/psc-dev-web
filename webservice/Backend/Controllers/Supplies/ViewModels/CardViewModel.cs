@@ -9,5 +9,6 @@ namespace Backend.Controllers.Supplies.ViewModels
     { 
         public string num { get; set; }
         public string type { get; set; }
+        public List<string> failedWashes { get; set; }
     }
 }
