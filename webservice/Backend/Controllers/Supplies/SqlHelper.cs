@@ -604,8 +604,14 @@ namespace Backend.Controllers.Supplies
                 if (e.HResult == -2146232060) // db contraint UNIQUE
                     throw new Exception("constraint", e);
 
-                throw e;
+                throw new Exception("db", e);
             }
+        }
+
+        public static CardTypeViewModel GetCardTypeByNum(string cardNum)
+        {
+            using ModelDbContext context = new ModelDbContext();
+            return context.Cards.Where(c => c.CardNum == cardNum).Include(t => t.IdcardTypeNavigation).Select(t => new CardTypeViewModel { idCardType = t.IdcardTypeNavigation.IdcardType, code = t.IdcardTypeNavigation.Code, name = t.IdcardTypeNavigation.Name }).FirstOrDefault();
         }
     }
 }
