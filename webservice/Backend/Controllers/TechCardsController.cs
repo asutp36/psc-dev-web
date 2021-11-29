@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HttpResponse = Backend.Controllers.Supplies.HttpResponse;
 
 namespace Backend.Controllers
 {
@@ -187,6 +188,83 @@ namespace Backend.Controllers
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500, new Error(e.Message, "unexpected"));
+            }
+        }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Отправить техническую карту на мойку")]
+        [SwaggerResponse(200)]
+        [SwaggerResponse(404, Type = typeof(Error), Description = "Карта или мойка не существует")]
+        [SwaggerResponse(424, Type = typeof(Error), Description = "Не получилось связаться с мойкой или сервисом управления постами")]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [HttpPost("send/{cardNum}/{washCode}")]
+        public IActionResult SendTechCardOnWash(string cardNum, string washCode)
+        {
+            try
+            {
+                if (!SqlHelper.IsCardExists(cardNum))
+                {
+                    _logger.LogError($"Карта {cardNum} не найдена" + Environment.NewLine);
+                    return NotFound(new Error($"Карта {cardNum} не найдена", "badvalue"));
+                }
+
+                if (!SqlHelper.IsWashExists(washCode))
+                {
+                    _logger.LogError($"Мойка {washCode} не найдена" + Environment.NewLine);
+                    return NotFound(new Error($"Мойка {washCode} не найдена", "badvalue"));
+                }
+
+                SetWashParameter<TechCardDeviceBindingModel> param = new SetWashParameter<TechCardDeviceBindingModel>()
+                {
+                    washCode = washCode,
+                    value = new TechCardDeviceBindingModel() { cardNum = cardNum, cardType = SqlHelper.GetCardTypeByNum(cardNum).code, cardName = cardNum }
+                };
+
+                SetParameterResultWash setResult = new SetParameterResultWash();
+                setResult.wash = washCode;
+
+                HttpResponse response = HttpSender.SendPost(_config["Services:postrc"] + "api/techcards/create/wash", JsonConvert.SerializeObject(param));
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    switch (response.StatusCode)
+                    {
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами", "service"));
+                        case (System.Net.HttpStatusCode)424:
+                            _logger.LogError($"Не удалось соединиться с мойкой {washCode}" + Environment.NewLine);
+                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {washCode}", "connection"));
+                        case (System.Net.HttpStatusCode)0:
+                            _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        case System.Net.HttpStatusCode.RequestTimeout:
+                            _logger.LogError($"postrc request timed out. wash = {washCode}" + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                        default:
+                            _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
+                    }
+                }
+
+                SqlHelper.WriteCardWash(cardNum, washCode);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                switch (e.Message) 
+                {
+                    case "constraint":
+                        _logger.LogError($"Карта {cardNum} уже присоединена к мойке {washCode}" + Environment.NewLine);
+                        return StatusCode(500, new Error("Карта уже присодинена к мойке", "db"));
+                    case "db":
+                        _logger.LogError("Ошибка при записи в базу: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
+                        return StatusCode(500, new Error("Ошибка записи в базу", "db"));
+                    default:
+                        _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                        return StatusCode(500, new Error("Произошла внутренняя ошибка сервера", "unexpexted"));
+                }
             }
         }
     }
