@@ -151,7 +151,7 @@ namespace PostRCService.Controllers
         [SwaggerResponse(500, Description = "Внутренняя ошибка сервера")]
         #endregion
         [HttpPost("set/wash")]
-        public IActionResult SetByWash(SetParametersWash<HappyHourModel> param)
+        public IActionResult SetByWash(SetParametersWash<AcquiringModel> param)
         {
             try
             {
