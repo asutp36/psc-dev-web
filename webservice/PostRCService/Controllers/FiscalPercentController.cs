@@ -61,8 +61,8 @@ namespace PostRCService.Controllers
                         continue;
                     }
 
-                    //HttpResponse response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
-                    HttpResponse response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/get/fiscalpercent");
+                    HttpResponse response = HttpSender.SendGet($"http://{ip}/api/post/get/fiscalpercent");
+                    //HttpResponse response = HttpSender.SendGet($"http://192.168.201.5:5000/api/post/get/fiscalpercent");
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
@@ -127,8 +127,8 @@ namespace PostRCService.Controllers
                     return NotFound();
                 }
 
-                //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
-                HttpResponse response = HttpSender.SendPatch($"http://192.168.201.5:5000/api/post/set/fiscalpercent", JsonConvert.SerializeObject(param.value));
+                HttpResponse response = HttpSender.SendPatch($"http://{ip}/api/post/set/fiscalpercent", JsonConvert.SerializeObject(param.value));
+                //HttpResponse response = HttpSender.SendPatch($"http://192.168.201.5:5000/api/post/set/fiscalpercent", JsonConvert.SerializeObject(param.value));
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
@@ -184,8 +184,8 @@ namespace PostRCService.Controllers
                         continue;
                     }
 
-                    //HttpResponse response = HttpSender.SendPost($"http://{ip}/api/post/rate", JsonConvert.SerializeObject(change.rates));
-                    HttpResponse response = HttpSender.SendPatch($"http://192.168.201.5:5000/api/post/set/fiscalpercent", JsonConvert.SerializeObject(parameter.value));
+                    HttpResponse response = HttpSender.SendPatch($"http://{ip}/api/post/set/fiscalpercent", JsonConvert.SerializeObject(parameter.value));
+                    //HttpResponse response = HttpSender.SendPatch($"http://192.168.201.5:5000/api/post/set/fiscalpercent", JsonConvert.SerializeObject(parameter.value));
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                         if (response.StatusCode == 0)
