@@ -9,6 +9,7 @@ namespace Backend.Controllers.Supplies.ViewModels
     {
         public string postCode { get; set; }
         public T value { get; set; }
+        public bool isConnected { get; set; }
 
         public override bool Equals(object obj)
         {

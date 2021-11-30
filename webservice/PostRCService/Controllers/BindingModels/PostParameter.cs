@@ -9,5 +9,6 @@ namespace PostRCService.Controllers.BindingModels
     {
         public string postCode { get; set; }
         public T value { get; set; }
+        public bool isConnected { get; set; }
     }
 }
