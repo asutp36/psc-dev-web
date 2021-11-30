@@ -66,7 +66,7 @@ namespace PostRCService.Controllers
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
-                        var emptyPost = new PostParameter<FiscalPercentModel> { postCode = p };
+                        var emptyPost = new PostParameter<FiscalPercentModel> { postCode = p, isConnected = false };
                         if (response.StatusCode == 0)
                         {
                             _logger.LogInformation($"Нет соединения с постом {p}");
@@ -80,6 +80,7 @@ namespace PostRCService.Controllers
                     }
 
                     postRates.value = JsonConvert.DeserializeObject<FiscalPercentModel>(response.ResultMessage);
+                    postRates.isConnected = true;
                     result.posts.Add(postRates);
                     returnError = false;
                 }

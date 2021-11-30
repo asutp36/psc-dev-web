@@ -23,6 +23,12 @@ namespace Backend.Controllers.Supplies.ViewModels
                 
                 foreach(PostParameter<T> p in this.posts)
                 {
+                    if (!p.isConnected)
+                    {
+                        other.Add(p);
+                        continue;
+                    }
+
                     if (p.value.Equals(first.value))
                         firstEqual.Add(p);
                     else
