@@ -64,17 +64,21 @@ namespace PostRCService.Controllers
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
+                        var emptyPost = new PostParameter<HappyHourModel> { postCode = p, isConnected = false };
                         if (response.StatusCode == 0)
                         {
                             _logger.LogInformation($"Нет соединения с постом {p}");
+                            result.posts.Add(emptyPost);
                             continue;
                         }
 
                         _logger.LogError($"Ответ поста {p}: {JsonConvert.SerializeObject(response)}");
+                        result.posts.Add(emptyPost);
                         continue;
                     }
 
                     postHappyHour.value = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
+                    postHappyHour.isConnected = true;
                     result.posts.Add(postHappyHour);
                 }
                 if (result.posts.Count < 1)

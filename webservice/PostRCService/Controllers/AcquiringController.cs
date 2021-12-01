@@ -64,17 +64,21 @@ namespace PostRCService.Controllers
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
+                        var emptyPost = new PostParameter<AcquiringModel>() { postCode = p, isConnected = false };
                         if (response.StatusCode == 0)
                         {
                             _logger.LogInformation($"Нет соединения с постом {p}");
+                            result.posts.Add(emptyPost);
                             continue;
                         }
 
                         _logger.LogError($"Ответ поста {p}: {JsonConvert.SerializeObject(response)}");
+                        result.posts.Add(emptyPost);
                         continue;
                     }
 
                     postAcquiring.value = JsonConvert.DeserializeObject<AcquiringModel>(response.ResultMessage);
+                    postAcquiring.isConnected = true;
                     result.posts.Add(postAcquiring);
                 }
                 if(result.posts.Count < 1)

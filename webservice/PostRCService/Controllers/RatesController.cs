@@ -81,6 +81,7 @@ namespace PostRCService.Controllers
                     }
 
                     postRates.value.rates = JsonConvert.DeserializeObject<List<FunctionRate>>(response.ResultMessage);
+                    postRates.isConnected = true;
                     result.posts.Add(postRates);
                     returnError = false;
                 }
