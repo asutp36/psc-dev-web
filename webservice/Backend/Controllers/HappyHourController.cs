@@ -260,8 +260,8 @@ namespace Backend.Controllers
         [HttpGet("fake")]
         public IActionResult GetFake()
         {
-            HappyHourModel hh1 = new HappyHourModel { HappyHourBeg = 23, HappyHourEnd = 6, HappyHourSale = 0.3 };
-            HappyHourModel hh2 = new HappyHourModel { HappyHourBeg = 0, HappyHourEnd = 5, HappyHourSale = 0.25 };
+            HappyHourModel hh1 = new HappyHourModel { HappyHourBeg = 23, HappyHourEnd = 6, HappyHourSale = 30 };
+            HappyHourModel hh2 = new HappyHourModel { HappyHourBeg = 0, HappyHourEnd = 5, HappyHourSale = 40 };
 
             PostParameter<HappyHourModel> p131 = new PostParameter<HappyHourModel>
             {
