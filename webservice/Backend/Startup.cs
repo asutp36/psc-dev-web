@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Backend.Controllers.Supplies;
 using Backend.Controllers.Supplies.Auth;
+using Backend.Extentions;
 using Backend.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -19,6 +20,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NLog.Extensions.Logging;
 
 namespace Backend
 {
@@ -29,9 +31,16 @@ namespace Backend
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            // Get the factory for ILogger instances.
+            var nlogLoggerProvider = new NLogLoggerProvider();
+
+            // Create an ILogger.
+            Logger = nlogLoggerProvider.CreateLogger(typeof(Startup).FullName);
         }
 
         public IConfiguration Configuration { get; }
+        public ILogger Logger { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -123,6 +132,8 @@ namespace Backend
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.ConfigureExceptionHandler(this.Logger);
 
             app.UseHttpsRedirection();
 
