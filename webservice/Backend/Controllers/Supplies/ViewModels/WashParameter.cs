@@ -55,8 +55,8 @@ namespace Backend.Controllers.Supplies.ViewModels
 
             }
             set { } }
-        public List<PostParameter<T>> differentPosts { get; set; }
-        public List<string> disconnectedPosts { get; set; }
         public List<PostParameter<T>> posts { private get; set; }
+        public List<string> disconnectedPosts { get; set; }
+        public List<PostParameter<T>> differentPosts { get; set; }
     }
 }
