@@ -9,6 +9,6 @@ namespace PostRCService.Controllers.BindingModels
     {
         public int HappyHourBeg { get; set; }
         public int HappyHourEnd { get; set; }
-        public double HappyHourSale { get; set; }
+        public int HappyHourSale { get; set; }
     }
 }

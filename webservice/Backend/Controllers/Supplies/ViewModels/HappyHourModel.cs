@@ -9,7 +9,7 @@ namespace Backend.Controllers.Supplies.ViewModels
     {
         public int HappyHourBeg { get; set; }
         public int HappyHourEnd { get; set; }
-        public double HappyHourSale { get; set; }
+        public int HappyHourSale { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -21,7 +21,7 @@ namespace Backend.Controllers.Supplies.ViewModels
             if (other == null)
                 return false;
 
-            return this.HappyHourBeg == other.HappyHourBeg && this.HappyHourEnd == other.HappyHourEnd && (this.HappyHourSale - other.HappyHourSale) < 1e-10;
+            return this.HappyHourBeg == other.HappyHourBeg && this.HappyHourEnd == other.HappyHourEnd && this.HappyHourSale == other.HappyHourSale;
         }
     }
 }
