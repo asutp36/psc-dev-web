@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +21,13 @@ namespace Backend.Controllers.Supplies.ViewModels
                 List<PostParameter<T>> firstEqual = new List<PostParameter<T>>();
                 List<PostParameter<T>> other = new List<PostParameter<T>>();
 
-                
                 foreach(PostParameter<T> p in this.posts)
                 {
                     if (!p.isConnected)
                     {
-                        other.Add(p);
+                        if (disconnectedPosts == null)
+                            disconnectedPosts = new List<string>(); 
+                        disconnectedPosts.Add(p.postCode);
                         continue;
                     }
 
@@ -36,25 +38,25 @@ namespace Backend.Controllers.Supplies.ViewModels
                 }
 
                 if(other.Count == 0)
-                {
-                    this.posts = null;
                     return first.value;
-                }
 
+                this.differentPosts = new List<PostParameter<T>>();
                 if (firstEqual.Count >= other.Count)
                 {
-                    this.posts = other;
+                    this.differentPosts = other;
                     return first.value;
                 }
                 else
                 {
-                    this.posts = firstEqual;
+                    this.differentPosts = firstEqual;
                     return other.ElementAt(0).value;
                 }
                     
 
             }
             set { } }
-        public List<PostParameter<T>> posts { get; set; }
+        public List<PostParameter<T>> differentPosts { get; set; }
+        public List<string> disconnectedPosts { get; set; }
+        public List<PostParameter<T>> posts { private get; set; }
     }
 }
