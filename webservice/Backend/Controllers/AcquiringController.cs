@@ -89,7 +89,7 @@ namespace Backend.Controllers
                 if (returnError)
                 {
                     _logger.LogError($"Ни с одной мойки не получилось получить текущие настройки эквайринга для пользователя {User.Identity.Name}" + Environment.NewLine);
-                    return StatusCode(424, new Error("Не удалось получить текущие настройки эквайринга с моек", "fail"));
+                    return StatusCode(424, new Error("Не удалось получить текущие настройки эквайринга с моек", "connection"));
                 }
 
                 return Ok(ParameterToRegion<AcquiringModel>.WashesToRegion(result));
@@ -97,7 +97,7 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
+                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
             }
         }
 
@@ -116,7 +116,7 @@ namespace Backend.Controllers
                 if (!SqlHelper.IsWashExists(wash))
                 {
                     _logger.LogError($"Не найдена мойка {wash}" + Environment.NewLine);
-                    return NotFound(new Error("Не найдена мойка", "badvalue"));
+                    return NotFound(new Error("Не найдена мойка.", "badvalue"));
                 }
 
                 HttpResponse response = HttpSender.SendGet(_config["Services:postrc"] + $"api/acquiring/wash/{wash}");
@@ -125,22 +125,22 @@ namespace Backend.Controllers
                     {
                         case System.Net.HttpStatusCode.NotFound:
                             _logger.LogError($"postrc не нашёл мойку {wash}" + Environment.NewLine);
-                            return NotFound(new Error("Не найдена мойка", "badvalue"));
+                            return NotFound(new Error("Не найдена мойка.", "badvalue"));
                         case System.Net.HttpStatusCode.InternalServerError:
                             _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
-                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами", "service"));
+                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами.", "service"));
                         case (System.Net.HttpStatusCode)424:
                             _logger.LogError($"Не удалось соединиться с мойкой {wash}" + Environment.NewLine);
-                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {wash}", "connection"));
+                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {wash}.", "connection"));
                         case (System.Net.HttpStatusCode)0:
                             _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами.", "connection"));
                         case System.Net.HttpStatusCode.RequestTimeout:
                             _logger.LogError($"postrc Request timed out. wash = {wash}" + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами.", "connection"));
                         default:
                             _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
+                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами.", "service"));
                     }
 
                 var result = JsonConvert.DeserializeObject<WashParameter<AcquiringModel>>(response.ResultMessage);
@@ -151,7 +151,7 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
+                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
             }
         }
 
@@ -202,7 +202,7 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
+                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
             }
         }
 
@@ -227,22 +227,22 @@ namespace Backend.Controllers
                     {
                         case System.Net.HttpStatusCode.NotFound:
                             _logger.LogError($"Не найдена мойка {model.washCode}" + Environment.NewLine);
-                            return NotFound(new Error("Не найдена мойка", "badvalue"));
+                            return NotFound(new Error("Не найдена мойка.", "badvalue"));
                         case System.Net.HttpStatusCode.InternalServerError:
                             _logger.LogError("Внутренняя ошибка на сервиса postrc" + Environment.NewLine);
-                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами", "service"));
+                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами.", "service"));
                         case (System.Net.HttpStatusCode)424:
                             _logger.LogError($"Не удалось соединиться с мойкой {model.washCode}" + Environment.NewLine);
-                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {model.washCode}", "connection"));
+                            return StatusCode(424, new Error($"Не удалось соединиться с мойкой {model.washCode}.", "connection"));
                         case (System.Net.HttpStatusCode)0:
                             _logger.LogError("Нет связи с сервисом postrc" + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами.", "connection"));
                         case System.Net.HttpStatusCode.RequestTimeout:
                             _logger.LogError($"postrc Request timed out. wash = {model.washCode}" + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "connection"));
+                            return StatusCode(424, new Error("Нет связи с сервисом управления постами.", "connection"));
                         default:
                             _logger.LogError("Ответ postrc: " + JsonConvert.SerializeObject(response) + Environment.NewLine);
-                            return StatusCode(424, new Error("Нет связи с сервисом управления постами", "service"));
+                            return StatusCode(424, new Error("Произошла ошибка в сервисе управления постами.", "service"));
                     }
                 }
 
@@ -253,7 +253,7 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
+                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
             }
         }
 
