@@ -39,7 +39,7 @@ namespace Backend.Controllers
                         return StatusCode(424, new Error("Нет связи с разменником", "connection"));
 
                     case System.Net.HttpStatusCode.InternalServerError:
-                        return StatusCode(503, new Error($"Проблема на сервисе postrc: {response.ResultMessage}", "microsevice"));
+                        return StatusCode(503, new Error($"Проблема на сервисе postrc: {response.ResultMessage}", "sevice"));
 
                     default:
                         return StatusCode(424, new Error("Проблема со связью", "connection"));
