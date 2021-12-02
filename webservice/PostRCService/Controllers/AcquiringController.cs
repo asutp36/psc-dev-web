@@ -47,7 +47,9 @@ namespace PostRCService.Controllers
                 result.posts = new List<PostParameter<AcquiringModel>>();
 
                 List<string> postCodes = SqlHelper.GetPostCodes(washCode);
-                foreach(string p in postCodes)
+                bool returnError = true;
+
+                foreach (string p in postCodes)
                 {
                     PostParameter<AcquiringModel> postAcquiring = new PostParameter<AcquiringModel>();
                     postAcquiring.postCode = p;
@@ -80,10 +82,12 @@ namespace PostRCService.Controllers
                     postAcquiring.value = JsonConvert.DeserializeObject<AcquiringModel>(response.ResultMessage);
                     postAcquiring.isConnected = true;
                     result.posts.Add(postAcquiring);
+                    returnError = false;
                 }
-                if(result.posts.Count < 1)
+
+                if (returnError)
                 {
-                    _logger.LogError($"Нет связи с мойкой {washCode}" + Environment.NewLine);
+                    _logger.LogInformation($"Нет связи с мойкой {washCode}" + Environment.NewLine);
                     return StatusCode(424);
                 }
 
