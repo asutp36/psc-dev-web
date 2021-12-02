@@ -51,7 +51,8 @@ namespace Backend.Controllers
             }
             catch (Exception e)
             {
-                return StatusCode(500, new Error(e.Message, "unexpected"));
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
             }
         }
 
@@ -77,7 +78,7 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
+                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
             }
         }
 
@@ -103,7 +104,7 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
+                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
             }
         }
     }
