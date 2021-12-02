@@ -47,6 +47,8 @@ namespace PostRCService.Controllers
                 result.posts = new List<PostParameter<HappyHourModel>>();
 
                 List<string> postCodes = SqlHelper.GetPostCodes(washCode);
+                bool returnError = true;
+
                 foreach (string p in postCodes)
                 {
                     PostParameter<HappyHourModel> postHappyHour = new PostParameter<HappyHourModel>();
@@ -80,8 +82,10 @@ namespace PostRCService.Controllers
                     postHappyHour.value = JsonConvert.DeserializeObject<HappyHourModel>(response.ResultMessage);
                     postHappyHour.isConnected = true;
                     result.posts.Add(postHappyHour);
+                    returnError = false;
                 }
-                if (result.posts.Count < 1)
+
+                if (returnError)
                 {
                     _logger.LogError($"Нет связи с мойкой {washCode}" + Environment.NewLine);
                     return StatusCode(424);
