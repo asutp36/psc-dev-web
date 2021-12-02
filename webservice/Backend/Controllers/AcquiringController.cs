@@ -89,7 +89,7 @@ namespace Backend.Controllers
                 if (returnError)
                 {
                     _logger.LogError($"Ни с одной мойки не получилось получить текущие настройки эквайринга для пользователя {User.Identity.Name}" + Environment.NewLine);
-                    return StatusCode(424, new Error("Не удалось получить текущие настройки эквайринга с моек", "connection"));
+                    return StatusCode(424, new Error("Не удалось получить текущие настройки эквайринга с моек.", "connection"));
                 }
 
                 return Ok(ParameterToRegion<AcquiringModel>.WashesToRegion(result));

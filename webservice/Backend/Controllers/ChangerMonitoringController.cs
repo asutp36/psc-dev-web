@@ -20,7 +20,7 @@ namespace Backend.Controllers
         [SwaggerResponse(200, "Ок", Type = typeof(ChangerState))]
         [SwaggerResponse(424, "Проблема со связью", Type = typeof(Error))]
         [SwaggerResponse(500, "Внутренняя ошибка сервера", Type = typeof(Error))]
-        [SwaggerResponse(500, "Проблема на микросервисе postrc", Type = typeof(Error))]
+        [SwaggerResponse(503, "Проблема на микросервисе postrc", Type = typeof(Error))]
         [Authorize]
         [HttpGet("{changer}")]
         public IActionResult GetInfo(string changer)
@@ -47,7 +47,7 @@ namespace Backend.Controllers
             }
             catch (Exception e)
             {
-                return StatusCode(500, new Error(e.Message, "unexpected"));
+                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
             }
         }
     }
