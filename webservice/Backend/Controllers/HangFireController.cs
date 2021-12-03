@@ -47,13 +47,13 @@ namespace Backend.Controllers
                 else
                 {
                     _logger.LogError("От сервиса hangfire пришёл ответ: " + response.ResultMessage + Environment.NewLine);
-                    return StatusCode(424, new Error("Не удалось получить список чатов", "dependency"));
+                    return StatusCode(424, new Error() { errorType = "service", alert = "Не удалось получить список чатов", errorCode = "Ошибка сервиса", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
                 }
             }
             catch(Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error(e.Message, "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
     }
