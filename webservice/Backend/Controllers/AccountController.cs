@@ -35,12 +35,12 @@ namespace Backend.Controllers
         private IActionResult Token(LoginModel login)
         {
             if (!ModelState.IsValid)
-                return BadRequest(new Error("Модель не прошла валидацию", "badvalue"));
+                return BadRequest(new Error() { errorType = "badvalue", alert = "Некорректные входные параметры", errorCode = "Ошибка валидации", errorMessage = "Проверьте правильность введенных данных и попробуйте снова" });
 
             var identity = GetIdentity(login);
             if (identity == null)
             {
-                return BadRequest(new Error("Неверный логин или пароль", "login"));
+                return BadRequest(new Error() { errorType = "login", alert = "Неверный логин или пароль", errorCode = "Ошибка введённых данных", errorMessage = "Проверьте правильность введённых логина и пароля" });
             }
 
             var now = DateTime.UtcNow;
@@ -105,7 +105,7 @@ namespace Backend.Controllers
         public IActionResult Login(LoginModel login)
         {
             if (!ModelState.IsValid)
-                return BadRequest(new Error("Модель не прошла валидацию", "badvalue"));
+                return BadRequest(new Error() { errorType = "badvalue", alert = "Некорректные входные параметры", errorCode = "Ошибка валидации", errorMessage = "Проверьте правильность введенных данных и попробуйте снова" });
             return Token(login);
         }
 
@@ -137,7 +137,7 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
 
@@ -154,10 +154,10 @@ namespace Backend.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest(new Error("Модель не прошла валидацию", "badvalue"));
+                    return BadRequest(new Error() { errorType = "badvalue", alert = "Ошибка валидации", errorCode = "Некорректные входные параметры", errorMessage = "Проверьте правильность введенных данных и попробуйте снова" });
 
                 if (_model.Users.Where(u => u.Login == account.login).FirstOrDefault() != null)
-                    return Conflict(new Error("Пользователь с таким логином уже существует", "badvalue"));
+                    return Conflict(new Error() { errorType = "badvalue", alert = "Пользователь с таким логином уже существует", errorCode = "Конфликт введённых и имеющихся данных", errorMessage = "Введите другой логин и попробуйте снова" });
 
                 _logger.LogInformation("запуск с параметрами: " + JsonConvert.SerializeObject(account));
 
@@ -170,17 +170,17 @@ namespace Backend.Controllers
                 if (e.Message == "command") // ошибка в выполнении команды к бд
                 {
                     _logger.LogError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
-                    return StatusCode(500, new Error("Произошла ошибка в ходе обращения с базе данных.", "db"));
+                    return StatusCode(500, new Error() { errorType = "db", alert = "Произошла ошибка во время обращения к базе данных", errorCode = "Ошибка базы данных", errorMessage = "Попробуйте снова или обратитесь к спецалисту" });
                 }
 
                 if (e.Message == "connection") // ошибка подключения к бд
                 {
                     _logger.LogError("Не удалось подключиться к базе данных: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
-                    return StatusCode(500, new Error("Произошла ошибка при попытке подключения с базе данных.", "db"));
+                    return StatusCode(500, new Error() { errorType = "db", alert = "Не удалось подключиться к базе данных", errorCode = "Ошибка базы данных", errorMessage = "Попробуйте снова или обратитесь к спецалисту" });
                 }
 
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
 
@@ -222,7 +222,7 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
 
@@ -239,10 +239,10 @@ namespace Backend.Controllers
             try
             {
                 if (login == null)
-                    return BadRequest(new Error("Не задано имя пользователя", "badvalue"));
+                    return BadRequest(new Error() { errorType = "badvalue", alert = "Не задано имя пользователя", errorCode = "Ошибка валидации", errorMessage = "Проверьте, введено ли имя пользователя, и попробуйте снова" });
 
                 if (_model.Users.Where(u => u.Login == login).FirstOrDefault() == null)
-                    return NotFound(new Error("Пользователь с таким логином не найден", "badvalue"));
+                    return NotFound(new Error() { errorType = "badvalue", alert = "Пользователя с таким логином не существует", errorCode = "Пользователь не найден", errorMessage = "Проверьте, правильно ли введён логин пользователя, и попробуйте снова" });
 
                 SqlHelper.DeleteUser(login);
                 _logger.LogInformation($"Удалён {login} пользователем {User.Identity.Name}");
@@ -254,17 +254,17 @@ namespace Backend.Controllers
                 if (e.Message == "command") // ошибка в выполнении команды к бд
                 {
                     _logger.LogError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
-                    return StatusCode(500, new Error("Произошла ошибка в ходе обращения с базе данных.", "db"));
+                    return StatusCode(500, new Error() { errorType = "db", alert = "Произошла ошибка во время обращения к базе данных", errorCode = "Ошибка базы данных", errorMessage = "Попробуйте снова или обратитесь к спецалисту" });
                 }
 
                 if (e.Message == "connection") // ошибка подключения к бд
                 {
                     _logger.LogError("Не удалось подключиться к базе данных: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
-                    return StatusCode(500, new Error("Произошла ошибка при попытке подключения с базе данных.", "connection"));
+                    return StatusCode(500, new Error() { errorType = "db", alert = "Не удалось подключиться к базе данных", errorCode = "Ошибка базы данных", errorMessage = "Попробуйте снова или обратитесь к спецалисту" });
                 }
 
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
 
@@ -283,12 +283,12 @@ namespace Backend.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(new Error("Модель не прошла валидацию", "badvalue"));
+                    return BadRequest(new Error() { errorType = "badvalue", alert = "Некорректные входные параметры", errorCode = "Ошибка валидации", errorMessage = "Проверьте правильность введенных данных и попробуйте снова" });
                 }
 
                 if (_model.Users.Where(u => u.Login == account.oldLogin).FirstOrDefault() == null)
                 {
-                    return NotFound(new Error("Пользователь с таким логином не найден", "badvalue"));
+                    return NotFound(new Error() { errorType = "badvalue", alert = "Пользователя с таким логином не существует", errorCode = "Пользователь не найден", errorMessage = "Проверьте, правильно ли введён логин пользователя, и попробуйте снова" });
                 }
 
                 SqlHelper.UpdateUser(account);
@@ -299,17 +299,17 @@ namespace Backend.Controllers
                 if (e.Message == "command") // ошибка в выполнении команды к бд
                 {
                     _logger.LogError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
-                    return StatusCode(500, new Error("Произошла ошибка в ходе обращения с базе данных.", "db"));
+                    return StatusCode(500, new Error() { errorType = "db", alert = "Произошла ошибка во время обращения к базе данных", errorCode = "Ошибка базы данных", errorMessage = "Попробуйте снова или обратитесь к спецалисту" });
                 }
 
                 if (e.Message == "connection") // ошибка подключения к бд
                 {
                     _logger.LogError("Не удалось подключиться к базе данных: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
-                    return StatusCode(500, new Error("Произошла ошибка при попытке подключения с базе данных.", "db"));
+                    return StatusCode(500, new Error() { errorType = "db", alert = "Не удалось подключиться к базе данных", errorCode = "Ошибка базы данных", errorMessage = "Попробуйте снова или обратитесь к спецалисту" });
                 }
 
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
             return Ok();
         }

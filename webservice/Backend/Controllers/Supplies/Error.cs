@@ -8,12 +8,19 @@ namespace Backend.Controllers.Supplies
     public class Error
     {
         public string errorMessage { get; set; }
+        public string errorType { get; set; }
+        public string alert { get; set; }
         public string errorCode { get; set; }
+
+        public Error()
+        {
+            
+        }
 
         public Error(string message, string code)
         {
             this.errorMessage = message;
-            this.errorCode = code;
+            this.errorType = code;
         }
     }
 }
