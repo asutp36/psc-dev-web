@@ -113,17 +113,17 @@ namespace Backend.Controllers
                 if(e.Message == "command")
                 {
                     _logger.LogError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
-                    return StatusCode(500, new Error("Произошла ошибка в ходе обращения с базе данных.", "db"));
+                    return StatusCode(500, new Error() { errorType = "db", alert = "Произошла ошибка во время обращения к базе данных", errorCode = "Ошибка базы данных", errorMessage = "Попробуйте снова или обратитесь к спецалисту" });
                 }
 
                 if(e.Message == "connection")
                 {
                     _logger.LogError("Не удалось подключиться к базе данных: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
-                    return StatusCode(500, new Error("Произошла ошибка при попытке подключения с базе данных.", "db"));
+                    return StatusCode(500, new Error() { errorType = "db", alert = "Не удалось подключиться к базе данных", errorCode = "Ошибка базы данных", errorMessage = "Попробуйте снова или обратитесь к спецалисту" });
                 }
 
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
 
@@ -163,17 +163,17 @@ namespace Backend.Controllers
                 if (e.Message == "command")
                 {
                     _logger.LogError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
-                    return StatusCode(500, new Error("Произошла ошибка в ходе обращения с базе данных.", "db"));
+                    return StatusCode(500, new Error() { errorType = "db", alert = "Произошла ошибка во время обращения к базе данных", errorCode = "Ошибка базы данных", errorMessage = "Попробуйте снова или обратитесь к спецалисту" });
                 }
 
                 if (e.Message == "connection")
                 {
                     _logger.LogError("Не удалось подключиться к базе данных: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
-                    return StatusCode(500, new Error("Произошла ошибка при попытке подключения с базе данных.", "db"));
+                    return StatusCode(500, new Error() { errorType = "db", alert = "Не удалось подключиться к базе данных", errorCode = "Ошибка базы данных", errorMessage = "Попробуйте снова или обратитесь к спецалисту" });
                 }
 
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
     }

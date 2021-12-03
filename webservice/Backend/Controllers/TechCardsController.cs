@@ -38,7 +38,7 @@ namespace Backend.Controllers
             try
             {
                 if (!SqlHelper.IsWashExists(washCode))
-                    return NotFound(new Error("Мойка не найдена.", "badvalue"));
+                    return NotFound(new Error() { errorType = "badvalue", alert = $"Мойка {washCode} не найдена", errorCode = "Мойка не найдена", errorMessage = "Проверьте, правильно ли введён код мойки, и попробуйте снова" });
 
                 var cards = SqlHelper.GetGroupsTechCardsByWash(washCode);
                 return Ok(cards);
@@ -46,7 +46,7 @@ namespace Backend.Controllers
             catch(Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
 
@@ -67,10 +67,10 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 if (e.Message == "404")
-                    return NotFound(new Error("Не найдена группа.", "badvalue"));
+                    return NotFound(new Error() { errorType = "badvalue", alert = $"Группа {groupCode} не найдена", errorCode = "Группа не найдена", errorMessage = "Проверьте, правильно ли введён код группы, и попробуйте снова" });
 
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
 
@@ -89,7 +89,7 @@ namespace Backend.Controllers
             catch(Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
 
@@ -108,7 +108,7 @@ namespace Backend.Controllers
                 if (!ModelState.IsValid)
                 {
                     _logger.LogError("Model not valid: " + JsonConvert.SerializeObject(model) + Environment.NewLine);
-                    return BadRequest(new Error("Некорректно заданы значения.", "badvalue"));
+                    return BadRequest(new Error() { errorType = "badvalue", alert = "Некорректные входные параметры", errorCode = "Ошибка валидации", errorMessage = "Проверьте правильность введенных данных и попробуйте снова" });
                 }
 
                 if (SqlHelper.IsCardExists(model.cardNum))
@@ -123,11 +123,11 @@ namespace Backend.Controllers
                 if (e.Message == "command")
                 {
                     _logger.LogError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
-                    return StatusCode(500, new Error("Произошла ошибка в ходе обращения к базе данных.", "db"));
+                    return StatusCode(500, new Error() { errorType = "db", alert = "Произошла ошибка во время обращения к базе данных", errorCode = "Ошибка базы данных", errorMessage = "Попробуйте снова или обратитесь к спецалисту" });
                 }
 
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
 
@@ -144,10 +144,10 @@ namespace Backend.Controllers
             try
             {
                 if (!SqlHelper.IsCardExists(cardNum))
-                    return NotFound(new Error("Карта с таким номером не найдена.", "badvalue"));
+                    return NotFound(new Error() { errorType = "badvalue", alert = $"Карта {cardNum} не найдена", errorCode = "Карта не найдена", errorMessage = "Проверьте, правильно ли введён номер карты, и попробуйте снова" });
 
                 if (!SqlHelper.IsGroupExists(groupCode))
-                    return NotFound(new Error("Группа не найдена.", "badvalue"));
+                    return NotFound(new Error() { errorType = "badvalue", alert = $"Группа {groupCode} не найдена", errorCode = "Группа не найдена", errorMessage = "Проверьте, правильно ли введён код группы, и попробуйте снова" });
 
                 SqlHelper.AddTechCardGroup(cardNum, groupCode);
 
@@ -158,11 +158,11 @@ namespace Backend.Controllers
                 if (e.Message == "constraint")
                 {
                     _logger.LogError(e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
-                    return Conflict(new Error($"Карта {cardNum} уже находится в группе {groupCode}.", "badvalue"));
+                    return Conflict(new Error() { errorType = "badvalue", alert = $"Карта {cardNum} уже добавлена в группу {groupCode}", errorCode = "Конфликт ввёднных и имеющихся данных", errorMessage = "Проверьте правильность введенных данных и попробуйте снова" });
                 }
 
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
 
@@ -178,7 +178,7 @@ namespace Backend.Controllers
             try
             {
                 if (!SqlHelper.IsCardExists(cardNum))
-                    return NotFound(new Error("Карта с таким номером не найдена", "badvalue"));
+                    return NotFound(new Error() { errorType = "badvalue", alert = $"Карта {cardNum} не найдена", errorCode = "Карта не найдена", errorMessage = "Проверьте, правильно ли введён номер карты, и попробуйте снова" });
 
                 SqlHelper.DeleteCard(cardNum);
 
@@ -187,7 +187,7 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
 
@@ -206,13 +206,13 @@ namespace Backend.Controllers
                 if (!SqlHelper.IsCardExists(cardNum))
                 {
                     _logger.LogError($"Карта {cardNum} не найдена" + Environment.NewLine);
-                    return NotFound(new Error($"Карта {cardNum} не найдена", "badvalue"));
+                    return NotFound(new Error() { errorType = "badvalue", alert = $"Карта {cardNum} не найдена", errorCode = "Карта не найдена", errorMessage = "Проверьте, правильно ли введён номер карты, и попробуйте снова" });
                 }
 
                 if (!SqlHelper.IsGroupExists(groupCode))
                 {
                     _logger.LogError($"Группа {groupCode} не найдена" + Environment.NewLine);
-                    return NotFound(new Error($"Группа {groupCode} не найдена", "badvalue"));
+                    return NotFound(new Error() { errorType = "badvalue", alert = $"Группа {groupCode} не найдена", errorCode = "Группа не найдена", errorMessage = "Проверьте, правильно ли введён код группы, и попробуйте снова" });
                 }
 
                 foreach (string washCode in washCodes)
@@ -289,7 +289,7 @@ namespace Backend.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpexted"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
     }

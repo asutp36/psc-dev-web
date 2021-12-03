@@ -36,18 +36,18 @@ namespace Backend.Controllers
                         return Ok(state);
 
                     case (System.Net.HttpStatusCode)424:
-                        return StatusCode(424, new Error("Нет связи с разменником", "connection"));
+                        return StatusCode(424, new Error() { errorType = "connection", alert = $"Нет связи с разменником {changer}", errorCode = "Ошибка связи", errorMessage = "Проверьте, есть ли на разменнике интернет, и попробуйте снова" });
 
                     case System.Net.HttpStatusCode.InternalServerError:
-                        return StatusCode(503, new Error($"Проблема на сервисе postrc: {response.ResultMessage}", "sevice"));
+                        return StatusCode(503, new Error() { errorType = "service", alert = "Не удалось связаться с сервисом управления разменниками", errorCode = "Ошибка связи", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
 
                     default:
-                        return StatusCode(424, new Error("Проблема со связью", "connection"));
+                        return StatusCode(424, new Error() { errorType = "connection", alert = $"Нет связи с разменником {changer}", errorCode = "Ошибка связи", errorMessage = "Проверьте, есть ли на разменнике интернет, и попробуйте снова" });
                 }
             }
             catch (Exception e)
             {
-                return StatusCode(500, new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"));
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
     }
