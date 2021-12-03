@@ -29,7 +29,7 @@ namespace Backend.Extentions
                                 logger.LogError("" + Environment.NewLine);
 
                                 await context.Response.WriteAsync(JsonConvert.SerializeObject(
-                                    new Error("Что-то пошло не так в ходе работы программы сервера. Обратитесь к специалисту.", "unexpected"))
+                                    new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" })
                                 );
                             }
                         });
