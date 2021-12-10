@@ -477,15 +477,12 @@ namespace MobileIntegration.Controllers
 
                                 Logger.Log.Debug("StartPost: запуск настоящего поста");
 
-                                Logger_Timeout.InitLogger();
-                                DateTime start = DateTime.Now;
                                 HttpResponse resp = Sender.SendPost("http://" + ip + "/api/post/balance/increase/card", JsonConvert.SerializeObject(new StartPostDevModel
                                 {
                                     Amount = amount,
                                     Dtime = model.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
                                     CardNum = model.card
                                 }));
-                                Logger_Timeout.Log.Debug($"{(DateTime.Now - start).TotalSeconds}");
 
                                 if (resp.StatusCode == 0)
                                 {
