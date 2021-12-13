@@ -11,6 +11,7 @@ namespace Backend.Models
     {
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<GetIncomeByPosts_Result>().HasNoKey();
             modelBuilder.Entity<GetIncreaseByEvents_Result>().HasNoKey();
             modelBuilder.Entity<GetIncreaseByWashs_Result>().HasNoKey();
             modelBuilder.Entity<GetIncreaseByPosts_Result>().HasNoKey();

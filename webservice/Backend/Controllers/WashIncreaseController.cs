@@ -63,7 +63,7 @@ namespace Backend.Controllers
                 SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
 
-                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashs @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode);
+                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashs1 @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode);
 
                 return Ok(result);
             }
@@ -105,7 +105,7 @@ namespace Backend.Controllers
                 SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
 
-                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashsAfterLastCollect @p_RegionCode, @p_WashCode", p_RegionCode, p_WashCode);
+                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashsAfterLastCollect1 @p_RegionCode, @p_WashCode", p_RegionCode, p_WashCode);
 
                 return Ok(result);
             }
@@ -147,7 +147,7 @@ namespace Backend.Controllers
                 SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
 
-                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashsBetweenTwoLastCollects @p_RegionCode, @p_WashCode", p_RegionCode, p_WashCode);
+                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashsBetweenTwoLastCollects1 @p_RegionCode, @p_WashCode", p_RegionCode, p_WashCode);
 
                 return Ok(result);
             }
@@ -175,12 +175,13 @@ namespace Backend.Controllers
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                 SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                var pocedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPosts @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode);
+                var pocedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPosts1 @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode);
 
                 return Ok(pocedureResult);
             }
             catch(Exception e)
             {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
         }
@@ -200,7 +201,7 @@ namespace Backend.Controllers
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                 SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                var pocedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPostsAfterLastCollect @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
+                var pocedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPostsAfterLastCollect1 @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
 
                 return Ok(pocedureResult);
             }
@@ -226,7 +227,7 @@ namespace Backend.Controllers
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                 SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                var pocedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPostsBetweenTwoLastCollects @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
+                var pocedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPostsBetweenTwoLastCollects1 @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
 
                 return Ok(pocedureResult);
             }
