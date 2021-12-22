@@ -26,7 +26,7 @@ namespace MobileIntegration.Controllers
         /// <response code="204">Некорректное входное значение</response>
         [HttpPost]
         [ActionName("increase_dev")]
-        public HttpResponseMessage IncreaseBalanceDev([FromBody]IncreaseFromChanger increase)
+        public HttpResponseMessage IncreaseBalanceDev([FromBody] IncreaseFromChanger increase)
         {
             Logger.InitLogger();
             if (increase != null)
@@ -92,7 +92,7 @@ namespace MobileIntegration.Controllers
 
                         int washID = _model.Changers.Where(c => c.IDDevice == _model.Device.Where(d => d.Code.Equals(increase.fromCode)).FirstOrDefault().IDDevice).FirstOrDefault().IDWash;
                         string washCode = _model.Wash.Find(washID).Code;
-                        
+
 
                         // отправка пополнения на пост
                         HttpResponse resp = Sender.SendPost("http://loyalty.myeco24.ru/api/externaldb/set-replenish", JsonConvert.SerializeObject(new Increase
@@ -133,7 +133,7 @@ namespace MobileIntegration.Controllers
         /// <response code="204">Некорректное входное значение</response>
         [HttpPost]
         [ActionName("increase")]
-        public HttpResponseMessage IncreaseBalance([FromBody]IncreaseFromMobile increase)
+        public HttpResponseMessage IncreaseBalance([FromBody] IncreaseFromMobile increase)
         {
             Logger.InitLogger();
             if (increase != null)
@@ -229,7 +229,7 @@ namespace MobileIntegration.Controllers
         /// <response code="204">Некорректные входные данные</response>
         [HttpPost]
         [ActionName("get_balance")]
-        public HttpResponseMessage GetBalance([FromBody]GetBalanceFromMobile getBalance)
+        public HttpResponseMessage GetBalance([FromBody] GetBalanceFromMobile getBalance)
         {
             Logger.InitLogger();
 
@@ -300,7 +300,7 @@ namespace MobileIntegration.Controllers
         /// <response code="204">Некорректные входные данные</response>
         [HttpPost]
         [ActionName("get_balance-dev")]
-        public HttpResponseMessage GetBalanceDev([FromBody]GetBalance getBalance)
+        public HttpResponseMessage GetBalanceDev([FromBody] GetBalance getBalance)
         {
             Logger.InitLogger();
 
@@ -396,7 +396,7 @@ namespace MobileIntegration.Controllers
         [HttpPost]
         [ActionName("change_phone")]
         //что делать с localized?
-        public HttpResponseMessage ChangePhone([FromBody]ChangePhoneFromMobile change)
+        public HttpResponseMessage ChangePhone([FromBody] ChangePhoneFromMobile change)
         {
             Logger.InitLogger();
             if (change != null)
@@ -448,7 +448,7 @@ namespace MobileIntegration.Controllers
         /// <response code="401">Хэш не прошёл проверку</response>
         [HttpPost]
         [ActionName("start_post")]
-        public HttpResponseMessage StartPost([FromBody]StartPostBindingModel model)
+        public HttpResponseMessage StartPost([FromBody] StartPostBindingModel model)
         {
             Logger.InitLogger();
 
@@ -511,7 +511,7 @@ namespace MobileIntegration.Controllers
                     Logger.Log.Error("StartPost: Unauthorized" + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.Unauthorized);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Logger.Log.Error("StartPost: " + e.Message.ToString() + Environment.NewLine + e.StackTrace.ToString() + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.InternalServerError);
@@ -536,7 +536,7 @@ namespace MobileIntegration.Controllers
         /// <response code="403">Карта не найдена</response>
         [HttpPost]
         [ActionName("start_post-dev")]
-        public HttpResponseMessage StartPostDev([FromBody]StartPostBindingModel model)
+        public HttpResponseMessage StartPostDev([FromBody] StartPostBindingModel model)
         {
             Logger.InitLogger();
 
@@ -558,7 +558,7 @@ namespace MobileIntegration.Controllers
 
                                 string ip = GetPostIp(model.post);
 
-                                if(ip == null || ip.Equals(""))
+                                if (ip == null || ip.Equals(""))
                                 {
                                     Logger.Log.Error("StartPost: Post not found" + Environment.NewLine);
                                     return Request.CreateResponse(HttpStatusCode.NotFound);
@@ -614,10 +614,10 @@ namespace MobileIntegration.Controllers
         /// <response code="200">Удачно</response>
         [HttpPost]
         [ActionName("stop_post-dev")]
-        public HttpResponseMessage StopPostDev([FromBody]StopPostBindingModel model)
+        public HttpResponseMessage StopPostDev([FromBody] StopPostBindingModel model)
         {
             Logger.InitLogger();
-            
+
             Logger.Log.Debug($"StopPost: отправка списания по карте {model.card}");
 
             string washCode = PrepareWashCodeForMobile(model.post);
@@ -685,12 +685,12 @@ namespace MobileIntegration.Controllers
                 }
 
             string qrCode = "";
-            try 
+            try
             {
 
                 //qrCode = _model.Posts.Where(p => p.IDDevice == _model.Device.Where(d => d.Code.Equals(model.post)).FirstOrDefault().IDDevice).FirstOrDefault().QRCode;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Logger.Log.Error("StopPostDev: не найден пост.\n" + e.Message + Environment.NewLine);
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Post not found");
@@ -729,7 +729,7 @@ namespace MobileIntegration.Controllers
                     _model.Database.Connection.Close();
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
                 {
@@ -750,7 +750,7 @@ namespace MobileIntegration.Controllers
 
                 return device.IpAddress;
             }
-            catch(NullReferenceException e)
+            catch (NullReferenceException e)
             {
                 Logger.Log.Error("GetPostIp: не удалось найти ip поста");
                 return "";
@@ -769,7 +769,7 @@ namespace MobileIntegration.Controllers
         /// <response code="204">Некорректные входные данные</response>
         [HttpPost]
         [ActionName("new_card")]
-        public HttpResponseMessage NewCard([FromBody]NewCard newCard)
+        public HttpResponseMessage NewCard([FromBody] NewCard newCard)
         {
             Logger.InitLogger();
 
@@ -879,7 +879,7 @@ namespace MobileIntegration.Controllers
         /// <response code="204">Некорректные входные значения</response>
         [HttpPost]
         [ActionName("send_new_card_dev")]
-        public HttpResponseMessage SendNewCardDev([FromBody]NewCardDev newCard)
+        public HttpResponseMessage SendNewCardDev([FromBody] NewCardDev newCard)
         {
             Logger.InitLogger();
 
@@ -1080,7 +1080,7 @@ namespace MobileIntegration.Controllers
 
                 List<CardsNumType> result = new List<CardsNumType>();
 
-                foreach(Cards c in cards)
+                foreach (Cards c in cards)
                 {
                     CardsNumType cnt = new CardsNumType();
                     cnt.cardNum = c.CardNum;
@@ -1105,7 +1105,7 @@ namespace MobileIntegration.Controllers
 
                 return Request.CreateResponse<List<CardsNumType>>(HttpStatusCode.OK, result);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Logger.Log.Error("GetCardsList: " + e.Message.ToString() + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
@@ -1161,7 +1161,7 @@ namespace MobileIntegration.Controllers
         public HttpResponseMessage GetTechCards()
         {
             Logger.InitLogger();
-            try 
+            try
             {
                 TechCards result = new TechCards();
 
@@ -1214,7 +1214,7 @@ namespace MobileIntegration.Controllers
         /// <response code="500">Внутренняя ошибка</response>
         [HttpPut]
         [ActionName("change_card")]
-        public HttpResponseMessage ChangeCard([FromBody]CardChange change)
+        public HttpResponseMessage ChangeCard([FromBody] CardChange change)
         {
             if (!ModelState.IsValid)
             {
@@ -1260,7 +1260,7 @@ namespace MobileIntegration.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
                     _model.Database.Connection.Close();
@@ -1284,7 +1284,7 @@ namespace MobileIntegration.Controllers
         {
             try
             {
-                if(cardNum != null && cardNum != "")
+                if (cardNum != null && cardNum != "")
                 {
                     if (CardIsExists(cardNum))
                     {
@@ -1301,12 +1301,94 @@ namespace MobileIntegration.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, true);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
                     _model.Database.Connection.Close();
                 Logger.Log.Error("ChangeCard: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, "Внутренняя ошибка сервера");
+            }
+        }
+
+        /// <summary>
+        /// Получить списания по карте за определённый день
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Ретранслирую коды ответа от сервера мобильного приложения</returns>
+        /// <response code="200">В теле ответа сумма списаний</response>
+        /// <response code="204">Входной объект null</response>
+        /// <response code="400">Не указан номер карты</response>
+        /// <response code="401">Хэш не прошёл проверку</response>
+        /// <response code="404">Карта не найдена</response>
+        /// <response code="500">Внутренняя ошибка сервера</response>
+        [HttpPost]
+        [ActionName("get_decrease")]
+        public HttpResponseMessage GetDecrease([FromBody]GetDecreaseModel model)
+        {
+            Logger.InitLogger();
+
+            try
+            {
+                if (model == null)
+                {
+                    Logger.Log.Error("GetDecrease: Входной параметр == null" + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                }
+
+                if (model.card == null || model.card == "")
+                {
+                    Logger.Log.Error("GetDecrease: Не указан номер карты" + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+
+                if (CryptHash.CheckHashCode(model.hash, model.time_send))
+                {
+                    Logger.Log.Error("GetDecrease: Хэш не прошёл проверку" + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.Unauthorized);
+                }
+
+                if (!CardIsExists(model.card))
+                {
+                    Logger.Log.Error($"Карта {model.card} не найдена" + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.NotFound);
+                }
+
+                if (model.date == null)
+                    model.date = DateTime.Today.AddDays(-1).Date;
+
+                if (!_model.Database.Exists())
+                {
+                    Logger.Log.Error("GetDecrease: база данных не найдена!" + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                }
+
+                _model.Database.Connection.Open();
+                DbCommand command = _model.Database.Connection.CreateCommand();
+                command.CommandText = $"select SUM(o.Amount) " +
+                    $"from Operations o " +
+                    $"join OperationTypes ot on ot.IDOperationType = o.IDOperationType " +
+                    $"join Cards c on c.IDCard = o.IDCard " +
+                    $"where ot.Code = 'decrease' " +
+                    $"and c.CardNum = '{model.card}' " +
+                    $"and o.DTime < '{model.date.Date:yyyy-MM-dd} 23:59:59' " +
+                    $"and o.DTime > '{model.date.Date:yyyy-MM-dd} 00:00:00'";
+
+                var decrease = command.ExecuteScalar();
+
+                if (decrease == null)
+                {
+                    Logger.Log.Info($"GetDecrease: запрос вернул null. Входные данные:" + JsonConvert.SerializeObject(model) + Environment.NewLine);
+                    return Request.CreateResponse(HttpStatusCode.OK, 0);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, int.Parse(decrease.ToString()));
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log.Error("GetDecrease: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
     }
