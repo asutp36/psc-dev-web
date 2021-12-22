@@ -13,7 +13,8 @@ namespace Backend.Controllers.Supplies.Stored_Procedures
         public string WashAddress { get; set; }
         public string PostCode { get; set; }
         public string PostName { get; set; }
-        public DateTime DTime { get; set; }
+        public DateTime DTimeStart { get; set; }
+        public DateTime DTimeEnd { get; set; }
         public int IDSessionOnPost { get; set; }
         public string IDFiscalization { get; set; }
         public int Cash { get; set; }
