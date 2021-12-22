@@ -650,7 +650,7 @@ namespace SynchronizationService.Controllers
                             "INSERT INTO PostSession (IDPost, IDSessionOnPost, StartDTime, QR, FiscalError, StopDTime, AmountCash, AmountBank) " +
                             $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{session.postCode}\')), " +
                             $@"{session.idSessionOnPost}, '{session.startDTime.ToString("yyyyMMdd HH:mm:ss.fff")}', '{session.qr}', '{session.fiscalError}', " +
-                            $@"'{session.startDTime.ToString("yyyyMMdd HH:mm: ss.fff")}', {session.amountCash}, {session.amountBank}); " +
+                            $@"'{session.stopDTime.ToString("yyyyMMdd HH:mm: ss.fff")}', {session.amountCash}, {session.amountBank}); " +
                             "SELECT IDENT_CURRENT(\'PostSession\')" +
                             "COMMIT;";
 
