@@ -1364,7 +1364,7 @@ namespace MobileIntegration.Controllers
 
                 _model.Database.Connection.Open();
                 DbCommand command = _model.Database.Connection.CreateCommand();
-                command.CommandText = $"select SUM(o.Amount) " +
+                command.CommandText = $"select SUM(coalesce(o.Amount, 0)) " +
                     $"from Operations o " +
                     $"join OperationTypes ot on ot.IDOperationType = o.IDOperationType " +
                     $"join Cards c on c.IDCard = o.IDCard " +
@@ -1375,6 +1375,8 @@ namespace MobileIntegration.Controllers
 
                 var decrease = command.ExecuteScalar();
 
+                int.TryParse(decrease.ToString(), out int result);
+
                 if (decrease == null)
                 {
                     Logger.Log.Info($"GetDecrease: запрос вернул null. Входные данные:" + JsonConvert.SerializeObject(model) + Environment.NewLine);
@@ -1382,7 +1384,7 @@ namespace MobileIntegration.Controllers
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, int.Parse(decrease.ToString()));
+                    return Request.CreateResponse(HttpStatusCode.OK, result);
                 }
             }
             catch (Exception e)
