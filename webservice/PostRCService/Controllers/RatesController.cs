@@ -63,11 +63,8 @@ namespace PostRCService.Controllers
                     }
 
                     HttpResponse response = new HttpResponse();
-
-                    if (washCode == "М13" || washCode == "М18")
-                        response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
-                    else
-                        response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/rate/get");
+                    response = HttpSender.SendGet("http://" + ip + "/api/post/rate/get");
+                    //response = HttpSender.SendGet("http://192.168.201.5:5000/api/post/rate/get");
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
@@ -191,11 +188,8 @@ namespace PostRCService.Controllers
                     }
 
                     HttpResponse response = new HttpResponse();
-
-                    if (parameter.washCode == "М13" || parameter.washCode == "М18")
-                        response = HttpSender.SendPost("http://" + ip + "/api/post/rate", JsonConvert.SerializeObject(parameter.value.rates));
-                    else
-                        response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/rate", JsonConvert.SerializeObject(parameter.value.rates));
+                    response = HttpSender.SendPost("http://" + ip + "/api/post/rate", JsonConvert.SerializeObject(parameter.value.rates));
+                    //response = HttpSender.SendPost($"http://192.168.201.5:5000/api/post/rate", JsonConvert.SerializeObject(parameter.value.rates));
 
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                         if (response.StatusCode == 0)
