@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-#nullable disable
+// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
+// If you have enabled NRTs for your project, then un-comment the following line:
+// #nullable disable
 
 namespace PostSyncService.Models.GateWash
 {
@@ -17,40 +19,39 @@ namespace PostSyncService.Models.GateWash
         {
         }
 
-        public virtual DbSet<Card> Cards { get; set; }
-        public virtual DbSet<Device> Devices { get; set; }
-        public virtual DbSet<DeviceType> DeviceTypes { get; set; }
-        public virtual DbSet<Event> Events { get; set; }
-        public virtual DbSet<EventIncrease> EventIncreases { get; set; }
-        public virtual DbSet<EventKind> EventKinds { get; set; }
-        public virtual DbSet<EventPayout> EventPayouts { get; set; }
-        public virtual DbSet<Function> Functions { get; set; }
-        public virtual DbSet<Post> Posts { get; set; }
-        public virtual DbSet<Region> Regions { get; set; }
-        public virtual DbSet<Session> Sessions { get; set; }
-        public virtual DbSet<Wash> Washes { get; set; }
+        public virtual DbSet<Cards> Cards { get; set; }
+        public virtual DbSet<Device> Device { get; set; }
+        public virtual DbSet<DeviceTypes> DeviceTypes { get; set; }
+        public virtual DbSet<Event> Event { get; set; }
+        public virtual DbSet<EventIncrease> EventIncrease { get; set; }
+        public virtual DbSet<EventKind> EventKind { get; set; }
+        public virtual DbSet<EventPayout> EventPayout { get; set; }
+        public virtual DbSet<Functions> Functions { get; set; }
+        public virtual DbSet<Posts> Posts { get; set; }
+        public virtual DbSet<Regions> Regions { get; set; }
+        public virtual DbSet<Sessions> Sessions { get; set; }
+        public virtual DbSet<Wash> Wash { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=GateWash;Trusted_Connection=True;");
+                //optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Initial Catalog=GateWash;User Id=sa; Password=ora4paSS");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("Relational:Collation", "Cyrillic_General_CI_AS");
-
-            modelBuilder.Entity<Card>(entity =>
+            modelBuilder.Entity<Cards>(entity =>
             {
                 entity.HasKey(e => e.Idcard);
 
                 entity.Property(e => e.Idcard)
-                    .HasMaxLength(8)
                     .HasColumnName("IDCard")
-                    .IsFixedLength(true);
+                    .HasMaxLength(8)
+                    .IsFixedLength();
 
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
             });
@@ -58,8 +59,6 @@ namespace PostSyncService.Models.GateWash
             modelBuilder.Entity<Device>(entity =>
             {
                 entity.HasKey(e => e.Iddevice);
-
-                entity.ToTable("Device");
 
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 
@@ -76,13 +75,13 @@ namespace PostSyncService.Models.GateWash
                 entity.Property(e => e.ServerId).HasColumnName("ServerID");
 
                 entity.HasOne(d => d.IddeviceTypeNavigation)
-                    .WithMany(p => p.Devices)
+                    .WithMany(p => p.Device)
                     .HasForeignKey(d => d.IddeviceType)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Device_DeviceTypes");
             });
 
-            modelBuilder.Entity<DeviceType>(entity =>
+            modelBuilder.Entity<DeviceTypes>(entity =>
             {
                 entity.HasKey(e => e.IddeviceType);
 
@@ -94,7 +93,7 @@ namespace PostSyncService.Models.GateWash
 
                 entity.Property(e => e.Description)
                     .HasMaxLength(50)
-                    .IsFixedLength(true);
+                    .IsFixedLength();
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -105,35 +104,34 @@ namespace PostSyncService.Models.GateWash
             {
                 entity.HasKey(e => e.Idevent);
 
-                entity.ToTable("Event");
-
-                entity.HasIndex(e => new { e.Idpost, e.Dtime }, "AK_Event_IDPost_DTime")
+                entity.HasIndex(e => new { e.Iddevice, e.Dtime })
+                    .HasName("AK_Event_IDPost_DTime")
                     .IsUnique();
 
                 entity.Property(e => e.Idevent).HasColumnName("IDEvent");
 
                 entity.Property(e => e.Dtime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("DTime");
+                    .HasColumnName("DTime")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 
                 entity.Property(e => e.IdeventKind).HasColumnName("IDEventKind");
 
-                entity.Property(e => e.Idpost).HasColumnName("IDPost");
-
                 entity.Property(e => e.Idsession).HasColumnName("IDSession");
 
+                entity.HasOne(d => d.IddeviceNavigation)
+                    .WithMany(p => p.Event)
+                    .HasForeignKey(d => d.Iddevice)
+                    .HasConstraintName("FK_Event_Device");
+
                 entity.HasOne(d => d.IdeventKindNavigation)
-                    .WithMany(p => p.Events)
+                    .WithMany(p => p.Event)
                     .HasForeignKey(d => d.IdeventKind)
                     .HasConstraintName("FK_Event_EventKind");
 
-                entity.HasOne(d => d.IdpostNavigation)
-                    .WithMany(p => p.Events)
-                    .HasForeignKey(d => d.Idpost)
-                    .HasConstraintName("FK_Event_Post");
-
                 entity.HasOne(d => d.IdsessionNavigation)
-                    .WithMany(p => p.Events)
+                    .WithMany(p => p.Event)
                     .HasForeignKey(d => d.Idsession)
                     .HasConstraintName("FK_Event_Sessions");
             });
@@ -142,11 +140,9 @@ namespace PostSyncService.Models.GateWash
             {
                 entity.HasKey(e => e.Idevent);
 
-                entity.ToTable("EventIncrease");
-
                 entity.Property(e => e.Idevent)
-                    .ValueGeneratedNever()
-                    .HasColumnName("IDEvent");
+                    .HasColumnName("IDEvent")
+                    .ValueGeneratedNever();
 
                 entity.Property(e => e.Amount).HasColumnName("amount");
 
@@ -174,8 +170,6 @@ namespace PostSyncService.Models.GateWash
             {
                 entity.HasKey(e => e.IdeventKind);
 
-                entity.ToTable("EventKind");
-
                 entity.HasComment("Типы событий");
 
                 entity.Property(e => e.IdeventKind).HasColumnName("IDEventKind");
@@ -193,11 +187,9 @@ namespace PostSyncService.Models.GateWash
             {
                 entity.HasKey(e => e.Idevent);
 
-                entity.ToTable("EventPayout");
-
                 entity.Property(e => e.Idevent)
-                    .ValueGeneratedNever()
-                    .HasColumnName("IDEvent");
+                    .HasColumnName("IDEvent")
+                    .ValueGeneratedNever();
 
                 entity.Property(e => e.Amount).HasColumnName("amount");
 
@@ -215,7 +207,7 @@ namespace PostSyncService.Models.GateWash
                     .HasConstraintName("FK_EventPayout_Event");
             });
 
-            modelBuilder.Entity<Function>(entity =>
+            modelBuilder.Entity<Functions>(entity =>
             {
                 entity.HasKey(e => e.Idfunction);
 
@@ -230,7 +222,7 @@ namespace PostSyncService.Models.GateWash
                     .HasMaxLength(50);
             });
 
-            modelBuilder.Entity<Post>(entity =>
+            modelBuilder.Entity<Posts>(entity =>
             {
                 entity.HasKey(e => e.Idpost);
 
@@ -243,8 +235,8 @@ namespace PostSyncService.Models.GateWash
                 entity.Property(e => e.Name).HasMaxLength(100);
 
                 entity.Property(e => e.Qrcode)
-                    .HasMaxLength(25)
-                    .HasColumnName("QRCode");
+                    .HasColumnName("QRCode")
+                    .HasMaxLength(25);
 
                 entity.HasOne(d => d.IddeviceNavigation)
                     .WithMany(p => p.Posts)
@@ -258,7 +250,7 @@ namespace PostSyncService.Models.GateWash
                     .HasConstraintName("FK_Posts_Wash");
             });
 
-            modelBuilder.Entity<Region>(entity =>
+            modelBuilder.Entity<Regions>(entity =>
             {
                 entity.HasKey(e => e.Idregion);
 
@@ -271,21 +263,21 @@ namespace PostSyncService.Models.GateWash
                     .HasMaxLength(100);
             });
 
-            modelBuilder.Entity<Session>(entity =>
+            modelBuilder.Entity<Sessions>(entity =>
             {
                 entity.HasKey(e => e.Idsession);
 
                 entity.Property(e => e.Idsession).HasColumnName("IDSession");
 
                 entity.Property(e => e.Dtime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("DTime");
+                    .HasColumnName("DTime")
+                    .HasColumnType("datetime");
 
                 entity.Property(e => e.Idcard)
                     .IsRequired()
-                    .HasMaxLength(8)
                     .HasColumnName("IDCard")
-                    .IsFixedLength(true);
+                    .HasMaxLength(8)
+                    .IsFixedLength();
 
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 
@@ -296,14 +288,12 @@ namespace PostSyncService.Models.GateWash
                 entity.Property(e => e.Uuid)
                     .IsRequired()
                     .HasMaxLength(32)
-                    .IsFixedLength(true);
+                    .IsFixedLength();
             });
 
             modelBuilder.Entity<Wash>(entity =>
             {
                 entity.HasKey(e => e.Idwash);
-
-                entity.ToTable("Wash");
 
                 entity.Property(e => e.Idwash).HasColumnName("IDWash");
 
@@ -318,7 +308,7 @@ namespace PostSyncService.Models.GateWash
                 entity.Property(e => e.Name).HasMaxLength(100);
 
                 entity.HasOne(d => d.IdregionNavigation)
-                    .WithMany(p => p.Washes)
+                    .WithMany(p => p.Wash)
                     .HasForeignKey(d => d.Idregion)
                     .HasConstraintName("FK_Wash_Regions");
             });

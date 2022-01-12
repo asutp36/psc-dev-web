@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-#nullable disable
+// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
+// If you have enabled NRTs for your project, then un-comment the following line:
+// #nullable disable
 
 namespace PostSyncService.Models.GateWash
 {
@@ -9,13 +11,13 @@ namespace PostSyncService.Models.GateWash
     {
         public int Idevent { get; set; }
         public int Idsession { get; set; }
-        public int Idpost { get; set; }
+        public int Iddevice { get; set; }
         public int IdeventKind { get; set; }
         public DateTime Dtime { get; set; }
 
+        public virtual Device IddeviceNavigation { get; set; }
         public virtual EventKind IdeventKindNavigation { get; set; }
-        public virtual Post IdpostNavigation { get; set; }
-        public virtual Session IdsessionNavigation { get; set; }
+        public virtual Sessions IdsessionNavigation { get; set; }
         public virtual EventIncrease EventIncrease { get; set; }
         public virtual EventPayout EventPayout { get; set; }
     }
