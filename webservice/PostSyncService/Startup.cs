@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using NLog.Extensions.Logging;
+using PostSyncService.Extentions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +21,16 @@ namespace PostSyncService
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            // Get the factory for ILogger instances.
+            var nlogLoggerProvider = new NLogLoggerProvider();
+
+            // Create an ILogger.
+            Logger = nlogLoggerProvider.CreateLogger(typeof(Startup).FullName);
         }
 
         public IConfiguration Configuration { get; }
+        public ILogger Logger { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -60,6 +69,8 @@ namespace PostSyncService
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.ConfigureExceptionHandler(this.Logger);
 
             app.UseHttpsRedirection();
 
