@@ -11,7 +11,7 @@ namespace PostSyncService.Controllers.BindingModels
         public string deviceCode { get; set; }
         public string functionCode { get; set; }
         public string idCard { get; set; }
-        public DateTime dtime { get; set; }
+        public string dtime { get; set; }
         public string uuid { get; set; }
     }
 }

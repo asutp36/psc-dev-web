@@ -31,7 +31,8 @@ namespace PostSyncService.Controllers
 
             string id = await sqlHelper.WriteCardAsync(card);
 
-            return Ok(id);
+            Response.Headers.Add("ServerID", id.ToString());
+            return Created(id.ToString(), null);
         }
     }
 }

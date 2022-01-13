@@ -27,7 +27,8 @@ namespace PostSyncService.Controllers
 
             int id = await sqlHelper.WriteEventAsync(evnt);
 
-            return Ok(id);
+            Response.Headers.Add("ServerID", id.ToString());
+            return Created(id.ToString(), null);
         }
     }
 }

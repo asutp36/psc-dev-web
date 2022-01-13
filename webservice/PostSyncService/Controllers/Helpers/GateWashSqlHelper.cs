@@ -42,7 +42,7 @@ namespace PostSyncService.Controllers.Helpers
                 Iddevice = this.GetIdDevice(session.deviceCode),
                 Idfunction = this.GetIdFunction(session.functionCode),
                 Idcard = session.idCard,
-                Dtime = session.dtime,
+                Dtime = DateTime.Parse(session.dtime),
                 Uuid = session.uuid
             };
 
@@ -79,7 +79,7 @@ namespace PostSyncService.Controllers.Helpers
                 Idsession = this.GetIdSession(evnt.idCard, evnt.uuid),
                 Iddevice = this.GetIdDevice(evnt.deviceCode),
                 IdeventKind = this.GetIdEventKind(evnt.eventKindCode),
-                Dtime = evnt.dtime
+                Dtime = DateTime.Parse(evnt.dtime)
             };
 
             await _model.Event.AddAsync(e);
