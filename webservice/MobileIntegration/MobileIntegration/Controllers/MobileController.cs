@@ -463,7 +463,7 @@ namespace MobileIntegration.Controllers
                         var card = _model.Cards.Where(c => c.CardNum == model.card).FirstOrDefault();
                         if (card != null)
                         {
-                            if (model.balance > 50)
+                            if (model.balance > 1)
                             {
                                 int amount = model.balance;
 
