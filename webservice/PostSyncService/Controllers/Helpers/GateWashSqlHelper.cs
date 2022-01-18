@@ -1,4 +1,5 @@
-﻿using PostSyncService.Controllers.BindingModels;
+﻿using Microsoft.Data.SqlClient;
+using PostSyncService.Controllers.BindingModels;
 using PostSyncService.Models.GateWash;
 using System;
 using System.Collections.Generic;
@@ -17,11 +18,18 @@ namespace PostSyncService.Controllers.Helpers
 
         public async Task<int> WriteCardAsync(CardBindingModel card)
         {
-            Cards c = new Cards() { CardNum = card.cardNum };
-            await _model.Cards.AddAsync(c);
-            await _model.SaveChangesAsync();
+            try
+            {
+                Cards c = new Cards() { CardNum = card.cardNum };
+                await _model.Cards.AddAsync(c);
+                await _model.SaveChangesAsync();
 
-            return c.Idcard;
+                return c.Idcard;
+            }
+            catch (SqlException e)
+            {
+                throw new Exception("command", e);
+            }
         }
 
         public bool IsCardExsists(string id)
