@@ -18,8 +18,8 @@ namespace PostSyncService.Controllers
         {
             GateWashSqlHelper sqlHelper = new GateWashSqlHelper();
 
-            if (!sqlHelper.IsSessionExsists(evnt.idCard, evnt.uuid))
-                return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найдена сессия для карты {evnt.idCard} с uuid = {evnt.uuid}" });
+            if (!sqlHelper.IsSessionExsists(evnt.cardNum, evnt.uuid))
+                return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найдена сессия для карты {evnt.cardNum} с uuid = {evnt.uuid}" });
             if(!sqlHelper.IsDeviceExsists(evnt.deviceCode))
                 return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден девайс {evnt.deviceCode}" });
             if (!sqlHelper.IsEventKindExsists(evnt.eventKindCode))

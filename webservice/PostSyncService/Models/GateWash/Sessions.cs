@@ -16,12 +16,13 @@ namespace PostSyncService.Models.GateWash
 
         public int Idsession { get; set; }
         public int IdsessoinOnWash { get; set; }
-        public int Iddevice { get; set; }
         public int Idfunction { get; set; }
-        public string Idcard { get; set; }
+        public int Idcard { get; set; }
         public DateTime Dtime { get; set; }
         public string Uuid { get; set; }
 
+        public virtual Cards IdcardNavigation { get; set; }
+        public virtual Functions IdfunctionNavigation { get; set; }
         public virtual ICollection<Event> Event { get; set; }
     }
 }

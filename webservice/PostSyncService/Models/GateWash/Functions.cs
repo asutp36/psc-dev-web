@@ -9,9 +9,16 @@ namespace PostSyncService.Models.GateWash
 {
     public partial class Functions
     {
+        public Functions()
+        {
+            Sessions = new HashSet<Sessions>();
+        }
+
         public int Idfunction { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public int Cost { get; set; }
+
+        public virtual ICollection<Sessions> Sessions { get; set; }
     }
 }

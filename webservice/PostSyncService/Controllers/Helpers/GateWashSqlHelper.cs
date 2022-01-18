@@ -15,9 +15,9 @@ namespace PostSyncService.Controllers.Helpers
             _model = new GateWashDbContext();
         }
 
-        public async Task<string> WriteCardAsync(CardBindingModel card)
+        public async Task<int> WriteCardAsync(CardBindingModel card)
         {
-            Cards c = new Cards() { Idcard = card.idCard, Iddevice = _model.Device.Where(d => d.Code == card.deviceCode).FirstOrDefault().Iddevice };
+            Cards c = new Cards() { CardNum = card.cardNum };
             await _model.Cards.AddAsync(c);
             await _model.SaveChangesAsync();
 
@@ -26,7 +26,7 @@ namespace PostSyncService.Controllers.Helpers
 
         public bool IsCardExsists(string id)
         {
-            return _model.Cards.Where(c => c.Idcard == id).FirstOrDefault() != null;
+            return _model.Cards.Where(c => c.CardNum == id).FirstOrDefault() != null;
         }
 
         public bool IsDeviceExsists(string code)
@@ -39,9 +39,8 @@ namespace PostSyncService.Controllers.Helpers
             Sessions s = new Sessions()
             {
                 IdsessoinOnWash = session.idSession,
-                Iddevice = this.GetIdDevice(session.deviceCode),
                 Idfunction = this.GetIdFunction(session.functionCode),
-                Idcard = session.idCard,
+                Idcard = this.GetIdCard(session.cardNum),
                 Dtime = DateTime.Parse(session.dtime),
                 Uuid = session.uuid
             };
@@ -50,6 +49,11 @@ namespace PostSyncService.Controllers.Helpers
             await _model.SaveChangesAsync();
 
             return s.Idsession;
+        }
+
+        public int GetIdCard(string cardNum)
+        {
+            return _model.Cards.Where(c => c.CardNum == cardNum).FirstOrDefault().Idcard;
         }
 
         public int GetIdDevice(string code)
@@ -67,16 +71,16 @@ namespace PostSyncService.Controllers.Helpers
             return _model.Functions.Where(f => f.Code == code).FirstOrDefault() != null;
         }
 
-        public bool IsSessionExsists(string idCard, string uuid)
+        public bool IsSessionExsists(string cardNum, string uuid)
         {
-            return _model.Sessions.Where(s => s.Idcard == idCard && s.Uuid == uuid).FirstOrDefault() != null;
+            return _model.Sessions.Where(s => s.Idcard == _model.Cards.Where(c => c.CardNum == cardNum).FirstOrDefault().Idcard && s.Uuid == uuid).FirstOrDefault() != null;
         }
 
         public async Task<int> WriteEventAsync(EventBindingModel evnt)
         {
             Event e = new Event()
             {
-                Idsession = this.GetIdSession(evnt.idCard, evnt.uuid),
+                Idsession = this.GetIdSession(evnt.cardNum, evnt.uuid),
                 Iddevice = this.GetIdDevice(evnt.deviceCode),
                 IdeventKind = this.GetIdEventKind(evnt.eventKindCode),
                 Dtime = DateTime.Parse(evnt.dtime)
@@ -88,9 +92,9 @@ namespace PostSyncService.Controllers.Helpers
             return e.Idevent;
         }
 
-        public int GetIdSession(string idCard, string uuid)
+        public int GetIdSession(string cardNum, string uuid)
         {
-            return _model.Sessions.Where(s => s.Idcard == idCard && s.Uuid == uuid).FirstOrDefault().Idsession;
+            return _model.Sessions.Where(s => s.Idcard == _model.Cards.Where(c => c.CardNum == cardNum).FirstOrDefault().Idcard && s.Uuid == uuid).FirstOrDefault().Idsession;
         }
 
         public int GetIdEventKind(string code)

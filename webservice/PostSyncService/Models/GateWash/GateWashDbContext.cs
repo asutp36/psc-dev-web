@@ -48,12 +48,12 @@ namespace PostSyncService.Models.GateWash
             {
                 entity.HasKey(e => e.Idcard);
 
-                entity.Property(e => e.Idcard)
-                    .HasColumnName("IDCard")
+                entity.Property(e => e.Idcard).HasColumnName("IDCard");
+
+                entity.Property(e => e.CardNum)
+                    .IsRequired()
                     .HasMaxLength(8)
                     .IsFixedLength();
-
-                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
             });
 
             modelBuilder.Entity<Device>(entity =>
@@ -103,10 +103,6 @@ namespace PostSyncService.Models.GateWash
             modelBuilder.Entity<Event>(entity =>
             {
                 entity.HasKey(e => e.Idevent);
-
-                entity.HasIndex(e => new { e.Iddevice, e.Dtime })
-                    .HasName("AK_Event_IDPost_DTime")
-                    .IsUnique();
 
                 entity.Property(e => e.Idevent).HasColumnName("IDEvent");
 
@@ -273,13 +269,7 @@ namespace PostSyncService.Models.GateWash
                     .HasColumnName("DTime")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.Idcard)
-                    .IsRequired()
-                    .HasColumnName("IDCard")
-                    .HasMaxLength(8)
-                    .IsFixedLength();
-
-                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
+                entity.Property(e => e.Idcard).HasColumnName("IDCard");
 
                 entity.Property(e => e.Idfunction).HasColumnName("IDFunction");
 
@@ -289,6 +279,16 @@ namespace PostSyncService.Models.GateWash
                     .IsRequired()
                     .HasMaxLength(32)
                     .IsFixedLength();
+
+                entity.HasOne(d => d.IdcardNavigation)
+                    .WithMany(p => p.Sessions)
+                    .HasForeignKey(d => d.Idcard)
+                    .HasConstraintName("FK_Sessions_Cards");
+
+                entity.HasOne(d => d.IdfunctionNavigation)
+                    .WithMany(p => p.Sessions)
+                    .HasForeignKey(d => d.Idfunction)
+                    .HasConstraintName("FK_Sessions_Functions");
             });
 
             modelBuilder.Entity<Wash>(entity =>

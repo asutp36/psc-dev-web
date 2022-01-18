@@ -8,9 +8,8 @@ namespace PostSyncService.Controllers.BindingModels
     public class SessionBindingModel
     {
         public int idSession { get; set; }
-        public string deviceCode { get; set; }
         public string functionCode { get; set; }
-        public string idCard { get; set; }
+        public string cardNum { get; set; }
         public string dtime { get; set; }
         public string uuid { get; set; }
     }

@@ -7,7 +7,6 @@ namespace PostSyncService.Controllers.BindingModels
 {
     public class CardBindingModel
     {
-        public string idCard { get; set; }
-        public string deviceCode { get; set; }
+        public string cardNum { get; set; }
     }
 }

@@ -19,17 +19,12 @@ namespace PostSyncService.Controllers
         {
             GateWashSqlHelper sqlHelper = new GateWashSqlHelper();
             
-            if(sqlHelper.IsCardExsists(card.idCard))
+            if(sqlHelper.IsCardExsists(card.cardNum))
             {
                 return Conflict(new Error() { errorCode = "badvalue", errorMessage = "Карта с таким номером уже существует" });
             }
 
-            if (!sqlHelper.IsDeviceExsists(card.deviceCode))
-            {
-                return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден девайс {card.deviceCode}" });
-            }
-
-            string id = await sqlHelper.WriteCardAsync(card);
+            int id = await sqlHelper.WriteCardAsync(card);
 
             Response.Headers.Add("ServerID", id.ToString());
             return Created(id.ToString(), null);

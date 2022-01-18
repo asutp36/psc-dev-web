@@ -9,7 +9,14 @@ namespace PostSyncService.Models.GateWash
 {
     public partial class Cards
     {
-        public string Idcard { get; set; }
-        public int Iddevice { get; set; }
+        public Cards()
+        {
+            Sessions = new HashSet<Sessions>();
+        }
+
+        public int Idcard { get; set; }
+        public string CardNum { get; set; }
+
+        public virtual ICollection<Sessions> Sessions { get; set; }
     }
 }
