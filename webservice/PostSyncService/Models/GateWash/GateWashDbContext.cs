@@ -114,6 +114,8 @@ namespace PostSyncService.Models.GateWash
 
                 entity.Property(e => e.IdeventKind).HasColumnName("IDEventKind");
 
+                entity.Property(e => e.IdeventOnPost).HasColumnName("IDEventOnPost");
+
                 entity.Property(e => e.Idsession).HasColumnName("IDSession");
 
                 entity.HasOne(d => d.IddeviceNavigation)

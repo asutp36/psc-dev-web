@@ -10,6 +10,7 @@ namespace PostSyncService.Models.GateWash
     public partial class Event
     {
         public int Idevent { get; set; }
+        public int IdeventOnPost { get; set; }
         public int Idsession { get; set; }
         public int IdeventKind { get; set; }
         public int Iddevice { get; set; }

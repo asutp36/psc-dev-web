@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using PostSyncService.Controllers.BindingModels;
 using PostSyncService.Models.GateWash;
 using System;
@@ -91,6 +92,7 @@ namespace PostSyncService.Controllers.Helpers
                 Event e = new Event()
                 {
                     Idsession = this.GetIdSession(evnt.cardNum, evnt.uuid),
+                    IdeventOnPost = evnt.idEventOnPost,
                     Iddevice = this.GetIdDevice(evnt.deviceCode),
                     IdeventKind = this.GetIdEventKind(evnt.eventKindCode),
                     Dtime = DateTime.Parse(evnt.dtime)
@@ -120,6 +122,97 @@ namespace PostSyncService.Controllers.Helpers
         public bool IsEventKindExsists(string code)
         {
             return _model.EventKind.Where(ek => ek.Code == code).FirstOrDefault() != null;
+        }
+
+        public async Task<int> WriteEventIncreaseAsync(EventIncreaseBindingModel eincr)
+        {
+            try
+            {
+                Event e = new Event
+                {
+                    Idsession = this.GetIdSession(eincr.cardNum, eincr.uuid),
+                    IdeventOnPost = eincr.idEventPost,
+                    Iddevice = this.GetIdDevice(eincr.deviceCode),
+                    IdeventKind = this.GetIdEventKind(eincr.eventKindCode),
+                    Dtime = DateTime.Parse(eincr.dtime)
+                };
+
+                EventIncrease ei = new EventIncrease
+                {
+                    Amount = eincr.amount,
+                    M10 = eincr.m10,
+                    B50 = eincr.b50,
+                    B100 = eincr.b100,
+                    B200 = eincr.b200,
+                    B500 = eincr.b500,
+                    B1000 = eincr.b1000,
+                    B2000 = eincr.b2000
+                };
+                ei.IdeventNavigation = e;
+
+                await _model.EventIncrease.AddAsync(ei);
+
+                await _model.SaveChangesAsync();
+
+                return e.Idevent;
+            }
+            catch (SqlException e)
+            {
+                throw new Exception("command", e);
+            }
+            catch (DbUpdateException e)
+            {
+                if (e.HResult == -2146232060) // проблема с внешними ключами
+                {
+                    throw new Exception("command", e);
+                }
+
+                throw new Exception("db", e);
+            }
+        }
+
+        public async Task<int> WriteEventPayoutAsync(EventPayoutBindingModel epayout)
+        {
+            try
+            {
+                Event e = new Event
+                {
+                    Idsession = this.GetIdSession(epayout.cardNum, epayout.uuid),
+                    IdeventOnPost = epayout.idEventPost,
+                    Iddevice = this.GetIdDevice(epayout.deviceCode),
+                    IdeventKind = this.GetIdEventKind(epayout.eventKindCode),
+                    Dtime = DateTime.Parse(epayout.dtime)
+                };
+
+                EventPayout ep = new EventPayout
+                {
+                    Amount = epayout.amount,
+                    B50 = epayout.b50,
+                    B100 = epayout.b100,
+                    StorageB50 = epayout.storage_b50,
+                    StorageB100 = epayout.storage_b100
+                };
+                ep.IdeventNavigation = e;
+
+                await _model.EventPayout.AddAsync(ep);
+
+                await _model.SaveChangesAsync();
+
+                return e.Idevent;
+            }
+            catch (SqlException e)
+            {
+                throw new Exception("command", e);
+            }
+            catch (DbUpdateException e)
+            {
+                if (e.HResult == -2146232060) // проблема с внешними ключами
+                {
+                    throw new Exception("command", e);
+                }
+
+                throw new Exception("db", e);
+            }
         }
     }
 }
