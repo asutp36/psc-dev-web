@@ -8,7 +8,7 @@ namespace PostSyncService.Controllers.BindingModels
     public class EventIncreaseBindingModel
     {
         public string deviceCode { get; set; }
-        public int idEventPost { get; set; }
+        public int idEventOnPost { get; set; }
         public string cardNum { get; set; }
         public string uuid { get; set; }
         public string dtime { get; set; }

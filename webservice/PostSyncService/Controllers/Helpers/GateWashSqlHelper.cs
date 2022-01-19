@@ -131,7 +131,7 @@ namespace PostSyncService.Controllers.Helpers
                 Event e = new Event
                 {
                     Idsession = this.GetIdSession(eincr.cardNum, eincr.uuid),
-                    IdeventOnPost = eincr.idEventPost,
+                    IdeventOnPost = eincr.idEventOnPost,
                     Iddevice = this.GetIdDevice(eincr.deviceCode),
                     IdeventKind = this.GetIdEventKind(eincr.eventKindCode),
                     Dtime = DateTime.Parse(eincr.dtime)
@@ -178,7 +178,7 @@ namespace PostSyncService.Controllers.Helpers
                 Event e = new Event
                 {
                     Idsession = this.GetIdSession(epayout.cardNum, epayout.uuid),
-                    IdeventOnPost = epayout.idEventPost,
+                    IdeventOnPost = epayout.idEventOnPost,
                     Iddevice = this.GetIdDevice(epayout.deviceCode),
                     IdeventKind = this.GetIdEventKind(epayout.eventKindCode),
                     Dtime = DateTime.Parse(epayout.dtime)
