@@ -86,18 +86,25 @@ namespace PostSyncService.Controllers.Helpers
 
         public async Task<int> WriteEventAsync(EventBindingModel evnt)
         {
-            Event e = new Event()
+            try
             {
-                Idsession = this.GetIdSession(evnt.cardNum, evnt.uuid),
-                Iddevice = this.GetIdDevice(evnt.deviceCode),
-                IdeventKind = this.GetIdEventKind(evnt.eventKindCode),
-                Dtime = DateTime.Parse(evnt.dtime)
-            };
+                Event e = new Event()
+                {
+                    Idsession = this.GetIdSession(evnt.cardNum, evnt.uuid),
+                    Iddevice = this.GetIdDevice(evnt.deviceCode),
+                    IdeventKind = this.GetIdEventKind(evnt.eventKindCode),
+                    Dtime = DateTime.Parse(evnt.dtime)
+                };
 
-            await _model.Event.AddAsync(e);
-            await _model.SaveChangesAsync();
+                await _model.Event.AddAsync(e);
+                await _model.SaveChangesAsync();
 
-            return e.Idevent;
+                return e.Idevent;
+            }
+            catch(SqlException e)
+            {
+                throw new Exception("command", e);
+            }
         }
 
         public int GetIdSession(string cardNum, string uuid)
