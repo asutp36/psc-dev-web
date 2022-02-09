@@ -11,6 +11,7 @@ namespace PostSyncService.Models.GateWash
     {
         public Functions()
         {
+            PaySession = new HashSet<PaySession>();
             Sessions = new HashSet<Sessions>();
         }
 
@@ -19,6 +20,7 @@ namespace PostSyncService.Models.GateWash
         public string Name { get; set; }
         public int Cost { get; set; }
 
+        public virtual ICollection<PaySession> PaySession { get; set; }
         public virtual ICollection<Sessions> Sessions { get; set; }
     }
 }

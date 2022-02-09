@@ -7,19 +7,21 @@ using System.Collections.Generic;
 
 namespace PostSyncService.Models.GateWash
 {
-    public partial class EventKind
+    public partial class PaySession
     {
-        public EventKind()
+        public PaySession()
         {
-            Event = new HashSet<Event>();
             PayEvent = new HashSet<PayEvent>();
         }
 
-        public int IdeventKind { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
+        public int IdpaySession { get; set; }
+        public int IdsessionOnPost { get; set; }
+        public int Idfunction { get; set; }
+        public DateTime Dtime { get; set; }
+        public int Iddevice { get; set; }
 
-        public virtual ICollection<Event> Event { get; set; }
+        public virtual Device IddeviceNavigation { get; set; }
+        public virtual Functions IdfunctionNavigation { get; set; }
         public virtual ICollection<PayEvent> PayEvent { get; set; }
     }
 }

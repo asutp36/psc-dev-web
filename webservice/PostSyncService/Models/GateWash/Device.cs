@@ -12,6 +12,8 @@ namespace PostSyncService.Models.GateWash
         public Device()
         {
             Event = new HashSet<Event>();
+            PayEvent = new HashSet<PayEvent>();
+            PaySession = new HashSet<PaySession>();
             Posts = new HashSet<Posts>();
         }
 
@@ -24,6 +26,8 @@ namespace PostSyncService.Models.GateWash
 
         public virtual DeviceTypes IddeviceTypeNavigation { get; set; }
         public virtual ICollection<Event> Event { get; set; }
+        public virtual ICollection<PayEvent> PayEvent { get; set; }
+        public virtual ICollection<PaySession> PaySession { get; set; }
         public virtual ICollection<Posts> Posts { get; set; }
     }
 }

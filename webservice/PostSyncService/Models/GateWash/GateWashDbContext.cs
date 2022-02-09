@@ -23,10 +23,13 @@ namespace PostSyncService.Models.GateWash
         public virtual DbSet<Device> Device { get; set; }
         public virtual DbSet<DeviceTypes> DeviceTypes { get; set; }
         public virtual DbSet<Event> Event { get; set; }
+        public virtual DbSet<EventCollect> EventCollect { get; set; }
         public virtual DbSet<EventIncrease> EventIncrease { get; set; }
         public virtual DbSet<EventKind> EventKind { get; set; }
         public virtual DbSet<EventPayout> EventPayout { get; set; }
         public virtual DbSet<Functions> Functions { get; set; }
+        public virtual DbSet<PayEvent> PayEvent { get; set; }
+        public virtual DbSet<PaySession> PaySession { get; set; }
         public virtual DbSet<Posts> Posts { get; set; }
         public virtual DbSet<Regions> Regions { get; set; }
         public virtual DbSet<Sessions> Sessions { get; set; }
@@ -134,12 +137,48 @@ namespace PostSyncService.Models.GateWash
                     .HasConstraintName("FK_Event_Sessions");
             });
 
+            modelBuilder.Entity<EventCollect>(entity =>
+            {
+                entity.HasKey(e => e.IdpayEvent);
+
+                entity.Property(e => e.IdpayEvent)
+                    .HasColumnName("IDPayEvent")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.B100).HasColumnName("b100");
+
+                entity.Property(e => e.B1000).HasColumnName("b1000");
+
+                entity.Property(e => e.B200).HasColumnName("b200");
+
+                entity.Property(e => e.B2000).HasColumnName("b2000");
+
+                entity.Property(e => e.B50).HasColumnName("b50");
+
+                entity.Property(e => e.B500).HasColumnName("b500");
+
+                entity.Property(e => e.BoxB100).HasColumnName("box_b100");
+
+                entity.Property(e => e.BoxB50).HasColumnName("box_b50");
+
+                entity.Property(e => e.InboxB100).HasColumnName("inbox_b100");
+
+                entity.Property(e => e.InboxB50).HasColumnName("inbox_b50");
+
+                entity.Property(e => e.M10).HasColumnName("m10");
+
+                entity.HasOne(d => d.IdpayEventNavigation)
+                    .WithOne(p => p.EventCollect)
+                    .HasForeignKey<EventCollect>(d => d.IdpayEvent)
+                    .HasConstraintName("FK_EventCollect_PayEvent");
+            });
+
             modelBuilder.Entity<EventIncrease>(entity =>
             {
-                entity.HasKey(e => e.Idevent);
+                entity.HasKey(e => e.IdpayEvent);
 
-                entity.Property(e => e.Idevent)
-                    .HasColumnName("IDEvent")
+                entity.Property(e => e.IdpayEvent)
+                    .HasColumnName("IDPayEvent")
                     .ValueGeneratedNever();
 
                 entity.Property(e => e.Amount).HasColumnName("amount");
@@ -158,10 +197,10 @@ namespace PostSyncService.Models.GateWash
 
                 entity.Property(e => e.M10).HasColumnName("m10");
 
-                entity.HasOne(d => d.IdeventNavigation)
+                entity.HasOne(d => d.IdpayEventNavigation)
                     .WithOne(p => p.EventIncrease)
-                    .HasForeignKey<EventIncrease>(d => d.Idevent)
-                    .HasConstraintName("FK_EventIncrease_Event");
+                    .HasForeignKey<EventIncrease>(d => d.IdpayEvent)
+                    .HasConstraintName("FK_EventIncrease_PayEvent");
             });
 
             modelBuilder.Entity<EventKind>(entity =>
@@ -183,10 +222,10 @@ namespace PostSyncService.Models.GateWash
 
             modelBuilder.Entity<EventPayout>(entity =>
             {
-                entity.HasKey(e => e.Idevent);
+                entity.HasKey(e => e.IdpayEvent);
 
-                entity.Property(e => e.Idevent)
-                    .HasColumnName("IDEvent")
+                entity.Property(e => e.IdpayEvent)
+                    .HasColumnName("IDPayEvent")
                     .ValueGeneratedNever();
 
                 entity.Property(e => e.Amount).HasColumnName("amount");
@@ -199,10 +238,10 @@ namespace PostSyncService.Models.GateWash
 
                 entity.Property(e => e.StorageB50).HasColumnName("storage_b50");
 
-                entity.HasOne(d => d.IdeventNavigation)
+                entity.HasOne(d => d.IdpayEventNavigation)
                     .WithOne(p => p.EventPayout)
-                    .HasForeignKey<EventPayout>(d => d.Idevent)
-                    .HasConstraintName("FK_EventPayout_Event");
+                    .HasForeignKey<EventPayout>(d => d.IdpayEvent)
+                    .HasConstraintName("FK_EventPayout_PayEvent");
             });
 
             modelBuilder.Entity<Functions>(entity =>
@@ -218,6 +257,68 @@ namespace PostSyncService.Models.GateWash
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<PayEvent>(entity =>
+            {
+                entity.HasKey(e => e.IdpayEvent);
+
+                entity.Property(e => e.IdpayEvent).HasColumnName("IDPayEvent");
+
+                entity.Property(e => e.Dtime)
+                    .HasColumnName("DTime")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
+
+                entity.Property(e => e.IdeventKind).HasColumnName("IDEventKind");
+
+                entity.Property(e => e.IdeventOnPost).HasColumnName("IDEventOnPost");
+
+                entity.Property(e => e.IdpaySession).HasColumnName("IDPaySession");
+
+                entity.HasOne(d => d.IddeviceNavigation)
+                    .WithMany(p => p.PayEvent)
+                    .HasForeignKey(d => d.Iddevice)
+                    .HasConstraintName("FK_PayEvent_Device");
+
+                entity.HasOne(d => d.IdeventKindNavigation)
+                    .WithMany(p => p.PayEvent)
+                    .HasForeignKey(d => d.IdeventKind)
+                    .HasConstraintName("FK_PayEvent_EventKind");
+
+                entity.HasOne(d => d.IdpaySessionNavigation)
+                    .WithMany(p => p.PayEvent)
+                    .HasForeignKey(d => d.IdpaySession)
+                    .HasConstraintName("FK_PayEvent_PaySession");
+            });
+
+            modelBuilder.Entity<PaySession>(entity =>
+            {
+                entity.HasKey(e => e.IdpaySession);
+
+                entity.Property(e => e.IdpaySession).HasColumnName("IDPaySession");
+
+                entity.Property(e => e.Dtime)
+                    .HasColumnName("DTime")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
+
+                entity.Property(e => e.Idfunction).HasColumnName("IDFunction");
+
+                entity.Property(e => e.IdsessionOnPost).HasColumnName("IDSessionOnPost");
+
+                entity.HasOne(d => d.IddeviceNavigation)
+                    .WithMany(p => p.PaySession)
+                    .HasForeignKey(d => d.Iddevice)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_PaySession_Device");
+
+                entity.HasOne(d => d.IdfunctionNavigation)
+                    .WithMany(p => p.PaySession)
+                    .HasForeignKey(d => d.Idfunction)
+                    .HasConstraintName("FK_PaySession_Functions");
             });
 
             modelBuilder.Entity<Posts>(entity =>

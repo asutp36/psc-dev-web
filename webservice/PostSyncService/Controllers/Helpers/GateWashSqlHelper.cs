@@ -85,6 +85,11 @@ namespace PostSyncService.Controllers.Helpers
             return _model.Sessions.Where(s => s.Idcard == _model.Cards.Where(c => c.CardNum == cardNum).FirstOrDefault().Idcard && s.Uuid == uuid).FirstOrDefault() != null;
         }
 
+        public bool IsPaySessionExsists(string deviceCode, int idSessionOnPost)
+        {
+            return _model.PaySession.Include(s => s.IddeviceNavigation).Where(s => s.IddeviceNavigation.Code == deviceCode && s.IdsessionOnPost == idSessionOnPost).FirstOrDefault() != null;
+        }
+
         public async Task<int> WriteEventAsync(EventBindingModel evnt)
         {
             try
@@ -128,9 +133,9 @@ namespace PostSyncService.Controllers.Helpers
         {
             try
             {
-                Event e = new Event
+                PayEvent pe = new PayEvent
                 {
-                    Idsession = this.GetIdSession(eincr.cardNum, eincr.uuid),
+                    IdpaySession = this.GetIdPaySession(eincr.deviceCode, eincr.idSessionOnPost),
                     IdeventOnPost = eincr.idEventOnPost,
                     Iddevice = this.GetIdDevice(eincr.deviceCode),
                     IdeventKind = this.GetIdEventKind(eincr.eventKindCode),
@@ -148,13 +153,13 @@ namespace PostSyncService.Controllers.Helpers
                     B1000 = eincr.b1000,
                     B2000 = eincr.b2000
                 };
-                ei.IdeventNavigation = e;
+                ei.IdpayEventNavigation = pe;
 
                 await _model.EventIncrease.AddAsync(ei);
 
                 await _model.SaveChangesAsync();
 
-                return e.Idevent;
+                return pe.IdpayEvent;
             }
             catch (SqlException e)
             {
@@ -175,9 +180,9 @@ namespace PostSyncService.Controllers.Helpers
         {
             try
             {
-                Event e = new Event
+                PayEvent e = new PayEvent
                 {
-                    Idsession = this.GetIdSession(epayout.cardNum, epayout.uuid),
+                    IdpaySession = this.GetIdPaySession(epayout.deviceCode, epayout.idSessionOnPost),
                     IdeventOnPost = epayout.idEventOnPost,
                     Iddevice = this.GetIdDevice(epayout.deviceCode),
                     IdeventKind = this.GetIdEventKind(epayout.eventKindCode),
@@ -192,13 +197,13 @@ namespace PostSyncService.Controllers.Helpers
                     StorageB50 = epayout.storage_b50,
                     StorageB100 = epayout.storage_b100
                 };
-                ep.IdeventNavigation = e;
+                ep.IdpayEventNavigation = e;
 
                 await _model.EventPayout.AddAsync(ep);
 
                 await _model.SaveChangesAsync();
 
-                return e.Idevent;
+                return e.IdpayEvent;
             }
             catch (SqlException e)
             {
@@ -213,6 +218,94 @@ namespace PostSyncService.Controllers.Helpers
 
                 throw new Exception("db", e);
             }
+        }
+        public async Task<int> WriteEventCollectAsync(EventCollectBindingModel ecollect)
+        {
+            try
+            {
+                PayEvent e = new PayEvent
+                {
+                    IdpaySession = this.GetIdPaySession(ecollect.deviceCode, ecollect.idSessionOnPost),
+                    IdeventOnPost = ecollect.idEventOnPost,
+                    Iddevice = this.GetIdDevice(ecollect.deviceCode),
+                    IdeventKind = this.GetIdEventKind(ecollect.eventKindCode),
+                    Dtime = DateTime.Parse(ecollect.dtime)
+                };
+
+                EventCollect ec = new EventCollect
+                {
+                    Amount = ecollect.amount,
+                    M10 = ecollect.m10,
+                    B50 = ecollect.b50,
+                    B100 = ecollect.b100,
+                    B200 = ecollect.b200,
+                    B500 = ecollect.b500,
+                    B1000 = ecollect.b1000,
+                    B2000 = ecollect.b2000,
+                    BoxB50 = ecollect.box_b50,
+                    BoxB100 = ecollect.box_b100,
+                    InboxB50 = ecollect.inbox_b50,
+                    InboxB100 = ecollect.inbox_b100
+                };
+                ec.IdpayEventNavigation = e;
+
+                await _model.EventCollect.AddAsync(ec);
+
+                await _model.SaveChangesAsync();
+
+                return e.IdpayEvent;
+            }
+            catch (SqlException e)
+            {
+                throw new Exception("command", e);
+            }
+            catch (DbUpdateException e)
+            {
+                if (e.HResult == -2146232060) // проблема с внешними ключами
+                {
+                    throw new Exception("command", e);
+                }
+
+                throw new Exception("db", e);
+            }
+        }
+
+        public async Task<int> WritePaySessionAsync(PaySessionBindingModel psession)
+        {
+            try
+            {
+                PaySession ps = new PaySession()
+                {
+                    IdsessionOnPost = psession.idSessionOnPost,
+                    Idfunction = this.GetIdFunction(psession.functionCode),
+                    Dtime = DateTime.Parse(psession.dtime),
+                    Iddevice = this.GetIdDevice(psession.deviceCode)
+                };
+
+                await _model.PaySession.AddAsync(ps);
+
+                await _model.SaveChangesAsync();
+
+                return ps.IdpaySession;
+            }
+            catch (SqlException e)
+            {
+                throw new Exception("command", e);
+            }
+            catch (DbUpdateException e)
+            {
+                if (e.HResult == -2146232060) // проблема с внешними ключами
+                {
+                    throw new Exception("command", e);
+                }
+
+                throw new Exception("db", e);
+            }
+        }
+
+        public int GetIdPaySession(string deviceCode, int idSessionOnPost)
+        {
+            return _model.PaySession.Include(s => s.IddeviceNavigation).Where(s => s.IdsessionOnPost == idSessionOnPost && s.IddeviceNavigation.Code == deviceCode).FirstOrDefault().IdpaySession;
         }
     }
 }
