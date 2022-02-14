@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GateWashSyncService.Models.GateWash;
 
 namespace GateWashSyncService.Controllers
 {
@@ -15,9 +16,12 @@ namespace GateWashSyncService.Controllers
     public class EventsController : ControllerBase
     {
         private readonly ILogger<EventsController> _logger;
-        public EventsController(ILogger<EventsController> logger)
+        private readonly GateWashDbContext _model;
+
+        public EventsController(ILogger<EventsController> logger, GateWashDbContext model)
         {
             _logger = logger;
+            _model = model;
         }
 
         [HttpPost]
@@ -25,14 +29,23 @@ namespace GateWashSyncService.Controllers
         {
             try
             {
-                GateWashSqlHelper sqlHelper = new GateWashSqlHelper();
+                GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
 
                 if (!sqlHelper.IsSessionExsists(evnt.cardNum, evnt.uuid))
+                {
+                    _logger.LogError($"Не найдена сессия для карты {evnt.cardNum} с uuid = {evnt.uuid}");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найдена сессия для карты {evnt.cardNum} с uuid = {evnt.uuid}" });
+                }
                 if (!sqlHelper.IsDeviceExsists(evnt.deviceCode))
+                {
+                    _logger.LogError($"Не найден девайс {evnt.deviceCode}");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден девайс {evnt.deviceCode}" });
+                }
                 if (!sqlHelper.IsEventKindExsists(evnt.eventKindCode))
+                {
+                    _logger.LogError($"Не найден тип event {evnt.eventKindCode}");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден тип event {evnt.eventKindCode}" });
+                }
 
                 int id = await sqlHelper.WriteEventAsync(evnt);
 
@@ -46,7 +59,9 @@ namespace GateWashSyncService.Controllers
                     case "command":
                         _logger.LogError("Произошла ошибка при выполнении запроса к бд: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
                         return StatusCode(500, new Error() { errorCode = "command", errorMessage = "Ошибка при выполнении запроса к бд" });
-
+                    case "db":
+                        _logger.LogError("Произошла ошибка при обновлении бд: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
+                        return StatusCode(500, new Error() { errorCode = "command", errorMessage = "Ошибка при обновлении бд" });
                     default:
                         _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                         return StatusCode(500, new Error() { errorCode = "unexpexted", errorMessage = "Непредвиденное исключение, необходимо смотреть лог сервиса" });
@@ -59,21 +74,21 @@ namespace GateWashSyncService.Controllers
         {
             try
             {
-                GateWashSqlHelper sqlHelper = new GateWashSqlHelper();
+                GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
 
                 if (!sqlHelper.IsDeviceExsists(epayout.deviceCode))
                 {
-                    _logger.LogError($"Не найден девайс {epayout.deviceCode}" + Environment.NewLine);
+                    _logger.LogError($"Не найден девайс {epayout.deviceCode}");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден девайс {epayout.deviceCode}" });
                 }
                 if (!sqlHelper.IsEventKindExsists(epayout.eventKindCode))
                 {
-                    _logger.LogError($"Не найден тип события {epayout.eventKindCode}" + Environment.NewLine);
+                    _logger.LogError($"Не найден тип события {epayout.eventKindCode}");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден тип события {epayout.eventKindCode}" });
                 }
                 if (!sqlHelper.IsPaySessionExsists(epayout.deviceCode, epayout.idSessionOnPost))
                 {
-                    _logger.LogError($"Не найдена сессия на посту {epayout.deviceCode} с id={epayout.idSessionOnPost}" + Environment.NewLine);
+                    _logger.LogError($"Не найдена сессия на посту {epayout.deviceCode} с id={epayout.idSessionOnPost}");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найдена сессия на посту {epayout.deviceCode} с id={epayout.idSessionOnPost}" });
                 }
 
@@ -89,7 +104,9 @@ namespace GateWashSyncService.Controllers
                     case "command":
                         _logger.LogError("Произошла ошибка при выполнении запроса к бд: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
                         return StatusCode(500, new Error() { errorCode = "command", errorMessage = "Ошибка при выполнении запроса к бд" });
-
+                    case "db":
+                        _logger.LogError("Произошла ошибка при обновлении бд: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
+                        return StatusCode(500, new Error() { errorCode = "command", errorMessage = "Ошибка при обновлении бд" });
                     default:
                         _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                         return StatusCode(500, new Error() { errorCode = "unexpexted", errorMessage = "Непредвиденное исключение, необходимо смотреть лог сервиса" });
@@ -102,21 +119,21 @@ namespace GateWashSyncService.Controllers
         {
             try
             {
-                GateWashSqlHelper sqlHelper = new GateWashSqlHelper();
+                GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
 
                 if (!sqlHelper.IsDeviceExsists(eincr.deviceCode))
                 {
-                    _logger.LogError($"Не найден девайс {eincr.deviceCode}" + Environment.NewLine);
+                    _logger.LogError($"Не найден девайс {eincr.deviceCode}");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден девайс {eincr.deviceCode}" });
                 }
                 if (!sqlHelper.IsEventKindExsists(eincr.eventKindCode))
                 {
-                    _logger.LogError($"Не найден тип события {eincr.eventKindCode}" + Environment.NewLine);
+                    _logger.LogError($"Не найден тип события {eincr.eventKindCode}");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден тип события {eincr.eventKindCode}" });
                 }
                 if (!sqlHelper.IsPaySessionExsists(eincr.deviceCode, eincr.idSessionOnPost))
                 {
-                    _logger.LogError($"Не найдена сессия на посту {eincr.deviceCode} с id={eincr.idSessionOnPost}" + Environment.NewLine);
+                    _logger.LogError($"Не найдена сессия на посту {eincr.deviceCode} с id={eincr.idSessionOnPost}");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найдена сессия на посту {eincr.deviceCode} с id={eincr.idSessionOnPost}" });
                 }
 
@@ -132,50 +149,9 @@ namespace GateWashSyncService.Controllers
                     case "command":
                         _logger.LogError("Произошла ошибка при выполнении запроса к бд: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
                         return StatusCode(500, new Error() { errorCode = "command", errorMessage = "Ошибка при выполнении запроса к бд" });
-
-                    default:
-                        _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                        return StatusCode(500, new Error() { errorCode = "unexpexted", errorMessage = "Непредвиденное исключение, необходимо смотреть лог сервиса" });
-                }
-            }
-        }
-
-        [HttpPost("collect")]
-        public async Task<IActionResult> PostEventCollect(EventCollectBindingModel ecollect)
-        {
-            try
-            {
-                GateWashSqlHelper sqlHelper = new GateWashSqlHelper();
-
-                if (!sqlHelper.IsDeviceExsists(ecollect.deviceCode))
-                {
-                    _logger.LogError($"Не найден девайс {ecollect.deviceCode}" + Environment.NewLine);
-                    return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден девайс {ecollect.deviceCode}" });
-                }
-                if (!sqlHelper.IsEventKindExsists(ecollect.eventKindCode))
-                {
-                    _logger.LogError($"Не найден тип события {ecollect.eventKindCode}" + Environment.NewLine);
-                    return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден тип события {ecollect.eventKindCode}" });
-                }
-                if (!sqlHelper.IsPaySessionExsists(ecollect.deviceCode, ecollect.idSessionOnPost))
-                {
-                    _logger.LogError($"Не найдена сессия на посту {ecollect.deviceCode} с id={ecollect.idSessionOnPost}" + Environment.NewLine);
-                    return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найдена сессия на посту {ecollect.deviceCode} с id={ecollect.idSessionOnPost}" });
-                }
-
-                int id = await sqlHelper.WriteEventCollectAsync(ecollect);
-
-                Response.Headers.Add("ServerID", id.ToString());
-                return Created(id.ToString(), null);
-            }
-            catch (Exception e)
-            {
-                switch (e.Message)
-                {
-                    case "command":
-                        _logger.LogError("Произошла ошибка при выполнении запроса к бд: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
-                        return StatusCode(500, new Error() { errorCode = "command", errorMessage = "Ошибка при выполнении запроса к бд" });
-
+                    case "db":
+                        _logger.LogError("Произошла ошибка при обновлении бд: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
+                        return StatusCode(500, new Error() { errorCode = "command", errorMessage = "Ошибка при обновлении бд" });
                     default:
                         _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                         return StatusCode(500, new Error() { errorCode = "unexpexted", errorMessage = "Непредвиденное исключение, необходимо смотреть лог сервиса" });

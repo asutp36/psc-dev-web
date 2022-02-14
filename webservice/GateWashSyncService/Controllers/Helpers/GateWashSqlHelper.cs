@@ -127,6 +127,15 @@ namespace GateWashSyncService.Controllers.Helpers
             {
                 throw new Exception("command", e);
             }
+            catch(DbUpdateException e)
+            {
+                if (e.HResult == -2146232060) // проблема с внешними ключами
+                {
+                    throw new Exception("command", e);
+                }
+
+                throw new Exception("db", e);
+            }
         }
 
         public int GetIdSession(string cardNum, string uuid)
@@ -209,8 +218,10 @@ namespace GateWashSyncService.Controllers.Helpers
                     Amount = epayout.amount,
                     B50 = epayout.b50,
                     B100 = epayout.b100,
-                    StorageB50 = epayout.storage_b50,
-                    StorageB100 = epayout.storage_b100
+                    Inbox1B50 = epayout.inbox_1_b50,
+                    Inbox2B50 = epayout.inbox_2_b50,
+                    Inbox3B100 = epayout.inbox_3_b100,
+                    Inbox4B100 = epayout.inbox_4_b100
                 };
                 ep.IdpayEventNavigation = e;
 
@@ -234,6 +245,7 @@ namespace GateWashSyncService.Controllers.Helpers
                 throw new Exception("db", e);
             }
         }
+
         public async Task<int> WriteEventCollectAsync(EventCollectBindingModel ecollect)
         {
             try
