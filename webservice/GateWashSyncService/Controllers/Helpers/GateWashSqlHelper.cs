@@ -31,6 +31,10 @@ namespace GateWashSyncService.Controllers.Helpers
             {
                 throw new Exception("command", e);
             }
+            catch (DbUpdateException e)
+            {
+                throw new Exception("db", e);
+            }
         }
 
         public bool IsCardExsists(string id)

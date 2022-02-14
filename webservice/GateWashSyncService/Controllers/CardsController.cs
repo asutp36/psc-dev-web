@@ -16,9 +16,11 @@ namespace GateWashSyncService.Controllers
     public class CardsController : ControllerBase
     {
         private readonly ILogger<CardsController> _logger;
-        public CardsController(ILogger<CardsController> logger)
+        private readonly GateWashDbContext _model;
+        public CardsController(ILogger<CardsController> logger, GateWashDbContext model)
         {
             _logger = logger;
+            _model = model;
         }
 
         [HttpPost]
@@ -26,10 +28,11 @@ namespace GateWashSyncService.Controllers
         {
             try
             {
-                GateWashSqlHelper sqlHelper = new GateWashSqlHelper();
+                GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
 
                 if (sqlHelper.IsCardExsists(card.cardNum))
                 {
+                    _logger.LogError($"Карта {card.cardNum} уже существует");
                     return Conflict(new Error() { errorCode = "badvalue", errorMessage = "Карта с таким номером уже существует" });
                 }
 
@@ -45,7 +48,9 @@ namespace GateWashSyncService.Controllers
                     case "command":
                         _logger.LogError("Произошла ошибка при выполнении запроса к бд: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
                         return StatusCode(500, new Error() { errorCode = "command", errorMessage = "Ошибка при выполнении запроса к бд" });
-
+                    case "db":
+                        _logger.LogError("Произошла ошибка при обновлении бд: " + e.InnerException.Message + Environment.NewLine + e.InnerException.StackTrace + Environment.NewLine);
+                        return StatusCode(500, new Error() { errorCode = "command", errorMessage = "Ошибка при обновлении бд" });
                     default:
                         _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                         return StatusCode(500, new Error() { errorCode = "unexpexted", errorMessage = "Непредвиденное исключение, необходимо смотреть лог сервиса" });
