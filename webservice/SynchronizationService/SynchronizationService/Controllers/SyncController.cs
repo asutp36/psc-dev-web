@@ -734,7 +734,7 @@ namespace SynchronizationService.Controllers
                             INSERT INTO RobotSession(IDPost, DTime, IDRobotProgram, IDSessionPost)
                             select
                             p.IDPost
-                            , '{data.DTime.ToString("yyyy-MM-dd HH:mm:ss")}'
+                            , '{data.DTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}'
                             , (select IDRobotProgram from RobotProgram p where p.Code = '{data.ProgramCode}')
                             , {data.IDSessionPost}
                             from
@@ -829,8 +829,9 @@ namespace SynchronizationService.Controllers
                         var id = command.ExecuteScalar();
                         if (id == DBNull.Value)
                         {
-                            Logger.Log.Debug("RobotEventIncrease: Не найден IDPost по DeviceCode " + data.DeviceCode + Environment.NewLine);
-                            return Request.CreateResponse(HttpStatusCode.NotAcceptable);
+                            string err_message = "Не найден IDPost по DeviceCode " + data.DeviceCode;
+                            Logger.Log.Debug("RobotEventIncrease: " + err_message + Environment.NewLine);
+                            return Request.CreateResponse(HttpStatusCode.NotFound, err_message);
                         }
                         Int32 IDPost = Convert.ToInt32(id.ToString());
                         //Logger.Log.Debug("RobotEventIncrease: IDPost=" + IDPost.ToString() + Environment.NewLine);
@@ -852,7 +853,7 @@ namespace SynchronizationService.Controllers
                         if (id == DBNull.Value)
                         {
                             Logger.Log.Debug("RobotEventIncrease: Не найден IDEventKind по EventKindCode " + data.EventKindCode + Environment.NewLine);
-                            return Request.CreateResponse(HttpStatusCode.NotAcceptable);
+                            return Request.CreateResponse(HttpStatusCode.NotFound);
                         }
                         Int32 IDEventKind = Convert.ToInt32(id.ToString());
                         //Logger.Log.Debug("RobotEventIncrease: IDEventKind=" + IDEventKind.ToString() + Environment.NewLine);
@@ -860,14 +861,14 @@ namespace SynchronizationService.Controllers
                         // Сохрнить Event
                         command.CommandText = $@"
                             insert into RobotEvent(IDRobotSession, IDPost, IDEventKind, DTime, IDEventPost)
-                            values({IDRobotSession}, {IDPost}, {IDEventKind}, '{data.DTime.ToString("yyyy-MM-dd HH:mm:ss")}', {data.IDEventPost});
+                            values({IDRobotSession}, {IDPost}, {IDEventKind}, '{data.DTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', {data.IDEventPost});
                             SELECT IDENT_CURRENT('RobotEvent');
                         ";
                         //Logger.Log.Debug("Command is: " + command.CommandText);
                         id = command.ExecuteScalar();
                         if (id == DBNull.Value)
                         {
-                            Logger.Log.Error("RobotEventIncrease: Данные Event не добавлены" + Environment.NewLine);
+                            Logger.Log.Error("RobotEventIncrease: Данные RobotEvent не добавлены" + Environment.NewLine);
                             return Request.CreateResponse(HttpStatusCode.ServiceUnavailable);
                         }
                         Int32 serverID = Convert.ToInt32(id.ToString());
@@ -881,7 +882,7 @@ namespace SynchronizationService.Controllers
                         //Logger.Log.Debug("Command is: " + command.CommandText);
                         if (command.ExecuteNonQuery() < 1)
                         {
-                            Logger.Log.Error("RobotEventIncrease: Данные не добавлены" + Environment.NewLine);
+                            Logger.Log.Error("RobotEventIncrease: Данные RobotEventIncrease не добавлены" + Environment.NewLine);
                             return Request.CreateResponse(HttpStatusCode.ServiceUnavailable);
                         }
 
@@ -967,7 +968,7 @@ namespace SynchronizationService.Controllers
                         if (id == DBNull.Value)
                         {
                             Logger.Log.Debug("RobotEventPayout: Не найден IDPost по DeviceCode " + data.DeviceCode + Environment.NewLine);
-                            return Request.CreateResponse(HttpStatusCode.NotAcceptable);
+                            return Request.CreateResponse(HttpStatusCode.NotFound);
                         }
                         Int32 IDPost = Convert.ToInt32(id.ToString());
                         //Logger.Log.Debug("RobotEventPayout: IDPost=" + IDPost.ToString() + Environment.NewLine);
@@ -989,7 +990,7 @@ namespace SynchronizationService.Controllers
                         if (id == DBNull.Value)
                         {
                             Logger.Log.Debug("RobotEventPayout: Не найден IDEventKind по EventKindCode " + data.EventKindCode + Environment.NewLine);
-                            return Request.CreateResponse(HttpStatusCode.NotAcceptable);
+                            return Request.CreateResponse(HttpStatusCode.NotFound);
                         }
                         Int32 IDEventKind = Convert.ToInt32(id.ToString());
                         //Logger.Log.Debug("RobotEventPayout: IDEventKind=" + IDEventKind.ToString() + Environment.NewLine);
@@ -997,14 +998,14 @@ namespace SynchronizationService.Controllers
                         // Сохранить Event
                         command.CommandText = $@"
                             insert into RobotEvent(IDRobotSession, IDPost, IDEventKind, DTime, IDEventPost)
-                            values({IDRobotSession}, {IDPost}, {IDEventKind}, '{data.DTime.ToString("yyyy-MM-dd HH:mm:ss")}', {data.IDEventPost});
+                            values({IDRobotSession}, {IDPost}, {IDEventKind}, '{data.DTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}', {data.IDEventPost});
                             SELECT IDENT_CURRENT('RobotEvent');
                         ";
                         //Logger.Log.Debug("Command is: " + command.CommandText);
                         id = command.ExecuteScalar();
                         if (id == DBNull.Value)
                         {
-                            Logger.Log.Error("RobotEventPayout: Данные Event не добавлены" + Environment.NewLine);
+                            Logger.Log.Error("RobotEventPayout: Данные RobotEvent не добавлены" + Environment.NewLine);
                             return Request.CreateResponse(HttpStatusCode.ServiceUnavailable);
                         }
                         Int32 serverID = Convert.ToInt32(id.ToString());
@@ -1018,7 +1019,7 @@ namespace SynchronizationService.Controllers
                         //Logger.Log.Debug("Command is: " + command.CommandText);
                         if (command.ExecuteNonQuery() < 1)
                         {
-                            Logger.Log.Error("RobotEventPayout: Данные не добавлены" + Environment.NewLine);
+                            Logger.Log.Error("RobotEventPayout: Данные RobotEventPayout не добавлены" + Environment.NewLine);
                             return Request.CreateResponse(HttpStatusCode.ServiceUnavailable);
                         }
 
