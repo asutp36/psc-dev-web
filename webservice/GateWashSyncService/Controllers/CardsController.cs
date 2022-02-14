@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace GateWashSyncService.Controllers
 {
@@ -29,6 +30,12 @@ namespace GateWashSyncService.Controllers
             try
             {
                 GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
+
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError($"Моедль не прошла валидацию: " + JsonConvert.SerializeObject(card));
+                    return BadRequest(new Error { errorCode = "badvalue", errorMessage = "Нет номера карты" });
+                }
 
                 if (sqlHelper.IsCardExsists(card.cardNum))
                 {
