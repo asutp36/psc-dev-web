@@ -12,9 +12,9 @@ namespace GateWashSyncService.Controllers.Helpers
     public class GateWashSqlHelper
     {
         private readonly GateWashDbContext _model;
-        public GateWashSqlHelper()
+        public GateWashSqlHelper(GateWashDbContext model)
         {
-            _model = new GateWashDbContext();
+            _model = model;
         }
 
         public async Task<int> WriteCardAsync(CardBindingModel card)
@@ -45,19 +45,30 @@ namespace GateWashSyncService.Controllers.Helpers
 
         public async Task<int> WriteSessionAsync(SessionBindingModel session)
         {
-            Sessions s = new Sessions()
+            try
             {
-                IdsessoinOnWash = session.idSession,
-                Idfunction = this.GetIdFunction(session.functionCode),
-                Idcard = this.GetIdCard(session.cardNum),
-                Dtime = DateTime.Parse(session.dtime),
-                Uuid = session.uuid
-            };
+                Sessions s = new Sessions()
+                {
+                    IdsessoinOnWash = session.idSession,
+                    Idfunction = this.GetIdFunction(session.functionCode),
+                    Idcard = this.GetIdCard(session.cardNum),
+                    Dtime = DateTime.Parse(session.dtime),
+                    Uuid = session.uuid
+                };
 
-            await _model.Sessions.AddAsync(s);
-            await _model.SaveChangesAsync();
+                await _model.Sessions.AddAsync(s);
+                await _model.SaveChangesAsync();
 
-            return s.Idsession;
+                return s.Idsession;
+            }
+            catch (SqlException e)
+            {
+                throw new Exception("command", e);
+            }
+            catch (DbUpdateException e)
+            {
+                throw new Exception("db", e);
+            }
         }
 
         public int GetIdCard(string cardNum)
