@@ -246,41 +246,34 @@ namespace GateWashSyncService.Controllers.Helpers
             }
         }
 
-        public async Task<int> WriteEventCollectAsync(EventCollectBindingModel ecollect)
+        public async Task<int> WriteCollectAsync(CollectBindingModel collect)
         {
             try
             {
-                PayEvent e = new PayEvent
+                Collect c = new Collect
                 {
-                    IdpaySession = this.GetIdPaySession(ecollect.deviceCode, ecollect.idSessionOnPost),
-                    IdeventOnPost = ecollect.idEventOnPost,
-                    Iddevice = this.GetIdDevice(ecollect.deviceCode),
-                    IdeventKind = this.GetIdEventKind(ecollect.eventKindCode),
-                    Dtime = DateTime.Parse(ecollect.dtime)
+                    Iddevice = this.GetIdDevice(collect.deviceCode),
+                    IdcollectOnPost = collect.idCollectOnPost,
+                    Dtime = DateTime.Parse(collect.dtime),
+                    Amount = collect.amount,
+                    M10 = collect.m10,
+                    B50 = collect.b50,
+                    B100 = collect.b100,
+                    B200 = collect.b200,
+                    B500 = collect.b500,
+                    B1000 = collect.b1000,
+                    B2000 = collect.b2000,
+                    BoxB50 = collect.box_b50,
+                    BoxB100 = collect.box_b100,
+                    InboxB50 = collect.inbox_b50,
+                    InboxB100 = collect.inbox_b100
                 };
 
-                EventCollect ec = new EventCollect
-                {
-                    Amount = ecollect.amount,
-                    M10 = ecollect.m10,
-                    B50 = ecollect.b50,
-                    B100 = ecollect.b100,
-                    B200 = ecollect.b200,
-                    B500 = ecollect.b500,
-                    B1000 = ecollect.b1000,
-                    B2000 = ecollect.b2000,
-                    BoxB50 = ecollect.box_b50,
-                    BoxB100 = ecollect.box_b100,
-                    InboxB50 = ecollect.inbox_b50,
-                    InboxB100 = ecollect.inbox_b100
-                };
-                ec.IdpayEventNavigation = e;
-
-                await _model.EventCollect.AddAsync(ec);
+                await _model.Collect.AddAsync(c);
 
                 await _model.SaveChangesAsync();
 
-                return e.IdpayEvent;
+                return c.Idcollect;
             }
             catch (SqlException e)
             {
