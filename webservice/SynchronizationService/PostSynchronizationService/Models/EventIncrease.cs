@@ -18,5 +18,6 @@ namespace PostSynchronizationService.Models
         public int? IdpostSession { get; set; }
 
         public virtual Event IdeventNavigation { get; set; }
+        public virtual PostSession IdpostSessionNavigation { get; set; }
     }
 }

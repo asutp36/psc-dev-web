@@ -26,6 +26,7 @@ namespace PostSynchronizationService.Models
         public virtual DbSet<EventIncrease> EventIncreases { get; set; }
         public virtual DbSet<EventKind> EventKinds { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
+        public virtual DbSet<PostSession> PostSessions { get; set; }
         public virtual DbSet<Wash> Washes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -204,6 +205,12 @@ namespace PostSynchronizationService.Models
                     .WithOne(p => p.EventIncrease)
                     .HasForeignKey<EventIncrease>(d => d.Idevent)
                     .HasConstraintName("FK_EventCash_Event");
+
+                entity.HasOne(d => d.IdpostSessionNavigation)
+                    .WithMany(p => p.EventIncreases)
+                    .HasForeignKey(d => d.IdpostSession)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_EventIncrease_PostSession");
             });
 
             modelBuilder.Entity<EventKind>(entity =>
@@ -253,6 +260,34 @@ namespace PostSynchronizationService.Models
                     .WithMany(p => p.Posts)
                     .HasForeignKey(d => d.Idwash)
                     .HasConstraintName("FK_Posts_Wash");
+            });
+
+            modelBuilder.Entity<PostSession>(entity =>
+            {
+                entity.HasKey(e => e.IdpostSession);
+
+                entity.ToTable("PostSession");
+
+                entity.Property(e => e.IdpostSession).HasColumnName("IDPostSession");
+
+                entity.Property(e => e.FiscalError).HasMaxLength(150);
+
+                entity.Property(e => e.Idpost).HasColumnName("IDPost");
+
+                entity.Property(e => e.IdsessionOnPost).HasColumnName("IDSessionOnPost");
+
+                entity.Property(e => e.Qr)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("QR");
+
+                entity.Property(e => e.StartDtime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("StartDTime");
+
+                entity.Property(e => e.StopDtime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("StopDTime");
             });
 
             modelBuilder.Entity<Wash>(entity =>
