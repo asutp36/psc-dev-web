@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GateWashSyncService.Models.GateWash;
+using Microsoft.EntityFrameworkCore;
 
 namespace GateWashSyncService
 {
@@ -49,6 +51,9 @@ namespace GateWashSyncService
 
                 c.EnableAnnotations();
             });
+
+            services.AddDbContextPool<GateWashDbContext>(
+                options => options.UseSqlServer(Configuration.GetConnectionString("GateWash")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

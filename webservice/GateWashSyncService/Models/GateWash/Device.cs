@@ -11,6 +11,7 @@ namespace GateWashSyncService.Models.GateWash
     {
         public Device()
         {
+            Collect = new HashSet<Collect>();
             Event = new HashSet<Event>();
             PayEvent = new HashSet<PayEvent>();
             PaySession = new HashSet<PaySession>();
@@ -25,6 +26,7 @@ namespace GateWashSyncService.Models.GateWash
         public string IpAddress { get; set; }
 
         public virtual DeviceTypes IddeviceTypeNavigation { get; set; }
+        public virtual ICollection<Collect> Collect { get; set; }
         public virtual ICollection<Event> Event { get; set; }
         public virtual ICollection<PayEvent> PayEvent { get; set; }
         public virtual ICollection<PaySession> PaySession { get; set; }

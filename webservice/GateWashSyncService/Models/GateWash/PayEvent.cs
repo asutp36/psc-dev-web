@@ -19,7 +19,6 @@ namespace GateWashSyncService.Models.GateWash
         public virtual Device IddeviceNavigation { get; set; }
         public virtual EventKind IdeventKindNavigation { get; set; }
         public virtual PaySession IdpaySessionNavigation { get; set; }
-        public virtual EventCollect EventCollect { get; set; }
         public virtual EventIncrease EventIncrease { get; set; }
         public virtual EventPayout EventPayout { get; set; }
     }

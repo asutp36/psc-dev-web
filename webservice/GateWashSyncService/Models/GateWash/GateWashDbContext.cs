@@ -20,10 +20,10 @@ namespace GateWashSyncService.Models.GateWash
         }
 
         public virtual DbSet<Cards> Cards { get; set; }
+        public virtual DbSet<Collect> Collect { get; set; }
         public virtual DbSet<Device> Device { get; set; }
         public virtual DbSet<DeviceTypes> DeviceTypes { get; set; }
         public virtual DbSet<Event> Event { get; set; }
-        public virtual DbSet<EventCollect> EventCollect { get; set; }
         public virtual DbSet<EventIncrease> EventIncrease { get; set; }
         public virtual DbSet<EventKind> EventKind { get; set; }
         public virtual DbSet<EventPayout> EventPayout { get; set; }
@@ -41,7 +41,6 @@ namespace GateWashSyncService.Models.GateWash
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=GateWash;Trusted_Connection=True;");
-                //optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Initial Catalog=GateWash;User Id=sa; Password=ora4paSS");
             }
         }
 
@@ -57,6 +56,49 @@ namespace GateWashSyncService.Models.GateWash
                     .IsRequired()
                     .HasMaxLength(8)
                     .IsFixedLength();
+            });
+
+            modelBuilder.Entity<Collect>(entity =>
+            {
+                entity.HasKey(e => e.Idcollect)
+                    .HasName("PK_EventCollect_1");
+
+                entity.Property(e => e.Idcollect).HasColumnName("IDCollect");
+
+                entity.Property(e => e.B100).HasColumnName("b100");
+
+                entity.Property(e => e.B1000).HasColumnName("b1000");
+
+                entity.Property(e => e.B200).HasColumnName("b200");
+
+                entity.Property(e => e.B2000).HasColumnName("b2000");
+
+                entity.Property(e => e.B50).HasColumnName("b50");
+
+                entity.Property(e => e.B500).HasColumnName("b500");
+
+                entity.Property(e => e.BoxB100).HasColumnName("box_b100");
+
+                entity.Property(e => e.BoxB50).HasColumnName("box_b50");
+
+                entity.Property(e => e.Dtime)
+                    .HasColumnName("DTime")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IdcollectOnPost).HasColumnName("IDCollectOnPost");
+
+                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
+
+                entity.Property(e => e.InboxB100).HasColumnName("inbox_b100");
+
+                entity.Property(e => e.InboxB50).HasColumnName("inbox_b50");
+
+                entity.Property(e => e.M10).HasColumnName("m10");
+
+                entity.HasOne(d => d.IddeviceNavigation)
+                    .WithMany(p => p.Collect)
+                    .HasForeignKey(d => d.Iddevice)
+                    .HasConstraintName("FK_Collect_Device");
             });
 
             modelBuilder.Entity<Device>(entity =>
@@ -137,42 +179,6 @@ namespace GateWashSyncService.Models.GateWash
                     .HasConstraintName("FK_Event_Sessions");
             });
 
-            modelBuilder.Entity<EventCollect>(entity =>
-            {
-                entity.HasKey(e => e.IdpayEvent);
-
-                entity.Property(e => e.IdpayEvent)
-                    .HasColumnName("IDPayEvent")
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.B100).HasColumnName("b100");
-
-                entity.Property(e => e.B1000).HasColumnName("b1000");
-
-                entity.Property(e => e.B200).HasColumnName("b200");
-
-                entity.Property(e => e.B2000).HasColumnName("b2000");
-
-                entity.Property(e => e.B50).HasColumnName("b50");
-
-                entity.Property(e => e.B500).HasColumnName("b500");
-
-                entity.Property(e => e.BoxB100).HasColumnName("box_b100");
-
-                entity.Property(e => e.BoxB50).HasColumnName("box_b50");
-
-                entity.Property(e => e.InboxB100).HasColumnName("inbox_b100");
-
-                entity.Property(e => e.InboxB50).HasColumnName("inbox_b50");
-
-                entity.Property(e => e.M10).HasColumnName("m10");
-
-                entity.HasOne(d => d.IdpayEventNavigation)
-                    .WithOne(p => p.EventCollect)
-                    .HasForeignKey<EventCollect>(d => d.IdpayEvent)
-                    .HasConstraintName("FK_EventCollect_PayEvent");
-            });
-
             modelBuilder.Entity<EventIncrease>(entity =>
             {
                 entity.HasKey(e => e.IdpayEvent);
@@ -234,9 +240,13 @@ namespace GateWashSyncService.Models.GateWash
 
                 entity.Property(e => e.B50).HasColumnName("b50");
 
-                entity.Property(e => e.StorageB100).HasColumnName("storage_b100");
+                entity.Property(e => e.Inbox1B50).HasColumnName("inbox_1_b50");
 
-                entity.Property(e => e.StorageB50).HasColumnName("storage_b50");
+                entity.Property(e => e.Inbox2B50).HasColumnName("inbox_2_b50");
+
+                entity.Property(e => e.Inbox3B100).HasColumnName("inbox_3_b100");
+
+                entity.Property(e => e.Inbox4B100).HasColumnName("inbox_4_b100");
 
                 entity.HasOne(d => d.IdpayEventNavigation)
                     .WithOne(p => p.EventPayout)
