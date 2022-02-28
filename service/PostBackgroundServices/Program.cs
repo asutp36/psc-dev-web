@@ -39,7 +39,7 @@ namespace PostBackgroundServices
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddHostedService<Worker>();
+                    services.AddHostedService<MobileAppWasteSender>();
                 })
                 .ConfigureLogging(logging =>
                 {
