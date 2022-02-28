@@ -1,8 +1,11 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Web;
+using PostBackgroundServices.Models.WashCompany;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +43,13 @@ namespace PostBackgroundServices
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<MobileAppWasteSender>();
+
+                    var config = new ConfigurationBuilder()
+                        .AddJsonFile("appsettings.json")
+                        .Build();
+
+                    services.AddDbContextPool<WashCompanyContext>(
+                        options => options.UseSqlServer(config.GetConnectionString("WashCompany")));
                 })
                 .ConfigureLogging(logging =>
                 {
