@@ -11,5 +11,6 @@ namespace GateWashSyncService.Controllers.BindingModels
         public string dtime { get; set; }
         public string functionCode { get; set; }
         public string deviceCode { get; set; }
+        public int programCost { get; set; }
     }
 }

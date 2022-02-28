@@ -299,7 +299,8 @@ namespace GateWashSyncService.Controllers.Helpers
                     IdsessionOnPost = psession.idSessionOnPost,
                     Idfunction = this.GetIdFunction(psession.functionCode),
                     Dtime = DateTime.Parse(psession.dtime),
-                    Iddevice = this.GetIdDevice(psession.deviceCode)
+                    Iddevice = this.GetIdDevice(psession.deviceCode),
+                    ProgramCost = psession.programCost
                 };
 
                 await _model.PaySession.AddAsync(ps);

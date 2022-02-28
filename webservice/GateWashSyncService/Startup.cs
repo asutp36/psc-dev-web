@@ -52,7 +52,7 @@ namespace GateWashSyncService
                 c.EnableAnnotations();
             });
 
-            services.AddDbContextPool<GateWashDbContext>(
+            services.AddDbContext<GateWashDbContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("GateWash")));
         }
 
