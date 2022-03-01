@@ -12,7 +12,7 @@ namespace PostBackgroundServices.Models.WashCompany
         public int Idpost { get; set; }
         public DateTime Dtime { get; set; }
         public int Amount { get; set; }
-        public string StatusCode { get; set; }
+        public int? StatusCode { get; set; }
         public string ResultMessage { get; set; }
 
         public virtual Post IdpostNavigation { get; set; }

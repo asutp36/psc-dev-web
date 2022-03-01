@@ -100,8 +100,6 @@ namespace PostBackgroundServices.Models.WashCompany
 
                 entity.Property(e => e.ResultMessage).HasMaxLength(80);
 
-                entity.Property(e => e.StatusCode).HasMaxLength(15);
-
                 entity.HasOne(d => d.IdpostNavigation)
                     .WithMany(p => p.MobileSendings)
                     .HasForeignKey(d => d.Idpost)

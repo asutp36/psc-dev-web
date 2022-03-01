@@ -42,7 +42,7 @@ namespace PostBackgroundServices
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddHostedService<MobileAppWasteSender>();
+                    services.AddHostedService<MobileAppWasteSenderService>();
 
                     var config = new ConfigurationBuilder()
                         .AddJsonFile("appsettings.json")
@@ -50,6 +50,8 @@ namespace PostBackgroundServices
 
                     services.AddDbContextPool<WashCompanyContext>(
                         options => options.UseSqlServer(config.GetConnectionString("WashCompany")));
+
+                    services.AddHttpClient();
                 })
                 .ConfigureLogging(logging =>
                 {
