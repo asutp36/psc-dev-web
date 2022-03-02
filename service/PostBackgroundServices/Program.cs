@@ -3,12 +3,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using NLog;
 using NLog.Web;
+using PostBackgroundServices.Helpers;
 using PostBackgroundServices.Models.WashCompany;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace PostBackgroundServices
@@ -27,6 +30,8 @@ namespace PostBackgroundServices
             }
             catch (Exception ex)
             {
+                Notification.SendCritical(ex);
+
                 //NLog: catch setup errors
                 logger.Error(ex, "Stopped program because of exception");
                 throw;
@@ -40,6 +45,7 @@ namespace PostBackgroundServices
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseWindowsService()
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<MobileAppWasteSenderService>();

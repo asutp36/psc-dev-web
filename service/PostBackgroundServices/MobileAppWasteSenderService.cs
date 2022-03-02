@@ -36,47 +36,61 @@ namespace PostBackgroundServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                List<MobileSending> mobileSendings = SqlHelper.GetUnsentWastes(_context);
-                if (mobileSendings.Count > 0) 
+                _logger.LogDebug("");
+                while (!stoppingToken.IsCancellationRequested)
                 {
-                    foreach(MobileSending ms in mobileSendings)
+                    List<MobileSending> mobileSendings = SqlHelper.GetUnsentWastes(_context);
+                    if (mobileSendings.Count > 0)
                     {
-                        try
+                        foreach (MobileSending ms in mobileSendings)
                         {
-                            using var response = await SendWaste(ms);
+                            try
+                            {
+                                using var response = await SendWaste(ms);
 
-                            ms.StatusCode = (int)response.StatusCode;
-                            ms.ResultMessage = await response.Content.ReadAsStringAsync(stoppingToken);
-                        }
-                        catch(HttpRequestException e)
-                        {
-                            _logger.LogError(e.Message + Environment.NewLine);
-                            ms.StatusCode = (int)e.StatusCode;
-                            ms.ResultMessage = e.Message;
-                        }
-                        catch(Exception e)
-                        {
-                            _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                        }
+                                ms.StatusCode = (int)response.StatusCode;
+                                ms.ResultMessage = await response.Content.ReadAsStringAsync(stoppingToken);
+                            }
+                            catch (HttpRequestException e)
+                            {
+                                _logger.LogError(e.Message + Environment.NewLine);
+                                ms.StatusCode = (int)e.StatusCode;
+                                ms.ResultMessage = e.Message;
+                            }
+                            catch (Exception e)
+                            {
+                                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                            }
+                            finally
+                            {
+                                _logger.LogDebug("Отправлена запись id=" + ms.IdmobileSending);
+                            }
 
-                        try
-                        {
-                            await SqlHelper.UpdateWaste(_context, ms);
-                        }
-                        catch (DbUpdateException e)
-                        {
-                            _logger.LogError("Ошибка при обновлении бд: " + e.Message + Environment.NewLine + e.InnerException.Message + Environment.NewLine);
-                        }
-                        catch (SqlException e)
-                        {
-                            _logger.LogError("Ошибка при воплнении запроса к бд: " + e.Message + Environment.NewLine + e.InnerException.Message + Environment.NewLine);
+                            try
+                            {
+                                await SqlHelper.UpdateWaste(_context, ms);
+                                _logger.LogDebug("Обновлена запись id=" + ms.IdmobileSending + Environment.NewLine);
+                            }
+                            catch (DbUpdateException e)
+                            {
+                                _logger.LogError("Ошибка при обновлении бд: " + e.Message + Environment.NewLine + e.InnerException.Message + Environment.NewLine);
+                            }
+                            catch (SqlException e)
+                            {
+                                _logger.LogError("Ошибка при выполнении запроса к бд: " + e.Message + Environment.NewLine + e.InnerException.Message + Environment.NewLine);
+                            }
                         }
                     }
-                }
 
-                await Task.Delay(1000, stoppingToken);
+                    await Task.Delay(1000, stoppingToken);
+                }
+            }
+            catch(Exception e)
+            {
+                Notification.SendCritical(e);
+                _logger.LogCritical("Критическая ошибка. " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
             }
         }
 
