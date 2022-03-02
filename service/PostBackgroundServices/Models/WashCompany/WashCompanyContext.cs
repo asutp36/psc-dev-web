@@ -83,16 +83,23 @@ namespace PostBackgroundServices.Models.WashCompany
             {
                 entity.HasKey(e => e.IdmobileSending);
 
-                entity.HasIndex(e => new { e.Idcard, e.Idpost, e.Dtime }, "UC_MobileSending")
+                entity.HasIndex(e => new { e.Idcard, e.Idpost, e.DtimeStart }, "UC_MobileSending")
                     .IsUnique();
 
-                entity.Property(e => e.IdmobileSending)
-                    .ValueGeneratedNever()
-                    .HasColumnName("IDMobileSending");
+                entity.Property(e => e.IdmobileSending).HasColumnName("IDMobileSending");
 
-                entity.Property(e => e.Dtime)
+                entity.Property(e => e.DtimeEnd)
                     .HasColumnType("datetime")
-                    .HasColumnName("DTime");
+                    .HasColumnName("DTimeEnd");
+
+                entity.Property(e => e.DtimeStart)
+                    .HasColumnType("datetime")
+                    .HasColumnName("DTimeStart");
+
+                entity.Property(e => e.Guid)
+                    .IsRequired()
+                    .HasMaxLength(36)
+                    .IsFixedLength(true);
 
                 entity.Property(e => e.Idcard).HasColumnName("IDCard");
 

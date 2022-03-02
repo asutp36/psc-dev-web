@@ -43,13 +43,10 @@ namespace PostBackgroundServices
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<MobileAppWasteSenderService>();
+                    //services.AddSingleton<MobileAppWasteSenderService>();
 
-                    var config = new ConfigurationBuilder()
-                        .AddJsonFile("appsettings.json")
-                        .Build();
-
-                    services.AddDbContextPool<WashCompanyContext>(
-                        options => options.UseSqlServer(config.GetConnectionString("WashCompany")));
+                    services.AddDbContext<WashCompanyContext>(
+                        options => options.UseSqlServer(hostContext.Configuration.GetConnectionString("WashCompany")), ServiceLifetime.Singleton);
 
                     services.AddHttpClient();
                 })

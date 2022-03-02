@@ -13,7 +13,7 @@ namespace PostBackgroundServices.Helpers
     {
         public static List<MobileSending> GetUnsentWastes(WashCompanyContext context)
         {
-            return context.MobileSendings.Where(s => (HttpStatusCode)s.StatusCode != HttpStatusCode.OK).ToList();
+            return context.MobileSendings.Where(s => (HttpStatusCode)s.StatusCode != HttpStatusCode.OK && s.DtimeEnd != null && s.Amount != null).ToList();
         }
 
         public static async Task UpdateWaste(WashCompanyContext context, MobileSending waste)

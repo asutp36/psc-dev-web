@@ -31,8 +31,6 @@ namespace PostBackgroundServices
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri("https://ptsv2.com/t/zuicy-1646128586/");
             _httpClient.DefaultRequestHeaders.Add(
-                HeaderNames.ContentType, "application/json");
-            _httpClient.DefaultRequestHeaders.Add(
                 HeaderNames.Accept, "application/json");
         }
 
@@ -47,33 +45,33 @@ namespace PostBackgroundServices
                     {
                         try
                         {
-                            var response = await SendWaste(ms);
+                            using var response = await SendWaste(ms);
 
                             ms.StatusCode = (int)response.StatusCode;
-                            ms.ResultMessage = response.Content.ToString();
-
-                            try
-                            {
-                                await SqlHelper.UpdateWaste(_context, ms);
-                            }
-                            catch(DbUpdateException e)
-                            {
-                                _logger.LogError("Ошибка при обновлении бд: " + e.Message + Environment.NewLine + e.InnerException.Message + Environment.NewLine);
-                            }
-                            catch(SqlException e)
-                            {
-                                _logger.LogError("Ошибка при воплнении запроса к бд: " + e.Message + Environment.NewLine + e.InnerException.Message + Environment.NewLine);
-                            }
+                            ms.ResultMessage = await response.Content.ReadAsStringAsync(stoppingToken);
                         }
                         catch(HttpRequestException e)
                         {
-                            _logger.LogError(e.Message + Environment.NewLine + e.InnerException.Message + Environment.NewLine);
+                            _logger.LogError(e.Message + Environment.NewLine);
                             ms.StatusCode = (int)e.StatusCode;
                             ms.ResultMessage = e.Message;
                         }
                         catch(Exception e)
                         {
                             _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                        }
+
+                        try
+                        {
+                            await SqlHelper.UpdateWaste(_context, ms);
+                        }
+                        catch (DbUpdateException e)
+                        {
+                            _logger.LogError("Ошибка при обновлении бд: " + e.Message + Environment.NewLine + e.InnerException.Message + Environment.NewLine);
+                        }
+                        catch (SqlException e)
+                        {
+                            _logger.LogError("Ошибка при воплнении запроса к бд: " + e.Message + Environment.NewLine + e.InnerException.Message + Environment.NewLine);
                         }
                     }
                 }
@@ -86,7 +84,7 @@ namespace PostBackgroundServices
         {
             var data = new StringContent(JsonConvert.SerializeObject(waste), Encoding.UTF8, Application.Json);
             
-            using var httpResponseMessage = await _httpClient.PostAsync("/post", data);
+            var httpResponseMessage = await _httpClient.PostAsync("post", data);
 
             return httpResponseMessage.EnsureSuccessStatusCode();
         }
