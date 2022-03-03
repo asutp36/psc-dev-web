@@ -17,10 +17,12 @@ namespace MobileAppWasteSender.Models.WashCompany
         {
         }
 
+        public virtual DbSet<Card> Cards { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<DeviceType> DeviceTypes { get; set; }
         public virtual DbSet<MobileSending> MobileSendings { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
+        public virtual DbSet<Wash> Washes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -35,6 +37,25 @@ namespace MobileAppWasteSender.Models.WashCompany
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "Cyrillic_General_CI_AS");
+
+            modelBuilder.Entity<Card>(entity =>
+            {
+                entity.HasKey(e => e.Idcard);
+
+                entity.Property(e => e.Idcard).HasColumnName("IDCard");
+
+                entity.Property(e => e.CardNum)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.IdcardStatus).HasColumnName("IDCardStatus");
+
+                entity.Property(e => e.IdcardType).HasColumnName("IDCardType");
+
+                entity.Property(e => e.Idowner).HasColumnName("IDOwner");
+
+                entity.Property(e => e.LocalizedId).HasColumnName("LocalizedID");
+            });
 
             modelBuilder.Entity<Device>(entity =>
             {
@@ -108,6 +129,11 @@ namespace MobileAppWasteSender.Models.WashCompany
 
                 entity.Property(e => e.ResultMessage).HasMaxLength(80);
 
+                entity.HasOne(d => d.IdcardNavigation)
+                    .WithMany(p => p.MobileSendings)
+                    .HasForeignKey(d => d.Idcard)
+                    .HasConstraintName("FK_MobileSendings_Cards");
+
                 entity.HasOne(d => d.IdpostNavigation)
                     .WithMany(p => p.MobileSendings)
                     .HasForeignKey(d => d.Idpost)
@@ -137,6 +163,30 @@ namespace MobileAppWasteSender.Models.WashCompany
                     .HasForeignKey(d => d.Iddevice)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Posts_Device");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany(p => p.Posts)
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_Posts_Wash");
+            });
+
+            modelBuilder.Entity<Wash>(entity =>
+            {
+                entity.HasKey(e => e.Idwash);
+
+                entity.ToTable("Wash");
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.Property(e => e.Address).HasMaxLength(100);
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.Idregion).HasColumnName("IDRegion");
+
+                entity.Property(e => e.Name).HasMaxLength(100);
             });
 
             OnModelCreatingPartial(modelBuilder);

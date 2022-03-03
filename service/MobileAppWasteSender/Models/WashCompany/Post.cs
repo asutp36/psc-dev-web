@@ -20,6 +20,7 @@ namespace MobileAppWasteSender.Models.WashCompany
         public string Name { get; set; }
 
         public virtual Device IddeviceNavigation { get; set; }
+        public virtual Wash IdwashNavigation { get; set; }
         public virtual ICollection<MobileSending> MobileSendings { get; set; }
     }
 }

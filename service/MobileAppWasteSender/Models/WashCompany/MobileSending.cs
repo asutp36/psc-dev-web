@@ -17,6 +17,7 @@ namespace MobileAppWasteSender.Models.WashCompany
         public string ResultMessage { get; set; }
         public string Guid { get; set; }
 
+        public virtual Card IdcardNavigation { get; set; }
         public virtual Post IdpostNavigation { get; set; }
     }
 }

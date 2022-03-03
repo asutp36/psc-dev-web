@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
+using MobileAppWasteSender.Models;
 using MobileAppWasteSender.Models.WashCompany;
 using Newtonsoft.Json;
 using NLog;
@@ -21,7 +22,6 @@ namespace MobileAppWasteSender
     {
         private static WashCompanyContext _context;
         private static HttpClient _httpClient;
-        //private static ILogger _logger;
 
         static async Task Main(string[] args)
         {
@@ -33,7 +33,7 @@ namespace MobileAppWasteSender
                   .CreateLogger();
 
                 _httpClient = new HttpClient();
-                _httpClient.BaseAddress = new Uri("https://ptsv2.com/t/zuicy-1646128586/");
+                _httpClient.BaseAddress = new Uri("http://188.225.79.69/api/externaldb/");
                 _httpClient.DefaultRequestHeaders.Add(
                   HeaderNames.Accept, "application/json");
                 Log.Logger.Debug("Работает");
@@ -81,7 +81,7 @@ namespace MobileAppWasteSender
 
                     await _context.DisposeAsync();
 
-                    await Task.Delay(10000);
+                    await Task.Delay(5000);
                 }
             }
             catch(Exception e)
@@ -104,11 +104,47 @@ namespace MobileAppWasteSender
 
         private static async Task<HttpResponseMessage> SendWaste(MobileSending waste)
         {
-            var data = new StringContent(JsonConvert.SerializeObject(waste), Encoding.UTF8, Application.Json);
+            MobileAppWasteModel model = new MobileAppWasteModel()
+            {
+                wash_id = await GetWashCode(waste.Idpost),
+                time_send = waste.DtimeEnd.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                operation_time = waste.DtimeEnd.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                card = GetCardNum(waste.Idcard),
+                value = waste.Amount.Value
+            };
+            var data = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, Application.Json);
 
-            var httpResponseMessage = await _httpClient.PostAsync("post", data);
+            var httpResponseMessage = await _httpClient.PostAsync("set-waste", data);
 
             return httpResponseMessage.EnsureSuccessStatusCode();
+        }
+
+        private static async Task<string> GetWashCode(int idPost)
+        {
+            string deviceCode = _context.Posts.Include(p => p.IddeviceNavigation).Where(p => p.Idpost == idPost).FirstOrDefault().IddeviceNavigation.Code;
+
+            await _context.Database.OpenConnectionAsync();
+            var connection = _context.Database.GetDbConnection();
+            var command = connection.CreateCommand();
+            command.CommandText = "select " +
+                        "replace(w.Code, 'М', 'm')" +
+                        "from " +
+                        "Device d " +
+                        "join Posts p on p.IDDevice = d.IDDevice " +
+                        "join Wash w on w.IDWash = p.IDWash " +
+                        "where 1 = 1 " +
+                        $"and d.Code = '{deviceCode}'";
+
+            string washCode = command.ExecuteScalar().ToString();
+
+            await _context.Database.CloseConnectionAsync();
+
+            return washCode;
+        }
+
+        private static string GetCardNum(int idCard)
+        {
+            return _context.Cards.Find(idCard).CardNum;
         }
     }
 }
