@@ -496,6 +496,25 @@ namespace MobileIntegration.Controllers
                                     return Request.CreateResponse((HttpStatusCode)423);
                                 }
 
+                                try
+                                {
+                                    int updateResult = UpdateDTimeStartMoobileSendings(model);
+
+                                    if (updateResult == 0)
+                                    {
+                                        int insertResult = InsertToMobileSendings(model);
+                                        Logger.Log.Debug("Добавлена запись в MobileSendings: " + insertResult.ToString());
+                                    }
+                                    else
+                                    {
+                                        Logger.Log.Debug($"Обновлено время старта у {updateResult} записей");
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    Logger.Log.Error("Ошибка при записи в журнал отправок в приложение: " + e.Message);
+                                }
+
                                 Logger.Log.Debug("Результат: " + resp.StatusCode);
                                 return Request.CreateResponse(resp.StatusCode);
                             }
@@ -584,6 +603,25 @@ namespace MobileIntegration.Controllers
                                     return Request.CreateResponse((HttpStatusCode)423);
                                 }
 
+                                try
+                                {
+                                    int updateResult = UpdateDTimeStartMoobileSendings(model);
+                                    
+                                    if (updateResult == 0)
+                                    {
+                                        int insertResult = InsertToMobileSendings(model);
+                                        Logger.Log.Debug("Добавлена запись в MobileSendings: " + insertResult.ToString());
+                                    }
+                                    else
+                                    {
+                                        Logger.Log.Debug($"Обновлено время страта у {updateResult} записей");
+                                    }                                    
+                                }
+                                catch(Exception e)
+                                {
+                                    Logger.Log.Error("Ошибка при записи в журнал отправок в приложение: " + e.Message);
+                                }
+
                                 Logger.Log.Debug("Результат: " + resp.StatusCode);
                                 return Request.CreateResponse(resp.StatusCode);
                             }
@@ -606,6 +644,41 @@ namespace MobileIntegration.Controllers
             return Request.CreateResponse(HttpStatusCode.NoContent);
         }
 
+        private int UpdateDTimeStartMoobileSendings(StartPostBindingModel start)
+        {
+            _model.Database.Connection.Open();
+
+            DbCommand command = _model.Database.Connection.CreateCommand();
+            command.CommandText = $@"update MobileSendings 
+                set IDPost = (select IDPost from Posts where QRCode = '{start.post}'), DTimeStart = '{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}' 
+                where IDCard = (select IDCard from Cards where CardNum = '22') 
+                and DTimeEnd is null";
+
+            var result = command.ExecuteScalar();
+            _model.Database.Connection.Close();
+            if (result == null)
+                return 0;
+
+            return int.Parse(result.ToString());
+        }
+
+        private int InsertToMobileSendings(StartPostBindingModel start)
+        {
+            Guid g = Guid.NewGuid();
+
+            _model.Database.Connection.Open();
+
+            DbCommand command = _model.Database.Connection.CreateCommand();
+            command.CommandText = $"insert into MobileSendings (IDCard, IDPost, DTimeStart, Guid)" +
+                $"values ((select IDCard from Cards where CardNum = '{start.card}'), " +
+                $"(select IDPost from Posts where QrCode = '{start.post}'), " +
+                $"'{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}', '{g.ToString().ToUpper()}'); " +
+                $"select scope_identity()";
+
+            var result = command.ExecuteScalar();
+            return int.Parse(result.ToString());
+        }
+
         /// <summary>
         /// Конец мойки
         /// </summary>
@@ -621,6 +694,16 @@ namespace MobileIntegration.Controllers
             Logger.Log.Debug($"StopPost: отправка списания по карте {model.card}");
 
             string washCode = PrepareWashCodeForMobile(model.post);
+
+            try
+            {
+                var res = UpdateMobileSendings(model);
+                Logger.Log.Debug($"Обновлены {res} записи MobileSendings");
+            }
+            catch (Exception e)
+            {
+                Logger.Log.Error("Ошибка при записи времени конца и суммы в журнал отправок приложения: " + e.Message);
+            }
 
             if (model.balance > 0)
                 try
@@ -701,8 +784,83 @@ namespace MobileIntegration.Controllers
             HttpResponse resp = Sender.SendPost("http://188.225.79.69/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), /*model.post*/ washCode, (int)model.balance)));
 
             Logger.Log.Debug("StopPostDev: Ответ от их сервера: " + resp.ResultMessage);
+            try
+            {
+                int r = WriteResponseToMibileSending(model, resp);
+                Logger.Log.Debug($"Записан http ответ мобильного приложения в {r} записях");
+            }
+            catch (Exception e)
+            {
+                Logger.Log.Error("Ошибка обновления записи в журнале отправок: " + e.Message + Environment.NewLine);
+            }
 
             return Request.CreateErrorResponse(resp.StatusCode, resp.ResultMessage);
+        }
+
+        private int UpdateMobileSendings(StopPostBindingModel stop)
+        {
+            _model.Database.Connection.Open();
+
+            DbCommand command = _model.Database.Connection.CreateCommand();
+            DbTransaction tran = _model.Database.Connection.BeginTransaction();
+            command.Transaction = tran;
+            try
+            {
+                command.CommandText = $"update MobileSendings " +
+                    $"set DTimeEnd = '{stop.time_send:yyyy-dd-MM HH:mm:ss.fff}', amount = {stop.balance} " +
+                    $"where IDMobileSending in " +
+                    $"(select top 1 IDMobileSending " +
+                    $"from MobileSendings ms " +
+                    $"where IDCard = (select IDCard from Cards where CardNum = '{stop.card}') " +
+                    $"and IDPost = (select p.IDpost from Posts p join Device d on d.IDDevice = p.IDDevice where d.Code = '{stop.post}') " +
+                    $"and ms.DTimeEnd is null " +
+                    $"order by ms.DTimeStart desc); ";
+
+                var res = command.ExecuteNonQuery();
+                if (res > 0)
+                {
+                    command.CommandText = $"update MobileSendings " +
+                        $"set DTimeEnd = '{stop.time_send:yyyy-dd-MM HH:mm:ss.fff}', amount = 0 " +
+                        $"where IDMobileSending in " +
+                        $"(select IDMobileSending " +
+                        $"from MobileSendings ms " +
+                        $"where IDCard = (select IDCard from Cards where CardNum = '{stop.card}') " +
+                        $"and IDPost = (select p.IDpost from Posts p join Device d on d.IDDevice = p.IDDevice where d.Code = '{stop.post}') " +
+                        $"and ms.DTimeEnd is null) ";
+
+                    //var result = command.ExecuteScalar();
+                    res += command.ExecuteNonQuery();
+                    tran.Commit();
+                    
+                }
+
+                return res;
+            }
+            catch (Exception e)
+            {
+                Logger.Log.Error("UpdateMobileSendings: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                tran.Rollback();
+                return 0;
+            }
+            finally
+            {
+                _model.Database.Connection.Close();
+            }
+        }
+
+        private int WriteResponseToMibileSending(StopPostBindingModel stop, HttpResponse response)
+        {
+            _model.Database.Connection.Open();
+            DbCommand command = _model.Database.Connection.CreateCommand();
+            command.CommandText = $"update MobileSendings " +
+                $"set StatusCode = {((int)response.StatusCode)}, ResultMessage = '{response.ResultMessage}' " +
+                $"where IDCard = (select IDCard from Cards where CardNum = '{stop.card}') " +
+                $"and IDPost = (select p.IDpost from Posts p join Device d on d.IDDevice = p.IDDevice where d.Code = '{stop.post}') " +
+                $"and DTimeEnd = '{stop.time_send:yyyy-dd-MM HH:mm:ss.fff}' " +
+                $"and Amount = {stop.balance}";
+
+            var result = command.ExecuteNonQuery();
+            return result;
         }
 
         private string PrepareWashCodeForMobile(string code)
