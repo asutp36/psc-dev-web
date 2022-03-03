@@ -779,22 +779,22 @@ namespace MobileIntegration.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Post not found");
             }
 
-            Logger.Log.Debug($"StopPostDev: отправка конца мойки. Баланс = {(int)model.balance}");
+            //Logger.Log.Debug($"StopPostDev: отправка конца мойки. Баланс = {(int)model.balance}");
 
-            HttpResponse resp = Sender.SendPost("http://188.225.79.69/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), /*model.post*/ washCode, (int)model.balance)));
+            //HttpResponse resp = Sender.SendPost("http://188.225.79.69/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), /*model.post*/ washCode, (int)model.balance)));
 
-            Logger.Log.Debug("StopPostDev: Ответ от их сервера: " + resp.ResultMessage);
-            try
-            {
-                int r = WriteResponseToMibileSending(model, resp);
-                Logger.Log.Debug($"Записан http ответ мобильного приложения в {r} записях");
-            }
-            catch (Exception e)
-            {
-                Logger.Log.Error("Ошибка обновления записи в журнале отправок: " + e.Message + Environment.NewLine);
-            }
+            //Logger.Log.Debug("StopPostDev: Ответ от их сервера: " + resp.ResultMessage);
+            //try
+            //{
+            //    int r = WriteResponseToMibileSending(model, resp);
+            //    Logger.Log.Debug($"Записан http ответ мобильного приложения в {r} записях");
+            //}
+            //catch (Exception e)
+            //{
+            //    Logger.Log.Error("Ошибка обновления записи в журнале отправок: " + e.Message + Environment.NewLine);
+            //}
 
-            return Request.CreateErrorResponse(resp.StatusCode, resp.ResultMessage);
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         private int UpdateMobileSendings(StopPostBindingModel stop)
