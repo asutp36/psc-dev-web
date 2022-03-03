@@ -51,12 +51,12 @@ namespace PostBackgroundServices
                                 using var response = await SendWaste(ms);
 
                                 ms.StatusCode = (int)response.StatusCode;
-                                ms.ResultMessage = await response.Content.ReadAsStringAsync(stoppingToken);
+                                ms.ResultMessage = await response.Content.ReadAsStringAsync();
                             }
                             catch (HttpRequestException e)
                             {
                                 _logger.LogError(e.Message + Environment.NewLine);
-                                ms.StatusCode = (int)e.StatusCode;
+                                ms.StatusCode = 0;
                                 ms.ResultMessage = e.Message;
                             }
                             catch (Exception e)
