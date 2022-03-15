@@ -292,6 +292,12 @@ namespace SynchronizationService.Controllers
 
                         var response = Request.CreateResponse(HttpStatusCode.OK);
                         response.Headers.Add("ServerID", serverID.ToString());
+
+                        if(increase.Kind == "cardincrease" && increase.CardNum != null)
+                        {
+                            int updated = UpdateMobileSendings(increase);
+                            Logger.Log.Debug($"PostEventIncrease: обновлены в MobileSendings {updated} записей");
+                        }
                         return response;
                     }
                     else
@@ -386,6 +392,13 @@ namespace SynchronizationService.Controllers
 
                         var response = Request.CreateResponse(HttpStatusCode.OK);
                         response.Headers.Add("ServerID", serverID.ToString());
+
+                        if (increase.Kind == "cardincrease" && increase.CardNum != null)
+                        {
+                            int updated = UpdateMobileSendings(increase);
+                            Logger.Log.Debug($"PostEventIncrease: обновлены в MobileSendings {updated} записей");
+                        }
+
                         return response;
                     }
                     else
@@ -419,6 +432,57 @@ namespace SynchronizationService.Controllers
             {
                 if (_model.Database.Connection.State != System.Data.ConnectionState.Closed)
                     _model.Database.Connection.Close();
+            }
+        }
+
+        private int UpdateMobileSendings(EIncreaseFromRequest increase)
+        {
+            _model.Database.Connection.Open();
+
+            DbCommand command = _model.Database.Connection.CreateCommand();
+            DbTransaction tran = _model.Database.Connection.BeginTransaction();
+            command.Transaction = tran;
+            try
+            {
+                command.CommandText = $"update MobileSendings " +
+                    $"set DTimeEnd = '{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}', amount = {increase.Amount} " +
+                    $"where IDMobileSending in " +
+                    $"(select top 1 IDMobileSending " +
+                    $"from MobileSendings ms " +
+                    $"where IDCard = (select IDCard from Cards where CardNum = '{increase.CardNum}') " +
+                    $"and IDPost = (select p.IDpost from Posts p join Device d on d.IDDevice = p.IDDevice where d.Code = '{increase.Device}') " +
+                    $"and ms.DTimeEnd is null " +
+                    $"order by ms.DTimeStart desc); ";
+
+                var res = command.ExecuteNonQuery();
+                if (res > 0)
+                {
+                    command.CommandText = $"update MobileSendings " +
+                        $"set DTimeEnd = '{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}', amount = 0 " +
+                        $"where IDMobileSending in " +
+                        $"(select IDMobileSending " +
+                        $"from MobileSendings ms " +
+                        $"where IDCard = (select IDCard from Cards where CardNum = '{increase.CardNum}') " +
+                        $"and IDPost = (select p.IDpost from Posts p join Device d on d.IDDevice = p.IDDevice where d.Code = '{increase.Device}') " +
+                        $"and ms.DTimeEnd is null) ";
+
+                    //var result = command.ExecuteScalar();
+                    res += command.ExecuteNonQuery();
+                    tran.Commit();
+
+                }
+
+                return res;
+            }
+            catch (Exception e)
+            {
+                Logger.Log.Error("UpdateMobileSendings: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                tran.Rollback();
+                return 0;
+            }
+            finally
+            {
+                _model.Database.Connection.Close();
             }
         }
 

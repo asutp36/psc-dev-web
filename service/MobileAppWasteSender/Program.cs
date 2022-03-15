@@ -37,8 +37,22 @@ namespace MobileAppWasteSender
                 _httpClient.DefaultRequestHeaders.Add(
                   HeaderNames.Accept, "application/json");
                 Log.Logger.Debug("Работает");
+                DateTime curDate = DateTime.Now.Date;
+
                 while (true)
                 {
+                    if(curDate != DateTime.Now.Date)
+                    {
+                        Log.CloseAndFlush();
+
+                        Log.Logger = new LoggerConfiguration()
+                            .MinimumLevel.Debug()
+                            .WriteTo.File($"Logs/{DateTime.Now:yyyy-MM-dd}.log")
+                            .CreateLogger();
+
+                        curDate = DateTime.Now.Date;
+                    }
+
                     _context = new WashCompanyContext();
                     List<MobileSending> mobileSendings = GetUnsentWastes();
                     if (mobileSendings.Count > 0)
@@ -116,7 +130,7 @@ namespace MobileAppWasteSender
 
             var httpResponseMessage = await _httpClient.PostAsync("set-waste", data);
 
-            return httpResponseMessage.EnsureSuccessStatusCode();
+            return httpResponseMessage;
         }
 
         private static async Task<string> GetWashCode(int idPost)

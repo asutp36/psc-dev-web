@@ -19,6 +19,7 @@ namespace SynchronizationService.Controllers.Supplies
         public int b200 { get; set; }
         public int Balance { get; set; }
         public int IDPostSession { get; set; }
+        public string CardNum { get; set; }
 
     }
 }

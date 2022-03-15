@@ -807,7 +807,7 @@ namespace MobileIntegration.Controllers
             try
             {
                 command.CommandText = $"update MobileSendings " +
-                    $"set DTimeEnd = '{stop.time_send:yyyy-dd-MM HH:mm:ss.fff}', amount = {stop.balance} " +
+                    $"set DTimeEnd = '{stop.time_send:yyyy-MM-dd HH:mm:ss.fff}', amount = {stop.balance} " +
                     $"where IDMobileSending in " +
                     $"(select top 1 IDMobileSending " +
                     $"from MobileSendings ms " +
@@ -820,7 +820,7 @@ namespace MobileIntegration.Controllers
                 if (res > 0)
                 {
                     command.CommandText = $"update MobileSendings " +
-                        $"set DTimeEnd = '{stop.time_send:yyyy-dd-MM HH:mm:ss.fff}', amount = 0 " +
+                        $"set DTimeEnd = '{stop.time_send:yyyy-MM-dd HH:mm:ss.fff}', amount = 0 " +
                         $"where IDMobileSending in " +
                         $"(select IDMobileSending " +
                         $"from MobileSendings ms " +
@@ -856,7 +856,7 @@ namespace MobileIntegration.Controllers
                 $"set StatusCode = {((int)response.StatusCode)}, ResultMessage = '{response.ResultMessage}' " +
                 $"where IDCard = (select IDCard from Cards where CardNum = '{stop.card}') " +
                 $"and IDPost = (select p.IDpost from Posts p join Device d on d.IDDevice = p.IDDevice where d.Code = '{stop.post}') " +
-                $"and DTimeEnd = '{stop.time_send:yyyy-dd-MM HH:mm:ss.fff}' " +
+                $"and DTimeEnd = '{stop.time_send:yyyy-MM-dd HH:mm:ss.fff}' " +
                 $"and Amount = {stop.balance}";
 
             var result = command.ExecuteNonQuery();
