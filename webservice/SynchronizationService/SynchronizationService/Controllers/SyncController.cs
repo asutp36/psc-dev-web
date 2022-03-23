@@ -452,6 +452,7 @@ namespace SynchronizationService.Controllers
                     $"where IDCard = (select IDCard from Cards where CardNum = '{increase.CardNum}') " +
                     $"and IDPost = (select p.IDpost from Posts p join Device d on d.IDDevice = p.IDDevice where d.Code = '{increase.Device}') " +
                     $"and ms.DTimeEnd is null " +
+                    $"and ms.DTimeStart <= '{increase.DTime.AddSeconds(2):yyyy-MM-dd HH:mm:ss.fff}'" +
                     $"order by ms.DTimeStart desc); ";
 
                 var res = command.ExecuteNonQuery();
@@ -464,6 +465,7 @@ namespace SynchronizationService.Controllers
                         $"from MobileSendings ms " +
                         $"where IDCard = (select IDCard from Cards where CardNum = '{increase.CardNum}') " +
                         $"and IDPost = (select p.IDpost from Posts p join Device d on d.IDDevice = p.IDDevice where d.Code = '{increase.Device}') " +
+                        $"and ms.DTimeStart <= '{increase.DTime.AddSeconds(2):yyyy-MM-dd HH:mm:ss.fff}'" +
                         $"and ms.DTimeEnd is null) ";
 
                     //var result = command.ExecuteScalar();
