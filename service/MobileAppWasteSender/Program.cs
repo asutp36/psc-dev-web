@@ -41,7 +41,7 @@ namespace MobileAppWasteSender
 
                 while (true)
                 {
-                    if(curDate != DateTime.Now.Date)
+                    if (curDate != DateTime.Now.Date)
                     {
                         Log.CloseAndFlush();
 
@@ -92,6 +92,10 @@ namespace MobileAppWasteSender
                             }
                         }
                     }
+
+                    List<UnstoppedSessionModel> unstopped = GetUnstoppedSessions();
+                    if (unstopped.Count > 0)
+                        Notification.SendUnstoppedSessions(unstopped);
 
                     await _context.DisposeAsync();
 
@@ -159,6 +163,21 @@ namespace MobileAppWasteSender
         private static string GetCardNum(int idCard)
         {
             return _context.Cards.Find(idCard).CardNum;
+        }
+
+        private static List<UnstoppedSessionModel> GetUnstoppedSessions()
+        {
+            return _context.MobileSendings.Where(s => (s.StatusCode == null || s.ResultMessage == null) && EF.Functions.DateDiffMinute(s.DtimeStart, DateTime.Now) > 30)
+                                          .Include(c => c.IdcardNavigation)
+                                          .Include(p => p.IdpostNavigation).ThenInclude(d => d.IddeviceNavigation)
+                                          .Select(m => new UnstoppedSessionModel
+                                          {
+                                              CardNum = m.IdcardNavigation.CardNum,
+                                              Post = m.IdpostNavigation.IddeviceNavigation.Code,
+                                              DTimeStart = m.DtimeStart
+                                          })
+                                          .ToList();
+            
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Net.Http.Headers;
+using MobileAppWasteSender.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -30,11 +31,22 @@ namespace MobileAppWasteSender
             httpClient.BaseAddress = new Uri("https://cwmon.ru/notify/");
             httpClient.DefaultRequestHeaders.Add(
                 HeaderNames.Accept, "application/json");
-            var data = new StringContent(m.Create("79507744415", $"Сервис отправки окончания мойки в мобильное приложение упал. {e.Message}"), Encoding.UTF8, Application.Json);
+            var data = new StringContent(m.Create("120363043000833241@g.us", $"Сервис отправки окончания мойки в мобильное приложение упал. {e.Message}"), Encoding.UTF8, Application.Json);
 
-            await httpClient.PostAsync("api/notify/message-dev", data);
+            await httpClient.PostAsync("api/notify/message-group", data);
+        }
 
-            //return httpResponseMessage.EnsureSuccessStatusCode();
+        public static async void SendUnstoppedSessions(List<UnstoppedSessionModel> unstopped)
+        {
+            Message m = new Message();
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("https://cwmon.ru/notify/");
+            httpClient.DefaultRequestHeaders.Add(
+                HeaderNames.Accept, "application/json");
+
+            var data = new StringContent(m.Create("120363043000833241@g.us", $"Есть неотправленные мойки:\n" + String.Join("\n", unstopped)), Encoding.UTF8, Application.Json);
+
+            await httpClient.PostAsync("api/notify/message-group", data);
         }
     }
 }
