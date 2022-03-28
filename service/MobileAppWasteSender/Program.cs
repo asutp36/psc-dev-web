@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Net.Http.Headers;
 using MobileAppWasteSender.Models;
 using MobileAppWasteSender.Models.WashCompany;
@@ -20,13 +21,20 @@ namespace MobileAppWasteSender
 {
     class Program
     {
+        private static IConfiguration _config;
         private static WashCompanyContext _context;
         private static HttpClient _httpClient;
+        private static int _updatePeriod;
 
         static async Task Main(string[] args)
         {
             try
             {
+                _config = new ConfigurationBuilder()
+                              .AddJsonFile("appsettings.json")
+                              .Build();
+                _updatePeriod = int.Parse(_config.GetSection("UpdatePeriod").Value);
+
                 Log.Logger = new LoggerConfiguration()
                   .MinimumLevel.Debug()
                   .WriteTo.File($"Logs/{DateTime.Now:yyyy-MM-dd}.log")
@@ -99,7 +107,7 @@ namespace MobileAppWasteSender
 
                     await _context.DisposeAsync();
 
-                    await Task.Delay(5000);
+                    await Task.Delay(_updatePeriod);
                 }
             }
             catch(Exception e)
