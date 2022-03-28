@@ -95,10 +95,16 @@ namespace MobileAppWasteSender
                     List<UnstoppedSessionModel> unstopped = GetUnstoppedSessions();
                     if (unstopped.Count > 0)
                     {
-                        Notification.SendUnstoppedSessions(unstopped);
+                        foreach(UnstoppedSessionModel m in unstopped)
+                        {
+                            if (!_cache.TryGetValue(m.Guid, out UnstoppedSessionModel s))
+                            {
+                                _cache.Set(m.Guid, m, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(_cacheExpiringTime)));
+                                Notification.SendUnstoppedSession(m);
+                            }
+                        }
                     }
                         
-
                     await _context.DisposeAsync();
 
                     await Task.Delay(_updatePeriod);

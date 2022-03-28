@@ -45,7 +45,7 @@ namespace MobileAppWasteSender
             await httpClient.PostAsync("api/notify/message-group", data);
         }
 
-        public static async void SendUnstoppedSessions(List<UnstoppedSessionModel> unstopped)
+        public static async void SendUnstoppedSession(UnstoppedSessionModel unstopped)
         {
             Message m = new Message();
             HttpClient httpClient = new HttpClient();
@@ -53,7 +53,7 @@ namespace MobileAppWasteSender
             httpClient.DefaultRequestHeaders.Add(
                 HeaderNames.Accept, "application/json");
 
-            var data = new StringContent(m.CreateChatId("120363043000833241@g.us", $"Есть неотправленные мойки:\n" + String.Join("\n", unstopped)), Encoding.UTF8, Application.Json);
+            var data = new StringContent(m.CreateChatId("120363043000833241@g.us", $"Не отправлена мойка:\n" + unstopped.ToString()), Encoding.UTF8, Application.Json);
 
             await httpClient.PostAsync("api/notify/message-group", data);
         }
