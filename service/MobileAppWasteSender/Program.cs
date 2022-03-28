@@ -30,20 +30,8 @@ namespace MobileAppWasteSender
         {
             try
             {
-                _config = new ConfigurationBuilder()
-                              .AddJsonFile("appsettings.json")
-                              .Build();
-                _updatePeriod = int.Parse(_config.GetSection("UpdatePeriod").Value);
+                Config();
 
-                Log.Logger = new LoggerConfiguration()
-                  .MinimumLevel.Debug()
-                  .WriteTo.File($"Logs/{DateTime.Now:yyyy-MM-dd}.log")
-                  .CreateLogger();
-
-                _httpClient = new HttpClient();
-                _httpClient.BaseAddress = new Uri("http://188.225.79.69/api/externaldb/");
-                _httpClient.DefaultRequestHeaders.Add(
-                  HeaderNames.Accept, "application/json");
                 Log.Logger.Debug("Работает");
                 DateTime curDate = DateTime.Now.Date;
 
@@ -115,6 +103,24 @@ namespace MobileAppWasteSender
                 Log.Logger.Error("Перехвачена общая ошибка. " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 Notification.SendCritical(e);
             }
+        }
+
+        private static void Config()
+        {
+            _config = new ConfigurationBuilder()
+                             .AddJsonFile("appsettings.json")
+                             .Build();
+            _updatePeriod = int.Parse(_config.GetSection("UpdatePeriod").Value);
+
+            Log.Logger = new LoggerConfiguration()
+              .MinimumLevel.Debug()
+              .WriteTo.File($"Logs/{DateTime.Now:yyyy-MM-dd}.log")
+              .CreateLogger();
+
+            _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new Uri("http://188.225.79.69/api/externaldb/");
+            _httpClient.DefaultRequestHeaders.Add(
+              HeaderNames.Accept, "application/json");
         }
 
         private static List<MobileSending> GetUnsentWastes()
