@@ -15,10 +15,19 @@ namespace MobileAppWasteSender
         {
             public string phone { get; set; }
             public string body { get; set; }
+            public string chatId { get; set; }
 
             public string Create(string phone, string body)
             {
                 this.phone = phone;
+                this.body = body;
+
+                return JsonConvert.SerializeObject(this);
+            }
+
+            public string CreateChatId(string chatId, string body)
+            {
+                this.chatId = chatId;
                 this.body = body;
 
                 return JsonConvert.SerializeObject(this);
@@ -44,7 +53,7 @@ namespace MobileAppWasteSender
             httpClient.DefaultRequestHeaders.Add(
                 HeaderNames.Accept, "application/json");
 
-            var data = new StringContent(m.Create("120363043000833241@g.us", $"Есть неотправленные мойки:\n" + String.Join("\n", unstopped)), Encoding.UTF8, Application.Json);
+            var data = new StringContent(m.CreateChatId("120363043000833241@g.us", $"Есть неотправленные мойки:\n" + String.Join("\n", unstopped)), Encoding.UTF8, Application.Json);
 
             await httpClient.PostAsync("api/notify/message-group", data);
         }

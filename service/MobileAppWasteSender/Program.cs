@@ -167,7 +167,7 @@ namespace MobileAppWasteSender
 
         private static List<UnstoppedSessionModel> GetUnstoppedSessions()
         {
-            return _context.MobileSendings.Where(s => (s.StatusCode == null || s.ResultMessage == null) && EF.Functions.DateDiffMinute(s.DtimeStart, DateTime.Now) > 30)
+            return _context.MobileSendings.Where(s => (s.StatusCode == null || s.ResultMessage == null) && EF.Functions.DateDiffMinute(s.DtimeStart, DateTime.Now) > 10)
                                           .Include(c => c.IdcardNavigation)
                                           .Include(p => p.IdpostNavigation).ThenInclude(d => d.IddeviceNavigation)
                                           .Select(m => new UnstoppedSessionModel
