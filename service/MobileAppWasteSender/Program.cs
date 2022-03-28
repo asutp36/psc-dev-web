@@ -94,7 +94,10 @@ namespace MobileAppWasteSender
 
                     List<UnstoppedSessionModel> unstopped = GetUnstoppedSessions();
                     if (unstopped.Count > 0)
+                    {
                         Notification.SendUnstoppedSessions(unstopped);
+                    }
+                        
 
                     await _context.DisposeAsync();
 
@@ -194,7 +197,8 @@ namespace MobileAppWasteSender
                                           {
                                               CardNum = m.IdcardNavigation.CardNum,
                                               Post = m.IdpostNavigation.IddeviceNavigation.Code,
-                                              DTimeStart = m.DtimeStart
+                                              DTimeStart = m.DtimeStart,
+                                              Guid = m.Guid
                                           })
                                           .ToList();
             

@@ -9,6 +9,7 @@ namespace MobileAppWasteSender.Models
         public string CardNum { get; set; }
         public string Post { get; set; }
         public DateTime DTimeStart { get; set; }
+        public string Guid { get; set; }
 
         public override string ToString()
         {
