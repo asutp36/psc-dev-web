@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Net.Http.Headers;
 using MobileAppWasteSender.Models;
@@ -25,6 +26,8 @@ namespace MobileAppWasteSender
         private static WashCompanyContext _context;
         private static HttpClient _httpClient;
         private static int _updatePeriod;
+        private static int _cacheExpiringTime;
+        private static IMemoryCache _cache;
 
         static async Task Main(string[] args)
         {
@@ -121,6 +124,9 @@ namespace MobileAppWasteSender
             _httpClient.BaseAddress = new Uri("http://188.225.79.69/api/externaldb/");
             _httpClient.DefaultRequestHeaders.Add(
               HeaderNames.Accept, "application/json");
+
+            _cache = new MemoryCache(new MemoryCacheOptions());
+            _cacheExpiringTime = int.Parse(_config.GetSection("CacheExpiringTime").Value);
         }
 
         private static List<MobileSending> GetUnsentWastes()
