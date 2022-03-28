@@ -27,6 +27,7 @@ namespace MobileAppWasteSender
         private static HttpClient _httpClient;
         private static int _updatePeriod;
         private static int _cacheExpiringTime;
+        private static int _oldSessionTime;
         private static IMemoryCache _cache;
 
         static async Task Main(string[] args)
@@ -35,7 +36,11 @@ namespace MobileAppWasteSender
             {
                 Config();
 
-                Log.Logger.Debug("Работает");
+                Log.Logger.Information("Работает");
+                Log.Logger.Information("Settings:");
+                Log.Logger.Information($"Мойка считается незавершённой через {_oldSessionTime} минут");
+                Log.Logger.Information($"Период работы программы {_updatePeriod} секунд");
+                Log.Logger.Information($"Время хранения записи в кэше {_cacheExpiringTime} минут");
                 DateTime curDate = DateTime.Now.Date;
 
                 while (true)
@@ -123,6 +128,7 @@ namespace MobileAppWasteSender
                              .AddJsonFile("appsettings.json")
                              .Build();
             _updatePeriod = int.Parse(_config.GetSection("UpdatePeriod").Value);
+            _oldSessionTime = int.Parse(_config.GetSection("OldSessionTime").Value);
 
             Log.Logger = new LoggerConfiguration()
               .MinimumLevel.Debug()
@@ -196,7 +202,7 @@ namespace MobileAppWasteSender
 
         private static List<UnstoppedSessionModel> GetUnstoppedSessions()
         {
-            return _context.MobileSendings.Where(s => (s.StatusCode == null || s.ResultMessage == null) && EF.Functions.DateDiffMinute(s.DtimeStart, DateTime.Now) > 10)
+            return _context.MobileSendings.Where(s => (s.StatusCode == null || s.ResultMessage == null) && EF.Functions.DateDiffMinute(s.DtimeStart, DateTime.Now) > _oldSessionTime)
                                           .Include(c => c.IdcardNavigation)
                                           .Include(p => p.IdpostNavigation).ThenInclude(d => d.IddeviceNavigation)
                                           .Select(m => new UnstoppedSessionModel
