@@ -164,7 +164,6 @@
     <Compile Include="Controllers\Supplies\IncreaseFromChanger.cs" />
     <Compile Include="Controllers\Supplies\IncreaseFromMobile.cs" />
     <Compile Include="Controllers\Supplies\Logger.cs" />
-    <Compile Include="Controllers\Supplies\Logger_Timeout.cs" />
     <Compile Include="Controllers\Supplies\NewCard.cs" />
     <Compile Include="Controllers\Supplies\NewCardDev.cs" />
     <Compile Include="Controllers\Supplies\PhoneFormatter.cs" />

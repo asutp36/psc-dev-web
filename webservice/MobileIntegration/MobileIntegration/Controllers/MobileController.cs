@@ -984,6 +984,22 @@ namespace MobileIntegration.Controllers
                                 Logger.Log.Debug($"NewCard: добавлены Owner и Card. CardNum = {formattedPhone.phoneInt.ToString()}" + Environment.NewLine);
                                 tran.Commit();
                             }
+                            catch(SqlException e)
+                            {
+                                if(e.Number == 2627)
+                                {
+                                    Logger.Log.Error($"NewCard: unique key constraint, CardNum = {formattedPhone.phoneInt}\n" + e.Message + Environment.NewLine);
+                                    tran.Rollback();
+                                    _model.Database.Connection.Close();
+
+                                    return Request.CreateResponse(HttpStatusCode.OK);
+                                }
+                                Logger.Log.Error("NewCard: ошибка транзакции.\n" + e.Message + Environment.NewLine);
+                                tran.Rollback();
+                                _model.Database.Connection.Close();
+
+                                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                            }
                             catch (Exception e)
                             {
                                 Logger.Log.Error("NewCard: ошибка транзакции.\n" + e.Message + Environment.NewLine);
