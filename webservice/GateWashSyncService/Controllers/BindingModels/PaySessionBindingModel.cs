@@ -12,5 +12,7 @@ namespace GateWashSyncService.Controllers.BindingModels
         public string functionCode { get; set; }
         public string deviceCode { get; set; }
         public int programCost { get; set; }
+        public string qr { get; set; }
+        public string fiscalError { get; set; }
     }
 }

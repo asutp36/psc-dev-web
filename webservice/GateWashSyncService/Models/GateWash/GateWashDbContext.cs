@@ -313,11 +313,17 @@ namespace GateWashSyncService.Models.GateWash
                     .HasColumnName("DTime")
                     .HasColumnType("datetime");
 
+                entity.Property(e => e.FiscalError).HasMaxLength(100);
+
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 
                 entity.Property(e => e.Idfunction).HasColumnName("IDFunction");
 
                 entity.Property(e => e.IdsessionOnPost).HasColumnName("IDSessionOnPost");
+
+                entity.Property(e => e.Qr)
+                    .HasColumnName("QR")
+                    .HasMaxLength(100);
 
                 entity.HasOne(d => d.IddeviceNavigation)
                     .WithMany(p => p.PaySession)

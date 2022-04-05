@@ -20,6 +20,8 @@ namespace GateWashSyncService.Models.GateWash
         public DateTime Dtime { get; set; }
         public int Iddevice { get; set; }
         public int ProgramCost { get; set; }
+        public string Qr { get; set; }
+        public string FiscalError { get; set; }
 
         public virtual Device IddeviceNavigation { get; set; }
         public virtual Functions IdfunctionNavigation { get; set; }

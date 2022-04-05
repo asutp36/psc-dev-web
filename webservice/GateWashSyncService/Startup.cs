@@ -42,11 +42,11 @@ namespace GateWashSyncService
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v2", new OpenApiInfo
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Version = "v2",
-                    Title = "postsync",
-                    Description = "Сервис синхронизации на .net core",
+                    Version = "v1",
+                    Title = "gatewash-sync",
+                    Description = "Сервис синхронизации проходной мойки",
                 });
 
                 c.EnableAnnotations();
@@ -66,7 +66,7 @@ namespace GateWashSyncService
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("./swagger/v2/swagger.json", "postsync");
+                c.SwaggerEndpoint("./swagger/v1/swagger.json", "gatewash-sync");
                 c.RoutePrefix = string.Empty;
             });
 
