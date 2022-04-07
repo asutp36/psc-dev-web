@@ -89,7 +89,7 @@ namespace GateWashSyncService.Controllers
                 if (!sqlHelper.IsPaySessionExsists(epayout.deviceCode, epayout.idSessionOnPost))
                 {
                     _logger.LogError($"Не найдена сессия на посту {epayout.deviceCode} с id={epayout.idSessionOnPost}");
-                    return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найдена сессия на посту {epayout.deviceCode} с id={epayout.idSessionOnPost}" });
+                    return StatusCode(406, new Error() { errorCode = "badvalue", errorMessage = $"Не найдена сессия на посту {epayout.deviceCode} с id={epayout.idSessionOnPost}" });
                 }
 
                 int id = await sqlHelper.WriteEventPayoutAsync(epayout);
@@ -134,7 +134,7 @@ namespace GateWashSyncService.Controllers
                 if (!sqlHelper.IsPaySessionExsists(eincr.deviceCode, eincr.idSessionOnPost))
                 {
                     _logger.LogError($"Не найдена сессия на посту {eincr.deviceCode} с id={eincr.idSessionOnPost}");
-                    return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найдена сессия на посту {eincr.deviceCode} с id={eincr.idSessionOnPost}" });
+                    return StatusCode(406, new Error() { errorCode = "badvalue", errorMessage = $"Не найдена сессия на посту {eincr.deviceCode} с id={eincr.idSessionOnPost}" });
                 }
 
                 int id = await sqlHelper.WriteEventIncreaseAsync(eincr);
