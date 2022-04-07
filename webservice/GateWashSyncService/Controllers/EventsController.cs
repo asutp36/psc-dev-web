@@ -81,6 +81,11 @@ namespace GateWashSyncService.Controllers
                     _logger.LogError($"Не найден девайс {epayout.deviceCode}");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден девайс {epayout.deviceCode}" });
                 }
+                if(sqlHelper.IsEventPayoutExists(epayout.deviceCode, epayout.idEventOnPost))
+                {
+                    _logger.LogError($"Событие с id={epayout.idEventOnPost} на посту {epayout.deviceCode} уже записано");
+                    return Conflict(new Error() { errorCode = "badvalue", errorMessage = $"Событие с id={epayout.idEventOnPost} на посту {epayout.deviceCode} уже записано" });
+                }
                 if (!sqlHelper.IsEventKindExsists(epayout.eventKindCode))
                 {
                     _logger.LogError($"Не найден тип события {epayout.eventKindCode}");
@@ -125,6 +130,11 @@ namespace GateWashSyncService.Controllers
                 {
                     _logger.LogError($"Не найден девайс {eincr.deviceCode}");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден девайс {eincr.deviceCode}" });
+                }
+                if (sqlHelper.IsEventIncreaseExists(eincr.deviceCode, eincr.idEventOnPost))
+                {
+                    _logger.LogError($"Событие с id={eincr.idEventOnPost} на посту {eincr.deviceCode} уже записано");
+                    return Conflict(new Error() { errorCode = "badvalue", errorMessage = $"Событие с id={eincr.idEventOnPost} на посту {eincr.deviceCode} уже записано" });
                 }
                 if (!sqlHelper.IsEventKindExsists(eincr.eventKindCode))
                 {

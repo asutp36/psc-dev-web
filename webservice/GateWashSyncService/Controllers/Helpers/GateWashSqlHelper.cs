@@ -332,5 +332,19 @@ namespace GateWashSyncService.Controllers.Helpers
         {
             return _model.PaySession.Include(s => s.IddeviceNavigation).Where(s => s.IdsessionOnPost == idSessionOnPost && s.IddeviceNavigation.Code == deviceCode).FirstOrDefault().IdpaySession;
         }
+
+        public bool IsEventIncreaseExists(string deviceCode, int idOnPost)
+        {
+            return _model.EventIncrease.Include(ei => ei.IdpayEventNavigation).ThenInclude(e => e.IddeviceNavigation)
+                                       .Where(r => r.IdpayEventNavigation.IdeventOnPost == idOnPost && r.IdpayEventNavigation.IddeviceNavigation.Code == deviceCode)
+                                       .FirstOrDefault() != null;
+        }
+
+        public bool IsEventPayoutExists(string deviceCode, int idOnPost)
+        {
+            return _model.EventPayout.Include(ei => ei.IdpayEventNavigation).ThenInclude(e => e.IddeviceNavigation)
+                                       .Where(r => r.IdpayEventNavigation.IdeventOnPost == idOnPost && r.IdpayEventNavigation.IddeviceNavigation.Code == deviceCode)
+                                       .FirstOrDefault() != null;
+        }
     }
 }
