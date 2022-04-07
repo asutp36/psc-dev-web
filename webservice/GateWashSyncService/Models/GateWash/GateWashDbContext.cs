@@ -309,8 +309,14 @@ namespace GateWashSyncService.Models.GateWash
 
                 entity.Property(e => e.IdpaySession).HasColumnName("IDPaySession");
 
-                entity.Property(e => e.Dtime)
-                    .HasColumnName("DTime")
+                entity.Property(e => e.Details).HasMaxLength(100);
+
+                entity.Property(e => e.DtimeBegin)
+                    .HasColumnName("DTimeBegin")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.DtimeEnd)
+                    .HasColumnName("DTimeEnd")
                     .HasColumnType("datetime");
 
                 entity.Property(e => e.FiscalError).HasMaxLength(100);

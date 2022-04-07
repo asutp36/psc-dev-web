@@ -298,11 +298,13 @@ namespace GateWashSyncService.Controllers.Helpers
                 {
                     IdsessionOnPost = psession.idSessionOnPost,
                     Idfunction = this.GetIdFunction(psession.functionCode),
-                    Dtime = DateTime.Parse(psession.dtime),
+                    DtimeBegin = DateTime.Parse(psession.dtimeBegin),
                     Iddevice = this.GetIdDevice(psession.deviceCode),
                     ProgramCost = psession.programCost,
                     Qr = psession.qr,
-                    FiscalError = psession.fiscalError
+                    FiscalError = psession.fiscalError,
+                    DtimeEnd = DateTime.Parse(psession.dtimeEnd),
+                    Details = psession.details
                 };
 
                 await _model.PaySession.AddAsync(ps);

@@ -17,11 +17,13 @@ namespace GateWashSyncService.Models.GateWash
         public int IdpaySession { get; set; }
         public int IdsessionOnPost { get; set; }
         public int Idfunction { get; set; }
-        public DateTime Dtime { get; set; }
+        public DateTime DtimeBegin { get; set; }
         public int Iddevice { get; set; }
         public int ProgramCost { get; set; }
         public string Qr { get; set; }
         public string FiscalError { get; set; }
+        public DateTime? DtimeEnd { get; set; }
+        public string Details { get; set; }
 
         public virtual Device IddeviceNavigation { get; set; }
         public virtual Functions IdfunctionNavigation { get; set; }
