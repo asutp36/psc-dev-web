@@ -1,0 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace GateWashDataService.Models.Filters
+{
+    public class FiltersModel
+    {
+        public List<RegionModel> Regions { get; set; }
+    }
+}

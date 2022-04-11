@@ -1,4 +1,5 @@
 ﻿using GateWashDataService.Models;
+using GateWashDataService.Models.Filters;
 using GateWashDataService.Models.GateWashContext;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,16 @@ namespace GateWashDataService.Helpers
                                       })
                                       .Where(i => (!isBank || i.Bank != 0) && (!isCash || i.Cash != 0))
                                       .ToList();
+        }
+
+        public static async Task<List<RegionModel>> GetRegions(GateWashDbContext context)
+        {
+            return context.Regions.Select(r => new RegionModel
+            {
+                IdRegion = r.Idregion,
+                Code = r.Code,
+                Name = r.Name
+            }).ToList();
         }
     }
 }
