@@ -25,6 +25,7 @@ namespace GateWashDataService.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
         public async Task<ActionResult> Get()
         {
             try
@@ -32,6 +33,8 @@ namespace GateWashDataService.Controllers
                 FiltersModel filters = new FiltersModel();
 
                 filters.Regions = await SqlHelper.GetRegions(_context);
+                filters.Washes = await SqlHelper.GetWashes(_context);
+                filters.PayTerminals = await SqlHelper.GetPayTerminals(_context);
 
                 return Ok(filters);
             }

@@ -9,7 +9,6 @@ namespace GateWashDataService.Models.GateWashContext
     {
         public Device()
         {
-            ClientSessionErrors = new HashSet<ClientSessionError>();
             Collects = new HashSet<Collect>();
             Events = new HashSet<Event>();
             PayEvents = new HashSet<PayEvent>();
@@ -25,7 +24,6 @@ namespace GateWashDataService.Models.GateWashContext
         public string IpAddress { get; set; }
 
         public virtual DeviceType IddeviceTypeNavigation { get; set; }
-        public virtual ICollection<ClientSessionError> ClientSessionErrors { get; set; }
         public virtual ICollection<Collect> Collects { get; set; }
         public virtual ICollection<Event> Events { get; set; }
         public virtual ICollection<PayEvent> PayEvents { get; set; }

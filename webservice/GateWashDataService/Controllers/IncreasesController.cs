@@ -22,17 +22,18 @@ namespace GateWashDataService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(DateTime startDate, DateTime endDate, 
-            string terminal = null, string program = null, bool onlyBank = false, bool onlyCash = false, bool onlyCheque = false, bool onlyNotes = false)
+        public async Task<IActionResult> GetAll([FromQuery] GetIncreaseParameters parameters)
         {
-            return Ok(SqlHelper.GetIncomes(_context, startDate, endDate, onlyBank, onlyCash, onlyNotes, terminal, program));
+            return Ok(SqlHelper.GetIncreases(_context, parameters.startDate, parameters.endDate, 
+                parameters.onlyBank, parameters.onlyCash, parameters.onlyNotes, parameters.terminal, parameters.program));
         }
 
         [HttpGet("days")]
-        public async Task<IActionResult> GetByDays(DateTime startDate, DateTime endDate,
-            string terminal = null, string program = null, bool onlyBank = false, bool onlyCash = false, bool onlyCheque = false, bool onlyNotes = false)
+        public async Task<IActionResult> GetByDays([FromQuery] GetIncreaseParameters parameters)
         {
-            var result = SqlHelper.GetIncomes(_context, startDate, endDate, onlyBank, onlyCash, onlyNotes, terminal, program).GroupBy(i => new { i.DTime.Date, i.Terminal })
+            var result = SqlHelper.GetIncreases(_context, parameters.startDate, parameters.endDate, parameters.onlyBank, 
+                parameters.onlyCash, parameters.onlyNotes, parameters.terminal, parameters.program)
+                .GroupBy(i => new { i.DTime.Date, i.Terminal })
                 .Select(x => new IncreaseModel
                 {
                     DTime = x.Key.Date,
@@ -42,6 +43,7 @@ namespace GateWashDataService.Controllers
                     Amount = x.Sum(i => i.Amount),
                     Payout = x.Sum(i => i.Payout)
                 });
+
             return Ok(result);
         }
 

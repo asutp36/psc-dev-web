@@ -18,9 +18,7 @@ namespace GateWashDataService.Models.GateWashContext
         }
 
         public virtual DbSet<Card> Cards { get; set; }
-        public virtual DbSet<ClientSessionError> ClientSessionErrors { get; set; }
         public virtual DbSet<Collect> Collects { get; set; }
-        public virtual DbSet<Company> Companies { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<DeviceType> DeviceTypes { get; set; }
         public virtual DbSet<Event> Events { get; set; }
@@ -58,37 +56,6 @@ namespace GateWashDataService.Models.GateWashContext
                     .IsRequired()
                     .HasMaxLength(8)
                     .IsFixedLength(true);
-            });
-
-            modelBuilder.Entity<ClientSessionError>(entity =>
-            {
-                entity.HasKey(e => e.IdclientSessionError);
-
-                entity.ToTable("ClientSessionError");
-
-                entity.Property(e => e.IdclientSessionError).HasColumnName("IDClientSessionError");
-
-                entity.Property(e => e.Dtime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("DTime");
-
-                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
-
-                entity.Property(e => e.IdpaySession).HasColumnName("IDPaySession");
-
-                entity.Property(e => e.Message)
-                    .IsRequired()
-                    .HasMaxLength(150);
-
-                entity.HasOne(d => d.IddeviceNavigation)
-                    .WithMany(p => p.ClientSessionErrors)
-                    .HasForeignKey(d => d.Iddevice)
-                    .HasConstraintName("FK_ClientSessionError_Device");
-
-                entity.HasOne(d => d.IdpaySessionNavigation)
-                    .WithMany(p => p.ClientSessionErrors)
-                    .HasForeignKey(d => d.IdpaySession)
-                    .HasConstraintName("FK_ClientSessionError_PaySession");
             });
 
             modelBuilder.Entity<Collect>(entity =>
@@ -134,17 +101,6 @@ namespace GateWashDataService.Models.GateWashContext
                     .WithMany(p => p.Collects)
                     .HasForeignKey(d => d.Iddevice)
                     .HasConstraintName("FK_Collect_Device");
-            });
-
-            modelBuilder.Entity<Company>(entity =>
-            {
-                entity.HasKey(e => e.Idcompany);
-
-                entity.Property(e => e.Idcompany).HasColumnName("IDCompany");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(100);
             });
 
             modelBuilder.Entity<Device>(entity =>
@@ -369,15 +325,27 @@ namespace GateWashDataService.Models.GateWashContext
 
                 entity.Property(e => e.IdpaySession).HasColumnName("IDPaySession");
 
-                entity.Property(e => e.Dtime)
+                entity.Property(e => e.Details).HasMaxLength(100);
+
+                entity.Property(e => e.DtimeBegin)
                     .HasColumnType("datetime")
-                    .HasColumnName("DTime");
+                    .HasColumnName("DTimeBegin");
+
+                entity.Property(e => e.DtimeEnd)
+                    .HasColumnType("datetime")
+                    .HasColumnName("DTimeEnd");
+
+                entity.Property(e => e.FiscalError).HasMaxLength(100);
 
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 
                 entity.Property(e => e.Idfunction).HasColumnName("IDFunction");
 
                 entity.Property(e => e.IdsessionOnPost).HasColumnName("IDSessionOnPost");
+
+                entity.Property(e => e.Qr)
+                    .HasMaxLength(100)
+                    .HasColumnName("QR");
 
                 entity.HasOne(d => d.IddeviceNavigation)
                     .WithMany(p => p.PaySessions)
@@ -401,7 +369,9 @@ namespace GateWashDataService.Models.GateWashContext
 
                 entity.Property(e => e.Idwash).HasColumnName("IDWash");
 
-                entity.Property(e => e.Name).HasMaxLength(100);
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.Qrcode)
                     .HasMaxLength(25)
@@ -410,7 +380,6 @@ namespace GateWashDataService.Models.GateWashContext
                 entity.HasOne(d => d.IddeviceNavigation)
                     .WithMany(p => p.Posts)
                     .HasForeignKey(d => d.Iddevice)
-                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Posts_Device");
 
                 entity.HasOne(d => d.IdwashNavigation)
@@ -430,11 +399,6 @@ namespace GateWashDataService.Models.GateWashContext
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100);
-
-                entity.HasOne(d => d.IdcompanyNavigation)
-                    .WithMany(p => p.Regions)
-                    .HasForeignKey(d => d.Idcompany)
-                    .HasConstraintName("FK_Regions_Companies");
             });
 
             modelBuilder.Entity<Session>(entity =>

@@ -10,7 +10,7 @@ namespace GateWashDataService.Models.GateWashContext
         public int Idpost { get; set; }
         public string Name { get; set; }
         public int Idwash { get; set; }
-        public int? Iddevice { get; set; }
+        public int Iddevice { get; set; }
         public string Qrcode { get; set; }
 
         public virtual Device IddeviceNavigation { get; set; }

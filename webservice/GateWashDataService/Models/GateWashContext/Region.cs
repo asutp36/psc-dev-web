@@ -17,7 +17,6 @@ namespace GateWashDataService.Models.GateWashContext
         public string Name { get; set; }
         public int Idcompany { get; set; }
 
-        public virtual Company IdcompanyNavigation { get; set; }
         public virtual ICollection<Wash> Washes { get; set; }
     }
 }
