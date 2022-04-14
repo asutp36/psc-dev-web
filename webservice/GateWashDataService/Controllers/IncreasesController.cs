@@ -101,5 +101,64 @@ namespace GateWashDataService.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("months")]
+        public async Task<IActionResult> GetByMonths([FromQuery] GetIncreaseParameters parameters)
+        {
+            List<IncreaseModel> increases = SqlHelper.GetIncreases(_context, parameters);
+
+            IEnumerable<IncreaseModel> groupedIncreases = increases.GroupBy(i => new { i.DTime.Year, i.DTime.Month })
+                                                                   .Select(x => new IncreaseModel
+                                                                   {
+                                                                       DTime = new DateTime(x.Key.Year, x.Key.Month, 1),
+                                                                       Bank = x.Sum(i => i.Bank),
+                                                                       Cash = x.Sum(i => i.Cash),
+                                                                       Payout = x.Sum(i => i.Payout)
+                                                                   });
+
+            PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(groupedIncreases.AsQueryable(), parameters.Paging);
+
+            var metadata = new
+            {
+                result.CurrentPage,
+                result.HasNext,
+                result.HasPrevious,
+                result.TotalPages
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return Ok(result);
+        }
+
+        [HttpGet("months/split-terminals")]
+        public async Task<IActionResult> GetByMonthsSplitTerminals([FromQuery] GetIncreaseParameters parameters)
+        {
+            List<IncreaseModel> increases = SqlHelper.GetIncreases(_context, parameters);
+
+            IEnumerable<IncreaseModel> groupedIncreases = increases.GroupBy(i => new { i.DTime.Year, i.DTime.Month, i.Terminal })
+                                                                   .Select(x => new IncreaseModel
+                                                                   {
+                                                                       DTime = new DateTime(x.Key.Year, x.Key.Month, 1),
+                                                                       Terminal = x.Key.Terminal,
+                                                                       Bank = x.Sum(i => i.Bank),
+                                                                       Cash = x.Sum(i => i.Cash),
+                                                                       Payout = x.Sum(i => i.Payout)
+                                                                   });
+
+            PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(groupedIncreases.AsQueryable(), parameters.Paging);
+
+            var metadata = new
+            {
+                result.CurrentPage,
+                result.HasNext,
+                result.HasPrevious,
+                result.TotalPages
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return Ok(result);
+        }
     }
 }
