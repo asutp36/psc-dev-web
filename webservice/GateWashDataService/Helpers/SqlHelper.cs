@@ -13,11 +13,11 @@ namespace GateWashDataService.Helpers
         private static readonly List<string> bankIncreaseEventkinds = new List<string>() { "cardincrease", "bankincrease", "qrincrease" };
         private static readonly List<string> cashIncreaseEventkinds = new List<string>() { "cashincrease" };
 
-        public static List<IncreaseModel> GetIncreases(GateWashDbContext context, DateTime startDate, DateTime endDate, bool isBank, bool isCash, bool isNotes, string terminal, string program)
+        public static List<IncreaseModel> GetIncreases(GateWashDbContext context, GetIncreaseParameters param)
         {
-            return context.PaySessions.Where(s => s.DtimeBegin >= startDate && s.DtimeBegin <= endDate && (!isNotes || s.Details != null)
-                                            && (terminal == null || s.IddeviceNavigation.Code == terminal)
-                                            && (program == null || s.IdfunctionNavigation.Code == program))
+            return context.PaySessions.Where(s => s.DtimeBegin >= param.StartDate && s.DtimeBegin <= param.EndDate && (!param.OnlyNotes || s.Details != null)
+                                            && (param.Terminal == null || s.IddeviceNavigation.Code == param.Terminal)
+                                            && (param.Program == null || s.IdfunctionNavigation.Code == param.Program))
                                       .Select(s => new IncreaseModel
                                       {
                                           DTime = s.DtimeBegin,
@@ -26,9 +26,10 @@ namespace GateWashDataService.Helpers
                                           Bank = s.PayEvents.Where(e => bankIncreaseEventkinds.Contains(e.IdeventKindNavigation.Code)).Sum(e => e.EventIncrease.Amount) ?? 0,
                                           Cash = s.PayEvents.Where(e => cashIncreaseEventkinds.Contains(e.IdeventKindNavigation.Code)).Sum(e => e.EventIncrease.Amount) ?? 0,
                                           Payout = s.PayEvents.Sum(e => e.EventPayout.Amount),
+                                          Cheque = s.Qr != null,
                                           Note = s.Details
                                       })
-                                      .Where(i => (!isBank || i.Bank != 0) && (!isCash || i.Cash != 0))
+                                      .Where(i => (!param.OnlyBank || i.Bank != 0) && (!param.OnlyCash || i.Cash != 0))
                                       .ToList();
         }
 
