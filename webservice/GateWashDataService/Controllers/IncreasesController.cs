@@ -48,6 +48,35 @@ namespace GateWashDataService.Controllers
         {
             List<IncreaseModel> increases = SqlHelper.GetIncreases(_context, parameters);
 
+            IEnumerable<IncreaseModel> groupedIncreases = increases.GroupBy(i => new { i.DTime.Date })
+                                                                    .Select(x => new IncreaseModel
+                                                                    {
+                                                                        DTime = x.Key.Date,
+                                                                        Bank = x.Sum(i => i.Bank),
+                                                                        Cash = x.Sum(i => i.Cash),
+                                                                        Payout = x.Sum(i => i.Payout)
+                                                                    });
+
+            PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(groupedIncreases.AsQueryable(), parameters.Paging);
+
+            var metadata = new
+            {
+                result.CurrentPage,
+                result.HasNext,
+                result.HasPrevious,
+                result.TotalPages
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return Ok(result);
+        }
+
+        [HttpGet("days/split-terminals")]
+        public async Task<IActionResult> GetByDaysSplitTerminals([FromQuery] GetIncreaseParameters parameters)
+        {
+            List<IncreaseModel> increases = SqlHelper.GetIncreases(_context, parameters);
+
             IEnumerable<IncreaseModel> groupedIncreases = increases.GroupBy(i => new { i.DTime.Date, i.Terminal })
                                                                     .Select(x => new IncreaseModel
                                                                     {
@@ -58,7 +87,7 @@ namespace GateWashDataService.Controllers
                                                                         Payout = x.Sum(i => i.Payout)
                                                                     });
 
-            PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(increases.AsQueryable(), parameters.Paging);
+            PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(groupedIncreases.AsQueryable(), parameters.Paging);
 
             var metadata = new
             {
