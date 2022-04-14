@@ -24,7 +24,7 @@ namespace GateWashDataService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] GetIncreaseParameters parameters)
+        public async Task<IActionResult> Get([FromQuery] GetIncreaseParameters parameters)
         {
             List<IncreaseModel> increases = SqlHelper.GetIncreases(_context, parameters);
 

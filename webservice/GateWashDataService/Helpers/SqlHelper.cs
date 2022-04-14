@@ -15,7 +15,7 @@ namespace GateWashDataService.Helpers
 
         public static List<IncreaseModel> GetIncreases(GateWashDbContext context, GetIncreaseParameters param)
         {
-            return context.PaySessions.Where(s => s.DtimeBegin >= param.StartDate && s.DtimeBegin <= param.EndDate && (!param.OnlyNotes || s.Details != null)
+            return context.PaySessions.Where(s => (s.DtimeBegin >= param.StartDate) && (s.DtimeBegin <= param.EndDate) && (!param.OnlyNotes || s.Details != null)
                                             && (param.Terminal == null || s.IddeviceNavigation.Code == param.Terminal)
                                             && (param.Program == null || s.IdfunctionNavigation.Code == param.Program))
                                       .Select(s => new IncreaseModel
@@ -63,6 +63,24 @@ namespace GateWashDataService.Helpers
                 Name = t.IddeviceNavigation.Name,
                 IdWash = t.Idwash
             }).ToList();
+        }
+
+        public static List<CollectModel> GetCollects(GateWashDbContext context, GetCollectsParameters param)
+        {
+            return context.Collects.Where(c => (c.Dtime >= param.StartDate && c.Dtime <= param.EndDate) 
+                                               && (param.Terminal == null || c.IddeviceNavigation.Code == param.Terminal))
+                                   .Select(c => new CollectModel
+                                   {
+                                       DTime = c.Dtime,
+                                       Terminal = c.IddeviceNavigation.Code,
+                                       m10 = c.M10,
+                                       b50 = c.B50,
+                                       b100 = c.B100,
+                                       b200 = c.B200,
+                                       b500 = c.B500,
+                                       b1000 = c.B1000,
+                                       b2000 = c.B2000
+                                   }).ToList();
         }
     }
 }
