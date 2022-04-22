@@ -1,4 +1,6 @@
 ﻿using GateWashDataService.Models;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +31,20 @@ namespace GateWashDataService.Extentions
             var count = source.Count();
             var items = source.Skip((pagingParam.PageNumber - 1) * pagingParam.PageSize).Take(pagingParam.PageSize).ToList();
             return new PagedList<T>(items, count, pagingParam.PageNumber, pagingParam.PageSize);
+        }
+
+        public static void PrepareHTTPResponseMetadata(HttpResponse response, PagedList<T> result)
+        {
+            var metadata = new
+            {
+                result.CurrentPage,
+                result.HasNext,
+                result.HasPrevious,
+                result.TotalPages,
+                result.TotalCount
+            };
+
+            response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
         }
     }
 }

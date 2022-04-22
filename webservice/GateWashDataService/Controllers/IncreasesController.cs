@@ -23,6 +23,20 @@ namespace GateWashDataService.Controllers
             _context = context;
         }
 
+        private async Task PrepareResponseMetadata<T>(HttpResponse response, PagedList<T> result)
+        {
+            var metadata = new
+            {
+                result.CurrentPage,
+                result.HasNext,
+                result.HasPrevious,
+                result.TotalPages,
+                result.TotalCount
+            };
+
+            response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+        }
+
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetIncreaseParameters parameters)
         {
@@ -30,15 +44,7 @@ namespace GateWashDataService.Controllers
 
             PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(increases.AsQueryable(), parameters.Paging);
 
-            var metadata = new
-            {
-                result.CurrentPage,
-                result.HasNext,
-                result.HasPrevious,
-                result.TotalPages
-            };
-
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            PagedList<IncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
         }
@@ -59,15 +65,7 @@ namespace GateWashDataService.Controllers
 
             PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(groupedIncreases.AsQueryable(), parameters.Paging);
 
-            var metadata = new
-            {
-                result.CurrentPage,
-                result.HasNext,
-                result.HasPrevious,
-                result.TotalPages
-            };
-
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            PagedList<IncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
         }
@@ -89,15 +87,7 @@ namespace GateWashDataService.Controllers
 
             PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(groupedIncreases.AsQueryable(), parameters.Paging);
 
-            var metadata = new
-            {
-                result.CurrentPage,
-                result.HasNext,
-                result.HasPrevious,
-                result.TotalPages
-            };
-
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            PagedList<IncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
         }
@@ -118,15 +108,7 @@ namespace GateWashDataService.Controllers
 
             PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(groupedIncreases.AsQueryable(), parameters.Paging);
 
-            var metadata = new
-            {
-                result.CurrentPage,
-                result.HasNext,
-                result.HasPrevious,
-                result.TotalPages
-            };
-
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            PagedList<IncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
         }
@@ -148,15 +130,7 @@ namespace GateWashDataService.Controllers
 
             PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(groupedIncreases.AsQueryable(), parameters.Paging);
 
-            var metadata = new
-            {
-                result.CurrentPage,
-                result.HasNext,
-                result.HasPrevious,
-                result.TotalPages
-            };
-
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            PagedList<IncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
         }
