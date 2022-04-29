@@ -35,6 +35,7 @@ namespace GateWashDataService.Controllers
                 filters.Regions = await SqlHelper.GetRegions(_context);
                 filters.Washes = await SqlHelper.GetWashes(_context);
                 filters.PayTerminals = await SqlHelper.GetPayTerminals(_context);
+                filters.Programs = await SqlHelper.GetPrograms(_context);
 
                 return Ok(filters);
             }

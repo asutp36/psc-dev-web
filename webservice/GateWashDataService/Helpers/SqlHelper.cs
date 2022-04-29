@@ -1,6 +1,7 @@
 ﻿using GateWashDataService.Models;
 using GateWashDataService.Models.Filters;
 using GateWashDataService.Models.GateWashContext;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +64,17 @@ namespace GateWashDataService.Helpers
                 Name = t.IddeviceNavigation.Name,
                 IdWash = t.Idwash
             }).ToList();
+        }
+
+        public static async Task<List<ProgramModel>> GetPrograms(GateWashDbContext context)
+        {
+            return context.Functions.Select(i => new ProgramModel
+            {
+                Code = i.Code,
+                Name = i.Name,
+                Cost = i.Cost
+            }
+            ).ToList();
         }
 
         public static List<CollectModel> GetCollects(GateWashDbContext context, GetCollectsParameters param)
