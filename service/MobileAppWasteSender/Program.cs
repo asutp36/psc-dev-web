@@ -29,6 +29,7 @@ namespace MobileAppWasteSender
         private static int _cacheExpiringTime;
         private static int _oldSessionTime;
         private static IMemoryCache _cache;
+        private static int _resultMessageLength;
 
         static async Task Main(string[] args)
         {
@@ -41,6 +42,7 @@ namespace MobileAppWasteSender
                 Log.Logger.Information($"Мойка считается незавершённой через {_oldSessionTime} минут");
                 Log.Logger.Information($"Период работы программы {_updatePeriod} секунд");
                 Log.Logger.Information($"Время хранения записи в кэше {_cacheExpiringTime} минут");
+                Log.Logger.Information($"Длина ResultMessage {_resultMessageLength} символов");
                 DateTime curDate = DateTime.Now.Date;
 
                 while (true)
@@ -69,11 +71,14 @@ namespace MobileAppWasteSender
 
                                 ms.StatusCode = (int)response.StatusCode;
                                 ms.ResultMessage = await response.Content.ReadAsStringAsync();
+                                if (ms.ResultMessage.Length > _resultMessageLength)
+                                    ms.ResultMessage = ms.ResultMessage.Substring(0, _resultMessageLength);
                             }
                             catch (Exception e)
                             {
                                 ms.StatusCode = 0;
-                                ms.ResultMessage = e.Message;
+                                if (ms.ResultMessage.Length > _resultMessageLength)
+                                    ms.ResultMessage = e.Message.Substring(0, _resultMessageLength);
                                 Log.Logger.Error("Ошибка при отправке. " + e.Message + Environment.NewLine);
                             }
                             finally
@@ -89,6 +94,8 @@ namespace MobileAppWasteSender
                             catch (DbUpdateException e)
                             {
                                 Log.Logger.Error("Ошибка при обновлении бд: " + e.Message + Environment.NewLine + e.InnerException.Message + Environment.NewLine);
+                                Log.Logger.Error($"Пытаюсь добавить объект: ms: IdmobileSending={ms.IdmobileSending},\n" +
+                                    $"amount={ms.Amount}, dtimeStart={ms.DtimeStart}, dtimeEnd={ms.DtimeEnd}, result={ms.ResultMessage}");
                             }
                             catch (SqlException e)
                             {
@@ -129,6 +136,7 @@ namespace MobileAppWasteSender
                              .Build();
             _updatePeriod = int.Parse(_config.GetSection("UpdatePeriod").Value);
             _oldSessionTime = int.Parse(_config.GetSection("OldSessionTime").Value);
+            _resultMessageLength = int.Parse(_config.GetSection("ResultMessageLength").Value);
 
             Log.Logger = new LoggerConfiguration()
               .MinimumLevel.Debug()
@@ -163,7 +171,8 @@ namespace MobileAppWasteSender
                 time_send = waste.DtimeEnd.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                 operation_time = waste.DtimeEnd.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                 card = GetCardNum(waste.Idcard),
-                value = waste.Amount.Value
+                value = waste.Amount.Value,
+                guid = Guid.Parse(waste.Guid)
             };
             var data = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, Application.Json);
 

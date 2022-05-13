@@ -16,5 +16,6 @@ namespace MobileAppWasteSender.Models
         public string operation_time { get; set; }
         public string card { get; set; }
         public int value { get; set; }
+        public Guid guid { get; set; }
     }
 }
