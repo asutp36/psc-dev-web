@@ -16,7 +16,7 @@ namespace GateWashDataService.Helpers
 
         public static List<IncreaseModel> GetIncreases(GateWashDbContext context, GetIncreaseParameters param)
         {
-            return context.PaySessions.Where(s => (s.DtimeBegin >= param.StartDate) && (s.DtimeBegin <= param.EndDate) && (!param.OnlyNotes || s.Details != null)
+            return context.PaySessions.Where(s => (s.DtimeBegin >= param.StartDate) && (s.DtimeBegin <= param.EndDate) && (!param.OnlyNotes || (s.Details != null && s.Details != ""))
                                             && (param.Terminal == null || s.IddeviceNavigation.Code == param.Terminal)
                                             && (param.Program == null || s.IdfunctionNavigation.Code == param.Program))
                                       .Select(s => new IncreaseModel
@@ -30,7 +30,7 @@ namespace GateWashDataService.Helpers
                                           Cheque = s.Qr != null && s.Qr != "",
                                           Note = s.Details
                                       })
-                                      .Where(i => (!param.OnlyBank || i.Bank != 0) && (!param.OnlyCash || i.Cash != 0))
+                                      .Where(i => (!param.OnlyBank || i.Bank != 0) && (!param.OnlyCash || i.Cash != 0) && (!param.OnlyCheque || i.Cheque))
                                       .ToList();
         }
 

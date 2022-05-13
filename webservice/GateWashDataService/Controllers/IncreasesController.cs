@@ -23,20 +23,6 @@ namespace GateWashDataService.Controllers
             _context = context;
         }
 
-        private async Task PrepareResponseMetadata<T>(HttpResponse response, PagedList<T> result)
-        {
-            var metadata = new
-            {
-                result.CurrentPage,
-                result.HasNext,
-                result.HasPrevious,
-                result.TotalPages,
-                result.TotalCount
-            };
-
-            response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-        }
-
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetIncreaseParameters parameters)
         {
@@ -47,6 +33,18 @@ namespace GateWashDataService.Controllers
             PagedList<IncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
+        }
+
+        [HttpGet("count")]
+        public async Task<IActionResult> GetCount([FromQuery] GetIncreaseParameters parameters)
+        {
+            List<IncreaseModel> increases = SqlHelper.GetIncreases(_context, parameters);
+
+            //PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(increases.AsQueryable(), parameters.Paging);
+
+            //PagedList<IncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
+
+            return Ok(increases.Count);
         }
 
         [HttpGet("days")]
@@ -68,6 +66,24 @@ namespace GateWashDataService.Controllers
             PagedList<IncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
+        }
+
+        [HttpGet("days/count")]
+        public async Task<IActionResult> GetByDaysCount([FromQuery] GetIncreaseParameters parameters)
+        {
+            List<IncreaseModel> increases = SqlHelper.GetIncreases(_context, parameters);
+
+            IEnumerable<IncreaseModel> groupedIncreases = increases.GroupBy(i => new { i.DTime.Date })
+                                                                    .Select(x => new IncreaseModel
+                                                                    {
+                                                                        DTime = x.Key.Date,
+                                                                        Bank = x.Sum(i => i.Bank),
+                                                                        Cash = x.Sum(i => i.Cash),
+                                                                        Payout = x.Sum(i => i.Payout)
+                                                                    });
+
+
+            return Ok(groupedIncreases.Count());
         }
 
         [HttpGet("days/split-terminals")]
@@ -92,6 +108,26 @@ namespace GateWashDataService.Controllers
             return Ok(result);
         }
 
+        [HttpGet("days/split-terminals/count")]
+        public async Task<IActionResult> GetByDaysSplitTerminalsCount([FromQuery] GetIncreaseParameters parameters)
+        {
+            List<IncreaseModel> increases = SqlHelper.GetIncreases(_context, parameters);
+
+            IEnumerable<IncreaseModel> groupedIncreases = increases.GroupBy(i => new { i.DTime.Date, i.Terminal })
+                                                                    .Select(x => new IncreaseModel
+                                                                    {
+                                                                        DTime = x.Key.Date,
+                                                                        Terminal = x.Key.Terminal,
+                                                                        Bank = x.Sum(i => i.Bank),
+                                                                        Cash = x.Sum(i => i.Cash),
+                                                                        Payout = x.Sum(i => i.Payout)
+                                                                    });
+
+            
+
+            return Ok(groupedIncreases.Count());
+        }
+
         [HttpGet("months")]
         public async Task<IActionResult> GetByMonths([FromQuery] GetIncreaseParameters parameters)
         {
@@ -111,6 +147,24 @@ namespace GateWashDataService.Controllers
             PagedList<IncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
+        }
+
+        [HttpGet("months/count")]
+        public async Task<IActionResult> GetByMonthsCount([FromQuery] GetIncreaseParameters parameters)
+        {
+            List<IncreaseModel> increases = SqlHelper.GetIncreases(_context, parameters);
+
+            IEnumerable<IncreaseModel> groupedIncreases = increases.GroupBy(i => new { i.DTime.Year, i.DTime.Month })
+                                                                   .Select(x => new IncreaseModel
+                                                                   {
+                                                                       DTime = new DateTime(x.Key.Year, x.Key.Month, 1),
+                                                                       Bank = x.Sum(i => i.Bank),
+                                                                       Cash = x.Sum(i => i.Cash),
+                                                                       Payout = x.Sum(i => i.Payout)
+                                                                   });
+
+
+            return Ok(groupedIncreases.Count());
         }
 
         [HttpGet("months/split-terminals")]
@@ -133,6 +187,25 @@ namespace GateWashDataService.Controllers
             PagedList<IncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
+        }
+
+        [HttpGet("months/split-terminals/count")]
+        public async Task<IActionResult> GetByMonthsSplitTerminalsCount([FromQuery] GetIncreaseParameters parameters)
+        {
+            List<IncreaseModel> increases = SqlHelper.GetIncreases(_context, parameters);
+
+            IEnumerable<IncreaseModel> groupedIncreases = increases.GroupBy(i => new { i.DTime.Year, i.DTime.Month, i.Terminal })
+                                                                   .Select(x => new IncreaseModel
+                                                                   {
+                                                                       DTime = new DateTime(x.Key.Year, x.Key.Month, 1),
+                                                                       Terminal = x.Key.Terminal,
+                                                                       Bank = x.Sum(i => i.Bank),
+                                                                       Cash = x.Sum(i => i.Cash),
+                                                                       Payout = x.Sum(i => i.Payout)
+                                                                   });
+
+
+            return Ok(groupedIncreases.Count());
         }
     }
 }
