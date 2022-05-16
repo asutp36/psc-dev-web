@@ -30,7 +30,10 @@ namespace GateWashDataService.Models.GateWashContext
         public virtual DbSet<PaySession> PaySessions { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Session> Sessions { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserWash> UserWashes { get; set; }
         public virtual DbSet<Wash> Washes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -401,6 +404,22 @@ namespace GateWashDataService.Models.GateWashContext
                     .HasMaxLength(100);
             });
 
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.HasKey(e => e.Idrole)
+                    .HasName("PK_Role");
+
+                entity.Property(e => e.Idrole).HasColumnName("IDRole");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
+            });
+
             modelBuilder.Entity<Session>(entity =>
             {
                 entity.HasKey(e => e.Idsession);
@@ -431,6 +450,57 @@ namespace GateWashDataService.Models.GateWashContext
                     .WithMany(p => p.Sessions)
                     .HasForeignKey(d => d.Idfunction)
                     .HasConstraintName("FK_Sessions_Functions");
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.Iduser);
+
+                entity.Property(e => e.Iduser).HasColumnName("IDUser");
+
+                entity.Property(e => e.Email).HasMaxLength(50);
+
+                entity.Property(e => e.Idrole).HasColumnName("IDRole");
+
+                entity.Property(e => e.Login)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Password)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Phone).HasMaxLength(20);
+
+                entity.HasOne(d => d.IdroleNavigation)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.Idrole)
+                    .HasConstraintName("FK_Users_Roles");
+            });
+
+            modelBuilder.Entity<UserWash>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("UserWash");
+
+                entity.Property(e => e.Iduser).HasColumnName("IDUser");
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.HasOne(d => d.IduserNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Iduser)
+                    .HasConstraintName("FK_UserWash_Users");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_UserWash_Wash");
             });
 
             modelBuilder.Entity<Wash>(entity =>
