@@ -313,5 +313,23 @@ namespace Backend.Controllers
             }
             return Ok();
         }
+
+        [HttpGet("{login}")]
+        public IActionResult GetUser(string login)
+        {
+            AccountViewModel result = _model.Users.Where(u => u.Login == login).Include(u => u.IdroleNavigation)
+                                                  .Select(u => new AccountViewModel
+                                                  {
+                                                      login = u.Login,
+                                                      name = u.Name,
+                                                      email = u.Email,
+                                                      phone = u.Phone,
+                                                      role = u.IdroleNavigation.Code
+                                                  }).FirstOrDefault();
+            if (result == null)
+                return NotFound(new Error() { errorType = "badvalue", alert = "Пользователя с таким логином не существует", errorCode = "Пользователь не найден", errorMessage = "Проверьте, правильно ли введён логин пользователя, и попробуйте снова" });
+
+            return Ok(result);
+        }
     }
 }
