@@ -28,7 +28,8 @@ namespace GateWashDataService.Helpers
                                           Cash = s.PayEvents.Where(e => cashIncreaseEventkinds.Contains(e.IdeventKindNavigation.Code)).Sum(e => e.EventIncrease.Amount) ?? 0,
                                           Payout = s.PayEvents.Sum(e => e.EventPayout.Amount),
                                           Cheque = s.Qr != null && s.Qr != "",
-                                          Note = s.Details
+                                          Note = s.Details,
+                                          Type = s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Name
                                       })
                                       .Where(i => (!param.OnlyBank || i.Bank != 0) && (!param.OnlyCash || i.Cash != 0) && (!param.OnlyCheque || i.Cheque))
                                       .ToList();
