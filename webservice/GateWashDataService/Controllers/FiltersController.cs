@@ -38,6 +38,7 @@ namespace GateWashDataService.Controllers
                 filters.PayTerminals = new List<PayTerminalModel>();
                 filters.Programs = new List<ProgramModel>();
                 filters.Washes = new List<WashModel>();
+                filters.EventKinds = new List<EventKindModel>();
                 foreach (Claim c in User.Claims.Where(cl => cl.Type == "Wash").ToList())
                 {
                     filters.Washes.Add(_context.Washes.Where(w => w.Code == c.Value).Select(w => new WashModel { IdWash = w.Idwash, IdRegion = w.Idregion, Code = w.Code, Name = w.Name }).FirstOrDefault());
@@ -59,6 +60,19 @@ namespace GateWashDataService.Controllers
                         Name = p.IdprogramNavigation.Name
                     }).ToList();
                     filters.Programs.AddRange(programs);
+
+                    var eventkinds = _context.EventKindWashes.Where(ekw => ekw.IdwashNavigation.Code == c.Value).Select(ek => new EventKindModel
+                    {
+                        IdEventKind = ek.IdeventKind,
+                        Code = ek.IdeventKindNavigation.Code,
+                        Name = ek.IdeventKindNavigation.Name,
+                        IdWash = new List<int>() { ek.Idwash }
+                    }).ToList();
+                    foreach (EventKindModel ek in eventkinds)
+                        if (filters.EventKinds.Find(e => e.IdEventKind == ek.IdEventKind && e.IdWash.FirstOrDefault() != ek.IdWash.FirstOrDefault()) == null)
+                            filters.EventKinds.Add(ek);
+                        else
+                            filters.EventKinds.Find(e => e.IdEventKind == ek.IdEventKind).IdWash.Add(ek.IdWash.First());
                 }
                 
 
@@ -66,6 +80,7 @@ namespace GateWashDataService.Controllers
                 //filters.Washes = await SqlHelper.GetWashes(_context);
                 //filters.PayTerminals = await SqlHelper.GetPayTerminals(_context);
                 //filters.Programs = await SqlHelper.GetPrograms(_context);
+
 
                 return Ok(filters);
             }

@@ -32,6 +32,7 @@ namespace GateWashDataService.Helpers
                                           Type = s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Name
                                       })
                                       .Where(i => (!param.OnlyBank || i.Bank != 0) && (!param.OnlyCash || i.Cash != 0) && (!param.OnlyCheque || i.Cheque))
+                                      .OrderBy(s => s.DTime)
                                       .ToList();
         }
 

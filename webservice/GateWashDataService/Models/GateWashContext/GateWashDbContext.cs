@@ -24,6 +24,7 @@ namespace GateWashDataService.Models.GateWashContext
         public virtual DbSet<Event> Events { get; set; }
         public virtual DbSet<EventIncrease> EventIncreases { get; set; }
         public virtual DbSet<EventKind> EventKinds { get; set; }
+        public virtual DbSet<EventKindWash> EventKindWashes { get; set; }
         public virtual DbSet<EventPayout> EventPayouts { get; set; }
         public virtual DbSet<PayEvent> PayEvents { get; set; }
         public virtual DbSet<PaySession> PaySessions { get; set; }
@@ -238,6 +239,27 @@ namespace GateWashDataService.Models.GateWashContext
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<EventKindWash>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("EventKindWash");
+
+                entity.Property(e => e.IdeventKind).HasColumnName("IDEventKind");
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.HasOne(d => d.IdeventKindNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdeventKind)
+                    .HasConstraintName("FK_EventKindWash_EventKind");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_EventKindWash_Wash");
             });
 
             modelBuilder.Entity<EventPayout>(entity =>
