@@ -2,12 +2,14 @@
 using GateWashDataService.Models;
 using GateWashDataService.Models.Filters;
 using GateWashDataService.Models.GateWashContext;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace GateWashDataService.Controllers
@@ -26,15 +28,31 @@ namespace GateWashDataService.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult> Get()
         {
             try
             {
                 FiltersModel filters = new FiltersModel();
+                filters.PayTerminals = new List<PayTerminalModel>();
+                foreach (Claim c in User.Claims.Where(cl => cl.Type == "Wash").ToList())
+                {
+                    var terminals = _context.Posts.Where(p => p.IddeviceNavigation.IddeviceTypeNavigation.Code == "pay"
+                    && p.IdwashNavigation.Code == c.Value).Select(t => new PayTerminalModel
+                    {
+                        IdDevice = t.Iddevice,
+                        Code = t.IddeviceNavigation.Code,
+                        Name = t.IddeviceNavigation.Name,
+                        IdWash = t.Idwash
+                    }).ToList();
+ 
+                    filters.PayTerminals.AddRange(terminals);
+                }
+                
 
                 filters.Regions = await SqlHelper.GetRegions(_context);
                 filters.Washes = await SqlHelper.GetWashes(_context);
-                filters.PayTerminals = await SqlHelper.GetPayTerminals(_context);
+                //filters.PayTerminals = await SqlHelper.GetPayTerminals(_context);
                 filters.Programs = await SqlHelper.GetPrograms(_context);
 
                 return Ok(filters);
@@ -51,5 +69,6 @@ namespace GateWashDataService.Controllers
                 });
             }
         }
+
     }
 }
