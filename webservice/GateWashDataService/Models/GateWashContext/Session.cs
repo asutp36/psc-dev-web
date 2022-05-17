@@ -20,7 +20,7 @@ namespace GateWashDataService.Models.GateWashContext
         public string Uuid { get; set; }
 
         public virtual Card IdcardNavigation { get; set; }
-        public virtual Function IdfunctionNavigation { get; set; }
+        public virtual Program IdfunctionNavigation { get; set; }
         public virtual ICollection<Event> Events { get; set; }
     }
 }

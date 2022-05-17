@@ -25,10 +25,10 @@ namespace GateWashDataService.Models.GateWashContext
         public virtual DbSet<EventIncrease> EventIncreases { get; set; }
         public virtual DbSet<EventKind> EventKinds { get; set; }
         public virtual DbSet<EventPayout> EventPayouts { get; set; }
-        public virtual DbSet<Function> Functions { get; set; }
         public virtual DbSet<PayEvent> PayEvents { get; set; }
         public virtual DbSet<PaySession> PaySessions { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
+        public virtual DbSet<Program> Programs { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Session> Sessions { get; set; }
@@ -269,21 +269,6 @@ namespace GateWashDataService.Models.GateWashContext
                     .HasConstraintName("FK_EventPayout_PayEvent");
             });
 
-            modelBuilder.Entity<Function>(entity =>
-            {
-                entity.HasKey(e => e.Idfunction);
-
-                entity.Property(e => e.Idfunction).HasColumnName("IDFunction");
-
-                entity.Property(e => e.Code)
-                    .IsRequired()
-                    .HasMaxLength(10);
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(50);
-            });
-
             modelBuilder.Entity<PayEvent>(entity =>
             {
                 entity.HasKey(e => e.IdpayEvent);
@@ -342,7 +327,7 @@ namespace GateWashDataService.Models.GateWashContext
 
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 
-                entity.Property(e => e.Idfunction).HasColumnName("IDFunction");
+                entity.Property(e => e.Idprogram).HasColumnName("IDProgram");
 
                 entity.Property(e => e.IdsessionOnPost).HasColumnName("IDSessionOnPost");
 
@@ -356,10 +341,10 @@ namespace GateWashDataService.Models.GateWashContext
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PaySession_Device");
 
-                entity.HasOne(d => d.IdfunctionNavigation)
+                entity.HasOne(d => d.IdprogramNavigation)
                     .WithMany(p => p.PaySessions)
-                    .HasForeignKey(d => d.Idfunction)
-                    .HasConstraintName("FK_PaySession_Functions");
+                    .HasForeignKey(d => d.Idprogram)
+                    .HasConstraintName("FK_PaySession_Program");
             });
 
             modelBuilder.Entity<Post>(entity =>
@@ -389,6 +374,24 @@ namespace GateWashDataService.Models.GateWashContext
                     .WithMany(p => p.Posts)
                     .HasForeignKey(d => d.Idwash)
                     .HasConstraintName("FK_Posts_Wash");
+            });
+
+            modelBuilder.Entity<Program>(entity =>
+            {
+                entity.HasKey(e => e.Idprogram)
+                    .HasName("PK_Functions");
+
+                entity.ToTable("Program");
+
+                entity.Property(e => e.Idprogram).HasColumnName("IDProgram");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<Region>(entity =>

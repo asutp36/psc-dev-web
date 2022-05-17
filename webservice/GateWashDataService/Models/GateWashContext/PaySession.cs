@@ -14,7 +14,7 @@ namespace GateWashDataService.Models.GateWashContext
 
         public int IdpaySession { get; set; }
         public int IdsessionOnPost { get; set; }
-        public int Idfunction { get; set; }
+        public int Idprogram { get; set; }
         public DateTime DtimeBegin { get; set; }
         public int Iddevice { get; set; }
         public int ProgramCost { get; set; }
@@ -24,7 +24,7 @@ namespace GateWashDataService.Models.GateWashContext
         public string Details { get; set; }
 
         public virtual Device IddeviceNavigation { get; set; }
-        public virtual Function IdfunctionNavigation { get; set; }
+        public virtual Program IdprogramNavigation { get; set; }
         public virtual ICollection<PayEvent> PayEvents { get; set; }
     }
 }
