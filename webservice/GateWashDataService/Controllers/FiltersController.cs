@@ -5,6 +5,7 @@ using GateWashDataService.Models.GateWashContext;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -35,8 +36,11 @@ namespace GateWashDataService.Controllers
             {
                 FiltersModel filters = new FiltersModel();
                 filters.PayTerminals = new List<PayTerminalModel>();
+                filters.Programs = new List<ProgramModel>();
+                filters.Washes = new List<WashModel>();
                 foreach (Claim c in User.Claims.Where(cl => cl.Type == "Wash").ToList())
                 {
+                    filters.Washes.Add(_context.Washes.Where(w => w.Code == c.Value).Select(w => new WashModel { IdWash = w.Idwash, IdRegion = w.Idregion, Code = w.Code, Name = w.Name }).FirstOrDefault());
                     var terminals = _context.Posts.Where(p => p.IddeviceNavigation.IddeviceTypeNavigation.Code == "pay"
                     && p.IdwashNavigation.Code == c.Value).Select(t => new PayTerminalModel
                     {
@@ -45,15 +49,23 @@ namespace GateWashDataService.Controllers
                         Name = t.IddeviceNavigation.Name,
                         IdWash = t.Idwash
                     }).ToList();
- 
                     filters.PayTerminals.AddRange(terminals);
+
+                    var programs = _context.ProgramWashes.Where(pw => pw.IdwashNavigation.Code == c.Value).Select(p => new ProgramModel
+                    {
+                        IdWash = p.Idwash,
+                        Code = p.IdprogramNavigation.Code,
+                        Cost = p.IdprogramNavigation.Cost,
+                        Name = p.IdprogramNavigation.Name
+                    }).ToList();
+                    filters.Programs.AddRange(programs);
                 }
                 
 
                 filters.Regions = await SqlHelper.GetRegions(_context);
-                filters.Washes = await SqlHelper.GetWashes(_context);
+                //filters.Washes = await SqlHelper.GetWashes(_context);
                 //filters.PayTerminals = await SqlHelper.GetPayTerminals(_context);
-                filters.Programs = await SqlHelper.GetPrograms(_context);
+                //filters.Programs = await SqlHelper.GetPrograms(_context);
 
                 return Ok(filters);
             }
