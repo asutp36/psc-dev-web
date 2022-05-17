@@ -29,6 +29,7 @@ namespace GateWashDataService.Models.GateWashContext
         public virtual DbSet<PaySession> PaySessions { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Program> Programs { get; set; }
+        public virtual DbSet<ProgramWash> ProgramWashes { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Session> Sessions { get; set; }
@@ -392,6 +393,27 @@ namespace GateWashDataService.Models.GateWashContext
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<ProgramWash>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("ProgramWash");
+
+                entity.Property(e => e.Idprogram).HasColumnName("IDProgram");
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.HasOne(d => d.IdprogramNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idprogram)
+                    .HasConstraintName("FK_ProgramWash_Program");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_ProgramWash_Wash");
             });
 
             modelBuilder.Entity<Region>(entity =>
