@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GateWashSyncService.Models.GateWash;
+using Newtonsoft.Json;
 
 namespace GateWashSyncService.Controllers
 {
@@ -27,6 +28,7 @@ namespace GateWashSyncService.Controllers
         [HttpPost]
         public async Task<IActionResult> PostEvent(EventBindingModel evnt)
         {
+            _logger.LogInformation("Запуск с параметрами: " + JsonConvert.SerializeObject(evnt));
             try
             {
                 GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
@@ -72,6 +74,7 @@ namespace GateWashSyncService.Controllers
         [HttpPost("payout")]
         public async Task<IActionResult> PostEventPayout(EventPayoutBindingModel epayout)
         {
+            _logger.LogInformation("Запуск с параметрами: " + JsonConvert.SerializeObject(epayout));
             try
             {
                 GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
@@ -122,6 +125,7 @@ namespace GateWashSyncService.Controllers
         [HttpPost("increase")]
         public async Task<IActionResult> PostEventIncrease(EventIncreaseBindingModel eincr)
         {
+            _logger.LogInformation("Запуск с параметрами: " + JsonConvert.SerializeObject(eincr));
             try
             {
                 GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);

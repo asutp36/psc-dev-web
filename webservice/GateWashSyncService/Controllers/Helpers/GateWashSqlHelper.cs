@@ -54,7 +54,7 @@ namespace GateWashSyncService.Controllers.Helpers
                 Sessions s = new Sessions()
                 {
                     IdsessoinOnWash = session.idSession,
-                    Idfunction = this.GetIdFunction(session.functionCode),
+                    Idfunction = this.GetIdProgram(session.functionCode),
                     Idcard = this.GetIdCard(session.cardNum),
                     Dtime = DateTime.Parse(session.dtime),
                     Uuid = session.uuid
@@ -85,14 +85,14 @@ namespace GateWashSyncService.Controllers.Helpers
             return _model.Device.Where(d => d.Code == code).FirstOrDefault().Iddevice;
         }
 
-        public int GetIdFunction(string code)
+        public int GetIdProgram(string code)
         {
-            return _model.Functions.Where(f => f.Code == code).FirstOrDefault().Idfunction;
+            return _model.Program.Where(f => f.Code == code).FirstOrDefault().Idprogram;
         }
 
-        public bool IsFunctionExsists(string code)
+        public bool IsProgramExsists(string code)
         {
-            return _model.Functions.Where(f => f.Code == code).FirstOrDefault() != null;
+            return _model.Program.Where(f => f.Code == code).FirstOrDefault() != null;
         }
 
         public bool IsSessionExsists(string cardNum, string uuid)
@@ -297,7 +297,7 @@ namespace GateWashSyncService.Controllers.Helpers
                 PaySession ps = new PaySession()
                 {
                     IdsessionOnPost = psession.idSessionOnPost,
-                    Idfunction = this.GetIdFunction(psession.functionCode),
+                    Idprogram = this.GetIdProgram(psession.functionCode),
                     DtimeBegin = DateTime.Parse(psession.dtimeBegin),
                     Iddevice = this.GetIdDevice(psession.deviceCode),
                     ProgramCost = psession.programCost,

@@ -27,10 +27,10 @@ namespace GateWashSyncService.Models.GateWash
         public virtual DbSet<EventIncrease> EventIncrease { get; set; }
         public virtual DbSet<EventKind> EventKind { get; set; }
         public virtual DbSet<EventPayout> EventPayout { get; set; }
-        public virtual DbSet<Functions> Functions { get; set; }
         public virtual DbSet<PayEvent> PayEvent { get; set; }
         public virtual DbSet<PaySession> PaySession { get; set; }
         public virtual DbSet<Posts> Posts { get; set; }
+        public virtual DbSet<Program> Program { get; set; }
         public virtual DbSet<Regions> Regions { get; set; }
         public virtual DbSet<Sessions> Sessions { get; set; }
         public virtual DbSet<Wash> Wash { get; set; }
@@ -254,21 +254,6 @@ namespace GateWashSyncService.Models.GateWash
                     .HasConstraintName("FK_EventPayout_PayEvent");
             });
 
-            modelBuilder.Entity<Functions>(entity =>
-            {
-                entity.HasKey(e => e.Idfunction);
-
-                entity.Property(e => e.Idfunction).HasColumnName("IDFunction");
-
-                entity.Property(e => e.Code)
-                    .IsRequired()
-                    .HasMaxLength(10);
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(50);
-            });
-
             modelBuilder.Entity<PayEvent>(entity =>
             {
                 entity.HasKey(e => e.IdpayEvent);
@@ -323,7 +308,7 @@ namespace GateWashSyncService.Models.GateWash
 
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 
-                entity.Property(e => e.Idfunction).HasColumnName("IDFunction");
+                entity.Property(e => e.Idprogram).HasColumnName("IDProgram");
 
                 entity.Property(e => e.IdsessionOnPost).HasColumnName("IDSessionOnPost");
 
@@ -337,10 +322,10 @@ namespace GateWashSyncService.Models.GateWash
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PaySession_Device");
 
-                entity.HasOne(d => d.IdfunctionNavigation)
+                entity.HasOne(d => d.IdprogramNavigation)
                     .WithMany(p => p.PaySession)
-                    .HasForeignKey(d => d.Idfunction)
-                    .HasConstraintName("FK_PaySession_Functions");
+                    .HasForeignKey(d => d.Idprogram)
+                    .HasConstraintName("FK_PaySession_Program");
             });
 
             modelBuilder.Entity<Posts>(entity =>
@@ -353,7 +338,9 @@ namespace GateWashSyncService.Models.GateWash
 
                 entity.Property(e => e.Idwash).HasColumnName("IDWash");
 
-                entity.Property(e => e.Name).HasMaxLength(100);
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.Qrcode)
                     .HasColumnName("QRCode")
@@ -362,13 +349,28 @@ namespace GateWashSyncService.Models.GateWash
                 entity.HasOne(d => d.IddeviceNavigation)
                     .WithMany(p => p.Posts)
                     .HasForeignKey(d => d.Iddevice)
-                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Posts_Device");
 
                 entity.HasOne(d => d.IdwashNavigation)
                     .WithMany(p => p.Posts)
                     .HasForeignKey(d => d.Idwash)
                     .HasConstraintName("FK_Posts_Wash");
+            });
+
+            modelBuilder.Entity<Program>(entity =>
+            {
+                entity.HasKey(e => e.Idprogram)
+                    .HasName("PK_Functions");
+
+                entity.Property(e => e.Idprogram).HasColumnName("IDProgram");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<Regions>(entity =>

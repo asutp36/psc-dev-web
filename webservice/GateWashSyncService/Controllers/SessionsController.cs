@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GateWashSyncService.Models.GateWash;
+using Newtonsoft.Json;
 
 namespace GateWashSyncService.Controllers
 {
@@ -27,6 +28,7 @@ namespace GateWashSyncService.Controllers
         [HttpPost]
         public async Task<IActionResult> PostSessionAsync(SessionBindingModel session)
         {
+            _logger.LogInformation("Запуск с параметрами: " + JsonConvert.SerializeObject(session));
             try
             {
                 GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
@@ -35,7 +37,7 @@ namespace GateWashSyncService.Controllers
                     _logger.LogError($"Карта {session.cardNum} не найдена");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Карта {session.cardNum} не найдена" });
                 }
-                if (!sqlHelper.IsFunctionExsists(session.functionCode))
+                if (!sqlHelper.IsProgramExsists(session.functionCode))
                 {
                     _logger.LogError($"Функция {session.functionCode} не найдена");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Функция {session.functionCode} не найдена" });
@@ -71,10 +73,11 @@ namespace GateWashSyncService.Controllers
         [HttpPost("pay")]
         public async Task<IActionResult> PostPaySessionAsync(PaySessionBindingModel psession)
         {
+            _logger.LogInformation("Запуск с параметрами: " + JsonConvert.SerializeObject(psession));
             try
             {
                 GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
-                if (!sqlHelper.IsFunctionExsists(psession.functionCode))
+                if (!sqlHelper.IsProgramExsists(psession.functionCode))
                 {
                     _logger.LogError($"Функция {psession.functionCode} не найдена");
                     return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Функция {psession.functionCode} не найдена" });
