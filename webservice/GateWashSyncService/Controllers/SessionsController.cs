@@ -28,7 +28,6 @@ namespace GateWashSyncService.Controllers
         [HttpPost]
         public async Task<IActionResult> PostSessionAsync(SessionBindingModel session)
         {
-            _logger.LogInformation("Запуск с параметрами: " + JsonConvert.SerializeObject(session));
             try
             {
                 GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
@@ -73,7 +72,6 @@ namespace GateWashSyncService.Controllers
         [HttpPost("pay")]
         public async Task<IActionResult> PostPaySessionAsync(PaySessionBindingModel psession)
         {
-            _logger.LogInformation("Запуск с параметрами: " + JsonConvert.SerializeObject(psession));
             try
             {
                 GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);

@@ -28,7 +28,6 @@ namespace GateWashSyncService.Controllers
         [HttpPost]
         public async Task<IActionResult> PostCollect(CollectBindingModel collect)
         {
-            _logger.LogInformation("Запуск с параметрами: " + JsonConvert.SerializeObject(collect));
             try
             {
                 GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
