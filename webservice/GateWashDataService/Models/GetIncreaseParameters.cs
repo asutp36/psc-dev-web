@@ -16,5 +16,6 @@ namespace GateWashDataService.Models
         public bool OnlyCash { get; set; } = false;
         public bool OnlyCheque { get; set; } = false;
         public bool OnlyNotes { get; set; } = false;
+        public string EventKind { get; set; } = null;
     }
 }

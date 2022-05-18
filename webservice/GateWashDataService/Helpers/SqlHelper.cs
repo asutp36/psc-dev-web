@@ -18,7 +18,8 @@ namespace GateWashDataService.Helpers
         {
             return context.PaySessions.Where(s => (s.DtimeBegin >= param.StartDate) && (s.DtimeBegin <= param.EndDate) && (!param.OnlyNotes || (s.Details != null && s.Details != ""))
                                             && (param.Terminal == null || s.IddeviceNavigation.Code == param.Terminal)
-                                            && (param.Program == null || s.IdprogramNavigation.Code == param.Program))
+                                            && (param.Program == null || s.IdprogramNavigation.Code == param.Program)
+                                            && (param.EventKind == null || s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Code == param.EventKind))
                                       .Select(s => new IncreaseModel
                                       {
                                           DTime = s.DtimeBegin,
@@ -32,7 +33,7 @@ namespace GateWashDataService.Helpers
                                           Type = s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Name
                                       })
                                       .Where(i => (!param.OnlyBank || i.Bank != 0) && (!param.OnlyCash || i.Cash != 0) && (!param.OnlyCheque || i.Cheque))
-                                      .OrderBy(s => s.DTime)
+                                      .OrderByDescending(s => s.DTime)
                                       .ToList();
         }
 
