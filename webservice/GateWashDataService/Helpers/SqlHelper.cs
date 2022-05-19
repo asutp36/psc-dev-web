@@ -23,8 +23,9 @@ namespace GateWashDataService.Helpers
                                       .Select(s => new IncreaseModel
                                       {
                                           DTime = s.DtimeBegin,
-                                          Terminal = s.IddeviceNavigation.Code,
-                                          Program = s.IdprogramNavigation.Code,
+                                          Terminal = s.IddeviceNavigation.Name,
+                                          TerminalCode = s.IddeviceNavigation.Code,
+                                          Program = s.IdprogramNavigation.Name,
                                           Bank = s.PayEvents.Where(e => bankIncreaseEventkinds.Contains(e.IdeventKindNavigation.Code)).Sum(e => e.EventIncrease.Amount) ?? 0,
                                           Cash = s.PayEvents.Where(e => cashIncreaseEventkinds.Contains(e.IdeventKindNavigation.Code)).Sum(e => e.EventIncrease.Amount) ?? 0,
                                           Payout = s.PayEvents.Sum(e => e.EventPayout.Amount),

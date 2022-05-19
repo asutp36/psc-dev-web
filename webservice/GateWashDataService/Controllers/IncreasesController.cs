@@ -31,7 +31,7 @@ namespace GateWashDataService.Controllers
             
             var terminalCodes = _context.Washes.Where(w => washCodes.Contains(w.Code)).Select(t => t.Posts.Select(tr => tr.IddeviceNavigation.Code).First());
 
-            IQueryable<IncreaseModel> result = data.Where(t => terminalCodes.Contains(t.Terminal));
+            IQueryable<IncreaseModel> result = data.Where(t => terminalCodes.Contains(t.TerminalCode));
             return result;
         }
 

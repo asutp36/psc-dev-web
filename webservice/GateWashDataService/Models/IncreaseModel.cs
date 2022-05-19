@@ -9,6 +9,7 @@ namespace GateWashDataService.Models
     {
         public DateTime DTime { get; set; }
         public string Terminal { get; set; }
+        public string TerminalCode { get; set; }
         public string Program { get; set; }
         public int Bank { get; set; }
         public int Cash { get; set; }
