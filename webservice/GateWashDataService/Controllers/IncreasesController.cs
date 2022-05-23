@@ -38,7 +38,7 @@ namespace GateWashDataService.Controllers
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetIncreaseParameters parameters)
-        {
+        { 
             IQueryable<IncreaseModel> increases = SqlHelper.GetIncreasesQueryable(_context, parameters);
 
             if(parameters.Terminal == null)
@@ -67,13 +67,13 @@ namespace GateWashDataService.Controllers
             var temp = increases.ToList();
 
             var groupedIncreases = temp.GroupBy(i => i.DTime.Date,
-                                                     i => new { i.Amount, i.Payout },
+                                                     i => new { i.Revenue, i.Payout },
                                                      (date, values) => new IncreaseModel
                                                      {
                                                          DTime = date.Date,
                                                          //Bank = values.Sum(v => v.Bank),
                                                          //Cash = values.Sum(v => v.Cash),
-                                                         Amount = values.Sum(v => v.Amount),
+                                                         Revenue = values.Sum(v => v.Revenue),
                                                          Payout = values.Sum(v => v.Payout)
                                                      }).OrderByDescending(i => i.DTime);
 
@@ -98,14 +98,14 @@ namespace GateWashDataService.Controllers
             var temp = increases.ToList();
 
             var groupedIncreases = temp.GroupBy(i => new { i.DTime.Date, i.Terminal },
-                                                                       i => new { i.Amount, i.Payout },
+                                                                       i => new { i.Revenue, i.Payout },
                                                                        (group, values) => new IncreaseModel
                                                                        {
                                                                            DTime = group.Date,
                                                                            Terminal = group.Terminal,
                                                                            //Bank = values.Sum(v => v.Bank),
                                                                            //Cash = values.Sum(v => v.Cash),
-                                                                           Amount = values.Sum(v => v.Amount),
+                                                                           Revenue = values.Sum(v => v.Revenue),
                                                                            Payout = values.Sum(v => v.Payout)
                                                                        }).OrderByDescending(i => i.DTime);
 
@@ -130,13 +130,13 @@ namespace GateWashDataService.Controllers
             var temp = increases.ToList();
 
             var groupedIncreases = temp.GroupBy(i => new { i.DTime.Year, i.DTime.Month },
-                                                i => new { i.Amount, i.Payout },
+                                                i => new { i.Revenue, i.Payout },
                                                 (date, values) => new IncreaseModel
                                                 {
                                                     DTime = new DateTime(date.Year, date.Month, 1),
                                                     //Bank = values.Sum(v => v.Bank),
                                                     //Cash = values.Sum(v => v.Cash),
-                                                    Amount = values.Sum(v => v.Amount),
+                                                    Revenue = values.Sum(v => v.Revenue),
                                                     Payout = values.Sum(v => v.Payout)
                                                 }).OrderByDescending(i => i.DTime);
 
@@ -161,14 +161,14 @@ namespace GateWashDataService.Controllers
             var temp = increases.ToList();
 
             var groupedIncreases = temp.GroupBy(i => new { i.DTime.Year, i.DTime.Month, i.Terminal },
-                                                i => new { i.Amount, i.Payout },
+                                                i => new { i.Revenue, i.Payout },
                                                 (group, values) => new IncreaseModel
                                                 {
                                                     DTime = new DateTime(group.Year, group.Month, 1),
                                                     Terminal = group.Terminal,
                                                     //Bank = values.Sum(v => v.Bank),
                                                     //Cash = values.Sum(v => v.Cash),
-                                                    Amount = values.Sum(v => v.Amount),
+                                                    Revenue = values.Sum(v => v.Revenue),
                                                     Payout = values.Sum(v => v.Payout)
                                                 }).OrderByDescending(i => i.DTime);
 
