@@ -23,16 +23,30 @@ namespace BotNotificationService.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetInfoAsync()
+        [HttpGet("updates")]
+        public async Task<IActionResult> GetUpdatesAsync()
+        { 
+            var response = await SendRequestAsync(HttpMethod.Get, "getUpdates", null);
+            string data = await response.Content.ReadAsStringAsync();
+            return Ok(data);
+        }
+
+        [HttpPost("message-group")]
+        public async Task<IActionResult> SendMessage([FromBody] SendMessageWhattsAppModel message)
         {
             SendMessage m = new SendMessage()
             {
-                chat_id = 147763492.ToString(),
-                text = "Кайфы, работает"
+                chat_id = message.chatId,
+                text = message.body
             };
             var response = await SendRequestAsync(HttpMethod.Post, "sendMessage", JsonConvert.SerializeObject(m));
             string data = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Сообщение не отправлено.\n " + data + Environment.NewLine);
+                return StatusCode(424, null);
+            }
             return Ok(data);
         }
 
@@ -46,7 +60,8 @@ namespace BotNotificationService.Controllers
 
                 HttpRequestMessage message = new HttpRequestMessage(method, uri);
 
-                message.Content = new StringContent(content, Encoding.UTF8, Application.Json);
+                if(content != null)
+                    message.Content = new StringContent(content, Encoding.UTF8, Application.Json);
 
                 var result = await client.SendAsync(message);
 
