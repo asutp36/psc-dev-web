@@ -44,6 +44,12 @@ namespace BotNotificationService.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
+                if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    BotResponse br = JsonConvert.DeserializeObject<BotResponse>(data);
+                    if (br.description.Contains("chat not found"))
+                        return NotFound();
+                }
                 _logger.LogError("Сообщение не отправлено.\n " + data + Environment.NewLine);
                 return StatusCode(424, null);
             }
