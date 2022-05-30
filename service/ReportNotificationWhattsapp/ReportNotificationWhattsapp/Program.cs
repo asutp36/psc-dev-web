@@ -95,7 +95,7 @@ namespace ReportNotificationWhattsapp
                         message.chatId = chat;
 
                         string json = JsonConvert.SerializeObject(message);
-                        ResponseSendMessage response = WhattsAppSender.SendMessage(json);
+                        ResponseSendMessage response = TelegramSender.SendMessage(json);
 
                         if (response.sent)
                         {
