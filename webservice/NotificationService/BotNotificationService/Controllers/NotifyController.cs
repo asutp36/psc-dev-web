@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -28,7 +31,10 @@ namespace BotNotificationService.Controllers
         { 
             var response = await SendRequestAsync(HttpMethod.Get, "getUpdates", null);
             string data = await response.Content.ReadAsStringAsync();
-            return Ok(data);
+
+            var result = JsonConvert.DeserializeObject<UpdateResult>(data);
+
+            return Ok(result);
         }
 
         [HttpPost("message-group")]
@@ -48,7 +54,10 @@ namespace BotNotificationService.Controllers
                 {
                     BotResponse br = JsonConvert.DeserializeObject<BotResponse>(data);
                     if (br.description.Contains("chat not found"))
+                    {
+                        _logger.LogError($"Чат {message.chatId} не найден");
                         return NotFound();
+                    }
                 }
                 _logger.LogError("Сообщение не отправлено.\n " + data + Environment.NewLine);
                 return StatusCode(424, null);
