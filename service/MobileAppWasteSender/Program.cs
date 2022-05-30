@@ -15,6 +15,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -30,6 +33,9 @@ namespace MobileAppWasteSender
         private static int _oldSessionTime;
         private static IMemoryCache _cache;
         private static int _resultMessageLength;
+        private static string _mobileAppBaseUrl;
+        private static string _notifyServiceBaseUrl;
+        private static string _telegramChatID;
 
         static async Task Main(string[] args)
         {
@@ -43,6 +49,8 @@ namespace MobileAppWasteSender
                 Log.Logger.Information($"Период работы программы {_updatePeriod} секунд");
                 Log.Logger.Information($"Время хранения записи в кэше {_cacheExpiringTime} минут");
                 Log.Logger.Information($"Длина ResultMessage {_resultMessageLength} символов");
+                Log.Logger.Information($"Адрес API мобильного приложения {_mobileAppBaseUrl}");
+                Log.Logger.Information($"Адрес API сервиса оповещений {_notifyServiceBaseUrl}, chatID: {_telegramChatID}");
                 DateTime curDate = DateTime.Now.Date;
 
                 while (true)
@@ -107,22 +115,22 @@ namespace MobileAppWasteSender
                     List<UnstoppedSessionModel> unstopped = GetUnstoppedSessions();
                     if (unstopped.Count > 0)
                     {
-                        foreach(UnstoppedSessionModel m in unstopped)
+                        foreach (UnstoppedSessionModel m in unstopped)
                         {
                             if (!_cache.TryGetValue(m.Guid, out UnstoppedSessionModel s))
                             {
                                 _cache.Set(m.Guid, m, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(_cacheExpiringTime)));
-                                Notification.SendUnstoppedSession(m);
+                                Notification.SendUnstoppedSession(m, _notifyServiceBaseUrl, _telegramChatID);
                             }
                         }
                     }
-                        
+
                     await _context.DisposeAsync();
 
                     await Task.Delay(_updatePeriod);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log.Logger.Error("Перехвачена общая ошибка. " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 Notification.SendCritical(e);
@@ -137,6 +145,10 @@ namespace MobileAppWasteSender
             _updatePeriod = int.Parse(_config.GetSection("UpdatePeriod").Value);
             _oldSessionTime = int.Parse(_config.GetSection("OldSessionTime").Value);
             _resultMessageLength = int.Parse(_config.GetSection("ResultMessageLength").Value);
+            _mobileAppBaseUrl = _config.GetSection("MobileAppBaseUrl").Value;
+            _notifyServiceBaseUrl = _config.GetSection("NotifyServiceBaseUrl").Value;
+            _telegramChatID = _config.GetSection("TelegramChatID").Value;
+
 
             Log.Logger = new LoggerConfiguration()
               .MinimumLevel.Debug()
@@ -144,7 +156,7 @@ namespace MobileAppWasteSender
               .CreateLogger();
 
             _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("http://188.225.79.69/api/externaldb/");
+            _httpClient.BaseAddress = new Uri(_mobileAppBaseUrl);
             _httpClient.DefaultRequestHeaders.Add(
               HeaderNames.Accept, "application/json");
 

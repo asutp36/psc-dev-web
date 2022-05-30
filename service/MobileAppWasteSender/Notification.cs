@@ -45,15 +45,15 @@ namespace MobileAppWasteSender
             await httpClient.PostAsync("api/notify/message-group", data);
         }
 
-        public static async void SendUnstoppedSession(UnstoppedSessionModel unstopped)
+        public static async void SendUnstoppedSession(UnstoppedSessionModel unstopped, string baseUrl, string chatID)
         {
             Message m = new Message();
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("https://cwmon.ru/notify/");
+            httpClient.BaseAddress = new Uri(baseUrl);
             httpClient.DefaultRequestHeaders.Add(
                 HeaderNames.Accept, "application/json");
 
-            var data = new StringContent(m.CreateChatId("120363043000833241@g.us", $"Не отправлена мойка:\n" + unstopped.ToString()), Encoding.UTF8, Application.Json);
+            var data = new StringContent(m.CreateChatId(chatID, $"Не отправлена мойка:\n" + unstopped.ToString()), Encoding.UTF8, Application.Json);
 
             await httpClient.PostAsync("api/notify/message-group", data);
         }
