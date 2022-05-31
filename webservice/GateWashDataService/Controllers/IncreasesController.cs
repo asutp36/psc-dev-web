@@ -36,6 +36,21 @@ namespace GateWashDataService.Controllers
         }
 
         [Authorize]
+        [HttpGet("by-day-test")]
+        public IActionResult Test([FromQuery] GetIncreaseParameters parameters)
+        {
+            var data = SqlHelper.GetIncreasesPrograms(_context, parameters);
+
+            IEnumerable<string> washCodes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value);
+
+            var terminalCodes = _context.Washes.Where(w => washCodes.Contains(w.Code)).Select(t => t.Posts.Select(tr => tr.IddeviceNavigation.Code).First());
+
+            var result = data.Where(t => terminalCodes.Contains(t.TerminalCode));
+
+            return Ok(result);
+        }
+
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetIncreaseParameters parameters)
         { 
@@ -56,7 +71,7 @@ namespace GateWashDataService.Controllers
         [Authorize]
         [HttpGet("days")]
         public async Task<IActionResult> GetByDays([FromQuery] GetIncreaseParameters parameters)
-        { 
+        {
             IQueryable<IncreaseModel> increases = SqlHelper.GetIncreasesQueryable(_context, parameters);
 
             if (parameters.Terminal == null)
