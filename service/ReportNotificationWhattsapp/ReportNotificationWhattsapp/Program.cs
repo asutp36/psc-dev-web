@@ -84,7 +84,7 @@ namespace ReportNotificationWhattsapp
                             Logger.Log.Error("Ошибка при обращении к бд: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                         }
                     }
-                    
+
 
                     string body = mtext[0].msg.Replace(" П", "\nП").Replace(": ", ":\n").Insert(mtext[0].msg.IndexOf("за ") + 14, "\n");
 
@@ -95,17 +95,17 @@ namespace ReportNotificationWhattsapp
                         message.chatId = chat;
 
                         string json = JsonConvert.SerializeObject(message);
-                        ResponseSendMessage response = TelegramSender.SendMessage(json);
+                        TelegramResponse response = TelegramSender.SendMessage(json);
 
-                        if (response.sent)
+                        if (response.ok)
                         {
                             Console.WriteLine("ok");
-                            Logger.Log.Debug("Main: Сообщение отправлено: " + response.message + Environment.NewLine + json + Environment.NewLine);
+                            Logger.Log.Debug("Main: Сообщение отправлено: " + json + Environment.NewLine);
                         }
                         else
                         {
                             Console.WriteLine("!ok");
-                            Logger.Log.Error("Main: Сообщение не отправлено: " + Environment.NewLine + response.message + Environment.NewLine + json + Environment.NewLine);
+                            Logger.Log.Error("Main: Сообщение не отправлено: " + json + Environment.NewLine);
                         }
                     }
                 }

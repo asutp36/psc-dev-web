@@ -97,6 +97,8 @@
     <Compile Include="Supplies\Logger.cs" />
     <Compile Include="Supplies\MessageToSend.cs" />
     <Compile Include="Supplies\ResponseSendMessage.cs" />
+    <Compile Include="Supplies\TelegramMessage.cs" />
+    <Compile Include="Supplies\TelegramResponse.cs" />
     <Compile Include="Supplies\TelegramSender.cs" />
     <Compile Include="Supplies\WhattsAppSender.cs" />
   </ItemGroup>

@@ -11,7 +11,7 @@ namespace ReportNotificationWhattsapp.Supplies
 {
     class TelegramSender
     {
-        public static ResponseSendMessage SendMessage(string json)
+        public static TelegramResponse SendMessage(string json)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://cwmon.ru/notify/api/notify/message-group");
             request.KeepAlive = false;
@@ -37,7 +37,8 @@ namespace ReportNotificationWhattsapp.Supplies
                 {
                     result = rdr.ReadToEnd();
                 }
-                return JsonConvert.DeserializeObject<ResponseSendMessage>(result);
+                string res = JsonConvert.DeserializeObject<string>(result);
+                return JsonConvert.DeserializeObject<TelegramResponse>(res);
             }
             catch (Exception e)
             {
@@ -47,7 +48,8 @@ namespace ReportNotificationWhattsapp.Supplies
                 {
                     result = rdr.ReadToEnd();
                 }
-                return JsonConvert.DeserializeObject<ResponseSendMessage>(result);
+                string res = JsonConvert.DeserializeObject<string>(result);
+                return JsonConvert.DeserializeObject<TelegramResponse>(res);
             }
         }
     }
