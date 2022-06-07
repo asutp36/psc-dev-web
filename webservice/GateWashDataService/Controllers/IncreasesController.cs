@@ -2,6 +2,7 @@
 using GateWashDataService.Helpers;
 using GateWashDataService.Models;
 using GateWashDataService.Models.GateWashContext;
+using GateWashDataService.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -97,7 +98,7 @@ namespace GateWashDataService.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetIncreaseParameters parameters)
         { 
-            IQueryable<IncreaseModel> increases = SqlHelper.GetIncreasesQueryable(_context, parameters);
+            IQueryable<IncreaseModel> increases = IncreasesRepository.GetAll(_context, parameters);
 
             if(parameters.Terminal == null)
             {
