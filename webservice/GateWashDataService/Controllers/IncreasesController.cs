@@ -37,15 +37,58 @@ namespace GateWashDataService.Controllers
 
         [Authorize]
         [HttpGet("by-day-test")]
-        public IActionResult Test([FromQuery] GetIncreaseParameters parameters)
+        public IActionResult TestByDay([FromQuery] GetIncreaseParameters parameters)
         {
-            var data = SqlHelper.GetIncreasesPrograms(_context, parameters);
+            var data = SqlHelper.GetIncreasesProgramsByDay(_context, parameters);
 
             IEnumerable<string> washCodes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value);
 
             var terminalCodes = _context.Washes.Where(w => washCodes.Contains(w.Code)).Select(t => t.Posts.Select(tr => tr.IddeviceNavigation.Code).First());
 
-            var result = data.Where(t => terminalCodes.Contains(t.TerminalCode));
+            var increases = data.Where(t => terminalCodes.Contains(t.TerminalCode)).Select(r => new IncreasesProgramsTypes
+            {
+                Terminal = r.Terminal,
+                TerminalCode = r.TerminalCode,
+                DTime = r.DTime,
+                Amount = r.Amount,
+                ProgramCount = r.ProgramCount,
+                Programs = string.Join(", ", r.Programs),
+                Types = string.Join(", ", r.Types.Where(t => t.Code != "payout")),
+                ARPU = r.ARPU
+            });
+
+            PagedList<IncreasesProgramsTypes> result = PagedList<IncreasesProgramsTypes>.ToPagedList(increases, parameters.Paging);
+
+            PagedList<IncreasesProgramsTypes>.PrepareHTTPResponseMetadata(Response, result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet("by-month-test")]
+        public IActionResult TestByMonth([FromQuery] GetIncreaseParameters parameters)
+        {
+            var data = SqlHelper.GetIncreasesProgramsByMonth(_context, parameters);
+
+            IEnumerable<string> washCodes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value);
+
+            var terminalCodes = _context.Washes.Where(w => washCodes.Contains(w.Code)).Select(t => t.Posts.Select(tr => tr.IddeviceNavigation.Code).First());
+
+            var increases = data.Where(t => terminalCodes.Contains(t.TerminalCode)).Select(r => new IncreasesProgramsTypes
+            {
+                Terminal = r.Terminal,
+                TerminalCode = r.TerminalCode,
+                DTime = r.DTime,
+                Amount = r.Amount,
+                ProgramCount = r.ProgramCount,
+                Programs = string.Join(", ", r.Programs),
+                Types = string.Join(", ", r.Types.Where(t => t.Code != "payout")),
+                ARPU = r.ARPU
+            });
+
+            PagedList<IncreasesProgramsTypes> result = PagedList<IncreasesProgramsTypes>.ToPagedList(increases, parameters.Paging);
+
+            PagedList<IncreasesProgramsTypes>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
         }

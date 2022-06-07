@@ -38,7 +38,6 @@ namespace GateWashDataService.Models
             }
             private set { }
         }
-
         public decimal ARPU
         {
             get
