@@ -36,61 +36,75 @@ namespace GateWashDataService.Controllers
             return result;
         }
 
-        [Authorize]
-        [HttpGet("by-day-test")]
-        public IActionResult TestByDay([FromQuery] GetIncreaseParameters parameters)
+        [HttpGet("testing-by-day")]
+        public IActionResult Testing([FromQuery] GetIncreaseParameters parameters)
         {
-            var data = SqlHelper.GetIncreasesProgramsByDay(_context, parameters);
-
-            IEnumerable<string> washCodes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value);
-
-            var terminalCodes = _context.Washes.Where(w => washCodes.Contains(w.Code)).Select(t => t.Posts.Select(tr => tr.IddeviceNavigation.Code).First());
-
-            var increases = data.Where(t => terminalCodes.Contains(t.TerminalCode)).Select(r => new IncreasesProgramsTypes
-            {
-                Terminal = r.Terminal,
-                TerminalCode = r.TerminalCode,
-                DTime = r.DTime,
-                Amount = r.Amount,
-                ProgramCount = r.ProgramCount,
-                Programs = string.Join(", ", r.Programs),
-                Types = string.Join(", ", r.Types.Where(t => t.Code != "payout")),
-                ARPU = r.ARPU
-            });
-
-            PagedList<IncreasesProgramsTypes> result = PagedList<IncreasesProgramsTypes>.ToPagedList(increases, parameters.Paging);
-
-            PagedList<IncreasesProgramsTypes>.PrepareHTTPResponseMetadata(Response, result);
-
+            var increases = IncreasesRepository.GetGroupedByDay(_context, parameters)
+                                            .Select(i => new GroupedIncreaseModel 
+                                            {
+                                                DTime = i.DTime,
+                                                ProgramsDescription = string.Join(", ", i.Programs),
+                                                TypesDescription = string.Join(", ", i.Types),
+                                                Amount = i.Types.Sum(t => t.Value),
+                                                ProgramCount = i.Programs.Sum(p => p.Value)
+                                            })
+                                            .OrderBy(i => i.DTime.Date).OrderBy(i => i.TerminalCode);
+            PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases, parameters.Paging);
             return Ok(result);
         }
 
-        [Authorize]
-        [HttpGet("by-month-test")]
-        public IActionResult TestByMonth([FromQuery] GetIncreaseParameters parameters)
+        [HttpGet("testing-by-day-split")]
+        public IActionResult TestingSplitTerm([FromQuery] GetIncreaseParameters parameters)
         {
-            var data = SqlHelper.GetIncreasesProgramsByMonth(_context, parameters);
+            var increases = IncreasesRepository.GetGroupedByDaySplitTerminals(_context, parameters)
+                                            .Select(i => new GroupedIncreaseModel
+                                            {
+                                                DTime = i.DTime,
+                                                Terminal = i.Terminal,
+                                                TerminalCode = i.TerminalCode,
+                                                ProgramsDescription = string.Join(", ", i.Programs),
+                                                TypesDescription = string.Join(", ", i.Types),
+                                                Amount = i.Types.Sum(t => t.Value),
+                                                ProgramCount = i.Programs.Sum(p => p.Value)
+                                            })
+                                            .OrderBy(i => i.DTime.Date).OrderBy(i => i.TerminalCode);
+            PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases.AsQueryable(), parameters.Paging);
+            return Ok(result);
+        }
 
-            IEnumerable<string> washCodes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value);
+        [HttpGet("testing-by-month")]
+        public IActionResult TestingByMonth([FromQuery] GetIncreaseParameters parameters)
+        {
+            var increases = IncreasesRepository.GetGroupedByMonth(_context, parameters)
+                                            .Select(i => new GroupedIncreaseModel
+                                            {
+                                                DTime = i.DTime,
+                                                ProgramsDescription = string.Join(", ", i.Programs),
+                                                TypesDescription = string.Join(", ", i.Types),
+                                                Amount = i.Types.Sum(t => t.Value),
+                                                ProgramCount = i.Programs.Sum(p => p.Value)
+                                            })
+                                            .OrderBy(i => i.DTime.Date).OrderBy(i => i.TerminalCode);
+            PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases, parameters.Paging);
+            return Ok(result);
+        }
 
-            var terminalCodes = _context.Washes.Where(w => washCodes.Contains(w.Code)).Select(t => t.Posts.Select(tr => tr.IddeviceNavigation.Code).First());
-
-            var increases = data.Where(t => terminalCodes.Contains(t.TerminalCode)).Select(r => new IncreasesProgramsTypes
-            {
-                Terminal = r.Terminal,
-                TerminalCode = r.TerminalCode,
-                DTime = r.DTime,
-                Amount = r.Amount,
-                ProgramCount = r.ProgramCount,
-                Programs = string.Join(", ", r.Programs),
-                Types = string.Join(", ", r.Types.Where(t => t.Code != "payout")),
-                ARPU = r.ARPU
-            });
-
-            PagedList<IncreasesProgramsTypes> result = PagedList<IncreasesProgramsTypes>.ToPagedList(increases, parameters.Paging);
-
-            PagedList<IncreasesProgramsTypes>.PrepareHTTPResponseMetadata(Response, result);
-
+        [HttpGet("testing-by-month-split")]
+        public IActionResult TestingByMonthSplitTerm([FromQuery] GetIncreaseParameters parameters)
+        { 
+            var increases = IncreasesRepository.GetGroupedByMonthSplitTerminals(_context, parameters)
+                                            .Select(i => new GroupedIncreaseModel
+                                            {
+                                                DTime = i.DTime,
+                                                Terminal = i.Terminal,
+                                                TerminalCode = i.TerminalCode,
+                                                ProgramsDescription = string.Join(", ", i.Programs),
+                                                TypesDescription = string.Join(", ", i.Types),
+                                                Amount = i.Types.Sum(t => t.Value),
+                                                ProgramCount = i.Programs.Sum(p => p.Value)
+                                            })
+                                            .OrderBy(i => i.DTime.Date).OrderBy(i => i.TerminalCode);
+            PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases.AsQueryable(), parameters.Paging);
             return Ok(result);
         }
 
