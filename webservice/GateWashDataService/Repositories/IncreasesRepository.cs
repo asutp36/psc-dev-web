@@ -23,7 +23,7 @@ namespace GateWashDataService.Repositories
                                                   Terminal = s.IddeviceNavigation.Name,
                                                   TerminalCode = s.IddeviceNavigation.Code,
                                                   Program = s.IdprogramNavigation.Name,
-                                                  Revenue = s.PayEvents.Sum(e => e.EventIncrease.Amount) ?? 0,
+                                                  Revenue = s.PayEvents.Sum(e => e.EventIncrease.Amount),
                                                   Payout = s.PayEvents.Sum(e => e.EventPayout.Amount),
                                                   Cheque = s.Qr != null && s.Qr != "",
                                                   Note = s.Details,
@@ -150,7 +150,7 @@ namespace GateWashDataService.Repositories
                                                            TerminalName = key.DeviceName,
                                                            TypeCode = key.Code,
                                                            TypeName = key.Name,
-                                                           Value = val.Sum() ?? 0
+                                                           Value = val.Sum()
                                                        });
 
             return types;
