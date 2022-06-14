@@ -11,76 +11,6 @@ namespace GateWashDataService.Helpers
 {
     public class SqlHelper
     {
-        private static readonly List<string> bankIncreaseEventkinds = new List<string>() { "cardincrease", "bankincrease", "qrincrease" };
-        private static readonly List<string> cashIncreaseEventkinds = new List<string>() { "cashincrease" };
-
-        public static IQueryable<IncreaseModel> GetIncreasesQueryable(GateWashDbContext context, GetIncreaseParameters param)
-        {
-            IQueryable<IncreaseModel> que = context.PaySessions.Where(s => (s.DtimeBegin >= param.StartDate) && (s.DtimeBegin <= param.EndDate) && (!param.OnlyNotes || (s.Details != null && s.Details != ""))
-                                            && (param.Terminal == null || s.IddeviceNavigation.Code == param.Terminal)
-                                            && (param.Program == null || s.IdprogramNavigation.Code == param.Program)
-                                            && (param.EventKind == null || s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Code == param.EventKind))
-                                      .Select(s => new IncreaseModel
-                                      {
-                                          DTime = s.DtimeBegin,
-                                          Terminal = s.IddeviceNavigation.Name,
-                                          TerminalCode = s.IddeviceNavigation.Code,
-                                          Program = s.IdprogramNavigation.Name,
-                                          //Bank = s.PayEvents.Where(e => bankIncreaseEventkinds.Contains(e.IdeventKindNavigation.Code)).Sum(e => e.EventIncrease.Amount) ?? 0,
-                                          //Cash = s.PayEvents.Where(e => cashIncreaseEventkinds.Contains(e.IdeventKindNavigation.Code)).Sum(e => e.EventIncrease.Amount) ?? 0,
-                                          Revenue = s.PayEvents.Sum(e => e.EventIncrease.Amount),
-                                          Payout = s.PayEvents.Sum(e => e.EventPayout.Amount),
-                                          Cheque = s.Qr != null && s.Qr != "",
-                                          Note = s.Details,
-                                          Type = s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Name
-                                      })
-                                      .Where(i => (!param.OnlyBank || i.Bank != 0) && (!param.OnlyCash || i.Cash != 0) && (!param.OnlyCheque || i.Cheque))
-                                      .OrderByDescending(s => s.DTime);
-            return que;
-        }
-
-        public static List<IncreaseModel> GetIncreases(GateWashDbContext context, GetIncreaseParameters param)
-        {
-            IOrderedQueryable<IncreaseModel> que = context.PaySessions.Where(s => (s.DtimeBegin >= param.StartDate) && (s.DtimeBegin <= param.EndDate) && (!param.OnlyNotes || (s.Details != null && s.Details != ""))
-                                            && (param.Terminal == null || s.IddeviceNavigation.Code == param.Terminal)
-                                            && (param.Program == null || s.IdprogramNavigation.Code == param.Program)
-                                            && (param.EventKind == null || s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Code == param.EventKind))
-                                      .Select(s => new IncreaseModel
-                                      {
-                                          DTime = s.DtimeBegin,
-                                          Terminal = s.IddeviceNavigation.Code,
-                                          Program = s.IdprogramNavigation.Code,
-                                          Bank = s.PayEvents.Where(e => bankIncreaseEventkinds.Contains(e.IdeventKindNavigation.Code)).Sum(e => e.EventIncrease.Amount),
-                                          Cash = s.PayEvents.Where(e => cashIncreaseEventkinds.Contains(e.IdeventKindNavigation.Code)).Sum(e => e.EventIncrease.Amount),
-                                          Payout = s.PayEvents.Sum(e => e.EventPayout.Amount),
-                                          Cheque = s.Qr != null && s.Qr != "",
-                                          Note = s.Details,
-                                          Type = s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Name
-                                      })
-                                      .Where(i => (!param.OnlyBank || i.Bank != 0) && (!param.OnlyCash || i.Cash != 0) && (!param.OnlyCheque || i.Cheque))
-                                      .OrderByDescending(s => s.DTime);
-
-            return context.PaySessions.Where(s => (s.DtimeBegin >= param.StartDate) && (s.DtimeBegin <= param.EndDate) && (!param.OnlyNotes || (s.Details != null && s.Details != ""))
-                                            && (param.Terminal == null || s.IddeviceNavigation.Code == param.Terminal)
-                                            && (param.Program == null || s.IdprogramNavigation.Code == param.Program)
-                                            && (param.EventKind == null || s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Code == param.EventKind))
-                                      .Select(s => new IncreaseModel
-                                      {
-                                          DTime = s.DtimeBegin,
-                                          Terminal = s.IddeviceNavigation.Code,
-                                          Program = s.IdprogramNavigation.Code,
-                                          Bank = s.PayEvents.Where(e => bankIncreaseEventkinds.Contains(e.IdeventKindNavigation.Code)).Sum(e => e.EventIncrease.Amount),
-                                          Cash = s.PayEvents.Where(e => cashIncreaseEventkinds.Contains(e.IdeventKindNavigation.Code)).Sum(e => e.EventIncrease.Amount),
-                                          Payout = s.PayEvents.Sum(e => e.EventPayout.Amount),
-                                          Cheque = s.Qr != null && s.Qr != "",
-                                          Note = s.Details,
-                                          Type = s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Name
-                                      })
-                                      .Where(i => (!param.OnlyBank || i.Bank != 0) && (!param.OnlyCash || i.Cash != 0) && (!param.OnlyCheque || i.Cheque))
-                                      .OrderByDescending(s => s.DTime)
-                                      .ToList();
-        }
-
         public static async Task<List<RegionModel>> GetRegions(GateWashDbContext context)
         {
             return context.Regions.Select(r => new RegionModel
@@ -89,39 +19,6 @@ namespace GateWashDataService.Helpers
                 Code = r.Code,
                 Name = r.Name
             }).ToList();
-        }
-
-        public static async Task<List<WashModel>> GetWashes(GateWashDbContext context)
-        {
-            return context.Washes.Select(w => new WashModel
-            {
-                IdWash = w.Idwash,
-                Code = w.Code,
-                Name = w.Name,
-                IdRegion = w.Idregion
-            }).ToList();
-        }
-
-        public static async Task<List<PayTerminalModel>> GetPayTerminals(GateWashDbContext context)
-        {
-            return context.Posts.Where(p => p.IddeviceNavigation.IddeviceTypeNavigation.Code == "pay").Select(t => new PayTerminalModel()
-            {
-                IdDevice = t.Iddevice,
-                Code = t.IddeviceNavigation.Code,
-                Name = t.IddeviceNavigation.Name,
-                IdWash = t.Idwash
-            }).ToList();
-        }
-
-        public static async Task<List<ProgramModel>> GetPrograms(GateWashDbContext context)
-        {
-            return context.Programs.Select(i => new ProgramModel
-            {
-                Code = i.Code,
-                Name = i.Name,
-                Cost = i.Cost
-            }
-            ).ToList();
         }
 
         public static List<CollectModel> GetCollects(GateWashDbContext context, GetCollectsParameters param)
