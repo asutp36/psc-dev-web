@@ -36,12 +36,14 @@ namespace GateWashDataService.Repositories
             return result;
         }
 
-        public static IQueryable<GroupedIncreaseDto> GetGroupedByDay(GateWashDbContext context, GetIncreaseParameters param)
+        public static IQueryable<GroupedIncreaseDto> GetGroupedByDay(GateWashDbContext context, GetIncreaseParameters param, List<string> washes)
         {
-            var programs = GetUsedProgramsByDayWithTerminals(context).Where(p => (p.DTime >= param.StartDate) && (p.DTime <= param.EndDate)
+            var terminals = GetTerminalsByWashes(context, washes);
+
+            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => (p.DTime >= param.StartDate) && (p.DTime <= param.EndDate)
                                                                              && (param.Terminal == null || p.TerminalCode == param.Terminal))
                                                                       .ToList();
-            var types = GetIncreaseTypesByDayWithTerminals(context).Where(t => (t.DTime >= param.StartDate) && (t.DTime <= param.EndDate)
+            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate) && (t.DTime <= param.EndDate)
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
 
@@ -79,13 +81,14 @@ namespace GateWashDataService.Repositories
             return groupedIncreases.AsQueryable();
         }
 
-        public static IQueryable<GroupedIncreaseDto> GetGroupedByDaySplitTerminals(GateWashDbContext context, GetIncreaseParameters param)
+        public static IQueryable<GroupedIncreaseDto> GetGroupedByDaySplitTerminals(GateWashDbContext context, GetIncreaseParameters param, List<string> washes)
         {
-            var programs = GetUsedProgramsByDayWithTerminals(context).Where(p => (p.DTime >= param.StartDate) && (p.DTime <= param.EndDate) 
+            var terminals = GetTerminalsByWashes(context, washes);
+            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => (p.DTime >= param.StartDate) && (p.DTime <= param.EndDate) 
                                                                              && (param.Terminal == null || p.TerminalCode == param.Terminal))
                                                                       .ToList();
 
-            var types = GetIncreaseTypesByDayWithTerminals(context).Where(t => (t.DTime >= param.StartDate) && (t.DTime <= param.EndDate) 
+            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate) && (t.DTime <= param.EndDate) 
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
 
@@ -105,10 +108,17 @@ namespace GateWashDataService.Repositories
             return grouppp.AsQueryable();
         }
 
-        private static IQueryable<UsedProgramDto> GetUsedProgramsByDayWithTerminals(GateWashDbContext context)
+        private static List<string> GetTerminalsByWashes(GateWashDbContext context, List<string> washes)
+        {
+            var terminalCodes = context.Devices.Where(d => d.IddeviceTypeNavigation.Code == "pay" && washes.Contains(d.Posts.First().IdwashNavigation.Code)).Select(d => d.Code).ToList();
+            return terminalCodes;
+        }
+
+        private static IQueryable<UsedProgramDto> GetUsedProgramsByDayWithTerminals(GateWashDbContext context, List<string> terminals)
         {
             var programs = context.PaySessions.Include(d => d.IddeviceNavigation)
                                               .Include(p => p.IdprogramNavigation)
+                                              .Where(d => terminals.Contains(d.IddeviceNavigation.Code))
                                               .GroupBy(k => new { k.IddeviceNavigation.Iddevice, DeviceCode = k.IddeviceNavigation.Code, DeviceName = k.IddeviceNavigation.Name, k.DtimeBegin.Date, k.IdprogramNavigation.Code, k.IdprogramNavigation.Name },
                                                        v => v.IdpaySession,
                                                        (key, val) => new UsedProgramDto
@@ -125,10 +135,11 @@ namespace GateWashDataService.Repositories
             return programs;
         }
 
-        private static IQueryable<IncreaseTypeDto> GetIncreaseTypesByDayWithTerminals(GateWashDbContext context)
+        private static IQueryable<IncreaseTypeDto> GetIncreaseTypesByDayWithTerminals(GateWashDbContext context, List<string> terminals)
         {
             var types = context.EventIncreases.Include(pe => pe.IdpayEventNavigation).ThenInclude(d => d.IddeviceNavigation)
                                               .Include(t => t.IdpayEventNavigation.IdeventKindNavigation)
+                                              .Where(d => terminals.Contains(d.IdpayEventNavigation.IddeviceNavigation.Code))
                                               .GroupBy(k => new { k.IdpayEventNavigation.Dtime.Date, k.IdpayEventNavigation.Iddevice, DeviceCode = k.IdpayEventNavigation.IddeviceNavigation.Code, DeviceName = k.IdpayEventNavigation.IddeviceNavigation.Name, k.IdpayEventNavigation.IdeventKindNavigation.Code, k.IdpayEventNavigation.IdeventKindNavigation.Name },
                                                        v => v.Amount,
                                                        (key, val) => new IncreaseTypeDto
@@ -145,12 +156,13 @@ namespace GateWashDataService.Repositories
             return types;
         }
 
-        public static IQueryable<GroupedIncreaseDto> GetGroupedByMonth(GateWashDbContext context, GetIncreaseParameters param) 
+        public static IQueryable<GroupedIncreaseDto> GetGroupedByMonth(GateWashDbContext context, GetIncreaseParameters param, List<string> washes) 
         {
-            var programs = GetUsedProgramsByDayWithTerminals(context).Where(p => (p.DTime >= param.StartDate) && (p.DTime <= param.EndDate)
+            var terminals = GetTerminalsByWashes(context, washes);
+            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => (p.DTime >= param.StartDate) && (p.DTime <= param.EndDate)
                                                                              && (param.Terminal == null || p.TerminalCode == param.Terminal))
                                                                       .ToList();
-            var types = GetIncreaseTypesByDayWithTerminals(context).Where(t => (t.DTime >= param.StartDate) && (t.DTime <= param.EndDate)
+            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate) && (t.DTime <= param.EndDate)
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
 
@@ -188,12 +200,13 @@ namespace GateWashDataService.Repositories
             return groupedIncreases.AsQueryable();
         }
 
-        public static IQueryable<GroupedIncreaseDto> GetGroupedByMonthSplitTerminals(GateWashDbContext context, GetIncreaseParameters param) 
+        public static IQueryable<GroupedIncreaseDto> GetGroupedByMonthSplitTerminals(GateWashDbContext context, GetIncreaseParameters param, List<string> washes) 
         {
-            var programs = GetUsedProgramsByDayWithTerminals(context).Where(p => (p.DTime >= param.StartDate) && (p.DTime <= param.EndDate)
+            var terminals = GetTerminalsByWashes(context, washes);
+            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => (p.DTime >= param.StartDate) && (p.DTime <= param.EndDate)
                                                                              && (param.Terminal == null || p.TerminalCode == param.Terminal))
                                                                       .ToList();
-            var types = GetIncreaseTypesByDayWithTerminals(context).Where(t => (t.DTime >= param.StartDate) && (t.DTime <= param.EndDate)
+            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate) && (t.DTime <= param.EndDate)
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
 
