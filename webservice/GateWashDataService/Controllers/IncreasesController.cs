@@ -25,16 +25,6 @@ namespace GateWashDataService.Controllers
             _context = context;
         }
 
-        private IQueryable<IncreaseModel> GetOnlyUserWashes(IEnumerable<Claim> claims, IQueryable<IncreaseModel> data)
-        {
-            IEnumerable<string> washCodes = claims.Where(c => c.Type == "Wash").Select(c => c.Value);
-            
-            var terminalCodes = _context.Washes.Where(w => washCodes.Contains(w.Code)).Select(t => t.Posts.Select(tr => tr.IddeviceNavigation.Code).First());
-
-            IQueryable<IncreaseModel> result = data.Where(t => terminalCodes.Contains(t.TerminalCode));
-            return result;
-        }
-
         public IQueryable<T> Sort<T>(IQueryable<T> entities, string orderByQueryString)
         {
             if (!entities.Any())
@@ -88,15 +78,11 @@ namespace GateWashDataService.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetIncreaseParameters parameters)
         {
-            IQueryable<IncreaseModel> increases = IncreasesRepository.GetAll(_context, parameters);
+            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            IQueryable<IncreaseModel> increases = IncreasesRepository.GetAll(_context, parameters, washes);
 
-            if(parameters.Terminal == null)
-            {
-                increases = GetOnlyUserWashes(User.Claims, increases);
-            }
-
-            if (string.IsNullOrEmpty(parameters.Sorting))
-                parameters.Sorting = "Dtime desc, TerminalCode asc";
+           if (string.IsNullOrEmpty(parameters.Sorting))
+                parameters.Sorting = "Dtime desc,TerminalCode asc";
 
             increases = Sort(increases, parameters.Sorting);
 
@@ -151,7 +137,7 @@ namespace GateWashDataService.Controllers
                                             });
 
             if (string.IsNullOrEmpty(parameters.Sorting))
-                parameters.Sorting = "Dtime desc, TerminalCode asc";
+                parameters.Sorting = "Dtime desc,TerminalCode asc";
 
             increases = Sort(increases, parameters.Sorting);
 
@@ -207,7 +193,7 @@ namespace GateWashDataService.Controllers
                                              });
 
             if (string.IsNullOrEmpty(parameters.Sorting))
-                parameters.Sorting = "Dtime desc, TerminalCode asc";
+                parameters.Sorting = "Dtime desc,TerminalCode asc";
 
             increases = Sort(increases, parameters.Sorting);
 

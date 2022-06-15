@@ -10,8 +10,9 @@ namespace GateWashDataService.Repositories
 {
     public class IncreasesRepository
     {
-        public static IQueryable<IncreaseModel> GetAll(GateWashDbContext context, GetIncreaseParameters param) 
+        public static IQueryable<IncreaseModel> GetAll(GateWashDbContext context, GetIncreaseParameters param, List<string> washes) 
         {
+            var terminals = GetTerminalsByWashes(context, washes);
             var result = context.PaySessions.Where(s => (s.DtimeBegin >= param.StartDate) && (s.DtimeBegin <= param.EndDate)
                                                     && (!param.OnlyNotes || (s.Details != null && s.Details != ""))
                                                     && (param.Terminal == null || s.IddeviceNavigation.Code == param.Terminal)
@@ -31,7 +32,8 @@ namespace GateWashDataService.Repositories
                                               })
                                               .Where(i => (!param.OnlyBank || i.Bank != 0)
                                                             && (!param.OnlyCash || i.Cash != 0)
-                                                            && (!param.OnlyCheque || i.Cheque));
+                                                            && (!param.OnlyCheque || i.Cheque)
+                                                            && terminals.Contains(i.TerminalCode));
 
             return result;
         }
@@ -114,8 +116,8 @@ namespace GateWashDataService.Repositories
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
 
-            var progs = programs.GroupBy(p => new { p.DTime, p.TerminalCode, p.TerminalName, p.DisplayOrder });
-            var tps = types.GroupBy(t => new { t.DTime, t.TerminalCode, t.TerminalName, t.DisplayOrder });
+            var progs = programs.GroupBy(p => new { p.DTime, p.TerminalCode, p.TerminalName });
+            var tps = types.GroupBy(t => new { t.DTime, t.TerminalCode, t.TerminalName });
 
             foreach (var t in tps)
             {
