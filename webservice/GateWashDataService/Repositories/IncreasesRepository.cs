@@ -12,7 +12,7 @@ namespace GateWashDataService.Repositories
     {
         public static IQueryable<IncreaseModel> GetAll(GateWashDbContext context, GetIncreaseParameters param) 
         {
-            var result = context.PaySessions.Where(s => (s.DtimeBegin >= param.StartDate) && (s.DtimeBegin <= param.EndDate) 
+            var result = context.PaySessions.Where(s => (s.DtimeBegin >= param.StartDate) && (s.DtimeBegin <= param.EndDate)
                                                     && (!param.OnlyNotes || (s.Details != null && s.Details != ""))
                                                     && (param.Terminal == null || s.IddeviceNavigation.Code == param.Terminal)
                                                     && (param.Program == null || s.IdprogramNavigation.Code == param.Program)
@@ -29,10 +29,10 @@ namespace GateWashDataService.Repositories
                                                   Note = s.Details,
                                                   Type = s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Name
                                               })
-                                              .Where(i => (!param.OnlyBank || i.Bank != 0) 
-                                                            && (!param.OnlyCash || i.Cash != 0) 
-                                                            && (!param.OnlyCheque || i.Cheque))
-                                              .OrderByDescending(s => s.DTime);
+                                              .Where(i => (!param.OnlyBank || i.Bank != 0)
+                                                            && (!param.OnlyCash || i.Cash != 0)
+                                                            && (!param.OnlyCheque || i.Cheque));
+
             return result;
         }
 

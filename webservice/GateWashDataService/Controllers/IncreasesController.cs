@@ -1,16 +1,15 @@
 ﻿using GateWashDataService.Extentions;
-using GateWashDataService.Helpers;
 using GateWashDataService.Models;
 using GateWashDataService.Models.GateWashContext;
 using GateWashDataService.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace GateWashDataService.Controllers
@@ -36,16 +35,62 @@ namespace GateWashDataService.Controllers
             return result;
         }
 
+        public IQueryable<T> Sort<T>(IQueryable<T> entities, string orderByQueryString)
+        {
+            if (!entities.Any())
+                return entities;
+            if (string.IsNullOrWhiteSpace(orderByQueryString))
+            {
+                return entities;
+            }
+            var orderParams = orderByQueryString.Trim().Split(',');
+            var propertyInfos = typeof(T).GetProperties();
+            var orderQueryBuilder = new StringBuilder();
+            foreach (var param in orderParams)
+            {
+                if (string.IsNullOrWhiteSpace(param))
+                    continue;
+                var propertyFromQueryName = param.Split(" ")[0];
+                var objectProperty = propertyInfos.FirstOrDefault(pi => pi.Name.Equals(propertyFromQueryName, StringComparison.InvariantCultureIgnoreCase));
+                if (objectProperty == null)
+                    continue;
+                var sortingOrder = param.EndsWith(" desc") ? "descending" : "ascending";
+                orderQueryBuilder.Append($"{objectProperty.Name.ToString()} {sortingOrder}, ");
+            }
+            var orderQuery = orderQueryBuilder.ToString().TrimEnd(',', ' ');
+            return entities.OrderBy(orderQuery);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("test")]
+        public IActionResult Test([FromQuery] GetIncreaseParameters parameters)
+        {
+            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            var increases = IncreasesRepository.GetGroupedByDay(_context, parameters, washes)
+                                            .Select(i => new GroupedIncreaseModel
+                                            {
+                                                DTime = i.DTime,
+                                                ProgramsDescription = string.Join(", ", i.Programs),
+                                                TypesDescription = string.Join(", ", i.Types),
+                                                Amount = i.Types.Sum(t => t.Value),
+                                                ProgramCount = i.Programs.Sum(p => p.Value)
+                                            });
+            increases = Sort(increases, "Dtime desc");
+            return Ok(increases);
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetIncreaseParameters parameters)
-        { 
+        {
             IQueryable<IncreaseModel> increases = IncreasesRepository.GetAll(_context, parameters);
 
             if(parameters.Terminal == null)
             {
                 increases = GetOnlyUserWashes(User.Claims, increases);
             }
+
+            increases = Sort(increases, "Dtime desc,TerminalCode asc");
 
             PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(increases, parameters.Paging);
 
@@ -67,8 +112,8 @@ namespace GateWashDataService.Controllers
                                                 TypesDescription = string.Join(", ", i.Types),
                                                 Amount = i.Types.Sum(t => t.Value),
                                                 ProgramCount = i.Programs.Sum(p => p.Value)
-                                            })
-                                            .OrderBy(i => i.DTime.Date).OrderBy(i => i.TerminalCode);
+                                            });
+            increases = Sort(increases, "Dtime desc");
             PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases, parameters.Paging);
 
             PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
@@ -91,8 +136,8 @@ namespace GateWashDataService.Controllers
                                                 TypesDescription = string.Join(", ", i.Types),
                                                 Amount = i.Types.Sum(t => t.Value),
                                                 ProgramCount = i.Programs.Sum(p => p.Value)
-                                            })
-                                            .OrderBy(i => i.DTime.Date).OrderBy(i => i.TerminalCode);
+                                            });
+            increases = Sort(increases, "Dtime desc,TerminalCode asc");
             PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases.AsQueryable(), parameters.Paging);
 
             PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
@@ -113,8 +158,8 @@ namespace GateWashDataService.Controllers
                                                  TypesDescription = string.Join(", ", i.Types),
                                                  Amount = i.Types.Sum(t => t.Value),
                                                  ProgramCount = i.Programs.Sum(p => p.Value)
-                                             })
-                                             .OrderBy(i => i.DTime.Date).OrderBy(i => i.TerminalCode);
+                                             });
+            increases = Sort(increases, "Dtime desc");
             PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases, parameters.Paging);
 
             PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
@@ -137,8 +182,8 @@ namespace GateWashDataService.Controllers
                                                  TypesDescription = string.Join(", ", i.Types),
                                                  Amount = i.Types.Sum(t => t.Value),
                                                  ProgramCount = i.Programs.Sum(p => p.Value)
-                                             })
-                                             .OrderBy(i => i.DTime.Date).OrderBy(i => i.TerminalCode);
+                                             });
+            increases = Sort(increases, "Dtime desc,TerminalCode asc");
             PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases.AsQueryable(), parameters.Paging);
 
             PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
