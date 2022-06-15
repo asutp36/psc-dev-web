@@ -14,6 +14,7 @@ namespace GateWashDataService.Repositories
         public string TerminalName { get; set; }
         public string TypeCode { get; set; }
         public string TypeName { get; set; }
+        public int DisplayOrder { get; set; }
         public int Value { get; set; }
 
         public bool Equals([AllowNull] IncreaseTypeDto other)
@@ -26,7 +27,7 @@ namespace GateWashDataService.Repositories
 
         public override string ToString()
         {
-            return $"{this.TypeName}: {this.Value}";
+            return $"{this.TypeName}: {this.Value.ToString("#,0")}";
         }
     }
 }

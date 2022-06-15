@@ -17,6 +17,7 @@ namespace GateWashDataService.Models.GateWashContext
         public string Code { get; set; }
         public string Name { get; set; }
         public int Cost { get; set; }
+        public int DisplayOrder { get; set; }
 
         public virtual ICollection<PaySession> PaySessions { get; set; }
         public virtual ICollection<Session> Sessions { get; set; }

@@ -14,6 +14,7 @@ namespace GateWashDataService.Repositories
         public string TerminalName { get; set; }
         public string ProgramCode { get; set; }
         public string ProgramName { get; set; }
+        public int DisplayOrder { get; set; }
         public int Value { get; set; }
 
         public bool Equals([AllowNull] UsedProgramDto other)
@@ -26,7 +27,7 @@ namespace GateWashDataService.Repositories
 
         public override string ToString()
         {
-            return $"{this.ProgramName}: {this.Value}";
+            return $"{this.ProgramName}: {this.Value.ToString("#,0")}";
         }
     }
 }

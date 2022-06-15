@@ -108,8 +108,8 @@ namespace GateWashDataService.Controllers
                                             .Select(i => new GroupedIncreaseModel
                                             {
                                                 DTime = i.DTime,
-                                                ProgramsDescription = string.Join(", ", i.Programs),
-                                                TypesDescription = string.Join(", ", i.Types),
+                                                ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
+                                                TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
                                                 Amount = i.Types.Sum(t => t.Value),
                                                 ProgramCount = i.Programs.Sum(p => p.Value)
                                             });
@@ -132,8 +132,8 @@ namespace GateWashDataService.Controllers
                                                 DTime = i.DTime,
                                                 Terminal = i.Terminal,
                                                 TerminalCode = i.TerminalCode,
-                                                ProgramsDescription = string.Join(", ", i.Programs),
-                                                TypesDescription = string.Join(", ", i.Types),
+                                                ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
+                                                TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
                                                 Amount = i.Types.Sum(t => t.Value),
                                                 ProgramCount = i.Programs.Sum(p => p.Value)
                                             });
@@ -154,8 +154,8 @@ namespace GateWashDataService.Controllers
                                              .Select(i => new GroupedIncreaseModel
                                              {
                                                  DTime = i.DTime,
-                                                 ProgramsDescription = string.Join(", ", i.Programs),
-                                                 TypesDescription = string.Join(", ", i.Types),
+                                                 ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
+                                                 TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
                                                  Amount = i.Types.Sum(t => t.Value),
                                                  ProgramCount = i.Programs.Sum(p => p.Value)
                                              });
@@ -178,8 +178,8 @@ namespace GateWashDataService.Controllers
                                                  DTime = i.DTime,
                                                  Terminal = i.Terminal,
                                                  TerminalCode = i.TerminalCode,
-                                                 ProgramsDescription = string.Join(", ", i.Programs),
-                                                 TypesDescription = string.Join(", ", i.Types),
+                                                 ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
+                                                 TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
                                                  Amount = i.Types.Sum(t => t.Value),
                                                  ProgramCount = i.Programs.Sum(p => p.Value)
                                              });

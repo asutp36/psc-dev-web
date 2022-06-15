@@ -16,6 +16,7 @@ namespace GateWashDataService.Models.GateWashContext
         public int IdeventKind { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
+        public int DisplayOrder { get; set; }
 
         public virtual ICollection<Event> Events { get; set; }
         public virtual ICollection<PayEvent> PayEvents { get; set; }
