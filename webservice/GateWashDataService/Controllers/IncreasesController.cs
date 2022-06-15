@@ -75,7 +75,12 @@ namespace GateWashDataService.Controllers
                                                 Amount = i.Types.Sum(t => t.Value),
                                                 ProgramCount = i.Programs.Sum(p => p.Value)
                                             });
-            increases = Sort(increases, "Dtime desc");
+
+            if (string.IsNullOrEmpty(parameters.Sorting))
+                parameters.Sorting = "Dtime desc";
+
+            increases = Sort(increases, parameters.Sorting);
+
             return Ok(increases);
         }
 
@@ -90,7 +95,10 @@ namespace GateWashDataService.Controllers
                 increases = GetOnlyUserWashes(User.Claims, increases);
             }
 
-            increases = Sort(increases, "Dtime desc,TerminalCode asc");
+            if (string.IsNullOrEmpty(parameters.Sorting))
+                parameters.Sorting = "Dtime desc, TerminalCode asc";
+
+            increases = Sort(increases, parameters.Sorting);
 
             PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(increases, parameters.Paging);
 
@@ -113,7 +121,11 @@ namespace GateWashDataService.Controllers
                                                 Amount = i.Types.Sum(t => t.Value),
                                                 ProgramCount = i.Programs.Sum(p => p.Value)
                                             });
-            increases = Sort(increases, "Dtime desc");
+
+            if (string.IsNullOrEmpty(parameters.Sorting))
+                parameters.Sorting = "Dtime desc";
+
+            increases = Sort(increases, parameters.Sorting);
             PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases, parameters.Paging);
 
             PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
@@ -137,7 +149,12 @@ namespace GateWashDataService.Controllers
                                                 Amount = i.Types.Sum(t => t.Value),
                                                 ProgramCount = i.Programs.Sum(p => p.Value)
                                             });
-            increases = Sort(increases, "Dtime desc,TerminalCode asc");
+
+            if (string.IsNullOrEmpty(parameters.Sorting))
+                parameters.Sorting = "Dtime desc, TerminalCode asc";
+
+            increases = Sort(increases, parameters.Sorting);
+
             PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases.AsQueryable(), parameters.Paging);
 
             PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
@@ -159,7 +176,12 @@ namespace GateWashDataService.Controllers
                                                  Amount = i.Types.Sum(t => t.Value),
                                                  ProgramCount = i.Programs.Sum(p => p.Value)
                                              });
-            increases = Sort(increases, "Dtime desc");
+
+            if (string.IsNullOrEmpty(parameters.Sorting))
+                parameters.Sorting = "Dtime desc";
+
+            increases = Sort(increases, parameters.Sorting);
+
             PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases, parameters.Paging);
 
             PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
@@ -183,7 +205,12 @@ namespace GateWashDataService.Controllers
                                                  Amount = i.Types.Sum(t => t.Value),
                                                  ProgramCount = i.Programs.Sum(p => p.Value)
                                              });
-            increases = Sort(increases, "Dtime desc,TerminalCode asc");
+
+            if (string.IsNullOrEmpty(parameters.Sorting))
+                parameters.Sorting = "Dtime desc, TerminalCode asc";
+
+            increases = Sort(increases, parameters.Sorting);
+
             PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases.AsQueryable(), parameters.Paging);
 
             PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
