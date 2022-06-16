@@ -65,11 +65,13 @@ namespace GateWashDataService.Controllers
                                                 Amount = i.Types.Sum(t => t.Value),
                                                 ProgramCount = i.Programs.Sum(p => p.Value)
                                             });
+            string sortingRule = "";
+            if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
+                sortingRule = "Dtime desc";
+            else
+                sortingRule = $"{parameters.Sorting.Field} {parameters.Sorting.Direction}";
 
-            if (string.IsNullOrEmpty(parameters.Sorting))
-                parameters.Sorting = "Dtime desc";
-
-            increases = Sort(increases, parameters.Sorting);
+            increases = Sort(increases, sortingRule);
 
             return Ok(increases);
         }
@@ -81,10 +83,13 @@ namespace GateWashDataService.Controllers
             var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
             IQueryable<IncreaseModel> increases = IncreasesRepository.GetAll(_context, parameters, washes);
 
-           if (string.IsNullOrEmpty(parameters.Sorting))
-                parameters.Sorting = "Dtime desc,TerminalCode asc";
+            string sortingRule = "";
+            if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
+                sortingRule = "Dtime desc,TerminalCode asc";
+            else
+                sortingRule = $"{parameters.Sorting.Field} {parameters.Sorting.Direction},Dtime desc,TerminalCode asc";
 
-            increases = Sort(increases, parameters.Sorting);
+            increases = Sort(increases, sortingRule);
 
             PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(increases, parameters.Paging);
 
@@ -108,10 +113,14 @@ namespace GateWashDataService.Controllers
                                                 ProgramCount = i.Programs.Sum(p => p.Value)
                                             });
 
-            if (string.IsNullOrEmpty(parameters.Sorting))
-                parameters.Sorting = "Dtime desc";
+            string sortingRule = "";
+            if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
+                sortingRule = "Dtime desc";
+            else
+                sortingRule = $"{parameters.Sorting.Field} {parameters.Sorting.Direction},Dtime desc";
 
-            increases = Sort(increases, parameters.Sorting);
+            increases = Sort(increases, sortingRule);
+
             PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases, parameters.Paging);
 
             PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
@@ -136,10 +145,13 @@ namespace GateWashDataService.Controllers
                                                 ProgramCount = i.Programs.Sum(p => p.Value)
                                             });
 
-            if (string.IsNullOrEmpty(parameters.Sorting))
-                parameters.Sorting = "Dtime desc,TerminalCode asc";
+            string sortingRule = "";
+            if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
+                sortingRule = "Dtime desc,TerminalCode asc";
+            else
+                sortingRule = $"{parameters.Sorting.Field} {parameters.Sorting.Direction},Dtime desc,TerminalCode asc";
 
-            increases = Sort(increases, parameters.Sorting);
+            increases = Sort(increases, sortingRule);
 
             PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases.AsQueryable(), parameters.Paging);
 
@@ -163,10 +175,13 @@ namespace GateWashDataService.Controllers
                                                  ProgramCount = i.Programs.Sum(p => p.Value)
                                              });
 
-            if (string.IsNullOrEmpty(parameters.Sorting))
-                parameters.Sorting = "Dtime desc";
+            string sortingRule = "";
+            if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
+                sortingRule = "Dtime desc";
+            else
+                sortingRule = $"{parameters.Sorting.Field} {parameters.Sorting.Direction},Dtime desc";
 
-            increases = Sort(increases, parameters.Sorting);
+            increases = Sort(increases, sortingRule);
 
             PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases, parameters.Paging);
 
@@ -192,10 +207,13 @@ namespace GateWashDataService.Controllers
                                                  ProgramCount = i.Programs.Sum(p => p.Value)
                                              });
 
-            if (string.IsNullOrEmpty(parameters.Sorting))
-                parameters.Sorting = "Dtime desc,TerminalCode asc";
+            string sortingRule = "";
+            if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
+                sortingRule = "Dtime desc,TerminalCode asc";
+            else
+                sortingRule = $"{parameters.Sorting.Field} {parameters.Sorting.Direction},Dtime desc,TerminalCode asc";
 
-            increases = Sort(increases, parameters.Sorting);
+            increases = Sort(increases, sortingRule);
 
             PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases.AsQueryable(), parameters.Paging);
 
