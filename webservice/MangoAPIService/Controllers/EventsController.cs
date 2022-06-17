@@ -9,6 +9,7 @@ using MangoAPIService.Models;
 using MangoAPIService.Helpers;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace MangoAPIService.Controllers
 {
@@ -26,15 +27,27 @@ namespace MangoAPIService.Controllers
         }
 
         [HttpPost("call")]
-        public async Task<IActionResult> Call([FromBody] MangoAPIRequestParameters parameters)
+        public async Task<IActionResult> Call([FromForm] MangoAPIRequestParameters parameters)
         {
-            if(!Hasher.VerifyHash(HashAlgorithm.Create("SHA256"), parameters.sign, parameters.vpbx_api_key + parameters.json + _apiSalt))
+            try
             {
-                _logger.LogError("Подпись не прошла проверку" + Environment.NewLine);
-                return Unauthorized();
-            }
+                _logger.LogInformation("Параметры запуска: " + JsonConvert.SerializeObject(parameters));
+                if (!Hasher.VerifyHash(HashAlgorithm.Create("SHA256"), parameters.sign, parameters.vpbx_api_key + parameters.json + _apiSalt))
+                {
+                    _logger.LogError("Подпись не прошла проверку" + Environment.NewLine);
+                    return Unauthorized();
+                }
 
-            return Ok();
+                MangoAPIIncomingCall incomingCallInfo = JsonConvert.DeserializeObject<MangoAPIIncomingCall>(parameters.json);
+                _logger.LogInformation($"От кого: {incomingCallInfo.from.number}, куда: {incomingCallInfo.to.number}");
+
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500);
+            }
         }
     }
 }
