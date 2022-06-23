@@ -122,7 +122,7 @@ namespace GateWashDataService.Repositories
             foreach (var t in tps)
             {
                 var payout = payouts.Find(p => p.DTime == t.Key.DTime && p.TerminalCode == t.Key.TerminalCode);
-                if (payout != null)
+                if (payout != null && payout.Value != 0)
                 {
                     t.First(q => q.TypeCode == "cashincrease").Value -= payout.Value;
                 }
