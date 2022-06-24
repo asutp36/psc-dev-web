@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 
 namespace GateWashDataService.Repositories
 {
-    public class GroupedIncreaseDto
+    public abstract class GroupedItemDto
     {
         public DateTime DTime { get; set; }
+        public int Hour { get; set; }
+        public int IdTerminal { get; set; }
         public string TerminalCode { get; set; }
-        public string Terminal { get; set; }
-        public IEnumerable<GroupedUsedProgramDto> Programs { get; set; }
-        public IEnumerable<GroupedIncreaseTypeDto> Types { get; set; }
+        public string TerminalName { get; set; }
+        public int Value { get; set; }
     }
 }

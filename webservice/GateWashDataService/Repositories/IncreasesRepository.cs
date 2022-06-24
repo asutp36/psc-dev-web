@@ -38,6 +38,110 @@ namespace GateWashDataService.Repositories
             return result;
         }
 
+        public static IQueryable<GroupedIncreaseDto> GetGroupedByHour(GateWashDbContext context, GetIncreaseParameters param, List<string> washes)
+        {
+            var terminals = GetTerminalsByWashes(context, washes);
+
+            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => (p.DTime >= param.StartDate) && (p.DTime <= param.EndDate)
+                                                                             && (param.Terminal == null || p.TerminalCode == param.Terminal))
+                                                                      .ToList();
+            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate) && (t.DTime <= param.EndDate)
+                                                                           && (param.Terminal == null || t.TerminalCode == param.Terminal))
+                                                                    .ToList();
+            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate) && (t.DTime <= param.EndDate)
+                                                                           && (param.Terminal == null || t.TerminalCode == param.Terminal))
+                                                                    .ToList();
+
+            var progs = programs.GroupBy(p => new { p.DTime.Date, p.Hour, p.ProgramCode, p.ProgramName, p.DisplayOrder },
+                                         v => v.Value,
+                                         (key, val) => new GroupedUsedProgramDto
+                                         {
+                                             DTime = key.Date.AddHours(key.Hour),
+                                             ProgramCode = key.ProgramCode,
+                                             ProgramName = key.ProgramName,
+                                             DisplayOrder = key.DisplayOrder,
+                                             Value = val.Sum()
+                                         }).ToList();
+
+            var tps = types.GroupBy(t => new { t.DTime.Date, t.Hour, t.TypeCode, t.TypeName, t.DisplayOrder },
+                                    v => v.Value,
+                                    (key, val) => new GroupedIncreaseTypeDto
+                                    {
+                                        DTime = key.Date.AddHours(key.Hour),
+                                        TypeCode = key.TypeCode,
+                                        TypeName = key.TypeName,
+                                        DisplayOrder = key.DisplayOrder,
+                                        Value = val.Sum()
+                                    }).ToList();
+
+            var pts = payouts.GroupBy(p => new { p.DTime.Date, p.Hour }, v => v.Value,
+                                      (key, val) => new GroupedIncreaseTypeDto { DTime = key.Date.AddHours(key.Hour), Value = val.Sum() }).ToList();
+
+            var pprogs = progs.GroupBy(p => p.DTime).ToList();
+            var ttps = tps.GroupBy(t => t.DTime).ToList();
+
+            foreach (var t in ttps)
+            {
+                var payout = pts.Find(p => p.DTime == t.Key);
+                if (payout != null && payout.Value != 0)
+                {
+                    t.First(q => q.TypeCode == "cashincrease").Value -= payout.Value;
+                }
+
+            }
+
+            var groupedIncreases = pprogs.Join(ttps, p => p.Key, t => t.Key,
+                                              (p, t) => new GroupedIncreaseDto
+                                              {
+                                                  DTime = p.Key,
+                                                  Programs = p.Select(p => new GroupedUsedProgramDto { ProgramCode = p.ProgramCode, ProgramName = p.ProgramName, Value = p.Value, DisplayOrder = p.DisplayOrder }),
+                                                  Types = t.Select(t => new GroupedIncreaseTypeDto { TypeCode = t.TypeCode, TypeName = t.TypeName, Value = t.Value, DisplayOrder = t.DisplayOrder })
+                                              });
+
+            return groupedIncreases.AsQueryable();
+        }
+
+        public static IQueryable<GroupedIncreaseDto> GetGroupedByHourSplitTerminals(GateWashDbContext context, GetIncreaseParameters param, List<string> washes)
+        {
+            var terminals = GetTerminalsByWashes(context, washes);
+            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => (p.DTime >= param.StartDate) && (p.DTime <= param.EndDate)
+                                                                             && (param.Terminal == null || p.TerminalCode == param.Terminal))
+                                                                      .ToList();
+
+            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate) && (t.DTime <= param.EndDate)
+                                                                           && (param.Terminal == null || t.TerminalCode == param.Terminal))
+                                                                    .ToList();
+
+            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate) && (t.DTime <= param.EndDate)
+                                                                           && (param.Terminal == null || t.TerminalCode == param.Terminal))
+                                                                    .ToList();
+
+            var progs = programs.GroupBy(p => new { p.DTime, p.Hour, p.TerminalCode, p.TerminalName });
+            var tps = types.GroupBy(t => new { t.DTime, t.Hour, t.TerminalCode, t.TerminalName });
+
+            foreach (var t in tps)
+            {
+                var payout = payouts.Find(p => p.DTime == t.Key.DTime && p.TerminalCode == t.Key.TerminalCode);
+                if (payout != null && payout.Value != 0)
+                {
+                    t.First(q => q.TypeCode == "cashincrease").Value -= payout.Value;
+                }
+
+            }
+
+            var grouppp = progs.Join(tps, p => p.Key, t => t.Key,
+                (p, t) => new GroupedIncreaseDto
+                {
+                    DTime = p.Key.DTime.AddHours(p.Key.Hour),
+                    Terminal = p.Key.TerminalName,
+                    TerminalCode = p.Key.TerminalCode,
+                    Programs = p.Select(p => new GroupedUsedProgramDto { ProgramCode = p.ProgramCode, ProgramName = p.ProgramName, Value = p.Value, DisplayOrder = p.DisplayOrder }),
+                    Types = t.Select(t => new GroupedIncreaseTypeDto { TypeCode = t.TypeCode, TypeName = t.TypeName, Value = t.Value, DisplayOrder = t.DisplayOrder })
+                });
+
+            return grouppp.AsQueryable();
+        }
+
         public static IQueryable<GroupedIncreaseDto> GetGroupedByDay(GateWashDbContext context, GetIncreaseParameters param, List<string> washes)
         {
             var terminals = GetTerminalsByWashes(context, washes);
@@ -54,7 +158,7 @@ namespace GateWashDataService.Repositories
 
             var progs = programs.GroupBy(p => new { p.DTime.Date, p.ProgramCode, p.ProgramName, p.DisplayOrder },
                                          v => v.Value,
-                                         (key, val) => new UsedProgramDto 
+                                         (key, val) => new GroupedUsedProgramDto 
                                          {
                                             DTime = key.Date,
                                             ProgramCode = key.ProgramCode,
@@ -65,7 +169,7 @@ namespace GateWashDataService.Repositories
 
             var tps = types.GroupBy(t => new { t.DTime.Date, t.TypeCode, t.TypeName, t.DisplayOrder },
                                     v => v.Value,
-                                    (key, val) => new IncreaseTypeDto 
+                                    (key, val) => new GroupedIncreaseTypeDto 
                                     {
                                         DTime = key.Date,
                                         TypeCode = key.TypeCode,
@@ -75,7 +179,7 @@ namespace GateWashDataService.Repositories
                                     }).ToList();
 
             var pts = payouts.GroupBy(p => p.DTime.Date, v => v.Value, 
-                                      (key, val) => new IncreaseTypeDto { DTime = key.Date, Value = val.Sum() }).ToList();
+                                      (key, val) => new GroupedIncreaseTypeDto { DTime = key.Date, Value = val.Sum() }).ToList();
 
             var pprogs = progs.GroupBy(p => p.DTime.Date).ToList();
             var ttps = tps.GroupBy(t => t.DTime.Date).ToList();
@@ -83,7 +187,7 @@ namespace GateWashDataService.Repositories
             foreach (var t in ttps)
             {
                 var payout = pts.Find(p => p.DTime == t.Key);
-                if (payout != null)
+                if (payout != null && payout.Value != 0)
                 {
                     t.First(q => q.TypeCode == "cashincrease").Value -= payout.Value;
                 }
@@ -94,8 +198,8 @@ namespace GateWashDataService.Repositories
                                               (p, t) => new GroupedIncreaseDto
                                               {
                                                   DTime = p.Key,
-                                                  Programs = p.Select(p => new UsedProgramDto { ProgramCode = p.ProgramCode, ProgramName = p.ProgramName, Value = p.Value, DisplayOrder = p.DisplayOrder }),
-                                                  Types = t.Select(t => new IncreaseTypeDto { TypeCode = t.TypeCode, TypeName = t.TypeName, Value = t.Value, DisplayOrder = t.DisplayOrder })
+                                                  Programs = p.Select(p => new GroupedUsedProgramDto { ProgramCode = p.ProgramCode, ProgramName = p.ProgramName, Value = p.Value, DisplayOrder = p.DisplayOrder }),
+                                                  Types = t.Select(t => new GroupedIncreaseTypeDto { TypeCode = t.TypeCode, TypeName = t.TypeName, Value = t.Value, DisplayOrder = t.DisplayOrder })
                                               });
 
             return groupedIncreases.AsQueryable();
@@ -116,12 +220,40 @@ namespace GateWashDataService.Repositories
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
 
-            var progs = programs.GroupBy(p => new { p.DTime, p.TerminalCode, p.TerminalName });
-            var tps = types.GroupBy(t => new { t.DTime, t.TerminalCode, t.TerminalName });
+            var progs = programs.GroupBy(p => new { p.DTime.Date, p.ProgramCode, p.ProgramName, p.TerminalCode, p.TerminalName, p.DisplayOrder },
+                                         v => v.Value,
+                                         (key, val) => new GroupedUsedProgramDto
+                                         {
+                                             DTime = key.Date,
+                                             TerminalCode = key.TerminalCode,
+                                             TerminalName = key.TerminalName,
+                                             ProgramCode = key.ProgramCode,
+                                             ProgramName = key.ProgramName,
+                                             DisplayOrder = key.DisplayOrder,
+                                             Value = val.Sum()
+                                         }).ToList();
 
-            foreach (var t in tps)
+            var tps = types.GroupBy(t => new { t.DTime.Date, t.TypeCode, t.TypeName, t.TerminalCode, t.TerminalName, t.DisplayOrder },
+                                    v => v.Value,
+                                    (key, val) => new GroupedIncreaseTypeDto
+                                    {
+                                        DTime = key.Date,
+                                        TerminalCode = key.TerminalCode,
+                                        TerminalName = key.TerminalName,
+                                        TypeCode = key.TypeCode,
+                                        TypeName = key.TypeName,
+                                        DisplayOrder = key.DisplayOrder,
+                                        Value = val.Sum()
+                                    }).ToList();
+
+            var pprogs = progs.GroupBy(p => new { p.DTime.Date, p.TerminalCode, p.TerminalName });
+            var ttps = tps.GroupBy(t => new { t.DTime.Date, t.TerminalCode, t.TerminalName });
+            var pts = payouts.GroupBy(k => new { k.DTime.Date, k.TerminalCode }, v => v.Value,
+                                      (key, val) => new GroupedIncreaseTypeDto { DTime = key.Date, TerminalCode = key.TerminalCode, Value = val.Sum() }).ToList();
+
+            foreach (var t in ttps)
             {
-                var payout = payouts.Find(p => p.DTime == t.Key.DTime && p.TerminalCode == t.Key.TerminalCode);
+                var payout = pts.Find(p => p.DTime.Date == t.Key.Date && p.TerminalCode == t.Key.TerminalCode);
                 if (payout != null && payout.Value != 0)
                 {
                     t.First(q => q.TypeCode == "cashincrease").Value -= payout.Value;
@@ -129,14 +261,14 @@ namespace GateWashDataService.Repositories
 
             }
 
-            var grouppp = progs.Join(tps, p => p.Key, t => t.Key,
+            var grouppp = pprogs.Join(ttps, p => p.Key, t => t.Key,
                 (p, t) => new GroupedIncreaseDto
                 {
-                    DTime = p.Key.DTime,
+                    DTime = p.Key.Date,
                     Terminal = p.Key.TerminalName,
                     TerminalCode = p.Key.TerminalCode,
-                    Programs = p.Select(p => new UsedProgramDto { ProgramCode = p.ProgramCode, ProgramName = p.ProgramName, Value = p.Value, DisplayOrder = p.DisplayOrder }),
-                    Types = t.Select(t => new IncreaseTypeDto { TypeCode = t.TypeCode, TypeName = t.TypeName, Value = t.Value, DisplayOrder = t.DisplayOrder })
+                    Programs = p.Select(p => new GroupedUsedProgramDto { ProgramCode = p.ProgramCode, ProgramName = p.ProgramName, Value = p.Value, DisplayOrder = p.DisplayOrder }),
+                    Types = t.Select(t => new GroupedIncreaseTypeDto { TypeCode = t.TypeCode, TypeName = t.TypeName, Value = t.Value, DisplayOrder = t.DisplayOrder })
                 });
 
             return grouppp.AsQueryable();
@@ -148,17 +280,28 @@ namespace GateWashDataService.Repositories
             return terminalCodes;
         }
 
-        private static IQueryable<UsedProgramDto> GetUsedProgramsByDayWithTerminals(GateWashDbContext context, List<string> terminals)
+        private static IQueryable<GroupedUsedProgramDto> GetUsedProgramsByDayWithTerminals(GateWashDbContext context, List<string> terminals)
         {
             var programs = context.PaySessions.Include(d => d.IddeviceNavigation)
                                               .Include(p => p.IdprogramNavigation)
                                               .Where(d => terminals.Contains(d.IddeviceNavigation.Code))
-                                              .GroupBy(k => new { k.IddeviceNavigation.Iddevice, DeviceCode = k.IddeviceNavigation.Code, DeviceName = k.IddeviceNavigation.Name, k.DtimeBegin.Date, k.IdprogramNavigation.Code, k.IdprogramNavigation.Name, k.IdprogramNavigation.DisplayOrder },
+                                              .GroupBy(k => new 
+                                                        { 
+                                                            k.IddeviceNavigation.Iddevice, 
+                                                            DeviceCode = k.IddeviceNavigation.Code, 
+                                                            DeviceName = k.IddeviceNavigation.Name, 
+                                                            k.DtimeBegin.Date, 
+                                                            k.DtimeBegin.Hour, 
+                                                            k.IdprogramNavigation.Code, 
+                                                            k.IdprogramNavigation.Name, 
+                                                            k.IdprogramNavigation.DisplayOrder 
+                                                        },
                                                        v => v.IdpaySession,
-                                                       (key, val) => new UsedProgramDto
+                                                       (key, val) => new GroupedUsedProgramDto
                                                        {
                                                            DTime = key.Date,
-                                                           IdTerminal = key.Iddevice,
+                                                           Hour = key.Hour,
+                                                            IdTerminal = key.Iddevice,
                                                            TerminalCode = key.DeviceCode,
                                                            TerminalName = key.DeviceName,
                                                            ProgramCode = key.Code,
@@ -170,16 +313,17 @@ namespace GateWashDataService.Repositories
             return programs;
         }
 
-        private static IQueryable<IncreaseTypeDto> GetIncreaseTypesByDayWithTerminals(GateWashDbContext context, List<string> terminals)
+        private static IQueryable<GroupedIncreaseTypeDto> GetIncreaseTypesByDayWithTerminals(GateWashDbContext context, List<string> terminals)
         {
             var types = context.EventIncreases.Include(pe => pe.IdpayEventNavigation).ThenInclude(d => d.IddeviceNavigation)
                                               .Include(t => t.IdpayEventNavigation.IdeventKindNavigation)
                                               .Where(d => terminals.Contains(d.IdpayEventNavigation.IddeviceNavigation.Code))
-                                              .GroupBy(k => new { k.IdpayEventNavigation.Dtime.Date, k.IdpayEventNavigation.Iddevice, DeviceCode = k.IdpayEventNavigation.IddeviceNavigation.Code, DeviceName = k.IdpayEventNavigation.IddeviceNavigation.Name, k.IdpayEventNavigation.IdeventKindNavigation.Code, k.IdpayEventNavigation.IdeventKindNavigation.Name, k.IdpayEventNavigation.IdeventKindNavigation.DisplayOrder },
+                                              .GroupBy(k => new { k.IdpayEventNavigation.Dtime.Date, k.IdpayEventNavigation.Dtime.Hour, k.IdpayEventNavigation.Iddevice, DeviceCode = k.IdpayEventNavigation.IddeviceNavigation.Code, DeviceName = k.IdpayEventNavigation.IddeviceNavigation.Name, k.IdpayEventNavigation.IdeventKindNavigation.Code, k.IdpayEventNavigation.IdeventKindNavigation.Name, k.IdpayEventNavigation.IdeventKindNavigation.DisplayOrder },
                                                        v => v.Amount,
-                                                       (key, val) => new IncreaseTypeDto
+                                                       (key, val) => new GroupedIncreaseTypeDto
                                                        {
                                                            DTime = key.Date,
+                                                           Hour = key.Hour,
                                                            IdTerminal = key.Iddevice,
                                                            TerminalCode = key.DeviceCode,
                                                            TerminalName = key.DeviceName,
@@ -192,16 +336,17 @@ namespace GateWashDataService.Repositories
             return types;
         }
 
-        private static IQueryable<IncreaseTypeDto> GetPayoutsByDaySplitTerminals(GateWashDbContext context, List<string> terminals)
+        private static IQueryable<GroupedIncreaseTypeDto> GetPayoutsByDaySplitTerminals(GateWashDbContext context, List<string> terminals)
         {
             var payouts = context.EventPayouts.Include(pe => pe.IdpayEventNavigation).ThenInclude(d => d.IddeviceNavigation)
                                               .Include(t => t.IdpayEventNavigation.IdeventKindNavigation)
                                               .Where(d => terminals.Contains(d.IdpayEventNavigation.IddeviceNavigation.Code))
-                                              .GroupBy(k => new { k.IdpayEventNavigation.Dtime.Date, k.IdpayEventNavigation.Iddevice, DeviceCode = k.IdpayEventNavigation.IddeviceNavigation.Code, DeviceName = k.IdpayEventNavigation.IddeviceNavigation.Name, k.IdpayEventNavigation.IdeventKindNavigation.Code, k.IdpayEventNavigation.IdeventKindNavigation.Name },
+                                              .GroupBy(k => new { k.IdpayEventNavigation.Dtime.Date, k.IdpayEventNavigation.Dtime.Hour, k.IdpayEventNavigation.Iddevice, DeviceCode = k.IdpayEventNavigation.IddeviceNavigation.Code, DeviceName = k.IdpayEventNavigation.IddeviceNavigation.Name, k.IdpayEventNavigation.IdeventKindNavigation.Code, k.IdpayEventNavigation.IdeventKindNavigation.Name },
                                                        v => v.Amount,
-                                                       (key, val) => new IncreaseTypeDto
+                                                       (key, val) => new GroupedIncreaseTypeDto
                                                        {
                                                            DTime = key.Date,
+                                                           Hour = key.Hour,
                                                            IdTerminal = key.Iddevice,
                                                            TerminalCode = key.DeviceCode,
                                                            TerminalName = key.DeviceName,
@@ -227,7 +372,7 @@ namespace GateWashDataService.Repositories
 
             var progs = programs.GroupBy(p => new { p.DTime.Date.Month, p.DTime.Date.Year, p.ProgramCode, p.ProgramName, p.DisplayOrder },
                                          v => v.Value,
-                                         (key, val) => new UsedProgramDto
+                                         (key, val) => new GroupedUsedProgramDto
                                          {
                                              DTime = new DateTime(key.Year, key.Month, 1),
                                              ProgramCode = key.ProgramCode,
@@ -238,7 +383,7 @@ namespace GateWashDataService.Repositories
 
             var tps = types.GroupBy(t => new { t.DTime.Date.Month, t.DTime.Date.Year, t.TypeCode, t.TypeName, t.DisplayOrder },
                                     v => v.Value,
-                                    (key, val) => new IncreaseTypeDto
+                                    (key, val) => new GroupedIncreaseTypeDto
                                     {
                                         DTime = new DateTime(key.Year, key.Month, 1),
                                         TypeCode = key.TypeCode,
@@ -250,12 +395,12 @@ namespace GateWashDataService.Repositories
             var pprogs = progs.GroupBy(p => p.DTime).ToList();
             var ttps = tps.GroupBy(t => t.DTime).ToList();
             var pts = payouts.GroupBy(p => new { p.DTime.Month, p.DTime.Year }, v => v.Value,
-                                      (key, val) => new IncreaseTypeDto { DTime = new DateTime(key.Year, key.Month, 1), Value = val.Sum() }).ToList();
+                                      (key, val) => new GroupedIncreaseTypeDto { DTime = new DateTime(key.Year, key.Month, 1), Value = val.Sum() }).ToList();
 
             foreach (var t in ttps)
             {
                 var payout = pts.Find(p => p.DTime == t.Key);
-                if (payout != null)
+                if (payout != null && payout.Value != 0)
                 {
                     t.First(q => q.TypeCode == "cashincrease").Value -= payout.Value;
                 }
@@ -266,8 +411,8 @@ namespace GateWashDataService.Repositories
                                               (p, t) => new GroupedIncreaseDto
                                               {
                                                   DTime = p.Key,
-                                                  Programs = p.Select(p => new UsedProgramDto { ProgramCode = p.ProgramCode, ProgramName = p.ProgramName, Value = p.Value, DisplayOrder = p.DisplayOrder }),
-                                                  Types = t.Select(t => new IncreaseTypeDto { TypeCode = t.TypeCode, TypeName = t.TypeName, Value = t.Value, DisplayOrder = t.DisplayOrder })
+                                                  Programs = p.Select(p => new GroupedUsedProgramDto { ProgramCode = p.ProgramCode, ProgramName = p.ProgramName, Value = p.Value, DisplayOrder = p.DisplayOrder }),
+                                                  Types = t.Select(t => new GroupedIncreaseTypeDto { TypeCode = t.TypeCode, TypeName = t.TypeName, Value = t.Value, DisplayOrder = t.DisplayOrder })
                                               });
 
             return groupedIncreases.AsQueryable();
@@ -288,7 +433,7 @@ namespace GateWashDataService.Repositories
 
             var progs = programs.GroupBy(p => new { p.DTime.Date.Month, p.DTime.Date.Year, p.ProgramCode, p.ProgramName, p.TerminalCode, p.TerminalName, p.DisplayOrder },
                                          v => v.Value,
-                                         (key, val) => new UsedProgramDto
+                                         (key, val) => new GroupedUsedProgramDto
                                          {
                                              DTime = new DateTime(key.Year, key.Month, 1),
                                              TerminalCode = key.TerminalCode,
@@ -301,7 +446,7 @@ namespace GateWashDataService.Repositories
 
             var tps = types.GroupBy(t => new { t.DTime.Date.Month, t.DTime.Date.Year, t.TypeCode, t.TypeName, t.TerminalCode, t.TerminalName, t.DisplayOrder },
                                     v => v.Value,
-                                    (key, val) => new IncreaseTypeDto
+                                    (key, val) => new GroupedIncreaseTypeDto
                                     {
                                         DTime = new DateTime(key.Year, key.Month, 1),
                                         TerminalCode = key.TerminalCode,
@@ -315,12 +460,12 @@ namespace GateWashDataService.Repositories
             var pprogs = progs.GroupBy(p => new { p.DTime, p.TerminalName, p.TerminalCode}).ToList();
             var ttps = tps.GroupBy(t => new { t.DTime, t.TerminalName, t.TerminalCode }).ToList();
             var pts = payouts.GroupBy(k => new { k.DTime.Month, k.DTime.Year, k.TerminalCode }, v => v.Value,
-                                      (key, val) => new IncreaseTypeDto { DTime = new DateTime(key.Year, key.Month, 1), Value = val.Sum() }).ToList();
+                                      (key, val) => new GroupedIncreaseTypeDto { DTime = new DateTime(key.Year, key.Month, 1), TerminalCode = key.TerminalCode, Value = val.Sum() }).ToList();
 
             foreach (var t in ttps)
             {
                 var payout = pts.Find(p => p.DTime == t.Key.DTime && p.TerminalCode == t.Key.TerminalCode);
-                if (payout != null)
+                if (payout != null && payout.Value != 0)
                 {
                     t.First(q => q.TypeCode == "cashincrease").Value -= payout.Value;
                 }
@@ -333,8 +478,8 @@ namespace GateWashDataService.Repositories
                                                   DTime = p.Key.DTime,
                                                   Terminal = p.Key.TerminalName,
                                                   TerminalCode = p.Key.TerminalCode,
-                                                  Programs = p.Select(p => new UsedProgramDto { ProgramCode = p.ProgramCode, ProgramName = p.ProgramName, Value = p.Value, DisplayOrder = p.DisplayOrder }),
-                                                  Types = t.Select(t => new IncreaseTypeDto { TypeCode = t.TypeCode, TypeName = t.TypeName, Value = t.Value, DisplayOrder = t.DisplayOrder })
+                                                  Programs = p.Select(p => new GroupedUsedProgramDto { ProgramCode = p.ProgramCode, ProgramName = p.ProgramName, Value = p.Value, DisplayOrder = p.DisplayOrder }),
+                                                  Types = t.Select(t => new GroupedIncreaseTypeDto { TypeCode = t.TypeCode, TypeName = t.TypeName, Value = t.Value, DisplayOrder = t.DisplayOrder })
                                               });
 
             return groupedIncreases.AsQueryable();

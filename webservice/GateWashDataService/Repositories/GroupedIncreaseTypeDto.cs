@@ -6,18 +6,13 @@ using System.Threading.Tasks;
 
 namespace GateWashDataService.Repositories
 {
-    public class IncreaseTypeDto : IEquatable<IncreaseTypeDto>
+    public class GroupedIncreaseTypeDto : GroupedItemDto, IEquatable<GroupedIncreaseTypeDto>
     {
-        public DateTime DTime { get; set; }
-        public int IdTerminal { get; set; }
-        public string TerminalCode { get; set; }
-        public string TerminalName { get; set; }
         public string TypeCode { get; set; }
         public string TypeName { get; set; }
         public int DisplayOrder { get; set; }
-        public int Value { get; set; }
 
-        public bool Equals([AllowNull] IncreaseTypeDto other)
+        public bool Equals([AllowNull] GroupedIncreaseTypeDto other)
         {
             if (other == null)
                 return false;

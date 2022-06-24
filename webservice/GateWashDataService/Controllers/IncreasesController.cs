@@ -55,8 +55,8 @@ namespace GateWashDataService.Controllers
         [HttpGet("test")]
         public IActionResult Test([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
-            var increases = IncreasesRepository.GetGroupedByDay(_context, parameters, washes)
+            var washes = new List<string>() { "M41", "RP-R36-M01" };
+            var increases = IncreasesRepository.GetGroupedByHour(_context, parameters, washes)
                                             .Select(i => new GroupedIncreaseModel
                                             {
                                                 DTime = i.DTime,
@@ -94,6 +94,68 @@ namespace GateWashDataService.Controllers
             PagedList<IncreaseModel> result = PagedList<IncreaseModel>.ToPagedList(increases, parameters.Paging);
 
             PagedList<IncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet("hours")]
+        public async Task<IActionResult> GetByHours([FromQuery] GetIncreaseParameters parameters)
+        {
+            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            var increases = IncreasesRepository.GetGroupedByHour(_context, parameters, washes)
+                                            .Select(i => new GroupedIncreaseModel
+                                            {
+                                                DTime = i.DTime,
+                                                ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
+                                                TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
+                                                Amount = i.Types.Sum(t => t.Value),
+                                                ProgramCount = i.Programs.Sum(p => p.Value)
+                                            });
+
+            string sortingRule = "";
+            if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
+                sortingRule = "Dtime desc";
+            else
+                sortingRule = $"{parameters.Sorting.Field} {parameters.Sorting.Direction},Dtime desc";
+
+            increases = Sort(increases, sortingRule);
+
+            PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases, parameters.Paging);
+
+            PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet("hours/split-terminals")]
+        public async Task<IActionResult> GetByHoursSplitTerminals([FromQuery] GetIncreaseParameters parameters)
+        {
+            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            var increases = IncreasesRepository.GetGroupedByHourSplitTerminals(_context, parameters, washes)
+                                            .Select(i => new GroupedIncreaseModel
+                                            {
+                                                DTime = i.DTime,
+                                                Terminal = i.Terminal,
+                                                TerminalCode = i.TerminalCode,
+                                                ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
+                                                TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
+                                                Amount = i.Types.Sum(t => t.Value),
+                                                ProgramCount = i.Programs.Sum(p => p.Value)
+                                            });
+
+            string sortingRule = "";
+            if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
+                sortingRule = "Dtime desc,TerminalCode asc";
+            else
+                sortingRule = $"{parameters.Sorting.Field} {parameters.Sorting.Direction},Dtime desc,TerminalCode asc";
+
+            increases = Sort(increases, sortingRule);
+
+            PagedList<GroupedIncreaseModel> result = PagedList<GroupedIncreaseModel>.ToPagedList(increases.AsQueryable(), parameters.Paging);
+
+            PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
         }

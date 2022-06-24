@@ -6,18 +6,13 @@ using System.Threading.Tasks;
 
 namespace GateWashDataService.Repositories
 {
-    public class UsedProgramDto : IEquatable<UsedProgramDto>
+    public class GroupedUsedProgramDto : GroupedItemDto, IEquatable<GroupedUsedProgramDto>
     {
-        public DateTime DTime { get; set; }
-        public int IdTerminal { get; set; }
-        public string TerminalCode { get; set; }
-        public string TerminalName { get; set; }
         public string ProgramCode { get; set; }
         public string ProgramName { get; set; }
         public int DisplayOrder { get; set; }
-        public int Value { get; set; }
 
-        public bool Equals([AllowNull] UsedProgramDto other)
+        public bool Equals([AllowNull] GroupedUsedProgramDto other)
         {
             if (other == null)
                 return false;
