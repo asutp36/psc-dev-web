@@ -50,7 +50,7 @@ namespace MangoAPIService.Services
             catch(HttpRequestException e)
             {
                 string content = await response.Content.ReadAsStringAsync();
-                _logger.LogError($"От MangoAPI ответ неудачный. StatusCode: {response.StatusCode}, Content: {content}");
+                _logger.LogError($"| MangoAPICallerService.CallHangupAsync | От MangoAPI ответ неудачный. StatusCode: {response.StatusCode}, Content: {content}");
             }
         }
     }
