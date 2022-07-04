@@ -1,5 +1,6 @@
 ﻿using MangoAPIService.Helpers;
 using MangoAPIService.Models;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,12 +13,14 @@ namespace MangoAPIService.Services
 {
     public class MangoAPICallerService : IMangoAPICaller
     {
+        private readonly ILogger _logger;
         private HttpSender _httpSender;
         private readonly string _apiKey;
         private readonly string _salt;
          
-        public MangoAPICallerService(string baseUrl, string apiKey, string salt)
+        public MangoAPICallerService(ILogger logger, string baseUrl, string apiKey, string salt)
         {
+            _logger = logger;
             _httpSender = new HttpSender(baseUrl);
             _apiKey = apiKey;
             _salt = salt;
@@ -32,7 +35,7 @@ namespace MangoAPIService.Services
             };
 
             string json = JsonConvert.SerializeObject(hangup);
-            string signature = Hasher.GetHash(HashAlgorithm.Create("SHA256"), _apiKey + json + _salt);
+            string signature = Hasher.GetHash(HashAlgorithm.Create("SHA256"), _apiKey + json + _salt + "qwerty");
 
             Dictionary<string, string> toSend = new Dictionary<string, string>();
             toSend.Add("vpbx_api_key", _apiKey);
@@ -40,7 +43,15 @@ namespace MangoAPIService.Services
             toSend.Add("sign", signature);
 
             HttpResponseMessage response = await _httpSender.PostAsync("commands/call/hangup", toSend);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            catch(HttpRequestException e)
+            {
+                string content = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"От MangoAPI ответ неудачный. StatusCode: {response.StatusCode}, Content: {content}");
+            }
         }
     }
 }

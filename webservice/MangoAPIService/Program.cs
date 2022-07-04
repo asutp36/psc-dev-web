@@ -42,7 +42,7 @@ namespace MangoAPIService
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();
-                    logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                    logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Warning);
                 })
                 .UseNLog();  // NLog: Setup NLog for Dependency injection;
     }

@@ -1,3 +1,4 @@
+using MangoAPIService.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -49,6 +50,14 @@ namespace MangoAPIService
 
                 s.EnableAnnotations();
             });
+
+            services.AddTransient<IMangoAPICaller>(s => new MangoAPICallerService(
+                    Logger,
+                    Configuration.GetValue<string>("MangoAPIBaseUrl"),
+                    Configuration.GetValue<string>("ApiKey"),
+                    Configuration.GetValue<string>("ApiSalt")
+                )
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

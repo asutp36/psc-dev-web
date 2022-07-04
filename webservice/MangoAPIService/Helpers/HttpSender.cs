@@ -18,13 +18,13 @@ namespace MangoAPIService.Helpers
             _httpClient.BaseAddress = new Uri(baseAddress);
         }
 
-        public async Task<HttpResponseMessage> Post(string url, string content)
+        public async Task<HttpResponseMessage> PostAsync(string url, Dictionary<string, string> content)
         {
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
 
             if(content != null)
             {
-                requestMessage.Content = new StringContent(content, Encoding.UTF8, Application.Json);
+                requestMessage.Content = new FormUrlEncodedContent(content);
             }
 
             HttpResponseMessage result = await _httpClient.SendAsync(requestMessage);

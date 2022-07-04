@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MangoAPIService.Services
 {
-    interface IMangoAPICaller
+    public interface IMangoAPICaller
     {
         void CallHangup(string call_id);
     }
