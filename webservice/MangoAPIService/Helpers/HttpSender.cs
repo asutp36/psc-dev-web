@@ -18,7 +18,7 @@ namespace MangoAPIService.Helpers
             _httpClient.BaseAddress = new Uri(baseAddress);
         }
 
-        public async Task<HttpResponseMessage> PostAsync(string url, Dictionary<string, string> content)
+        public async Task<HttpResponseMessage> PostFormUrlEncodedAsync(string url, Dictionary<string, string> content)
         {
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
 

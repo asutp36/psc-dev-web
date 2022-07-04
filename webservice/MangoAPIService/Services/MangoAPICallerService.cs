@@ -28,6 +28,7 @@ namespace MangoAPIService.Services
 
         public async void CallHangupAsync(string call_id)
         {
+            // манго апи нужно отправить идентификатор звонка (call_id) и любой идентификатор команды (им неважно какой он)
             MangoAPICallHangup hangup = new MangoAPICallHangup() 
             {
                 call_id = call_id,
@@ -35,14 +36,17 @@ namespace MangoAPIService.Services
             };
 
             string json = JsonConvert.SerializeObject(hangup);
+
+            // генерируется подпись
             string signature = Hasher.GetHash(HashAlgorithm.Create("SHA256"), _apiKey + json + _salt + "qwerty");
 
+            // данные нужно отправлять в виде application/x-www-form-urlencoded, то их нужно предстваить в виде словаря
             Dictionary<string, string> toSend = new Dictionary<string, string>();
             toSend.Add("vpbx_api_key", _apiKey);
             toSend.Add("json", json);
             toSend.Add("sign", signature);
 
-            HttpResponseMessage response = await _httpSender.PostAsync("commands/call/hangup", toSend);
+            HttpResponseMessage response = await _httpSender.PostFormUrlEncodedAsync("commands/call/hangup", toSend);
             try
             {
                 response.EnsureSuccessStatusCode();
