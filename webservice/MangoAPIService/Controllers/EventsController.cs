@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Net.Http;
 using MangoAPIService.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace MangoAPIService.Controllers
 {
@@ -23,13 +24,15 @@ namespace MangoAPIService.Controllers
         private readonly string _apiSalt;
         private readonly string _apiKey;
         private readonly IMangoAPICaller _mangoApiCallerService;
+        private IMemoryCache _cache;
 
-        public EventsController(ILogger<EventsController> logger, IConfiguration config, IMangoAPICaller mangoApiCallerService)
+        public EventsController(ILogger<EventsController> logger, IConfiguration config, IMangoAPICaller mangoApiCallerService, IMemoryCache memoryCache)
         {
             _logger = logger;
             _apiSalt = config.GetValue<string>("ApiSalt", null);
             _apiKey = config.GetValue<string>("ApiKey", null);
             _mangoApiCallerService = mangoApiCallerService;
+            _cache = memoryCache;
         }
 
         [HttpPost("call")]
@@ -39,18 +42,35 @@ namespace MangoAPIService.Controllers
             {
                 _logger.LogInformation("Параметры запуска: " + JsonConvert.SerializeObject(parameters));
                 //проверка хэша
-                if (!Hasher.VerifyHash(HashAlgorithm.Create("SHA256"), parameters.sign, parameters.vpbx_api_key + parameters.json + _apiSalt))
-                {
-                    _logger.LogError("Подпись не прошла проверку" + Environment.NewLine);
-                    return Unauthorized();
-                }
+                //if (!Hasher.VerifyHash(HashAlgorithm.Create("SHA256"), parameters.sign, parameters.vpbx_api_key + parameters.json + _apiSalt))
+                //{
+                //    _logger.LogError("Подпись не прошла проверку" + Environment.NewLine);
+                //    return Unauthorized();
+                //}
 
                 // парсинг данных запроса
                 MangoAPIIncomingCall incomingCallInfo = JsonConvert.DeserializeObject<MangoAPIIncomingCall>(parameters.json);
                 _logger.LogInformation($"От кого: {incomingCallInfo.from.number}, куда: {incomingCallInfo.to.number}");
 
-                // вызов манго API чтобы завершить звонок
-                _mangoApiCallerService.CallHangupAsync(incomingCallInfo.call_id);
+                int callIdentifier = (incomingCallInfo.from.number + incomingCallInfo.to.number).GetHashCode();
+                CallCacheModel call = null;
+                // если нет в кэше этого вызова, то считаем его новым
+                if (!_cache.TryGetValue(callIdentifier, out call))
+                {
+                    // создаётся вызов, добавляется в кэш 
+                    call = new CallCacheModel
+                    {
+                        From = incomingCallInfo.from.number,
+                        To = incomingCallInfo.to.number,
+                        When = DateTime.Now
+                    };
+
+                    // время жизни вызова в кэше - 5 секунд (с момента, когда последний раз обращались к этому вызову)
+                    _cache.Set(callIdentifier, call, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(5)));
+
+                    // вызов манго API чтобы завершить звонок
+                    _mangoApiCallerService.CallHangupAsync(incomingCallInfo.call_id);
+                }
 
                 return Ok();
             }
