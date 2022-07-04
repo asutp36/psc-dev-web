@@ -7,6 +7,6 @@ namespace MangoAPIService.Services
 {
     public interface IMangoAPICaller
     {
-        void CallHangup(string call_id);
+        void CallHangupAsync(string call_id);
     }
 }

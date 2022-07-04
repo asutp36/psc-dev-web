@@ -26,7 +26,7 @@ namespace MangoAPIService.Services
             _salt = salt;
         }
 
-        public async void CallHangup(string call_id)
+        public async void CallHangupAsync(string call_id)
         {
             MangoAPICallHangup hangup = new MangoAPICallHangup() 
             {

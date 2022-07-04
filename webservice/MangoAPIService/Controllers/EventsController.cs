@@ -38,17 +38,19 @@ namespace MangoAPIService.Controllers
             try
             {
                 _logger.LogInformation("Параметры запуска: " + JsonConvert.SerializeObject(parameters));
+                //проверка хэша
                 if (!Hasher.VerifyHash(HashAlgorithm.Create("SHA256"), parameters.sign, parameters.vpbx_api_key + parameters.json + _apiSalt))
                 {
                     _logger.LogError("Подпись не прошла проверку" + Environment.NewLine);
                     return Unauthorized();
                 }
 
-                // парсим данные из запроса
+                // парсинг данных запроса
                 MangoAPIIncomingCall incomingCallInfo = JsonConvert.DeserializeObject<MangoAPIIncomingCall>(parameters.json);
                 _logger.LogInformation($"От кого: {incomingCallInfo.from.number}, куда: {incomingCallInfo.to.number}");
 
-                _mangoApiCallerService.CallHangup(incomingCallInfo.call_id);
+                // вызов манго API чтобы завершить звонок
+                _mangoApiCallerService.CallHangupAsync(incomingCallInfo.call_id);
 
                 return Ok();
             }
