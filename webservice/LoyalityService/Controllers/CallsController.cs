@@ -24,7 +24,7 @@ namespace LoyalityService.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] IncomeCallModel call)
         {
-            if (call == null || long.TryParse(call.From, out long userPhone) || long.TryParse(call.To, out long devicePhone) || DateTime.Now - call.DTime > TimeSpan.FromDays(31))
+            if (call == null || long.TryParse(call.From, out long userPhone) || long.TryParse(call.To, out long devicePhone) || DateTime.Now - call.When > TimeSpan.FromDays(31))
             {
                 return BadRequest();
             }

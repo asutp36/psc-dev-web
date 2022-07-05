@@ -9,6 +9,6 @@ namespace LoyalityService.Models
     {
         public string From { get; set; }
         public string To { get; set; }
-        public DateTime DTime { get; set; }
+        public DateTime When { get; set; }
     }
 }

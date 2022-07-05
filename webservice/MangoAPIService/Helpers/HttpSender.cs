@@ -31,5 +31,19 @@ namespace MangoAPIService.Helpers
 
             return result;
         }
+
+        public async Task<HttpResponseMessage> PostJsonAsync(string url, string json)
+        {
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
+
+            if (!string.IsNullOrEmpty(json))
+            {
+                requestMessage.Content = new StringContent(json);
+            }
+
+            HttpResponseMessage result = await _httpClient.SendAsync(requestMessage);
+
+            return result;
+        }
     }
 }

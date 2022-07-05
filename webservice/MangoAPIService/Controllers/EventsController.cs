@@ -25,14 +25,16 @@ namespace MangoAPIService.Controllers
         private readonly string _apiKey;
         private readonly IMangoAPICaller _mangoApiCallerService;
         private IMemoryCache _cache;
+        private readonly ILoyalityServiceCaller _loyalityService;
 
-        public EventsController(ILogger<EventsController> logger, IConfiguration config, IMangoAPICaller mangoApiCallerService, IMemoryCache memoryCache)
+        public EventsController(ILogger<EventsController> logger, IConfiguration config, IMangoAPICaller mangoApiCallerService, IMemoryCache memoryCache, ILoyalityServiceCaller loyalityService)
         {
             _logger = logger;
             _apiSalt = config.GetValue<string>("ApiSalt", null);
             _apiKey = config.GetValue<string>("ApiKey", null);
             _mangoApiCallerService = mangoApiCallerService;
             _cache = memoryCache;
+            _loyalityService = loyalityService;
         }
 
         [HttpPost("call")]
@@ -53,9 +55,9 @@ namespace MangoAPIService.Controllers
                 _logger.LogInformation($"От кого: {incomingCallInfo.from.number}, куда: {incomingCallInfo.to.number}");
 
                 int callIdentifier = (incomingCallInfo.from.number + incomingCallInfo.to.number).GetHashCode();
-                CallCacheModel call = null;
+
                 // если нет в кэше этого вызова, то считаем его новым
-                if (!_cache.TryGetValue(callIdentifier, out call))
+                if (!_cache.TryGetValue(callIdentifier, out CallCacheModel call))
                 {
                     // создаётся вызов, добавляется в кэш 
                     call = new CallCacheModel
@@ -70,6 +72,9 @@ namespace MangoAPIService.Controllers
 
                     // вызов манго API чтобы завершить звонок
                     _mangoApiCallerService.CallHangupAsync(incomingCallInfo.call_id);
+
+                    // отправляем на сервис лояльности сообщение о новом вызове
+                    _loyalityService.HandleNewCallAsync(call);
                 }
 
                 return Ok();

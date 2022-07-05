@@ -53,11 +53,13 @@ namespace MangoAPIService
 
             services.AddTransient<IMangoAPICaller>(s => new MangoAPICallerService(
                     Logger,
-                    Configuration.GetValue<string>("MangoAPIBaseUrl"),
+                    Configuration.GetSection("BaseUrls")["MangoAPIBaseUrl"],
                     Configuration.GetValue<string>("ApiKey"),
                     Configuration.GetValue<string>("ApiSalt")
                 )
             );
+
+            services.AddTransient<ILoyalityServiceCaller>(s => new LoyalityService(Configuration.GetSection("BaseUrls")["LoyalityService"], Logger));
 
             services.AddMemoryCache();
         }

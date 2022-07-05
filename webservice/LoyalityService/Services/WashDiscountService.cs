@@ -35,7 +35,7 @@ namespace LoyalityService.Services
             // новая запись о мойке
             _context.Washings.Add(new Washing
             {
-                Dtime = call.DTime,
+                Dtime = call.When,
                 Phone = long.Parse(call.From),
                 Iddevice = device.Iddevice,
                 Complited = false,
