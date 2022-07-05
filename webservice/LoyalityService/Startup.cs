@@ -54,6 +54,8 @@ namespace LoyalityService
             services.AddDbContext<GateWashDbContext>(
                options => options.UseSqlServer(Configuration.GetConnectionString("GateWash")));
 
+            services.AddTransient<PostRCCallerService>(s => new PostRCCallerService(Logger, Configuration.GetValue<string>("PostRCBaseUrl")));
+
             services.AddTransient<WashDiscountService>();
         }
 

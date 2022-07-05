@@ -14,12 +14,10 @@ namespace LoyalityService.Controllers
     [ApiController]
     public class CallsController : ControllerBase
     {
-        private readonly ILogger<CallsController> _logger;
         private readonly WashDiscountService _washDiscountService;
 
-        public CallsController(ILogger<CallsController> logger, WashDiscountService washDiscountService)
+        public CallsController(WashDiscountService washDiscountService)
         {
-            _logger = logger;
             _washDiscountService = washDiscountService;
         }
 
@@ -31,9 +29,8 @@ namespace LoyalityService.Controllers
                 return BadRequest();
             }
 
-            // получить скидку пользователя и код девайса
-            int discount = await _washDiscountService.GetDiscountAsync(userPhone);
-            string deviceCode = await _washDiscountService.GetDeviceCodeAsync(devicePhone);
+            // запускает пост, если удачно - записывает мойку
+            _washDiscountService.StartPostAsync(call);
 
             return Ok();
         }
