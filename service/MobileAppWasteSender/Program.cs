@@ -76,11 +76,13 @@ namespace MobileAppWasteSender
                             try
                             {
                                 using var response = await SendWaste(ms);
-
-                                ms.StatusCode = (int)response.StatusCode;
-                                ms.ResultMessage = await response.Content.ReadAsStringAsync();
-                                if (ms.ResultMessage.Length > _resultMessageLength)
-                                    ms.ResultMessage = ms.ResultMessage.Substring(0, _resultMessageLength);
+                                if(response != null)
+                                {
+                                    ms.StatusCode = (int)response.StatusCode;
+                                    ms.ResultMessage = await response.Content.ReadAsStringAsync();
+                                    if (ms.ResultMessage.Length > _resultMessageLength)
+                                        ms.ResultMessage = ms.ResultMessage.Substring(0, _resultMessageLength);
+                                }                                
                             }
                             catch (Exception e)
                             {
@@ -177,20 +179,28 @@ namespace MobileAppWasteSender
 
         private static async Task<HttpResponseMessage> SendWaste(MobileSending waste)
         {
-            MobileAppWasteModel model = new MobileAppWasteModel()
+            try
             {
-                wash_id = await GetWashCode(waste.Idpost),
-                time_send = waste.DtimeEnd.Value.ToString("yyyy-MM-dd HH:mm:ss"),
-                operation_time = waste.DtimeEnd.Value.ToString("yyyy-MM-dd HH:mm:ss"),
-                card = GetCardNum(waste.Idcard),
-                value = waste.Amount.Value,
-                guid = Guid.Parse(waste.Guid)
-            };
-            var data = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, Application.Json);
+                MobileAppWasteModel model = new MobileAppWasteModel()
+                {
+                    wash_id = await GetWashCode(waste.Idpost),
+                    time_send = waste.DtimeEnd.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                    operation_time = waste.DtimeEnd.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                    card = GetCardNum(waste.Idcard),
+                    value = waste.Amount.Value,
+                    guid = Guid.Parse(waste.Guid)
+                };
+                var data = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, Application.Json);
 
-            var httpResponseMessage = await _httpClient.PostAsync("set-waste", data);
+                var httpResponseMessage = await _httpClient.PostAsync("set-waste", data);
 
-            return httpResponseMessage;
+                return httpResponseMessage;
+            }
+            catch(HttpRequestException e)
+            {
+                Log.Logger.Information($"Ошибка запроса: {e.Message}");
+                return null;
+            }
         }
 
         private static async Task<string> GetWashCode(int idPost)
