@@ -16,7 +16,7 @@ namespace LoyalityService.Services
         private readonly ILogger _logger;
         private readonly PostRCCallerService _postRCService;
 
-        public WashDiscountService(GateWashDbContext context, ILogger logger, PostRCCallerService postRC)
+        public WashDiscountService(GateWashDbContext context, ILogger<WashDiscountService> logger, PostRCCallerService postRC)
         {
             _context = context;
             _logger = logger;
@@ -103,17 +103,19 @@ namespace LoyalityService.Services
         /// запустить пост через сервис PostRC
         /// </summary>
         /// <param name="call">Параметры входящего вызова</param>
-        public async void StartPostAsync(IncomeCallModel call)
+        public async Task StartPostAsync(IncomeCallModel call)
         {
+            _logger.LogInformation("запустился метод старта поста");
             // получить скидку и код поста по входящим параметрам вызова
             string deviceCode = await GetDeviceCodeAsync(long.Parse(call.To));
             int discount = await GetCustomerDiscountAsync(long.Parse(call.From));
-
+            _logger.LogInformation($"deviceCode = {deviceCode} discount = {discount}");
             // запуск поста
             var response = await _postRCService.StartPostAsync(new StartPostParameters { DeviceCode = deviceCode, Discount = discount });
 
+            _logger.LogInformation("прошёл запрос на сервис postrc");
             // если удачно, записать запись о мойке
-            if (response.IsSuccessStatusCode)
+            if (response != null && response.IsSuccessStatusCode)
             {
                 WriteWashingAsync(call, discount);
             }            

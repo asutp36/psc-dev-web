@@ -22,19 +22,27 @@ namespace LoyalityService.Services
 
         public async Task<HttpResponseMessage> StartPostAsync(StartPostParameters parameters)
         {
-            HttpResponseMessage response = await _httpSender.PostJsonAsync("", JsonConvert.SerializeObject(parameters));
-           
             try 
             {
-                response.EnsureSuccessStatusCode();
+                HttpResponseMessage response = await _httpSender.PostJsonAsync("api/state/start", JsonConvert.SerializeObject(parameters));
+
+                string content = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return response;
+                }
+                else
+                {
+                    _logger.LogError($"| PostRCCallerService.StartPostAsync | Ответ от PostRC не ок. StatusCode: {response.StatusCode}, Message: {content}");
+                    return null;
+                }
             }
             catch (HttpRequestException e)
             {
-                string content = await response.Content.ReadAsStringAsync();
-                _logger.LogError($"| PostRCCallerService.StartPostAsync | От PostRC ответ не ок. StatusCode: {response.StatusCode}, Content: {content}");
+                _logger.LogError($"| PostRCCallerService.StartPostAsync | Нет связи с PostRC. HttpRequestException: {e.Message}");
+                return null;
             }
-
-            return response;
         }
     }
 }
