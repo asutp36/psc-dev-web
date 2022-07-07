@@ -38,7 +38,7 @@ namespace MangoAPIService.Helpers
 
             if (!string.IsNullOrEmpty(json))
             {
-                requestMessage.Content = new StringContent(json);
+                requestMessage.Content = new StringContent(json, Encoding.UTF8, "application/json");
             }
 
             HttpResponseMessage result = await _httpClient.SendAsync(requestMessage);
