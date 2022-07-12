@@ -99,6 +99,28 @@ namespace GateWashDataService.Controllers
         }
 
         [Authorize]
+        [HttpGet("commulative-total")]
+        public async Task<IActionResult> GetCommulativeTotal([FromQuery] GetIncreaseParameters parameters)
+        {
+            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            IQueryable<IncreaseCommulativeTotalModel> increases = IncreasesRepository.GetCommulativeTotal(_context, parameters, washes);
+
+            string sortingRule = "";
+            if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
+                sortingRule = "Dtime desc";
+            else
+                sortingRule = $"{parameters.Sorting.Field} {parameters.Sorting.Direction},Dtime desc,TerminalCode asc";
+
+            increases = Sort(increases, sortingRule);
+
+            PagedList<IncreaseCommulativeTotalModel> result = PagedList<IncreaseCommulativeTotalModel>.ToPagedList(increases, parameters.Paging);
+
+            PagedList<IncreaseCommulativeTotalModel>.PrepareHTTPResponseMetadata(Response, result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
         [HttpGet("hours")]
         public async Task<IActionResult> GetByHours([FromQuery] GetIncreaseParameters parameters)
         {

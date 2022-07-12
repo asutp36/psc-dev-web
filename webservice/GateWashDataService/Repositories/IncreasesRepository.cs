@@ -1,5 +1,7 @@
 ﻿using GateWashDataService.Models;
 using GateWashDataService.Models.GateWashContext;
+using GateWashDataService.Models.GateWashContext.StoredProcedures;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -42,13 +44,13 @@ namespace GateWashDataService.Repositories
         {
             var terminals = GetTerminalsByWashes(context, washes);
 
-            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => (p.DTime >= param.StartDate.Date && p.Hour >= param.StartDate.Hour) && (p.DTime <= param.EndDate.Date && p.Hour <= param.EndDate.Hour)
-                                                                              && (param.Terminal == null || p.TerminalCode == param.Terminal))
-                                                                       .ToList();
-            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate.Date && t.Hour >= param.StartDate.Hour) && (t.DTime <= param.EndDate.Date && t.Hour <= param.EndDate.Hour)
+            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => ((p.DTime > param.StartDate.Date) || (p.DTime == param.StartDate.Date && p.Hour >= param.StartDate.Hour)) && ((p.DTime < param.EndDate.Date) || (p.DTime == param.EndDate.Date && p.Hour <= param.EndDate.Hour))
+                                                                             && (param.Terminal == null || p.TerminalCode == param.Terminal))
+                                                                      .ToList();
+            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
-            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate.Date && t.Hour >= param.StartDate.Hour) && (t.DTime <= param.EndDate.Date && t.Hour <= param.EndDate.Hour)
+            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
 
@@ -104,13 +106,13 @@ namespace GateWashDataService.Repositories
         public static IQueryable<GroupedIncreaseDto> GetGroupedByHourSplitTerminals(GateWashDbContext context, GetIncreaseParameters param, List<string> washes)
         {
             var terminals = GetTerminalsByWashes(context, washes);
-            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => (p.DTime >= param.StartDate.Date && p.Hour >= param.StartDate.Hour) && (p.DTime <= param.EndDate.Date && p.Hour <= param.EndDate.Hour)
+            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => ((p.DTime > param.StartDate.Date) || (p.DTime == param.StartDate.Date && p.Hour >= param.StartDate.Hour)) && ((p.DTime < param.EndDate.Date) || (p.DTime == param.EndDate.Date && p.Hour <= param.EndDate.Hour))
                                                                              && (param.Terminal == null || p.TerminalCode == param.Terminal))
                                                                       .ToList();
-            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate.Date && t.Hour >= param.StartDate.Hour) && (t.DTime <= param.EndDate.Date && t.Hour <= param.EndDate.Hour)
+            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
-            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate.Date && t.Hour >= param.StartDate.Hour) && (t.DTime <= param.EndDate.Date && t.Hour <= param.EndDate.Hour)
+            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
 
@@ -144,13 +146,13 @@ namespace GateWashDataService.Repositories
         {
             var terminals = GetTerminalsByWashes(context, washes);
 
-            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => (p.DTime >= param.StartDate.Date && p.Hour >= param.StartDate.Hour) && (p.DTime <= param.EndDate.Date && p.Hour <= param.EndDate.Hour)
+            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => ((p.DTime > param.StartDate.Date) || (p.DTime == param.StartDate.Date && p.Hour >= param.StartDate.Hour)) && ((p.DTime < param.EndDate.Date) || (p.DTime == param.EndDate.Date && p.Hour <= param.EndDate.Hour))
                                                                              && (param.Terminal == null || p.TerminalCode == param.Terminal))
                                                                       .ToList();
-            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate.Date && t.Hour >= param.StartDate.Hour) && (t.DTime <= param.EndDate.Date && t.Hour <= param.EndDate.Hour)
+            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
-            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate.Date && t.Hour >= param.StartDate.Hour) && (t.DTime <= param.EndDate.Date && t.Hour <= param.EndDate.Hour)
+            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
 
@@ -206,13 +208,13 @@ namespace GateWashDataService.Repositories
         public static IQueryable<GroupedIncreaseDto> GetGroupedByDaySplitTerminals(GateWashDbContext context, GetIncreaseParameters param, List<string> washes)
         {
             var terminals = GetTerminalsByWashes(context, washes);
-            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => (p.DTime >= param.StartDate.Date && p.Hour >= param.StartDate.Hour) && (p.DTime <= param.EndDate.Date && p.Hour <= param.EndDate.Hour)
+            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => ((p.DTime > param.StartDate.Date) || (p.DTime == param.StartDate.Date && p.Hour >= param.StartDate.Hour)) && ((p.DTime < param.EndDate.Date) || (p.DTime == param.EndDate.Date && p.Hour <= param.EndDate.Hour))
                                                                              && (param.Terminal == null || p.TerminalCode == param.Terminal))
                                                                       .ToList();
-            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate.Date && t.Hour >= param.StartDate.Hour) && (t.DTime <= param.EndDate.Date && t.Hour <= param.EndDate.Hour)
+            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
-            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate.Date && t.Hour >= param.StartDate.Hour) && (t.DTime <= param.EndDate.Date && t.Hour <= param.EndDate.Hour)
+            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
 
@@ -356,13 +358,13 @@ namespace GateWashDataService.Repositories
         public static IQueryable<GroupedIncreaseDto> GetGroupedByMonth(GateWashDbContext context, GetIncreaseParameters param, List<string> washes) 
         {
             var terminals = GetTerminalsByWashes(context, washes);
-            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => (p.DTime >= param.StartDate.Date && p.Hour >= param.StartDate.Hour) && (p.DTime <= param.EndDate.Date && p.Hour <= param.EndDate.Hour)
+            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => ((p.DTime > param.StartDate.Date) || (p.DTime == param.StartDate.Date && p.Hour >= param.StartDate.Hour)) && ((p.DTime < param.EndDate.Date) || (p.DTime == param.EndDate.Date && p.Hour <= param.EndDate.Hour))
                                                                              && (param.Terminal == null || p.TerminalCode == param.Terminal))
                                                                       .ToList();
-            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate.Date && t.Hour >= param.StartDate.Hour) && (t.DTime <= param.EndDate.Date && t.Hour <= param.EndDate.Hour)
+            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
-            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate.Date && t.Hour >= param.StartDate.Hour) && (t.DTime <= param.EndDate.Date && t.Hour <= param.EndDate.Hour)
+            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
 
@@ -417,13 +419,13 @@ namespace GateWashDataService.Repositories
         public static IQueryable<GroupedIncreaseDto> GetGroupedByMonthSplitTerminals(GateWashDbContext context, GetIncreaseParameters param, List<string> washes) 
         {
             var terminals = GetTerminalsByWashes(context, washes);
-            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => (p.DTime >= param.StartDate.Date && p.Hour >= param.StartDate.Hour) && (p.DTime <= param.EndDate.Date && p.Hour <= param.EndDate.Hour)
+            var programs = GetUsedProgramsByDayWithTerminals(context, terminals).Where(p => ((p.DTime > param.StartDate.Date) || (p.DTime == param.StartDate.Date && p.Hour >= param.StartDate.Hour)) && ((p.DTime < param.EndDate.Date) || (p.DTime == param.EndDate.Date && p.Hour <= param.EndDate.Hour))
                                                                              && (param.Terminal == null || p.TerminalCode == param.Terminal))
                                                                       .ToList();
-            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate.Date && t.Hour >= param.StartDate.Hour) && (t.DTime <= param.EndDate.Date && t.Hour <= param.EndDate.Hour)
+            var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
-            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => (t.DTime >= param.StartDate.Date && t.Hour >= param.StartDate.Hour) && (t.DTime <= param.EndDate.Date && t.Hour <= param.EndDate.Hour)
+            var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
 
@@ -479,6 +481,43 @@ namespace GateWashDataService.Repositories
                                               });
 
             return groupedIncreases.AsQueryable();
+        }
+
+        public static IQueryable<IncreaseCommulativeTotalModel> GetCommulativeTotal(GateWashDbContext context, GetIncreaseParameters param, List<string> washes)
+        {
+            string terminalCodes = "";
+            if (string.IsNullOrEmpty(param.Terminal))
+            {
+                var terminals = GetTerminalsByWashes(context, washes);
+                terminalCodes = string.Join(", ", terminals);
+            }
+            else
+            {
+                terminalCodes = param.Terminal;
+            }
+
+            SqlParameter p_DTimeBegin = new SqlParameter("@p_DTimeBegin", param.StartDate);
+            SqlParameter p_DTimeEnd = new SqlParameter("@p_DTimeEnd", param.EndDate);
+            SqlParameter p_TerminalCode = new SqlParameter("@p_TerminalCode", terminalCodes);
+            SqlParameter p_IncreaseKind = new SqlParameter("@p_IncreaseKind", param.EventKind ?? "");
+
+            var tr = context.Set<spGetCommulativeTotal_Result>()
+                .FromSqlRaw("GetCommulativeIncreases @p_DTimeBegin, @p_DTimeEnd, @p_TerminalCode, @p_IncreaseKind",
+                p_DTimeBegin, p_DTimeEnd, p_TerminalCode, p_IncreaseKind).ToList();
+
+            var res = context.Set<spGetCommulativeTotal_Result>()
+                .FromSqlRaw("GetCommulativeIncreases @p_DTimeBegin, @p_DTimeEnd, @p_TerminalCode, @p_IncreaseKind",
+                p_DTimeBegin, p_DTimeEnd, p_TerminalCode, p_IncreaseKind).AsEnumerable()
+                .Select(i => new IncreaseCommulativeTotalModel
+                {
+                    DTime = i.DTimeBegin,
+                    Terminal = i.TerminalName,
+                    TerminalCode = i.Code,
+                    Amount = i.Total,
+                });
+                //.Where(i => terminals.Contains(i.TerminalCode));
+
+            return res.AsQueryable();
         }
     }
 }
