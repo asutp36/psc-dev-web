@@ -81,7 +81,7 @@ namespace GateWashDataService.Controllers
         public async Task<IActionResult> Get([FromQuery] GetIncreaseParameters parameters)
         {
             var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
-            IQueryable<IncreaseModel> increases = IncreasesRepository.GetAll(_context, parameters, washes);
+            IQueryable<IncreaseModel> increases = IncreasesRepository.GetAll(_context, parameters, washes).ToList().AsQueryable();
 
             string sortingRule = "";
             if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
