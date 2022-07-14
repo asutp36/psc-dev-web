@@ -1,5 +1,6 @@
 ﻿using MangoAPIService.Helpers;
 using MangoAPIService.Models;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -23,16 +24,19 @@ namespace MangoAPIService.Services
 
         public async void HandleNewCallAsync(CallCacheModel call)
         {
-            HttpResponseMessage response = await _httpSender.PostJsonAsync("api/calls", JsonConvert.SerializeObject(call));
-
             try 
             {
-                response.EnsureSuccessStatusCode();
+                HttpResponseMessage response = await _httpSender.PostJsonAsync("api/calls", JsonConvert.SerializeObject(call));
+                if (!response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    _logger.LogError($"| LoyalityService.HandleNewCall | Ответ от сервиса лояльности не ок. StatusCode: {response.StatusCode}, Message: {content}");
+                }
             }
             catch(HttpRequestException e)
             {
-                string content = await response.Content.ReadAsStringAsync();
-                _logger.LogError($"| LoyalityService.HandleNewCall | Ответ от сервиса лояльности не ок. StatusCode: {response.StatusCode}, Message: {content}, Exception: {e.Message}");
+                await Task.Delay(2000);
+                _logger.LogError($"| LoyalityService.HandleNewCall | Перехвачена ошибка во проемя отправки запроса: {e.GetType()}: {e.Message}");
             }
         }
     }

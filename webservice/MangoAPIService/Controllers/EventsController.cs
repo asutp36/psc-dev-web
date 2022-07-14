@@ -77,7 +77,7 @@ namespace MangoAPIService.Controllers
                     _loyalityService.HandleNewCallAsync(call);
                 }
 
-                return Ok();
+                return Accepted();
             }
             catch(Exception e)
             {
