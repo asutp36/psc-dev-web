@@ -11,7 +11,7 @@ namespace GateWashDataService.Models.GateWashContext
     {
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<spGetCommulativeTotal_Result>().HasNoKey();
+            modelBuilder.Entity<spGetCommulativeTotalSplitTerminals_Result>().HasNoKey();
         }
     }
 }

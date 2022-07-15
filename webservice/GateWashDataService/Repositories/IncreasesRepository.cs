@@ -483,7 +483,7 @@ namespace GateWashDataService.Repositories
             return groupedIncreases.AsQueryable();
         }
 
-        public static IQueryable<IncreaseCommulativeTotalModel> GetCommulativeTotal(GateWashDbContext context, GetIncreaseParameters param, List<string> washes)
+        public static IQueryable<IncreaseCommulativeTotalModel> GetCommulativeTotalSplitTerminals(GateWashDbContext context, GetIncreaseParameters param, List<string> washes)
         {
             string terminalCodes = "";
             if (string.IsNullOrEmpty(param.Terminal))
@@ -501,12 +501,8 @@ namespace GateWashDataService.Repositories
             SqlParameter p_TerminalCode = new SqlParameter("@p_TerminalCode", terminalCodes);
             SqlParameter p_IncreaseKind = new SqlParameter("@p_IncreaseKind", param.EventKind ?? "");
 
-            var tr = context.Set<spGetCommulativeTotal_Result>()
-                .FromSqlRaw("GetCommulativeIncreases @p_DTimeBegin, @p_DTimeEnd, @p_TerminalCode, @p_IncreaseKind",
-                p_DTimeBegin, p_DTimeEnd, p_TerminalCode, p_IncreaseKind).ToList();
-
-            var res = context.Set<spGetCommulativeTotal_Result>()
-                .FromSqlRaw("GetCommulativeIncreases @p_DTimeBegin, @p_DTimeEnd, @p_TerminalCode, @p_IncreaseKind",
+            var res = context.Set<spGetCommulativeTotalSplitTerminals_Result>()
+                .FromSqlRaw("GetCommulativeIncreasesSplitTerminals @p_DTimeBegin, @p_DTimeEnd, @p_TerminalCode, @p_IncreaseKind",
                 p_DTimeBegin, p_DTimeEnd, p_TerminalCode, p_IncreaseKind).AsEnumerable()
                 .Select(i => new IncreaseCommulativeTotalModel
                 {

@@ -100,10 +100,10 @@ namespace GateWashDataService.Controllers
 
         [Authorize]
         [HttpGet("commulative-total")]
-        public async Task<IActionResult> GetCommulativeTotal([FromQuery] GetIncreaseParameters parameters)
+        public async Task<IActionResult> GetCommulativeTotalSplitTerminals([FromQuery] GetIncreaseParameters parameters)
         {
             var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
-            IQueryable<IncreaseCommulativeTotalModel> increases = IncreasesRepository.GetCommulativeTotal(_context, parameters, washes);
+            IQueryable<IncreaseCommulativeTotalModel> increases = IncreasesRepository.GetCommulativeTotalSplitTerminals(_context, parameters, washes);
 
             string sortingRule = "";
             if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
