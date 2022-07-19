@@ -12,6 +12,7 @@ namespace GateWashSyncService.Models.GateWash
         public Wash()
         {
             Posts = new HashSet<Posts>();
+            Terminals = new HashSet<Terminals>();
         }
 
         public int Idwash { get; set; }
@@ -22,5 +23,6 @@ namespace GateWashSyncService.Models.GateWash
 
         public virtual Regions IdregionNavigation { get; set; }
         public virtual ICollection<Posts> Posts { get; set; }
+        public virtual ICollection<Terminals> Terminals { get; set; }
     }
 }

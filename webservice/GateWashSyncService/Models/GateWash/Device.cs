@@ -16,6 +16,7 @@ namespace GateWashSyncService.Models.GateWash
             PayEvent = new HashSet<PayEvent>();
             PaySession = new HashSet<PaySession>();
             Posts = new HashSet<Posts>();
+            Terminals = new HashSet<Terminals>();
         }
 
         public int Iddevice { get; set; }
@@ -24,6 +25,7 @@ namespace GateWashSyncService.Models.GateWash
         public int? ServerId { get; set; }
         public int? IddeviceType { get; set; }
         public string IpAddress { get; set; }
+        public long? Phone { get; set; }
 
         public virtual DeviceTypes IddeviceTypeNavigation { get; set; }
         public virtual ICollection<Collect> Collect { get; set; }
@@ -31,5 +33,6 @@ namespace GateWashSyncService.Models.GateWash
         public virtual ICollection<PayEvent> PayEvent { get; set; }
         public virtual ICollection<PaySession> PaySession { get; set; }
         public virtual ICollection<Posts> Posts { get; set; }
+        public virtual ICollection<Terminals> Terminals { get; set; }
     }
 }
