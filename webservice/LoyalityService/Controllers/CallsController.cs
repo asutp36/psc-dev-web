@@ -34,10 +34,10 @@ namespace LoyalityService.Controllers
                 return BadRequest("Не получилось распарсить входные данные");
             }
 
-                // запускает пост, если удачно - записывает мойку
-                Task.Run(() => _washDiscountService.StartPostAsync(call));
+            // запускает пост, если удачно - записывает мойку
+            _washDiscountService.StartPostAsync(call);
 
-            return Ok();
+            return Accepted();
         }
     }
 }
