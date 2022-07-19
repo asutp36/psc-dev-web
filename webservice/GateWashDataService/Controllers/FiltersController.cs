@@ -42,14 +42,16 @@ namespace GateWashDataService.Controllers
                 foreach (Claim c in User.Claims.Where(cl => cl.Type == "Wash").ToList())
                 {
                     filters.Washes.Add(_context.Washes.Where(w => w.Code == c.Value).Select(w => new WashModel { IdWash = w.Idwash, IdRegion = w.Idregion, Code = w.Code, Name = w.Name }).FirstOrDefault());
-                    var terminals = _context.Posts.Where(p => p.IddeviceNavigation.IddeviceTypeNavigation.Code == "pay"
-                    && p.IdwashNavigation.Code == c.Value).Select(t => new PayTerminalModel
-                    {
-                        IdDevice = t.Iddevice,
-                        Code = t.IddeviceNavigation.Code,
-                        Name = t.IddeviceNavigation.Name,
-                        IdWash = t.Idwash
-                    }).ToList();
+                    var terminals = _context.Terminals.Where(t => t.IdwashNavigation.Code == c.Value)
+                        .Include(d => d.IddeviceNavigation)
+                        .Select(t => new PayTerminalModel
+                        {
+                            IdDevice = t.Iddevice,
+                            Code = t.IddeviceNavigation.Code,
+                            Name = t.IddeviceNavigation.Name,
+                            IdWash = t.Idwash
+                        })
+                        .ToList();
                     filters.PayTerminals.AddRange(terminals);
 
                     var programs = _context.ProgramWashes.Where(pw => pw.IdwashNavigation.Code == c.Value).Select(p => new ProgramModel

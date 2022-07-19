@@ -274,7 +274,7 @@ namespace GateWashDataService.Repositories
 
         private static List<string> GetTerminalsByWashes(GateWashDbContext context, List<string> washes)
         {
-            var terminalCodes = context.Devices.Where(d => d.IddeviceTypeNavigation.Code == "pay" && washes.Contains(d.Posts.First().IdwashNavigation.Code)).Select(d => d.Code).ToList();
+            var terminalCodes = context.Terminals.Where(t => washes.Contains(t.IdwashNavigation.Code)).Include(t => t.IddeviceNavigation).Select(t => t.IddeviceNavigation.Code).ToList();
             return terminalCodes;
         }
 

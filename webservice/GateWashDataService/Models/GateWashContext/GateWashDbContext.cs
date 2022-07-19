@@ -34,6 +34,7 @@ namespace GateWashDataService.Models.GateWashContext
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Session> Sessions { get; set; }
+        public virtual DbSet<Terminal> Terminals { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserWash> UserWashes { get; set; }
         public virtual DbSet<Wash> Washes { get; set; }
@@ -497,6 +498,35 @@ namespace GateWashDataService.Models.GateWashContext
                     .WithMany(p => p.Sessions)
                     .HasForeignKey(d => d.Idfunction)
                     .HasConstraintName("FK_Sessions_Functions");
+            });
+
+            modelBuilder.Entity<Terminal>(entity =>
+            {
+                entity.HasKey(e => e.Idterminal);
+
+                entity.Property(e => e.Idterminal).HasColumnName("IDTerminal");
+
+                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Qrcode)
+                    .HasMaxLength(25)
+                    .HasColumnName("QRCode");
+
+                entity.HasOne(d => d.IddeviceNavigation)
+                    .WithMany(p => p.Terminals)
+                    .HasForeignKey(d => d.Iddevice)
+                    .HasConstraintName("FK_Terminals_Device");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany(p => p.Terminals)
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_Terminals_Wash");
             });
 
             modelBuilder.Entity<User>(entity =>
