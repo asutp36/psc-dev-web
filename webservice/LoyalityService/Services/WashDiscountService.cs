@@ -1,5 +1,5 @@
-﻿using DiscountService.Models;
-using DiscountService.Models.GateWashContext;
+﻿using LoyalityService.Models;
+using LoyalityService.Models.GateWashContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace DiscountService.Services
+namespace LoyalityService.Services
 {
     public class WashDiscountService
     {

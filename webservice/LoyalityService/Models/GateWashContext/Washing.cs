@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace DiscountService.Models.GateWashContext
+namespace LoyalityService.Models.GateWashContext
 {
     public partial class Washing
     {

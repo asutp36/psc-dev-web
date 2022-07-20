@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace DiscountService.Services
+namespace LoyalityService.Services
 {
     public class HttpSender
     {
