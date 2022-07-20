@@ -1,5 +1,5 @@
-﻿using LoyalityService.Models;
-using LoyalityService.Services;
+﻿using DiscountService.Models;
+using DiscountService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LoyalityService.Controllers
+namespace DiscountService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,5 +1,5 @@
-using LoyalityService.Models.GateWashContext;
-using LoyalityService.Services;
+using DiscountService.Models.GateWashContext;
+using DiscountService.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LoyalityService
+namespace DiscountService
 {
     public class Startup
     {

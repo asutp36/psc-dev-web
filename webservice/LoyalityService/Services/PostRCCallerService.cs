@@ -1,4 +1,4 @@
-﻿using LoyalityService.Models;
+﻿using DiscountService.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace LoyalityService.Services
+namespace DiscountService.Services
 {
     public class PostRCCallerService
     {

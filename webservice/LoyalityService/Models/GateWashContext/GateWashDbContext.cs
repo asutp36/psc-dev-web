@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace LoyalityService.Models.GateWashContext
+namespace DiscountService.Models.GateWashContext
 {
     public partial class GateWashDbContext : DbContext
     {
