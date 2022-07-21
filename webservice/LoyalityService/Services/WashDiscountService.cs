@@ -67,6 +67,7 @@ namespace LoyalityService.Services
         {
             // получаю группу, в которую входит терминал
             Group group = await GetWashGroupByTerminalCodeAsync(terminalCode);
+
             // все скидки, под которые попадает этот телефон (код скидки: величина)
             Dictionary<string, int> availibleDiscounts = new Dictionary<string, int>();
 
@@ -75,6 +76,9 @@ namespace LoyalityService.Services
 
             int happyHourDiscount = await CalculateHappyHourDiscount(group.Code);
             availibleDiscounts.Add("happyHour", happyHourDiscount);
+
+            int holidayDiscount = await CalculateHolidayDiscount(group.Code);
+            availibleDiscounts.Add("holiday", holidayDiscount);
 
             return availibleDiscounts.Max(p => p.Value);
         }
@@ -135,9 +139,9 @@ namespace LoyalityService.Services
         }
 
         /// <summary>
-        /// рассчитать скидку "счастливые часы"
+        /// Рассчитать скидку "счастливые часы"
         /// </summary>
-        /// <param name="groupCode">Код группы</param>
+        /// <param name="groupCode">Код группы моек</param>
         /// <returns>Максимальная доступная скидка</returns>
         private async Task<int> CalculateHappyHourDiscount(string groupCode) 
         {
@@ -150,9 +154,18 @@ namespace LoyalityService.Services
         }
 
         /// <summary>
-        /// рассчитать скидку типа "праздничный день"
+        /// Рассчитать скидку типа "праздничный день"
         /// </summary>
-        private void CalculateHolidayDiscount() { }
+        /// <param name="groupCode">Код группы моек</param>
+        /// <returns>Максимальная скидка</returns>
+        private async Task<int> CalculateHolidayDiscount(string groupCode) 
+        {
+            int maxDiscount = await _context.Promotions.Where(o => o.IdgroupNavigation.Code == groupCode
+                                                        && o.HolidayCondition != null
+                                                        && o.HolidayCondition.Date == DateTime.Now.Date)
+                                                 .MaxAsync(o => o.Discount);
+            return maxDiscount;
+        }
 
         /// <summary>
         /// рассчитать скидку типа "vip клиент"
