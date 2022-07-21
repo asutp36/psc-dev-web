@@ -7,14 +7,9 @@ namespace LoyalityService.Models.WashLoyality
 {
     public partial class VipCondition
     {
-        public VipCondition()
-        {
-            Promotions = new HashSet<Promotion>();
-        }
-
-        public int Idcondition { get; set; }
+        public int Idpromotion { get; set; }
         public long Phone { get; set; }
 
-        public virtual ICollection<Promotion> Promotions { get; set; }
+        public virtual Promotion IdpromotionNavigation { get; set; }
     }
 }

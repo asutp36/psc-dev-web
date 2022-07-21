@@ -29,7 +29,7 @@ namespace LoyalityService.Controllers
                 return BadRequest("call пустой");
             }
 
-            if (!long.TryParse(call.From, out long userPhone) || !long.TryParse(call.To, out long terminalPhone) || DateTime.Now - call.When > TimeSpan.FromDays(31))
+            if (!long.TryParse(call.From, out long clientPhone) || !long.TryParse(call.To, out long terminalPhone) || DateTime.Now - call.When > TimeSpan.FromDays(31))
             {
                 return BadRequest("Не получилось распарсить входные данные");
             }
@@ -40,6 +40,7 @@ namespace LoyalityService.Controllers
                 return NotFound($"Не удалось найти терминал по номеру телефона {terminalPhone}");
             }
 
+            int discount = await _washDiscountService.CalculateDiscountAsync(terminalCode, clientPhone);
 
             return Accepted();
         }

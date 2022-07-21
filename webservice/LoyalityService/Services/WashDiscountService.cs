@@ -67,8 +67,9 @@ namespace LoyalityService.Services
         {
             // все скидки, под которые попадает этот телефон (код скидки: величина)
             Dictionary<string, int> availibleDiscounts = new Dictionary<string, int>();
-            
 
+            int eachNwashDiscount = await CalculateEachNWashDicsount(terminalCode, phone);
+            availibleDiscounts.Add("eachN", eachNwashDiscount);
 
             return availibleDiscounts.Max().Value;
         }
@@ -81,14 +82,14 @@ namespace LoyalityService.Services
             // получил группу, в которую входит терминал
             Group group = await this.GetWashGroupByTerminalCodeAsync(terminalCode);
 
-            // IdconditionNavigation - условия для каждой энной мойки
+            // определить условия акций для группы 
             IEnumerable<EachNWashPromotionCondition> conditions = _context.Promotions
                         .Where(o => o.IdgroupNavigation.Code == group.Code)
                         .Select(o => new EachNWashPromotionCondition
                         {
                             Discount = o.Discount,
-                            EachN = o.IdconditionNavigation.EachN,
-                            Days = o.IdconditionNavigation.Days
+                            EachN = o.EachNwashCondition.EachN,
+                            Days = o.EachNwashCondition.Days
                         })
                         .AsEnumerable();
 

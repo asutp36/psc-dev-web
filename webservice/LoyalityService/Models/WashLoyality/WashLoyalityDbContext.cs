@@ -72,12 +72,18 @@ namespace LoyalityService.Models.WashLoyality
 
             modelBuilder.Entity<EachNwashCondition>(entity =>
             {
-                entity.HasKey(e => e.Idcondition)
-                    .HasName("PK_EachNWashPromotions");
+                entity.HasKey(e => e.Idpromotion);
 
                 entity.ToTable("EachNWashConditions");
 
-                entity.Property(e => e.Idcondition).HasColumnName("IDCondition");
+                entity.Property(e => e.Idpromotion)
+                    .ValueGeneratedNever()
+                    .HasColumnName("IDPromotion");
+
+                entity.HasOne(d => d.IdpromotionNavigation)
+                    .WithOne(p => p.EachNwashCondition)
+                    .HasForeignKey<EachNwashCondition>(d => d.Idpromotion)
+                    .HasConstraintName("FK_EachNWashConditions_Promotions");
             });
 
             modelBuilder.Entity<Group>(entity =>
@@ -98,20 +104,34 @@ namespace LoyalityService.Models.WashLoyality
 
             modelBuilder.Entity<HappyHourCondition>(entity =>
             {
-                entity.HasKey(e => e.Idcondition)
+                entity.HasKey(e => e.Idpromotion)
                     .HasName("PK_HappyHourPromotions");
 
-                entity.Property(e => e.Idcondition).HasColumnName("IDCondition");
+                entity.Property(e => e.Idpromotion)
+                    .ValueGeneratedNever()
+                    .HasColumnName("IDPromotion");
+
+                entity.HasOne(d => d.IdpromotionNavigation)
+                    .WithOne(p => p.HappyHourCondition)
+                    .HasForeignKey<HappyHourCondition>(d => d.Idpromotion)
+                    .HasConstraintName("FK_HappyHourConditions_Promotions");
             });
 
             modelBuilder.Entity<HolidayCondition>(entity =>
             {
-                entity.HasKey(e => e.Idcondition)
+                entity.HasKey(e => e.Idpromotion)
                     .HasName("PK_HolidayPromotions");
 
-                entity.Property(e => e.Idcondition).HasColumnName("IDCondition");
+                entity.Property(e => e.Idpromotion)
+                    .ValueGeneratedNever()
+                    .HasColumnName("IDPromotion");
 
                 entity.Property(e => e.Date).HasColumnType("date");
+
+                entity.HasOne(d => d.IdpromotionNavigation)
+                    .WithOne(p => p.HolidayCondition)
+                    .HasForeignKey<HolidayCondition>(d => d.Idpromotion)
+                    .HasConstraintName("FK_HolidayConditions_Promotions");
             });
 
             modelBuilder.Entity<Post>(entity =>
@@ -149,31 +169,9 @@ namespace LoyalityService.Models.WashLoyality
 
                 entity.Property(e => e.Idpromotion).HasColumnName("IDPromotion");
 
-                entity.Property(e => e.Idcondition).HasColumnName("IDCondition");
-
                 entity.Property(e => e.Idgroup).HasColumnName("IDGroup");
 
                 entity.Property(e => e.IdpromotionType).HasColumnName("IDPromotionType");
-
-                entity.HasOne(d => d.IdconditionNavigation)
-                    .WithMany(p => p.Promotions)
-                    .HasForeignKey(d => d.Idcondition)
-                    .HasConstraintName("FK_Promotions_EachNWashConditions");
-
-                entity.HasOne(d => d.Idcondition1)
-                    .WithMany(p => p.Promotions)
-                    .HasForeignKey(d => d.Idcondition)
-                    .HasConstraintName("FK_Promotions_HappyHourConditions");
-
-                entity.HasOne(d => d.Idcondition2)
-                    .WithMany(p => p.Promotions)
-                    .HasForeignKey(d => d.Idcondition)
-                    .HasConstraintName("FK_Promotions_HolidayConditions");
-
-                entity.HasOne(d => d.Idcondition3)
-                    .WithMany(p => p.Promotions)
-                    .HasForeignKey(d => d.Idcondition)
-                    .HasConstraintName("FK_Promotions_VipConditions");
 
                 entity.HasOne(d => d.IdgroupNavigation)
                     .WithMany(p => p.Promotions)
@@ -232,10 +230,17 @@ namespace LoyalityService.Models.WashLoyality
 
             modelBuilder.Entity<VipCondition>(entity =>
             {
-                entity.HasKey(e => e.Idcondition)
+                entity.HasKey(e => e.Idpromotion)
                     .HasName("PK_VipPromotions");
 
-                entity.Property(e => e.Idcondition).HasColumnName("IDCondition");
+                entity.Property(e => e.Idpromotion)
+                    .ValueGeneratedNever()
+                    .HasColumnName("IDPromotion");
+
+                entity.HasOne(d => d.IdpromotionNavigation)
+                    .WithOne(p => p.VipCondition)
+                    .HasForeignKey<VipCondition>(d => d.Idpromotion)
+                    .HasConstraintName("FK_VipConditions_Promotions");
             });
 
             modelBuilder.Entity<Wash>(entity =>
