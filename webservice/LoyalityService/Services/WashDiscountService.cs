@@ -80,6 +80,9 @@ namespace LoyalityService.Services
             int holidayDiscount = await CalculateHolidayDiscount(group.Code);
             availibleDiscounts.Add("holiday", holidayDiscount);
 
+            int vipDiscount = await CalculateVipDiscount(group.Code, phone);
+            availibleDiscounts.Add("vip", vipDiscount);
+
             return availibleDiscounts.Max(p => p.Value);
         }
 
@@ -120,7 +123,7 @@ namespace LoyalityService.Services
         /// </summary>
         /// <param name="condition">Условие акции</param>
         /// <param name="clientPhone">Номер телефона клиента</param>
-        /// <returns>Скидка, которая положена клиенту</returns>
+        /// <returns>Величина скидки, которая положена клиенту, или 0</returns>
         private int CheckEachNWashCondition(EachNWashPromotionCondition condition, long clientPhone)
         {
             // посчитать все мойки клиента за последние Days (из условия скидки)
@@ -142,22 +145,29 @@ namespace LoyalityService.Services
         /// Рассчитать скидку "счастливые часы"
         /// </summary>
         /// <param name="groupCode">Код группы моек</param>
-        /// <returns>Максимальная доступная скидка</returns>
+        /// <returns>Величина скидки, если сейчас идёт счастливый час, или 0</returns>
         private async Task<int> CalculateHappyHourDiscount(string groupCode) 
         {
-            int maxDiscount = await _context.Promotions.Where(o => o.IdgroupNavigation.Code == groupCode
+            var promotion = await _context.Promotions.Where(o => o.IdgroupNavigation.Code == groupCode
                                                         && o.HappyHourCondition != null
                                                         && o.HappyHourCondition.HourBegin <= DateTime.Now.Hour
                                                         && o.HappyHourCondition.HourEnd > DateTime.Now.Hour)
-                                                .MaxAsync(o => o.Discount);
-            return maxDiscount;
+                                                        .FirstOrDefaultAsync();
+
+            // если найдена акция, которая сейчас идёт
+            if(promotion != null)
+            {
+                return promotion.Discount;
+            }
+
+            return 0;
         }
 
         /// <summary>
         /// Рассчитать скидку типа "праздничный день"
         /// </summary>
         /// <param name="groupCode">Код группы моек</param>
-        /// <returns>Максимальная скидка</returns>
+        /// <returns>Величина скидки, если сегодня праздничный день, или 0</returns>
         private async Task<int> CalculateHolidayDiscount(string groupCode) 
         {
             int maxDiscount = await _context.Promotions.Where(o => o.IdgroupNavigation.Code == groupCode
@@ -168,9 +178,26 @@ namespace LoyalityService.Services
         }
 
         /// <summary>
-        /// рассчитать скидку типа "vip клиент"
+        /// Рассчитать скидку типа "vip клиент"
         /// </summary>
-        private void CalculateVipDiscount() { }
+        /// <param name="groupCode">Код группы моек</param>
+        /// <param name="phone">Номер телефона клиента</param>
+        /// <returns>Величина скидки, если клент есть в списке vip, или 0</returns>
+        private async Task<int> CalculateVipDiscount(string groupCode, long phone) 
+        {
+            var promotion = await _context.Promotions.Where(o => o.IdgroupNavigation.Code == groupCode
+                                                        && o.VipCondition != null
+                                                        && o.VipCondition.Phone == phone)
+                                              .FirstOrDefaultAsync();
+
+            // если найден этот телефон в списках vip
+            if(promotion != null)
+            {
+                return promotion.Discount;
+            }
+
+            return 0;
+        }
 
         private async Task<Group> GetWashGroupByTerminalCodeAsync(string terminalCode)
         {
