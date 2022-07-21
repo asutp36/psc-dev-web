@@ -76,15 +76,15 @@ namespace LoyalityService.Services
         /// <summary>
         /// рассчитать скидку типа "каждая энная мойка"
         /// </summary>
-        private async Task CalculateEachNWashDicsount(string terminalCode, long phone) 
+        private async Task<int> CalculateEachNWashDicsount(string terminalCode, long clientPhone) 
         {
             // получил группу, в которую входит терминал
             Group group = await this.GetWashGroupByTerminalCodeAsync(terminalCode);
 
             // IdconditionNavigation - условия для каждой энной мойки
-            var conditions = _context.Promotions
+            IEnumerable<EachNWashPromotionCondition> conditions = _context.Promotions
                         .Where(o => o.IdgroupNavigation.Code == group.Code)
-                        .Select(o => new
+                        .Select(o => new EachNWashPromotionCondition
                         {
                             Discount = o.Discount,
                             EachN = o.IdconditionNavigation.EachN,
@@ -92,6 +92,39 @@ namespace LoyalityService.Services
                         })
                         .AsEnumerable();
 
+            // перебирем каждое условие, высчитываем максимальную скидку
+            int maxDiscount = 0;
+            foreach(var c in conditions)
+            {
+                int currentDiscount = CheckEachNWashCondition(c, clientPhone);
+                if (currentDiscount > maxDiscount)
+                    maxDiscount = currentDiscount;
+            }
+
+            return maxDiscount;
+        }
+
+        /// <summary>
+        /// Проверить, подходит ли клиент под условия акции, вернуть полагающуюся скидку
+        /// </summary>
+        /// <param name="condition">Условие акции</param>
+        /// <param name="clientPhone">Номер телефона клиента</param>
+        /// <returns>Скидку, которая положена клиенту</returns>
+        private int CheckEachNWashCondition(EachNWashPromotionCondition condition, long clientPhone)
+        {
+            // посчитать все мойки клиента за последние Days (из условия скидки)
+            int clientWashingsCount = _context.Washings.Count(o => o.IdclientNavigation.Phone == clientPhone 
+                                                                && o.Dtime.Date <= DateTime.Now.Date.AddDays(-condition.Days));
+
+            // если количество моек > 0 и эта мойка будет энной, скидка будет из условия или 0
+            if(clientWashingsCount > 0 && clientWashingsCount + 1 % condition.EachN == 0)
+            {
+                return condition.Discount;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         /// <summary>
