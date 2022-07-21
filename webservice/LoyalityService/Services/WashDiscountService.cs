@@ -1,5 +1,6 @@
 ﻿using LoyalityService.Models;
 using LoyalityService.Models.GateWashContext;
+using LoyalityService.Models.WashLoyality;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -11,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace LoyalityService.Services
 {
-    public class WashDiscountService
+    public class WashDiscountService : IDiscountManager
     {
-        private readonly GateWashDbContext _context;
+        private readonly WashLoyalityDbContext _context;
         private readonly ILogger _logger;
         private readonly PostRCCallerService _postRCService;
 
-        public WashDiscountService(GateWashDbContext context, ILogger<WashDiscountService> logger, PostRCCallerService postRC)
+        public WashDiscountService(WashLoyalityDbContext context, ILogger<WashDiscountService> logger, PostRCCallerService postRC)
         {
             _context = context;
             _logger = logger;
@@ -30,18 +31,18 @@ namespace LoyalityService.Services
         /// <param name="call">Вызов запуска мойки</param>
         private async void WriteWashingAsync(IncomeCallModel call, int discount)
         {
-            // получить пост, который запускали
-            Device device = await GetDeviceAsync(long.Parse(call.To));
+            //// получить пост, который запускали
+            //Device device = await GetDeviceAsync(long.Parse(call.To));
             
-            // новая запись о мойке
-            _context.Washings.Add(new Washing
-            {
-                Dtime = call.When,
-                Phone = long.Parse(call.From),
-                Iddevice = device.Iddevice,
-                Complited = false,
-                Discount = discount
-            });
+            //// новая запись о мойке
+            //_context.Washings.Add(new Washing
+            //{
+            //    Dtime = call.When,
+            //    Phone = long.Parse(call.From),
+            //    Iddevice = device.Iddevice,
+            //    Complited = false,
+            //    Discount = discount
+            //});
 
             // сохранение изменений
             try
@@ -62,82 +63,73 @@ namespace LoyalityService.Services
             }
         }
 
-        /// <summary>
-        /// найти девайс по его телефону
-        /// </summary>
-        /// <param name="phone">Телефон девайса</param>
-        /// <returns></returns>
-        public async Task<Device> GetDeviceAsync(long phone)
+        public async Task<int> CalculateDiscountAsync(string terminalCode, long phone)
         {
-            return await _context.Devices.Where(d => d.Phone == phone).FirstOrDefaultAsync();
+            // все скидки, под которые попадает этот телефон (код скидки: величина)
+            Dictionary<string, int> availibleDiscounts = new Dictionary<string, int>();
+            
+
+
+            return availibleDiscounts.Max().Value;
         }
 
         /// <summary>
-        /// получить скидку пользователя
+        /// рассчитать скидку типа "каждая энная мойка"
         /// </summary>
-        /// <param name="phone">Телефон пользователя</param>
-        /// <returns></returns>
-        public async Task<int> GetCustomerDiscountAsync(long phone)
+        private async Task CalculateEachNWashDicsount(string terminalCode, long phone) 
         {
-            int washCount = await _context.Washings.Where(w => w.Phone == phone && w.Complited).CountAsync();
+            // получил группу, в которую входит терминал
+            Group group = await this.GetWashGroupByTerminalCodeAsync(terminalCode);
 
-            if (washCount % 5 == 0)
-            {
-                return 70;
-            }
+            // IdconditionNavigation - условия для каждой энной мойки
+            var conditions = _context.Promotions
+                        .Where(o => o.IdgroupNavigation.Code == group.Code)
+                        .Select(o => new
+                        {
+                            Discount = o.Discount,
+                            EachN = o.IdconditionNavigation.EachN,
+                            Days = o.IdconditionNavigation.Days
+                        })
+                        .AsEnumerable();
 
-            return 0;
         }
 
         /// <summary>
-        /// получить код девайса по его телефону
+        /// рассчитать скидку типа "счастливые часы"
         /// </summary>
-        /// <param name="phone">Телефон девайса</param>
-        /// <returns></returns>
-        public async Task<string> GetDeviceCodeAsync(long phone)
-        {
-            var device = await _context.Devices.Where(d => d.Phone == phone).FirstOrDefaultAsync();
-            return device.Code;
-        }
+        private void CalculateHappyHourDiscount() { }
 
         /// <summary>
-        /// запустить пост через сервис PostRC
+        /// рассчитать скидку типа "праздничный день"
         /// </summary>
-        /// <param name="call">Параметры входящего вызова</param>
-        public async void StartPostAsync(IncomeCallModel call)
+        private void CalculateHolidayDiscount() { }
+
+        /// <summary>
+        /// рассчитать скидку типа "vip клиент"
+        /// </summary>
+        private void CalculateVipDiscount() { }
+
+        private async Task<Group> GetWashGroupByTerminalCodeAsync(string terminalCode)
         {
-            try
-            {
-               // await Task.Delay(5000);
-                
-                _logger.LogInformation("запустился метод старта поста");
-                // получить скидку и код поста по входящим параметрам вызова
-                string deviceCode = await GetDeviceCodeAsync(long.Parse(call.To));
-                int discount = await GetCustomerDiscountAsync(long.Parse(call.From));
-                _logger.LogInformation($"deviceCode = {deviceCode} discount = {discount}");
-                try
-                {
-                    // запуск поста
-                    var response = await _postRCService.StartPostAsync(new StartPostParameters { DeviceCode = deviceCode, Discount = discount });
+            var group = await _context.Terminals.Where(o => o.IddeviceNavigation.Code == terminalCode)
+                .Select(o => o.IdwashNavigation.IdgroupNavigation)
+                .FirstOrDefaultAsync();
 
-                    await Task.Delay(5000);
+            return group;
+        }
 
-                    _logger.LogInformation("прошёл запрос на сервис postrc");
-                    // если удачно, записать запись о мойке
-                    //if (response != null && response.IsSuccessStatusCode)
-                    //{
-                    //    WriteWashingAsync(call, discount);
-                    //}
-                }
-                catch (HttpRequestException e)
-                {
-                    _logger.LogError($"| WashDiscountService.StartPostAsync | Перехвачена ошибка во время отправки запроса. {e.GetType()}: {e.Message}");
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"| WashDiscountService.StartPostAsync | Перехвачена общая ошибка. {e.GetType()}: {e.Message}");
-            }
+        public Task WriteWashingAsync(string terminaCode, long phone)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<string> GetTerminalCodeByPhoneAsync(long phone)
+        {
+            string code = await _context.Terminals.Where(t => t.Phone == phone)
+                            .Select(t => t.IddeviceNavigation.Code)
+                            .FirstOrDefaultAsync();
+
+            return code;
         }
     }
 }
