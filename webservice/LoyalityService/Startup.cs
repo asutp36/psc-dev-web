@@ -1,4 +1,5 @@
 using LoyalityService.Models.GateWashContext;
+using LoyalityService.Models.WashLoyality;
 using LoyalityService.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -53,6 +54,8 @@ namespace LoyalityService
 
             services.AddDbContext<GateWashDbContext>(
                options => options.UseSqlServer(Configuration.GetConnectionString("GateWash")));
+            services.AddDbContext<WashLoyalityDbContext>(
+                options => options.UseSqlServer(Configuration.GetConnectionString("WashLoyality")));
 
             services.AddTransient<PostRCCallerService>(s => new PostRCCallerService(Logger, Configuration.GetValue<string>("PostRCBaseUrl")));
 
