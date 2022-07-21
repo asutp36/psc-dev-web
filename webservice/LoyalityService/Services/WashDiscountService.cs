@@ -65,33 +65,39 @@ namespace LoyalityService.Services
 
         public async Task<int> CalculateDiscountAsync(string terminalCode, long phone)
         {
+            // получаю группу, в которую входит терминал
+            Group group = await GetWashGroupByTerminalCodeAsync(terminalCode);
             // все скидки, под которые попадает этот телефон (код скидки: величина)
             Dictionary<string, int> availibleDiscounts = new Dictionary<string, int>();
 
-            int eachNwashDiscount = await CalculateEachNWashDicsount(terminalCode, phone);
+            int eachNwashDiscount = await CalculateEachNWashDicsount(group.Code, phone);
             availibleDiscounts.Add("eachN", eachNwashDiscount);
 
-            return availibleDiscounts.Max().Value;
+            int happyHourDiscount = await CalculateHappyHourDiscount(group.Code);
+            availibleDiscounts.Add("happyHour", happyHourDiscount);
+
+            return availibleDiscounts.Max(p => p.Value);
         }
 
         /// <summary>
         /// рассчитать скидку типа "каждая энная мойка"
         /// </summary>
-        private async Task<int> CalculateEachNWashDicsount(string terminalCode, long clientPhone) 
+        /// <param name="groupCode">Код группы</param>
+        /// <param name="clientPhone">Номер телефона клиента</param>
+        /// <returns>Максимальная скидка</returns>
+        private async Task<int> CalculateEachNWashDicsount(string groupCode, long clientPhone) 
         {
-            // получил группу, в которую входит терминал
-            Group group = await this.GetWashGroupByTerminalCodeAsync(terminalCode);
-
             // определить условия акций для группы 
-            IEnumerable<EachNWashPromotionCondition> conditions = _context.Promotions
-                        .Where(o => o.IdgroupNavigation.Code == group.Code)
+            IEnumerable<EachNWashPromotionCondition> conditions = await _context.Promotions
+                        .Where(o => o.IdgroupNavigation.Code == groupCode
+                        && o.EachNwashCondition != null)
                         .Select(o => new EachNWashPromotionCondition
                         {
                             Discount = o.Discount,
                             EachN = o.EachNwashCondition.EachN,
                             Days = o.EachNwashCondition.Days
                         })
-                        .AsEnumerable();
+                        .ToListAsync();
 
             // перебирем каждое условие, высчитываем максимальную скидку
             int maxDiscount = 0;
@@ -110,7 +116,7 @@ namespace LoyalityService.Services
         /// </summary>
         /// <param name="condition">Условие акции</param>
         /// <param name="clientPhone">Номер телефона клиента</param>
-        /// <returns>Скидку, которая положена клиенту</returns>
+        /// <returns>Скидка, которая положена клиенту</returns>
         private int CheckEachNWashCondition(EachNWashPromotionCondition condition, long clientPhone)
         {
             // посчитать все мойки клиента за последние Days (из условия скидки)
@@ -129,9 +135,19 @@ namespace LoyalityService.Services
         }
 
         /// <summary>
-        /// рассчитать скидку типа "счастливые часы"
+        /// рассчитать скидку "счастливые часы"
         /// </summary>
-        private void CalculateHappyHourDiscount() { }
+        /// <param name="groupCode">Код группы</param>
+        /// <returns>Максимальная доступная скидка</returns>
+        private async Task<int> CalculateHappyHourDiscount(string groupCode) 
+        {
+            int maxDiscount = await _context.Promotions.Where(o => o.IdgroupNavigation.Code == groupCode
+                                                        && o.HappyHourCondition != null
+                                                        && o.HappyHourCondition.HourBegin <= DateTime.Now.Hour
+                                                        && o.HappyHourCondition.HourEnd > DateTime.Now.Hour)
+                                                .MaxAsync(o => o.Discount);
+            return maxDiscount;
+        }
 
         /// <summary>
         /// рассчитать скидку типа "праздничный день"
