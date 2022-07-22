@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LoyalityService.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,5 +30,12 @@ namespace LoyalityService.Services
         /// <param name="phone">Номер телефона терминала</param>
         /// <returns></returns>
         Task<string> GetTerminalCodeByPhoneAsync(long phone);
+
+        /// <summary>
+        /// Получить последнюю мойку клиента
+        /// </summary>
+        /// <param name="clientPhone">Телефон клиента</param>
+        /// <returns>Данные о последней мойке</returns>
+        Task<WashingModel> GetClientLastWashing(long clientPhone);
     }
 }

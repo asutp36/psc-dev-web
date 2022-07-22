@@ -1,4 +1,5 @@
-﻿using LoyalityService.Services;
+﻿using LoyalityService.Models;
+using LoyalityService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,7 +23,24 @@ namespace LoyalityService.Controllers
         [HttpGet("{clientPhone}")]
         public async Task<IActionResult> GetLastWashing(long clientPhone)
         {
-            return Ok();
+            if(clientPhone <= 0)
+            {
+                BadRequest("Телефон клиента не может быть <= 0");
+            }
+
+            int digitsCount = (int)Math.Log10(clientPhone) + 1;
+            if(digitsCount != 11)
+            {
+                return BadRequest($"Неверное количество цифр в номере {clientPhone}. Необходимо 11, а введено {digitsCount}");
+            }
+
+            WashingModel washing = await _washDiscount.GetClientLastWashing(clientPhone);
+            if(washing == null)
+            {
+                return NotFound("Похоже, что вы у нас ещё ни разу не мылись");
+            }
+
+            return Ok(washing);
         }
     }
 }

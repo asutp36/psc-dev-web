@@ -221,5 +221,22 @@ namespace LoyalityService.Services
 
             return code;
         }
+
+        public async Task<WashingModel> GetClientLastWashing(long clientPhone)
+        {
+            var washing = await _context.Washings.Where(o => o.IdclientNavigation.Phone == clientPhone)
+                .Select(o => new WashingModel
+                {
+                    ClientPhone = o.IdclientNavigation.Phone,
+                    DTime = o.Dtime,
+                    Device = o.IddeviceNavigation.Name,
+                    Program = o.IdprogramNavigation.Name,
+                    Amount = o.Amount,
+                    Discount = o.Discount
+                })
+                .FirstOrDefaultAsync();
+
+            return washing;
+        }
     }
 }
