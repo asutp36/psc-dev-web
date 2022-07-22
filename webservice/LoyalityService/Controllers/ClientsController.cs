@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using LoyalityService.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,5 +12,11 @@ namespace LoyalityService.Controllers
     [ApiController]
     public class ClientsController : ControllerBase
     {
+        private readonly IDiscountManager _washDiscount;
+
+        public ClientsController(IDiscountManager washDiscount)
+        {
+            _washDiscount = washDiscount;
+        }
     }
 }

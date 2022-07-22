@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LoyalityService.Services
 {
-    interface IDiscountManager
+    public interface IDiscountManager
     {
         /// <summary>
         /// рассчитать скидку по коду терминала и номеру клиента
