@@ -24,6 +24,7 @@ namespace LoyalityService.Models.WashLoyality
         public virtual DbSet<HappyHourCondition> HappyHourConditions { get; set; }
         public virtual DbSet<HolidayCondition> HolidayConditions { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
+        public virtual DbSet<Program> Programs { get; set; }
         public virtual DbSet<Promotion> Promotions { get; set; }
         public virtual DbSet<PromotionType> PromotionTypes { get; set; }
         public virtual DbSet<Terminal> Terminals { get; set; }
@@ -163,6 +164,21 @@ namespace LoyalityService.Models.WashLoyality
                     .HasConstraintName("FK_Posts_Wash");
             });
 
+            modelBuilder.Entity<Program>(entity =>
+            {
+                entity.HasKey(e => e.Idprogram);
+
+                entity.Property(e => e.Idprogram).HasColumnName("IDProgram");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
+            });
+
             modelBuilder.Entity<Promotion>(entity =>
             {
                 entity.HasKey(e => e.Idpromotion);
@@ -281,17 +297,24 @@ namespace LoyalityService.Models.WashLoyality
 
                 entity.Property(e => e.Idclient).HasColumnName("IDClient");
 
-                entity.Property(e => e.Idterminal).HasColumnName("IDTerminal");
+                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
+
+                entity.Property(e => e.Idprogram).HasColumnName("IDProgram");
 
                 entity.HasOne(d => d.IdclientNavigation)
                     .WithMany(p => p.Washings)
                     .HasForeignKey(d => d.Idclient)
                     .HasConstraintName("FK_Washings_Clients");
 
-                entity.HasOne(d => d.IdterminalNavigation)
+                entity.HasOne(d => d.IddeviceNavigation)
                     .WithMany(p => p.Washings)
-                    .HasForeignKey(d => d.Idterminal)
-                    .HasConstraintName("FK_Washings_Terminals");
+                    .HasForeignKey(d => d.Iddevice)
+                    .HasConstraintName("FK_Washings_Device");
+
+                entity.HasOne(d => d.IdprogramNavigation)
+                    .WithMany(p => p.Washings)
+                    .HasForeignKey(d => d.Idprogram)
+                    .HasConstraintName("FK_Washings_Programs");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -11,6 +11,7 @@ namespace LoyalityService.Models.WashLoyality
         {
             Posts = new HashSet<Post>();
             Terminals = new HashSet<Terminal>();
+            Washings = new HashSet<Washing>();
         }
 
         public int Iddevice { get; set; }
@@ -21,5 +22,6 @@ namespace LoyalityService.Models.WashLoyality
 
         public virtual ICollection<Post> Posts { get; set; }
         public virtual ICollection<Terminal> Terminals { get; set; }
+        public virtual ICollection<Washing> Washings { get; set; }
     }
 }
