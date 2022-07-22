@@ -59,7 +59,7 @@ namespace LoyalityService
 
             services.AddTransient<PostRCCallerService>(s => new PostRCCallerService(Logger, Configuration.GetValue<string>("PostRCBaseUrl")));
 
-            services.AddTransient<WashDiscountService>();
+            services.AddTransient<IDiscountManager, WashDiscountService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -14,9 +14,9 @@ namespace LoyalityService.Controllers
     [ApiController]
     public class CallsController : ControllerBase
     {
-        private readonly WashDiscountService _washDiscountService;
+        private readonly IDiscountManager _washDiscountService;
 
-        public CallsController(WashDiscountService washDiscountService)
+        public CallsController(IDiscountManager washDiscountService)
         {
             _washDiscountService = washDiscountService;
         }

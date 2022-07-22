@@ -18,5 +18,11 @@ namespace LoyalityService.Controllers
         {
             _washDiscount = washDiscount;
         }
+
+        [HttpGet("{clientPhone}")]
+        public async Task<IActionResult> GetLastWashing(long clientPhone)
+        {
+            return Ok();
+        }
     }
 }
