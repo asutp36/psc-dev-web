@@ -25,7 +25,6 @@ namespace GateWashSyncService.Models.GateWash
         public int? ServerId { get; set; }
         public int? IddeviceType { get; set; }
         public string IpAddress { get; set; }
-        public long? Phone { get; set; }
 
         public virtual DeviceTypes IddeviceTypeNavigation { get; set; }
         public virtual ICollection<Collect> Collect { get; set; }
