@@ -13,7 +13,6 @@ namespace PostRCService.Models.GateWashContext
         public int? ServerId { get; set; }
         public int? IddeviceType { get; set; }
         public string IpAddress { get; set; }
-        public long? Phone { get; set; }
 
         public virtual DeviceType IddeviceTypeNavigation { get; set; }
     }
