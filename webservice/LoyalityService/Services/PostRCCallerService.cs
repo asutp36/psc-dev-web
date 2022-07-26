@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LoyalityService.Services
 {
-    public class PostRCCallerService
+    public class PostRCCallerService : IPostRCCaller
     {
         private readonly HttpSender _httpSender;
         private readonly ILogger _logger;

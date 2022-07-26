@@ -15,10 +15,12 @@ namespace LoyalityService.Controllers
     public class CallsController : ControllerBase
     {
         private readonly IDiscountManager _washDiscountService;
+        private readonly IPostRCCaller _postRCService;
 
-        public CallsController(IDiscountManager washDiscountService)
+        public CallsController(IDiscountManager washDiscountService, IPostRCCaller postRCService)
         {
             _washDiscountService = washDiscountService;
+            _postRCService = postRCService;
         }
 
         [HttpPost]
@@ -34,13 +36,20 @@ namespace LoyalityService.Controllers
                 return BadRequest("Не получилось распарсить входные данные");
             }
 
-            string terminalCode = await _washDiscountService.GetTerminalCodeByPhoneAsync(terminalPhone);
-            if (string.IsNullOrEmpty(terminalCode))
+            string terminalCode = string.Empty;
+            try
             {
-                return NotFound($"Не удалось найти терминал по номеру телефона {terminalPhone}");
+                terminalCode = await _washDiscountService.GetTerminalCodeByPhoneAsync(terminalPhone);
             }
+            catch(KeyNotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            
 
             int discount = await _washDiscountService.CalculateDiscountAsync(terminalCode, clientPhone);
+
+            _postRCService.StartPostAsync(new StartPostParameters { DeviceCode = terminalCode, Discount = discount });
 
             return Accepted();
         }

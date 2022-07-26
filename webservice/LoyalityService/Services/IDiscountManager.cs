@@ -28,7 +28,8 @@ namespace LoyalityService.Services
         /// получить код ерминала по его номру телефона
         /// </summary>
         /// <param name="phone">Номер телефона терминала</param>
-        /// <returns></returns>
+        /// <returns>Код терминала</returns>
+        /// <exception cref="KeyNotFoundException">Если терминал не найден по номеру</exception>
         Task<string> GetTerminalCodeByPhoneAsync(long phone);
 
         /// <summary>

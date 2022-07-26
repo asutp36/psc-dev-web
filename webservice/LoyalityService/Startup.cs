@@ -57,9 +57,9 @@ namespace LoyalityService
             services.AddDbContext<WashLoyalityDbContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("WashLoyality")));
 
-            services.AddTransient<PostRCCallerService>(s => new PostRCCallerService(Logger, Configuration.GetValue<string>("PostRCBaseUrl")));
+            services.AddScoped<IPostRCCaller, PostRCCallerService>(s => new PostRCCallerService(new NLogLoggerProvider().CreateLogger(typeof(PostRCCallerService).FullName), Configuration.GetValue<string>("PostRCBaseUrl")));
 
-            services.AddTransient<IDiscountManager, WashDiscountService>();
+            services.AddScoped<IDiscountManager, WashDiscountService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

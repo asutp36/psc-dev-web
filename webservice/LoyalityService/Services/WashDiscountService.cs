@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Data;
 
 namespace LoyalityService.Services
 {
@@ -16,9 +17,9 @@ namespace LoyalityService.Services
     {
         private readonly WashLoyalityDbContext _context;
         private readonly ILogger _logger;
-        private readonly PostRCCallerService _postRCService;
+        private readonly IPostRCCaller _postRCService;
 
-        public WashDiscountService(WashLoyalityDbContext context, ILogger<WashDiscountService> logger, PostRCCallerService postRC)
+        public WashDiscountService(WashLoyalityDbContext context, ILogger<WashDiscountService> logger, IPostRCCaller postRC)
         {
             _context = context;
             _logger = logger;
@@ -65,6 +66,7 @@ namespace LoyalityService.Services
 
         public async Task<int> CalculateDiscountAsync(string terminalCode, long phone)
         {
+            _logger.LogInformation("logging test");
             // получаю группу, в которую входит терминал
             Group group = await GetWashGroupByTerminalCodeAsync(terminalCode);
 
@@ -170,11 +172,19 @@ namespace LoyalityService.Services
         /// <returns>Величина скидки, если сегодня праздничный день, или 0</returns>
         private async Task<int> CalculateHolidayDiscount(string groupCode) 
         {
-            int maxDiscount = await _context.Promotions.Where(o => o.IdgroupNavigation.Code == groupCode
-                                                        && o.HolidayCondition != null
-                                                        && o.HolidayCondition.Date == DateTime.Now.Date)
-                                                 .MaxAsync(o => o.Discount);
-            return maxDiscount;
+            try
+            {
+                int maxDiscount = await _context.Promotions.Where(o => o.IdgroupNavigation.Code == groupCode
+                                                            && o.HolidayCondition != null
+                                                            && o.HolidayCondition.Date == DateTime.Now.Date)
+                                                     .MaxAsync(o => o.Discount);
+                return maxDiscount;
+            }
+            catch (InvalidOperationException e)
+            {
+                _logger.LogError($"| WashDiscountService.CalculateHolidayDiscount | Не найдены скидки в праздничные дня для группы моек {groupCode}. InvalidOperationException: {e.Message}");
+                return 0;
+            }
         }
 
         /// <summary>
@@ -218,7 +228,11 @@ namespace LoyalityService.Services
             string code = await _context.Terminals.Where(t => t.Phone == phone)
                             .Select(t => t.IddeviceNavigation.Code)
                             .FirstOrDefaultAsync();
-
+            if (string.IsNullOrEmpty(code))
+            {
+                _logger.LogError($"Не удалось найти терминал по номеру телефона {phone}");
+                throw new KeyNotFoundException($"Не удалось найти терминал по номеру телефона {phone}");
+            }
             return code;
         }
 
@@ -237,6 +251,11 @@ namespace LoyalityService.Services
                 .FirstOrDefaultAsync();
 
             return washing;
+        }
+
+        public void CalcWashingsBeforeDiscount(long clientPhone)
+        {
+            
         }
     }
 }
