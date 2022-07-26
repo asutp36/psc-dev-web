@@ -59,7 +59,7 @@ namespace LoyalityService
 
             services.AddScoped<IPostRCCaller, PostRCCallerService>(s => new PostRCCallerService(new NLogLoggerProvider().CreateLogger(typeof(PostRCCallerService).FullName), Configuration.GetValue<string>("PostRCBaseUrl")));
 
-            services.AddScoped<IDiscountManager, WashDiscountService>();
+            services.AddScoped<IAsyncDiscountManager, WashDiscountService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

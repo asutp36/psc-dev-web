@@ -14,10 +14,10 @@ namespace LoyalityService.Controllers
     [ApiController]
     public class CallsController : ControllerBase
     {
-        private readonly IDiscountManager _washDiscountService;
+        private readonly IAsyncDiscountManager _washDiscountService;
         private readonly IPostRCCaller _postRCService;
 
-        public CallsController(IDiscountManager washDiscountService, IPostRCCaller postRCService)
+        public CallsController(IAsyncDiscountManager washDiscountService, IPostRCCaller postRCService)
         {
             _washDiscountService = washDiscountService;
             _postRCService = postRCService;

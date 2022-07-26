@@ -13,9 +13,9 @@ namespace LoyalityService.Controllers
     [ApiController]
     public class ClientsController : ControllerBase
     {
-        private readonly IDiscountManager _washDiscount;
+        private readonly IAsyncDiscountManager _washDiscount;
 
-        public ClientsController(IDiscountManager washDiscount)
+        public ClientsController(IAsyncDiscountManager washDiscount)
         {
             _washDiscount = washDiscount;
         }
@@ -34,7 +34,7 @@ namespace LoyalityService.Controllers
                 return BadRequest($"Неверное количество цифр в номере {clientPhone}. Необходимо 11, а введено {digitsCount}");
             }
 
-            WashingModel washing = await _washDiscount.GetClientLastWashing(clientPhone);
+            WashingModel washing = await _washDiscount.GetClientLastWashingAsync(clientPhone);
             if(washing == null)
             {
                 return NotFound("Похоже, что вы у нас ещё ни разу не мылись");

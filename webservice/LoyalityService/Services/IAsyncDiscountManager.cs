@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LoyalityService.Services
 {
-    public interface IDiscountManager
+    public interface IAsyncDiscountManager
     {
         /// <summary>
         /// рассчитать скидку по коду терминала и номеру клиента
@@ -22,7 +22,7 @@ namespace LoyalityService.Services
         /// <param name="terminaCode">Код терминала</param>
         /// <param name="phone">Номер клиента</param>
         /// <returns></returns>
-        Task WriteWashingAsync(string terminaCode, long phone);
+        Task<int> WriteWashingAsync(WashingModel washing);
 
         /// <summary>
         /// получить код ерминала по его номру телефона
@@ -37,6 +37,20 @@ namespace LoyalityService.Services
         /// </summary>
         /// <param name="clientPhone">Телефон клиента</param>
         /// <returns>Данные о последней мойке</returns>
-        Task<WashingModel> GetClientLastWashing(long clientPhone);
+        Task<WashingModel> GetClientLastWashingAsync(long clientPhone);
+
+        /// <summary>
+        /// Проверить, что программа существует
+        /// </summary>
+        /// <param name="programCode">Код программы</param>
+        /// <returns></returns>
+        Task<bool> IsProgramExistsAsync(string programCode);
+
+        /// <summary>
+        /// Проверить, что девайс существует
+        /// </summary>
+        /// <param name="deviceCode">Код девайса</param>
+        /// <returns></returns>
+        Task<bool> IsDeviceExistsAsync(string deviceCode);
     }
 }
