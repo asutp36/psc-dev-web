@@ -228,11 +228,14 @@ namespace LoyalityService.Services
             string code = await _context.Terminals.Where(t => t.Phone == phone)
                             .Select(t => t.IddeviceNavigation.Code)
                             .FirstOrDefaultAsync();
+
+            // если терминал не найден - выкинуть KeyNotFoundException
             if (string.IsNullOrEmpty(code))
             {
                 _logger.LogError($"Не удалось найти терминал по номеру телефона {phone}");
                 throw new KeyNotFoundException($"Не удалось найти терминал по номеру телефона {phone}");
             }
+
             return code;
         }
 
