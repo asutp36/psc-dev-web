@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace PostRCService.Controllers.BindingModels
 {
-    public class PostStartingParameters
+    public class PostStartingDiscountParameters
     {
         public int Discount { get; set; }
+        public long ClientPhone { get; set; }
     }
 }

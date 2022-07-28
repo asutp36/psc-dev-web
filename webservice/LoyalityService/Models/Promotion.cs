@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 
 namespace LoyalityService.Models
 {
-    public class StartPostParameters
+    public abstract class Promotion
     {
-        public string DeviceCode { get; set; }
         public int Discount { get; set; }
-        public long CleintPhone { get; set; }
+        public string Group { get; set; }
+        public string Type { get; set; }
+        public int ApplyPriority { get; set; }
     }
 }

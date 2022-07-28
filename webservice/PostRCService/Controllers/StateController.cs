@@ -27,7 +27,7 @@ namespace PostRCService.Controllers
         }
 
         [HttpPost("start")]
-        public async Task<IActionResult> Start([FromBody] PostStartModel model)
+        public async Task<IActionResult> Start([FromBody] PostStartDicountModel model)
         {
             if (!IsDeviceExists(model.DeviceCode))
             {
@@ -43,10 +43,10 @@ namespace PostRCService.Controllers
             }
 
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri($"http://{deviceIP}/");
+            httpClient.BaseAddress = new Uri($"http://{deviceIP}/api/post/discount");
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "");
-            string json = JsonConvert.SerializeObject(new PostStartingParameters { Discount = model.Discount });
+            string json = JsonConvert.SerializeObject(new PostStartingDiscountParameters { Discount = model.Discount, ClientPhone = model.ClientPhone });
 
             if (!string.IsNullOrEmpty(json))
             {
