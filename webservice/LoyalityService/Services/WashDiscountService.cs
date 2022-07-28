@@ -65,7 +65,6 @@ namespace LoyalityService.Services
 
         public async Task<int> CalculateDiscountAsync(string terminalCode, long phone)
         {
-            _logger.LogInformation("logging test");
             // получаю группу, в которую входит терминал
             Group group = await GetWashGroupByTerminalCodeAsync(terminalCode);
 

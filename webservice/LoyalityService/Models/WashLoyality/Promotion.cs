@@ -11,7 +11,7 @@ namespace LoyalityService.Models.WashLoyality
         public int IdpromotionType { get; set; }
         public int Discount { get; set; }
         public int Idgroup { get; set; }
-        public int? ApplyPriority { get; set; }
+        public int ApplyOrder { get; set; }
 
         public virtual Group IdgroupNavigation { get; set; }
         public virtual PromotionType IdpromotionTypeNavigation { get; set; }
