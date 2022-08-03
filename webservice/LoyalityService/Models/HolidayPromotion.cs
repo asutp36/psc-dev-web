@@ -5,11 +5,9 @@ using System.Threading.Tasks;
 
 namespace LoyalityService.Models
 {
-    public abstract class Promotion
+    public class HolidayPromotion
     {
         public int Discount { get; set; }
-        public string Group { get; set; }
-        public string Type { get; set; }
-        public int ApplyPriority { get; set; }
+        public DateTime Date { get; set; }
     }
 }

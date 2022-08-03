@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace LoyalityService.Models
 {
-    public class StartPostParameters
+    public class ClientEachNWashStatus
     {
-        public string DeviceCode { get; set; }
         public int Discount { get; set; }
-        public long ClientPhone { get; set; }
+        public int CurrentWashCount { get; set; }
+        public int N { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using LoyalityService.Models;
+using LoyalityService.Models.WashLoyality;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace LoyalityService.Services
         /// </summary>
         /// <param name="clientPhone">Телефон клиента</param>
         /// <returns>Данные о последней мойке</returns>
-        Task<WashingModel> GetClientLastWashingAsync(long clientPhone);
+        Task<IEnumerable<WashingModel>> GetClientLast10WashingsAsync(long clientPhone);
 
         /// <summary>
         /// Проверить, что программа существует
@@ -52,5 +53,9 @@ namespace LoyalityService.Services
         /// <param name="deviceCode">Код девайса</param>
         /// <returns></returns>
         Task<bool> IsDeviceExistsAsync(string deviceCode);
+
+        Task<ClientPromotions> GetCurrentPromotions(long clientPhone);
+
+        Task<Client> GetClientByPhoneAsync(long clientPhone);
     }
 }

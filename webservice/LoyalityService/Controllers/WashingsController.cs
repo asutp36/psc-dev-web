@@ -22,6 +22,11 @@ namespace LoyalityService.Controllers
         [HttpPost]
         public async Task<IActionResult> WriteWashing([FromBody]WashingModel washing)
         {
+            if(!DateTime.TryParse(washing.DTime, out DateTime dtime))
+            {
+                return BadRequest("Не удалось распарсить дату");
+            }
+
             // проверить, что девайс существует
             if(!(await _washDiscountService.IsDeviceExistsAsync(washing.Device)))
             {
@@ -46,6 +51,18 @@ namespace LoyalityService.Controllers
             }
 
             return Created("", idWashing);
+        }
+
+        [HttpPost("test")]
+        public async Task<IActionResult> TestPost()
+        {
+            return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TestGet()
+        {
+            return Ok();
         }
     }
 }

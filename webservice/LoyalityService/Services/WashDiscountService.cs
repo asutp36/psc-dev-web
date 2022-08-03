@@ -25,44 +25,6 @@ namespace LoyalityService.Services
             _postRCService = postRC;
         }
 
-        /// <summary>
-        /// записать новую мойку
-        /// </summary>
-        /// <param name="call">Вызов запуска мойки</param>
-        private async void WriteWashingAsync(IncomeCallModel call, int discount)
-        {
-            //// получить пост, который запускали
-            //Device device = await GetDeviceAsync(long.Parse(call.To));
-            
-            //// новая запись о мойке
-            //_context.Washings.Add(new Washing
-            //{
-            //    Dtime = call.When,
-            //    Phone = long.Parse(call.From),
-            //    Iddevice = device.Iddevice,
-            //    Complited = false,
-            //    Discount = discount
-            //});
-
-            // сохранение изменений
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                _logger.LogError($"| LoyalityService.WriteWashing | {nameof(e.GetType)}: {e.Message}");
-            }
-            catch (DbUpdateException e)
-            {
-                _logger.LogError($"| LoyalityService.WriteWashing | {nameof(e.GetType)}: {e.Message}");
-            }
-            finally 
-            {
-                _logger.LogError($"| LoyalityService.WriteWashing | Мойка не записалась, параметры: {JsonConvert.SerializeObject(call)}, скидка {discount}");
-            }
-        }
-
         public async Task<int> CalculateDiscountAsync(string terminalCode, long phone)
         {
             // получаю группу, в которую входит терминал
@@ -70,13 +32,13 @@ namespace LoyalityService.Services
 
             // все скидки, под которые попадает этот телефон (код скидки: величина)
             Dictionary<string, int> availibleDiscounts = new Dictionary<string, int>();
-            var proms = _context.Promotions.Where(o => o.Idgroup == group.Idgroup)
+            var proms = await _context.Promotions.Where(o => o.Idgroup == group.Idgroup)
                                            .Include(o => o.EachNwashCondition)
                                            .Include(o => o.HappyHourCondition)
                                            .Include(o => o.HolidayCondition)
                                            .Include(o => o.VipCondition)
                                            .OrderBy(o => o.ApplyOrder)
-                                           .AsEnumerable();
+                                           .ToListAsync();
 
             int discount = 0;
 
@@ -171,7 +133,7 @@ namespace LoyalityService.Services
             Washing toAdd = new Washing()
             {
                 Idclient = client.Idclient,
-                Dtime = washing.DTime,
+                Dtime = DateTime.Parse(washing.DTime),
                 Amount = washing.Amount,
                 Discount = washing.Discount,
                 Iddevice = await GetDeviceIdByCode(washing.Device),
@@ -199,7 +161,7 @@ namespace LoyalityService.Services
         /// <param name="phone">Номер телефона клиента</param>
         /// <returns></returns>
         /// <exception cref="KeyNotFoundException">Клиент не найден</exception>
-        private async Task<Client> GetClientByPhoneAsync(long phone)
+        public async Task<Client> GetClientByPhoneAsync(long phone)
         {
             var client = await _context.Clients.Where(o => o.Phone == phone).FirstOrDefaultAsync();
             if (client == null)
@@ -250,26 +212,23 @@ namespace LoyalityService.Services
             return code;
         }
 
-        public async Task<WashingModel> GetClientLastWashingAsync(long clientPhone)
+        public async Task<IEnumerable<WashingModel>> GetClientLast10WashingsAsync(long clientPhone)
         {
-            var washing = await _context.Washings.Where(o => o.IdclientNavigation.Phone == clientPhone)
+            var washing = _context.Washings.Where(o => o.IdclientNavigation.Phone == clientPhone)
+                .OrderByDescending(o => o.Dtime)
                 .Select(o => new WashingModel
                 {
                     ClientPhone = o.IdclientNavigation.Phone,
-                    DTime = o.Dtime,
+                    DTime = o.Dtime.ToString("yyyy-MM-dd HH:mm:ss"),
                     Device = o.IddeviceNavigation.Name,
                     Program = o.IdprogramNavigation.Name,
                     Amount = o.Amount,
                     Discount = o.Discount
                 })
-                .FirstOrDefaultAsync();
+                .Take(10)
+                .AsEnumerable();
 
             return washing;
-        }
-
-        public void CalcWashingsBeforeDiscount(long clientPhone)
-        {
-            
         }
 
         public async Task<bool> IsProgramExistsAsync(string programCode)
@@ -308,6 +267,67 @@ namespace LoyalityService.Services
             var program = await _context.Programs.Where(o => o.Code == programCode).FirstOrDefaultAsync();
 
             return program.Idprogram;
+        }
+
+        public async Task<ClientPromotions> GetCurrentPromotions(long clientPhone)
+        {
+            ClientPromotions result = new ClientPromotions();
+
+            result.EachNWash = await GetCurrentStatusAsync(clientPhone);
+
+            result.Holiday = await GetHolidayPromotionAsync();
+
+            result.HappyHour = await GetHappyHourAsync();
+
+            return result;
+        }
+
+        private async Task<ClientEachNWashStatus> GetCurrentStatusAsync(long phone)
+        {
+            ClientEachNWashStatus currentStatus = new ClientEachNWashStatus();
+
+            Promotion p = await _context.Promotions.Include(o => o.EachNwashCondition).Where(o => o.EachNwashCondition != null).FirstOrDefaultAsync();
+
+            if (p == null)
+                return null;
+
+            currentStatus.CurrentWashCount = await _context.Washings.Where(o => o.IdclientNavigation.Phone == phone).CountAsync() % p.EachNwashCondition.EachN;
+            currentStatus.N = p.EachNwashCondition.EachN;
+            currentStatus.Discount = p.Discount;
+            return currentStatus;
+        }
+
+        private async Task<HolidayPromotion> GetHolidayPromotionAsync()
+        {
+            Promotion p = await _context.Promotions.Include(o => o.HolidayCondition).Where(o => o.HolidayCondition != null && o.HolidayCondition.Date >= DateTime.Now.Date)
+                                                         .OrderBy(o => o.HolidayCondition.Date).FirstOrDefaultAsync();
+            if (p == null)
+                return null;
+
+            HolidayPromotion result = new HolidayPromotion()
+            {
+                Date = p.HolidayCondition.Date,
+                Discount = p.Discount
+            };
+
+            return result;
+        }
+
+        private async Task<HappyHourPromotion> GetHappyHourAsync()
+        {
+            Promotion p = await _context.Promotions.Include(o => o.HappyHourCondition).Where(o => o.HappyHourCondition != null).FirstOrDefaultAsync();
+
+            if (p == null)
+                return null;
+
+            HappyHourPromotion result = new HappyHourPromotion()
+            {
+                BeginHour = p.HappyHourCondition.HourBegin,
+                EndHour = p.HappyHourCondition.HourEnd,
+                Discount = p.Discount
+            };
+
+            return result;
         }
     }
 }
