@@ -89,6 +89,7 @@ namespace MangoAPIService.Controllers
         [HttpGet]
         public async Task<IActionResult> TestSignature()
         {
+            _logger.LogInformation("тест логгов");
             var a = HashAlgorithm.Create("SHA256");
             string sign = Hasher.GetHash(a, _apiKey + "{\"command_id\":\"24.06.2022 16:49:36\",\"call_id\":\"MToxMDE4MDk0NzoxMDE6NDI4NzA1Njk1OjE=\"}" + _apiSalt);
             return Ok(new string[] { sign, "03bcba3efe9f66a45752e337cb8164dfdf8a0fbf59f4611e36c60a04020759a1" });

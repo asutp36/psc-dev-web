@@ -35,7 +35,6 @@ namespace MangoAPIService.Services
             }
             catch(HttpRequestException e)
             {
-                await Task.Delay(2000);
                 _logger.LogError($"| LoyalityService.HandleNewCall | Перехвачена ошибка во проемя отправки запроса: {e.GetType()}: {e.Message}");
             }
         }
