@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace LoyalityService.Services
 {
     public class PostRCCallerService : IPostRCCaller
-    {
+    { 
         private readonly HttpSender _httpSender;
         private readonly ILogger _logger;
 
@@ -24,6 +24,7 @@ namespace LoyalityService.Services
         {
             try 
             {
+                _logger.LogInformation($"| PostRCCallerService.StartPostAsync | Запускается пост {parameters.DeviceCode} пользователем {parameters.ClientPhone} со скидкой {parameters.Discount}%");
                 HttpResponseMessage response = await _httpSender.PostJsonAsync("api/state/start", JsonConvert.SerializeObject(parameters));
 
                 string content = await response.Content.ReadAsStringAsync();
