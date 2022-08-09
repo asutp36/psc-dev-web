@@ -44,11 +44,11 @@ namespace MangoAPIService.Controllers
             {
                 _logger.LogInformation("Параметры запуска: " + JsonConvert.SerializeObject(parameters));
                 //проверка хэша
-                //if (!Hasher.VerifyHash(HashAlgorithm.Create("SHA256"), parameters.sign, parameters.vpbx_api_key + parameters.json + _apiSalt))
-                //{
-                //    _logger.LogError("Подпись не прошла проверку" + Environment.NewLine);
-                //    return Unauthorized();
-                //}
+                if (!Hasher.VerifyHash(HashAlgorithm.Create("SHA256"), parameters.sign, parameters.vpbx_api_key + parameters.json + _apiSalt))
+                {
+                    _logger.LogError("Подпись не прошла проверку" + Environment.NewLine);
+                    return Unauthorized();
+                }
 
                 // парсинг данных запроса
                 MangoAPIIncomingCall incomingCallInfo = JsonConvert.DeserializeObject<MangoAPIIncomingCall>(parameters.json);
