@@ -139,6 +139,7 @@ namespace LeikaIntegration.Controllers
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.OK:
+                        _logger.LogInformation($"Запущен пост {model.post}. Клиент {model.clientID}, сумма {model.amount}");
                         return Ok();
 
                     case (HttpStatusCode)0:
