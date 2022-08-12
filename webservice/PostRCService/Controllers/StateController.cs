@@ -45,7 +45,7 @@ namespace PostRCService.Controllers
             HttpClient httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri($"http://{deviceIP}/");
 
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/post/discount");
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/post/loyalty/run");
             string json = JsonConvert.SerializeObject(new PostStartingDiscountParameters { discount = model.Discount, clientPhone = model.ClientPhone });
 
             if (!string.IsNullOrEmpty(json))
