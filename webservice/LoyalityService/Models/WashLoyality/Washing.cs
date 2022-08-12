@@ -14,6 +14,7 @@ namespace LoyalityService.Models.WashLoyality
         public int Idprogram { get; set; }
         public int Amount { get; set; }
         public int Discount { get; set; }
+        public Guid? Guid { get; set; }
 
         public virtual Client IdclientNavigation { get; set; }
         public virtual Device IddeviceNavigation { get; set; }

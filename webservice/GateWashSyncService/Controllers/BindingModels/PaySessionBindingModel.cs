@@ -16,5 +16,6 @@ namespace GateWashSyncService.Controllers.BindingModels
         public string fiscalError { get; set; }
         public string dtimeEnd { get; set; }
         public string details { get; set; }
+        public Guid guid { get; set; }
     }
 }

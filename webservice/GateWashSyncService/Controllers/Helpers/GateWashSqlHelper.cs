@@ -304,7 +304,8 @@ namespace GateWashSyncService.Controllers.Helpers
                     Qr = psession.qr,
                     FiscalError = psession.fiscalError,
                     DtimeEnd = DateTime.Parse(psession.dtimeEnd),
-                    Details = psession.details
+                    Details = psession.details,
+                    Guid = psession.guid
                 };
 
                 await _model.PaySession.AddAsync(ps);

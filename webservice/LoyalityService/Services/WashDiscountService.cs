@@ -137,7 +137,8 @@ namespace LoyalityService.Services
                 Amount = washing.Amount,
                 Discount = washing.Discount,
                 Iddevice = await GetDeviceIdByCode(washing.Device),
-                Idprogram = await GetProgramIdByCode(washing.Program)
+                Idprogram = await GetProgramIdByCode(washing.Program),
+                Guid = washing.Guid
             };
 
             await _context.Washings.AddAsync(toAdd);

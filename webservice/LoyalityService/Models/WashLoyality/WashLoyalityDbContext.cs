@@ -295,6 +295,8 @@ namespace LoyalityService.Models.WashLoyality
                     .HasColumnType("datetime")
                     .HasColumnName("DTime");
 
+                entity.Property(e => e.Guid).HasColumnName("GUID");
+
                 entity.Property(e => e.Idclient).HasColumnName("IDClient");
 
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
