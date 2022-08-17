@@ -8,6 +8,6 @@ namespace MangoAPIService.Services
 {
     public interface ILoyalityServiceCaller
     {
-        public void HandleNewCallAsync(CallCacheModel call);
+        public Task HandleNewCallAsync(CallCacheModel call);
     }
 }

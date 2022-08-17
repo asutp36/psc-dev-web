@@ -25,7 +25,7 @@ namespace LoyalityService.Services
             _postRCService = postRC;
         }
 
-        public async Task<int> CalculateDiscountAsync(string terminalCode, long phone)
+        public async Task<Discount> CalculateDiscountAsync(string terminalCode, long phone)
         {
             // получаю группу, в которую входит терминал
             Group group = await GetWashGroupByTerminalCodeAsync(terminalCode);
@@ -40,31 +40,37 @@ namespace LoyalityService.Services
                                            .OrderBy(o => o.ApplyOrder)
                                            .ToListAsync();
 
-            int discount = 0;
+            Discount discount = new Discount();
+            //discount.Percent = 0;
+            //discount.Ruble = 0;
 
             foreach(var p in proms)
             {
                 if (p.EachNwashCondition != null && CheckEachNWashCondition(p.EachNwashCondition, phone)) 
                 {
-                    discount = p.Discount;
+                    discount.Percent = p.Discount ?? 0;
+                    discount.Ruble = p.DiscountRub ?? 0;
                 }
 
                 if (p.HappyHourCondition != null && CheckHappyHourCindition(p.HappyHourCondition)) 
                 {
-                    discount = p.Discount;
+                    discount.Percent = p.Discount ?? 0;
+                    discount.Ruble = p.DiscountRub ?? 0;
                 }
 
                 if (p.HolidayCondition != null && DateTime.Now.Date == p.HolidayCondition.Date.Date) 
                 {
-                    discount = p.Discount;
+                    discount.Percent = p.Discount ?? 0;
+                    discount.Ruble = p.DiscountRub ?? 0;
                 }
 
                 if (p.VipCondition != null && phone == p.VipCondition.Phone) 
                 {
-                    discount = p.Discount;
+                    discount.Percent = p.Discount ?? 0;
+                    discount.Ruble = p.DiscountRub ?? 0;
                 }
 
-                if (discount > 0)
+                if (discount.Percent > 0 || discount.Ruble > 0)
                 {
                     break;
                 }
@@ -136,9 +142,10 @@ namespace LoyalityService.Services
                 Dtime = DateTime.Parse(washing.DTime),
                 Amount = washing.Amount,
                 Discount = washing.Discount,
+                DiscountRub = washing.DiscountRub,
                 Iddevice = await GetDeviceIdByCode(washing.Device),
                 Idprogram = await GetProgramIdByCode(washing.Program),
-                Guid = washing.Guid
+                Guid = new Guid(washing.Guid)
             };
 
             await _context.Washings.AddAsync(toAdd);
@@ -224,7 +231,8 @@ namespace LoyalityService.Services
                     Device = o.IddeviceNavigation.Name,
                     Program = o.IdprogramNavigation.Name,
                     Amount = o.Amount,
-                    Discount = o.Discount
+                    Discount = o.Discount,
+                    DiscountRub = o.DiscountRub ?? 0
                 })
                 .Take(10)
                 .AsEnumerable();
@@ -294,7 +302,7 @@ namespace LoyalityService.Services
 
             currentStatus.CurrentWashCount = await _context.Washings.Where(o => o.IdclientNavigation.Phone == phone).CountAsync() % p.EachNwashCondition.EachN;
             currentStatus.N = p.EachNwashCondition.EachN;
-            currentStatus.Discount = p.Discount;
+            currentStatus.Discount = p.Discount ?? 0;
             return currentStatus;
         }
 
@@ -308,7 +316,7 @@ namespace LoyalityService.Services
             HolidayPromotion result = new HolidayPromotion()
             {
                 Date = p.HolidayCondition.Date,
-                Discount = p.Discount
+                Discount = p.Discount ?? 0
             };
 
             return result;
@@ -325,7 +333,7 @@ namespace LoyalityService.Services
             {
                 BeginHour = p.HappyHourCondition.HourBegin,
                 EndHour = p.HappyHourCondition.HourEnd,
-                Discount = p.Discount
+                Discount = p.Discount ?? 0
             };
 
             return result;

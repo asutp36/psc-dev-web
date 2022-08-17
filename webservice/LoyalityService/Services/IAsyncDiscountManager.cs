@@ -15,7 +15,7 @@ namespace LoyalityService.Services
         /// <param name="terminalCode">Код терминала</param>
         /// <param name="phone">Номер клиента</param>
         /// <returns></returns>
-        Task<int> CalculateDiscountAsync(string terminalCode, long phone);
+        Task<Discount> CalculateDiscountAsync(string terminalCode, long phone);
 
         /// <summary>
         /// Записать новую мойку

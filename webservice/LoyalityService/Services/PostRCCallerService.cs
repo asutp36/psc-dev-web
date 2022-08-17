@@ -24,7 +24,7 @@ namespace LoyalityService.Services
         {
             try 
             {
-                _logger.LogInformation($"| PostRCCallerService.StartPostAsync | Запускается пост {parameters.DeviceCode} пользователем {parameters.ClientPhone} со скидкой {parameters.Discount}%");
+                _logger.LogInformation($"| PostRCCallerService.StartPostAsync | Запускается пост {parameters.DeviceCode} пользователем {parameters.ClientPhone} со скидкой {parameters.DiscountPercent}% или {parameters.DiscountRub}руб");
                 HttpResponseMessage response = await _httpSender.PostJsonAsync("api/state/start", JsonConvert.SerializeObject(parameters));
 
                 string content = await response.Content.ReadAsStringAsync();

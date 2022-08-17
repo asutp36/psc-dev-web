@@ -8,7 +8,8 @@ namespace PostRCService.Controllers.BindingModels
     public class PostStartDicountModel
     {
         public string DeviceCode { get; set; }
-        public int Discount { get; set; }
+        public int DiscountPercent { get; set; }
+        public int DiscountRub { get; set; }
         public long ClientPhone { get; set; }
     }
 }

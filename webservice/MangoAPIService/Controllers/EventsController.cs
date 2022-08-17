@@ -68,12 +68,13 @@ namespace MangoAPIService.Controllers
                     };
 
                     // время жизни вызова в кэше - 5 секунд (с момента, когда последний раз обращались к этому вызову)
-                    _cache.Set(callIdentifier, call, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(5)));
+                    _cache.Set(callIdentifier, call, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(7)));
 
                     // вызов манго API чтобы завершить звонок
                     _mangoApiCallerService.CallHangupAsync(incomingCallInfo.call_id);
 
                     // отправляем на сервис лояльности сообщение о новом вызове
+                    _logger.LogInformation("отправка в лояльность");
                     _loyalityService.HandleNewCallAsync(call);
                 }
 

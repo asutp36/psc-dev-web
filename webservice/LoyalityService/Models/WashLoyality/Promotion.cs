@@ -9,7 +9,8 @@ namespace LoyalityService.Models.WashLoyality
     {
         public int Idpromotion { get; set; }
         public int IdpromotionType { get; set; }
-        public int Discount { get; set; }
+        public int? Discount { get; set; }
+        public int? DiscountRub { get; set; }
         public int Idgroup { get; set; }
         public int ApplyOrder { get; set; }
 

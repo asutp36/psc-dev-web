@@ -13,6 +13,7 @@ namespace LoyalityService.Models
         public string Program { get; set; }
         public int Amount { get; set; }
         public int Discount { get; set; }
-        public Guid? Guid { get; set; }
+        public string Guid { get; set; }
+        public int DiscountRub { get; set; }
     }
 }

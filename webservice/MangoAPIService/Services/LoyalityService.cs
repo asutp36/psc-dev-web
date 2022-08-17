@@ -22,7 +22,7 @@ namespace MangoAPIService.Services
             _logger = logger;
         }
 
-        public async void HandleNewCallAsync(CallCacheModel call)
+        public async Task HandleNewCallAsync(CallCacheModel call)
         {
             try 
             {

@@ -7,7 +7,8 @@ namespace PostRCService.Controllers.BindingModels
 {
     public class PostStartingDiscountParameters
     {
-        public int discount { get; set; }
+        public int discountPercent { get; set; }
+        public int discountRub { get; set; }
         public long clientPhone { get; set; }
     }
 }

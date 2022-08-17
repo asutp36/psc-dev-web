@@ -26,7 +26,7 @@ namespace MangoAPIService.Services
             _salt = salt;
         }
 
-        public async void CallHangupAsync(string call_id)
+        public async Task CallHangupAsync(string call_id)
         {
             // манго апи нужно отправить идентификатор звонка (call_id) и любой идентификатор команды (им неважно какой он)
             MangoAPICallHangup hangup = new MangoAPICallHangup() 
