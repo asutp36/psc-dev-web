@@ -349,6 +349,8 @@ namespace GateWashDataService.Models.GateWashContext
 
                 entity.Property(e => e.FiscalError).HasMaxLength(100);
 
+                entity.Property(e => e.Guid).HasColumnName("GUID");
+
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 
                 entity.Property(e => e.Idprogram).HasColumnName("IDProgram");

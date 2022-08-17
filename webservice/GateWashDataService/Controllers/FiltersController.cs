@@ -76,7 +76,7 @@ namespace GateWashDataService.Controllers
                         else
                             filters.EventKinds.Find(e => e.IdEventKind == ek.IdEventKind).IdWash.Add(ek.IdWash.First());
                 }
-                
+
 
                 filters.Regions = await SqlHelper.GetRegions(_context);
                 //filters.Washes = await SqlHelper.GetWashes(_context);

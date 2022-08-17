@@ -19,5 +19,6 @@ namespace GateWashDataService.Models
         public bool Cheque { get; set; }
         public string Note { get; set; }
         public string Type { get; set; }
+        public float Fee { get; set; }
     }
 }

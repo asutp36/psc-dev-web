@@ -22,6 +22,7 @@ namespace GateWashDataService.Models.GateWashContext
         public string FiscalError { get; set; }
         public DateTime? DtimeEnd { get; set; }
         public string Details { get; set; }
+        public Guid? Guid { get; set; }
 
         public virtual Device IddeviceNavigation { get; set; }
         public virtual Program IdprogramNavigation { get; set; }

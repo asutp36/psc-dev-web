@@ -14,7 +14,8 @@ namespace GateWashDataService.Repositories
     {
         public static IQueryable<IncreaseModel> GetAll(GateWashDbContext context, GetIncreaseParameters param, List<string> washes) 
         {
-            var terminals = GetTerminalsByWashes(context, washes);
+            var terminals = GetTerminalsByWashes(context, washes);                                                   
+
             var result = context.PaySessions.Where(s => (s.DtimeBegin >= param.StartDate) && (s.DtimeBegin <= param.EndDate)
                                                     && (!param.OnlyNotes || (s.Details != null && s.Details != ""))
                                                     && (param.Terminal == null || s.IddeviceNavigation.Code == param.Terminal)
@@ -26,11 +27,12 @@ namespace GateWashDataService.Repositories
                                                   Terminal = s.IddeviceNavigation.Name,
                                                   TerminalCode = s.IddeviceNavigation.Code,
                                                   Program = s.IdprogramNavigation.Name,
-                                                  Revenue = s.PayEvents.Sum(e => e.EventIncrease.Amount),
+                                                  Revenue = (int)(s.PayEvents.Sum(e => e.EventIncrease.Amount) * (1f - (s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Fee ?? 0f))),
                                                   Payout = s.PayEvents.Sum(e => e.EventPayout.Amount),
                                                   Cheque = s.Qr != null && s.Qr != "",
                                                   Note = s.Details,
-                                                  Type = s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Name
+                                                  Type = s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Name,
+                                                  Fee = s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Fee ?? 0f
                                               })
                                               .Where(i => (!param.OnlyBank || i.Bank != 0)
                                                             && (!param.OnlyCash || i.Cash != 0)
