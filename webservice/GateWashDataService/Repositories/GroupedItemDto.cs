@@ -12,6 +12,6 @@ namespace GateWashDataService.Repositories
         public int IdTerminal { get; set; }
         public string TerminalCode { get; set; }
         public string TerminalName { get; set; }
-        public int Value { get; set; }
+        public double Value { get; set; }
     }
 }

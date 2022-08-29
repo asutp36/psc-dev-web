@@ -27,7 +27,7 @@ namespace GateWashDataService.Repositories
                                                   Terminal = s.IddeviceNavigation.Name,
                                                   TerminalCode = s.IddeviceNavigation.Code,
                                                   Program = s.IdprogramNavigation.Name,
-                                                  Revenue = (int)(s.PayEvents.Sum(e => e.EventIncrease.Amount) * (1f - (s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Fee ?? 0f))),
+                                                  Revenue = Math.Round(s.PayEvents.Sum(e => e.EventIncrease.Amount) * (1f - (s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Fee ?? 0f)), 2, MidpointRounding.ToEven),
                                                   Payout = s.PayEvents.Sum(e => e.EventPayout.Amount),
                                                   Cheque = s.Qr != null && s.Qr != "",
                                                   Note = s.Details,
@@ -51,7 +51,19 @@ namespace GateWashDataService.Repositories
                                                                       .ToList();
             var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
-                                                                    .ToList();
+                                                                    .ToList().Select(o => new GroupedIncreaseTypeDto 
+                                                                    {
+                                                                        DTime = o.DTime,
+                                                                        Hour = o.Hour,
+                                                                        IdTerminal = o.IdTerminal,
+                                                                        TerminalCode = o.TerminalCode,
+                                                                        TerminalName = o.TerminalName,
+                                                                        TypeCode = o.TypeCode,
+                                                                        TypeName = o.TypeName,
+                                                                        DisplayOrder = o.DisplayOrder,
+                                                                        Value = Math.Round(o.Value * (1 - o.Fee), 2, MidpointRounding.ToEven)
+                                                                    });
+
             var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
@@ -75,7 +87,7 @@ namespace GateWashDataService.Repositories
                                         TypeCode = key.TypeCode,
                                         TypeName = key.TypeName,
                                         DisplayOrder = key.DisplayOrder,
-                                        Value = val.Sum()
+                                        Value = val.Sum(),
                                     }).ToList();
 
             var pts = payouts.GroupBy(p => new { p.DTime.Date, p.Hour }, v => v.Value,
@@ -99,7 +111,7 @@ namespace GateWashDataService.Repositories
                                               {
                                                   DTime = p.Key.DTime.AddHours(p.Key.Hour),
                                                   Programs = p.Select(p => new GroupedUsedProgramDto { ProgramCode = p.ProgramCode, ProgramName = p.ProgramName, Value = p.Value, DisplayOrder = p.DisplayOrder }),
-                                                  Types = t.Select(t => new GroupedIncreaseTypeDto { TypeCode = t.TypeCode, TypeName = t.TypeName, Value = t.Value, DisplayOrder = t.DisplayOrder })
+                                                  Types = t.Select(t => new GroupedIncreaseTypeDto { TypeCode = t.TypeCode, TypeName = t.TypeName, Value = t.Value, DisplayOrder = t.DisplayOrder})
                                               });
 
             return groupedIncreases.AsQueryable();
@@ -113,7 +125,18 @@ namespace GateWashDataService.Repositories
                                                                       .ToList();
             var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
-                                                                    .ToList();
+                                                                    .ToList().Select(o => new GroupedIncreaseTypeDto
+                                                                    {
+                                                                        DTime = o.DTime,
+                                                                        Hour = o.Hour,
+                                                                        IdTerminal = o.IdTerminal,
+                                                                        TerminalCode = o.TerminalCode,
+                                                                        TerminalName = o.TerminalName,
+                                                                        TypeCode = o.TypeCode,
+                                                                        TypeName = o.TypeName,
+                                                                        DisplayOrder = o.DisplayOrder,
+                                                                        Value = Math.Round(o.Value * (1 - o.Fee), 2, MidpointRounding.ToEven)
+                                                                    });
             var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
@@ -153,7 +176,18 @@ namespace GateWashDataService.Repositories
                                                                       .ToList();
             var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
-                                                                    .ToList();
+                                                                    .ToList().Select(o => new GroupedIncreaseTypeDto
+                                                                    {
+                                                                        DTime = o.DTime,
+                                                                        Hour = o.Hour,
+                                                                        IdTerminal = o.IdTerminal,
+                                                                        TerminalCode = o.TerminalCode,
+                                                                        TerminalName = o.TerminalName,
+                                                                        TypeCode = o.TypeCode,
+                                                                        TypeName = o.TypeName,
+                                                                        DisplayOrder = o.DisplayOrder,
+                                                                        Value = Math.Round(o.Value * (1 - o.Fee), 2, MidpointRounding.ToEven)
+                                                                    });
             var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
@@ -215,7 +249,19 @@ namespace GateWashDataService.Repositories
                                                                       .ToList();
             var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
-                                                                    .ToList();
+                                                                    .ToList().Select(o => new GroupedIncreaseTypeDto
+                                                                    {
+                                                                        DTime = o.DTime,
+                                                                        Hour = o.Hour,
+                                                                        IdTerminal = o.IdTerminal,
+                                                                        TerminalCode = o.TerminalCode,
+                                                                        TerminalName = o.TerminalName,
+                                                                        TypeCode = o.TypeCode,
+                                                                        TypeName = o.TypeName,
+                                                                        DisplayOrder = o.DisplayOrder,
+                                                                        Value = Math.Round(o.Value * (1 - o.Fee), 2, MidpointRounding.ToEven)
+                                                                    });
+
             var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
@@ -318,7 +364,7 @@ namespace GateWashDataService.Repositories
             var types = context.EventIncreases.Include(pe => pe.IdpayEventNavigation).ThenInclude(d => d.IddeviceNavigation)
                                               .Include(t => t.IdpayEventNavigation.IdeventKindNavigation)
                                               .Where(d => terminals.Contains(d.IdpayEventNavigation.IddeviceNavigation.Code))
-                                              .GroupBy(k => new { k.IdpayEventNavigation.Dtime.Date, k.IdpayEventNavigation.Dtime.Hour, k.IdpayEventNavigation.Iddevice, DeviceCode = k.IdpayEventNavigation.IddeviceNavigation.Code, DeviceName = k.IdpayEventNavigation.IddeviceNavigation.Name, k.IdpayEventNavigation.IdeventKindNavigation.Code, k.IdpayEventNavigation.IdeventKindNavigation.Name, k.IdpayEventNavigation.IdeventKindNavigation.DisplayOrder },
+                                              .GroupBy(k => new { k.IdpayEventNavigation.Dtime.Date, k.IdpayEventNavigation.Dtime.Hour, k.IdpayEventNavigation.Iddevice, DeviceCode = k.IdpayEventNavigation.IddeviceNavigation.Code, DeviceName = k.IdpayEventNavigation.IddeviceNavigation.Name, k.IdpayEventNavigation.IdeventKindNavigation.Code, k.IdpayEventNavigation.IdeventKindNavigation.Name, k.IdpayEventNavigation.IdeventKindNavigation.DisplayOrder, k.IdpayEventNavigation.IdeventKindNavigation.Fee },
                                                        v => v.Amount,
                                                        (key, val) => new GroupedIncreaseTypeDto
                                                        {
@@ -330,7 +376,8 @@ namespace GateWashDataService.Repositories
                                                            TypeCode = key.Code,
                                                            TypeName = key.Name,
                                                            DisplayOrder = key.DisplayOrder,
-                                                           Value = val.Sum()
+                                                           Value = val.Sum(),
+                                                           Fee = key.Fee ?? 0
                                                        });
 
             return types;
@@ -365,7 +412,18 @@ namespace GateWashDataService.Repositories
                                                                       .ToList();
             var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
-                                                                    .ToList();
+                                                                    .ToList().Select(o => new GroupedIncreaseTypeDto
+                                                                    {
+                                                                        DTime = o.DTime,
+                                                                        Hour = o.Hour,
+                                                                        IdTerminal = o.IdTerminal,
+                                                                        TerminalCode = o.TerminalCode,
+                                                                        TerminalName = o.TerminalName,
+                                                                        TypeCode = o.TypeCode,
+                                                                        TypeName = o.TypeName,
+                                                                        DisplayOrder = o.DisplayOrder,
+                                                                        Value = Math.Round(o.Value * (1 - o.Fee), 2, MidpointRounding.ToEven)
+                                                                    });
             var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();
@@ -426,7 +484,18 @@ namespace GateWashDataService.Repositories
                                                                       .ToList();
             var types = GetIncreaseTypesByDayWithTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
-                                                                    .ToList();
+                                                                    .ToList().Select(o => new GroupedIncreaseTypeDto
+                                                                    {
+                                                                        DTime = o.DTime,
+                                                                        Hour = o.Hour,
+                                                                        IdTerminal = o.IdTerminal,
+                                                                        TerminalCode = o.TerminalCode,
+                                                                        TerminalName = o.TerminalName,
+                                                                        TypeCode = o.TypeCode,
+                                                                        TypeName = o.TypeName,
+                                                                        DisplayOrder = o.DisplayOrder,
+                                                                        Value = Math.Round(o.Value * (1 - o.Fee), 2, MidpointRounding.ToEven)
+                                                                    });
             var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
                                                                     .ToList();

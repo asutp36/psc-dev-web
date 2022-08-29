@@ -11,6 +11,7 @@ namespace GateWashDataService.Repositories
         public string TypeCode { get; set; }
         public string TypeName { get; set; }
         public int DisplayOrder { get; set; }
+        public float Fee { get; set; }
 
         public bool Equals([AllowNull] GroupedIncreaseTypeDto other)
         {

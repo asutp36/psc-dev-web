@@ -63,7 +63,7 @@ namespace GateWashDataService.Controllers
                                                 ProgramsDescription = string.Join(", ", i.Programs),
                                                 TypesDescription = string.Join(", ", i.Types),
                                                 Amount = i.Types.Sum(t => t.Value),
-                                                ProgramCount = i.Programs.Sum(p => p.Value)
+                                                ProgramCount = (int)i.Programs.Sum(p => p.Value)
                                             });
             string sortingRule = "";
             if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
@@ -132,7 +132,7 @@ namespace GateWashDataService.Controllers
                                                 ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
                                                 TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
                                                 Amount = i.Types.Sum(t => t.Value),
-                                                ProgramCount = i.Programs.Sum(p => p.Value)
+                                                ProgramCount = (int)i.Programs.Sum(p => p.Value)
                                             });
 
             string sortingRule = "";
@@ -164,7 +164,7 @@ namespace GateWashDataService.Controllers
                                                 ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
                                                 TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
                                                 Amount = i.Types.Sum(t => t.Value),
-                                                ProgramCount = i.Programs.Sum(p => p.Value)
+                                                ProgramCount = (int)i.Programs.Sum(p => p.Value)
                                             });
 
             string sortingRule = "";
@@ -194,7 +194,7 @@ namespace GateWashDataService.Controllers
                                                 ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
                                                 TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
                                                 Amount = i.Types.Sum(t => t.Value),
-                                                ProgramCount = i.Programs.Sum(p => p.Value)
+                                                ProgramCount = (int)i.Programs.Sum(p => p.Value)
                                             });
 
             string sortingRule = "";
@@ -226,7 +226,7 @@ namespace GateWashDataService.Controllers
                                                 ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
                                                 TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
                                                 Amount = i.Types.Sum(t => t.Value),
-                                                ProgramCount = i.Programs.Sum(p => p.Value)
+                                                ProgramCount = (int)i.Programs.Sum(p => p.Value)
                                             });
 
             string sortingRule = "";
@@ -256,7 +256,7 @@ namespace GateWashDataService.Controllers
                                                  ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
                                                  TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
                                                  Amount = i.Types.Sum(t => t.Value),
-                                                 ProgramCount = i.Programs.Sum(p => p.Value)
+                                                 ProgramCount = (int)i.Programs.Sum(p => p.Value)
                                              });
 
             string sortingRule = "";
@@ -288,7 +288,7 @@ namespace GateWashDataService.Controllers
                                                  ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
                                                  TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
                                                  Amount = i.Types.Sum(t => t.Value),
-                                                 ProgramCount = i.Programs.Sum(p => p.Value)
+                                                 ProgramCount = (int)i.Programs.Sum(p => p.Value)
                                              });
 
             string sortingRule = "";
