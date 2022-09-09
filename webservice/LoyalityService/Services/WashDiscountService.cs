@@ -302,8 +302,8 @@ namespace LoyalityService.Services
 
             currentStatus.CurrentWashCount = await _context.Washings.Where(o => o.IdclientNavigation.Phone == phone).CountAsync() % p.EachNwashCondition.EachN;
             currentStatus.N = p.EachNwashCondition.EachN;
-            currentStatus.Discount = p.Discount ?? 0;
-            currentStatus.DiscountRub = p.DiscountRub ?? 0;
+            currentStatus.Discount = p.Discount;
+            currentStatus.DiscountRub = p.DiscountRub;
             return currentStatus;
         }
 
@@ -317,8 +317,8 @@ namespace LoyalityService.Services
             HolidayPromotion result = new HolidayPromotion()
             {
                 Date = p.HolidayCondition.Date,
-                Discount = p.Discount ?? 0,
-                DiscountRub = p.DiscountRub ?? 0
+                Discount = p.Discount,
+                DiscountRub = p.DiscountRub
             };
 
             return result;
@@ -335,8 +335,8 @@ namespace LoyalityService.Services
             {
                 BeginHour = p.HappyHourCondition.HourBegin,
                 EndHour = p.HappyHourCondition.HourEnd,
-                Discount = p.Discount ?? 0,
-                DiscountRub = p.DiscountRub ?? 0
+                Discount = p.Discount,
+                DiscountRub = p.DiscountRub
             };
 
             return result;

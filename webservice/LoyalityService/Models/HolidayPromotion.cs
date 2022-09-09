@@ -7,8 +7,8 @@ namespace LoyalityService.Models
 {
     public class HolidayPromotion
     {
-        public int Discount { get; set; }
-        public int DiscountRub { get; set; }
+        public int? Discount { get; set; }
+        public int? DiscountRub { get; set; }
         public DateTime Date { get; set; }
     }
 }

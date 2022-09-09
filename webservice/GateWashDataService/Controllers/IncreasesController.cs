@@ -97,6 +97,16 @@ namespace GateWashDataService.Controllers
 
             return Ok(result);
         }
+        
+        [Authorize]
+        [HttpGet("total_count")]
+        public async Task<IActionResult> GetTotalCount([FromQuery] GetIncreaseParameters parameters)
+        {
+            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            IQueryable<IncreaseModel> increases = IncreasesRepository.GetAll(_context, parameters, washes).ToList().AsQueryable();
+
+            return Ok(increases.Count());
+        }
 
         [Authorize]
         [HttpGet("commulative-total")]
@@ -151,6 +161,24 @@ namespace GateWashDataService.Controllers
         }
 
         [Authorize]
+        [HttpGet("hours/total_count")]
+        public async Task<IActionResult> GetByHoursTotalCount([FromQuery] GetIncreaseParameters parameters)
+        {
+            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            var increases = IncreasesRepository.GetGroupedByHour(_context, parameters, washes)
+                                            .Select(i => new GroupedIncreaseModel
+                                            {
+                                                DTime = i.DTime,
+                                                ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
+                                                TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
+                                                Amount = i.Types.Sum(t => t.Value),
+                                                ProgramCount = (int)i.Programs.Sum(p => p.Value)
+                                            });
+
+            return Ok(increases.Count());
+        }
+
+        [Authorize]
         [HttpGet("hours/split-terminals")]
         public async Task<IActionResult> GetByHoursSplitTerminals([FromQuery] GetIncreaseParameters parameters)
         {
@@ -183,6 +211,26 @@ namespace GateWashDataService.Controllers
         }
 
         [Authorize]
+        [HttpGet("hours/split-terminals/total_count")]
+        public async Task<IActionResult> GetByHoursSplitTerminalsTotalCount([FromQuery] GetIncreaseParameters parameters)
+        {
+            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            var increases = IncreasesRepository.GetGroupedByHourSplitTerminals(_context, parameters, washes)
+                                            .Select(i => new GroupedIncreaseModel
+                                            {
+                                                DTime = i.DTime,
+                                                Terminal = i.Terminal,
+                                                TerminalCode = i.TerminalCode,
+                                                ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
+                                                TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
+                                                Amount = i.Types.Sum(t => t.Value),
+                                                ProgramCount = (int)i.Programs.Sum(p => p.Value)
+                                            });
+
+            return Ok(increases.Count());
+        }
+
+        [Authorize]
         [HttpGet("days")]
         public async Task<IActionResult> GetByDays([FromQuery] GetIncreaseParameters parameters)
         {
@@ -210,6 +258,24 @@ namespace GateWashDataService.Controllers
             PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet("days/total_count")]
+        public async Task<IActionResult> GetByDaysTotalCount([FromQuery] GetIncreaseParameters parameters)
+        {
+            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            var increases = IncreasesRepository.GetGroupedByDay(_context, parameters, washes)
+                                            .Select(i => new GroupedIncreaseModel
+                                            {
+                                                DTime = i.DTime,
+                                                ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
+                                                TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
+                                                Amount = i.Types.Sum(t => t.Value),
+                                                ProgramCount = (int)i.Programs.Sum(p => p.Value)
+                                            });
+
+            return Ok(increases.Count());
         }
 
         [Authorize]
@@ -245,6 +311,26 @@ namespace GateWashDataService.Controllers
         }
 
         [Authorize]
+        [HttpGet("days/split-terminals/total_count")]
+        public async Task<IActionResult> GetByDaysSplitTerminalsTotalCount([FromQuery] GetIncreaseParameters parameters)
+        {
+            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            var increases = IncreasesRepository.GetGroupedByDaySplitTerminals(_context, parameters, washes)
+                                            .Select(i => new GroupedIncreaseModel
+                                            {
+                                                DTime = i.DTime,
+                                                Terminal = i.Terminal,
+                                                TerminalCode = i.TerminalCode,
+                                                ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
+                                                TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
+                                                Amount = i.Types.Sum(t => t.Value),
+                                                ProgramCount = (int)i.Programs.Sum(p => p.Value)
+                                            });
+
+            return Ok(increases.Count());
+        }
+
+        [Authorize]
         [HttpGet("months")]
         public async Task<IActionResult> GetByMonths([FromQuery] GetIncreaseParameters parameters)
         {
@@ -272,6 +358,24 @@ namespace GateWashDataService.Controllers
             PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet("months/total_count")]
+        public async Task<IActionResult> GetByMonthsTotalCount([FromQuery] GetIncreaseParameters parameters)
+        {
+            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            var increases = IncreasesRepository.GetGroupedByMonth(_context, parameters, washes)
+                                             .Select(i => new GroupedIncreaseModel
+                                             {
+                                                 DTime = i.DTime,
+                                                 ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
+                                                 TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
+                                                 Amount = i.Types.Sum(t => t.Value),
+                                                 ProgramCount = (int)i.Programs.Sum(p => p.Value)
+                                             });
+
+            return Ok(increases.Count());
         }
 
         [Authorize]
@@ -304,6 +408,26 @@ namespace GateWashDataService.Controllers
             PagedList<GroupedIncreaseModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet("months/split-terminals/total_count")]
+        public async Task<IActionResult> GetByMonthsSplitTerminalsTotalCount([FromQuery] GetIncreaseParameters parameters)
+        {
+            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            var increases = IncreasesRepository.GetGroupedByMonthSplitTerminals(_context, parameters, washes)
+                                             .Select(i => new GroupedIncreaseModel
+                                             {
+                                                 DTime = i.DTime,
+                                                 Terminal = i.Terminal,
+                                                 TerminalCode = i.TerminalCode,
+                                                 ProgramsDescription = string.Join(", ", i.Programs.OrderBy(p => p.DisplayOrder)),
+                                                 TypesDescription = string.Join(", ", i.Types.OrderBy(t => t.DisplayOrder)),
+                                                 Amount = i.Types.Sum(t => t.Value),
+                                                 ProgramCount = (int)i.Programs.Sum(p => p.Value)
+                                             });
+
+            return Ok(increases.Count());
         }
     }
 }

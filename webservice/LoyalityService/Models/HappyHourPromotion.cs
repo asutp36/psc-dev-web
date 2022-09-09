@@ -7,8 +7,8 @@ namespace LoyalityService.Models
 {
     public class HappyHourPromotion
     {
-        public int Discount { get; set; }
-        public int DiscountRub { get; set; }
+        public int? Discount { get; set; }
+        public int? DiscountRub { get; set; }
         public int BeginHour { get; set; }
         public int EndHour { get; set; }
     }
