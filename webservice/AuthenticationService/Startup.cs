@@ -66,6 +66,18 @@ namespace AuthenticationService
                 });
 
                 s.EnableAnnotations();
+
+                s.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Значение заголовка JWT авторизации.\nФормат: Bearer *token*",
+                });
+
+                s.OperationFilter<AuthOperationFilter>();
             });
         }
 
