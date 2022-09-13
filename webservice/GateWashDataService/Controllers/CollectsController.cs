@@ -36,7 +36,7 @@ namespace GateWashDataService.Controllers
             return Ok(result);
         }
 
-        [HttpGet("count")]
+        [HttpGet("total_count")]
         public async Task<IActionResult> GetCount([FromQuery] GetCollectsParameters parameters)
         {
             List<CollectModel> collects = SqlHelper.GetCollects(_context, parameters);
