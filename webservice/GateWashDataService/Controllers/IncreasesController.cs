@@ -97,7 +97,7 @@ namespace GateWashDataService.Controllers
 
             return Ok(result);
         }
-        
+
         [Authorize]
         [HttpGet("total_count")]
         public async Task<IActionResult> GetTotalCount([FromQuery] GetIncreaseParameters parameters)
@@ -117,7 +117,7 @@ namespace GateWashDataService.Controllers
 
             string sortingRule = "";
             if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
-                sortingRule = "Dtime desc";
+                sortingRule = "Dtime asc";
             else
                 sortingRule = $"{parameters.Sorting.Field} {parameters.Sorting.Direction},Dtime desc,TerminalCode asc";
 
@@ -128,6 +128,61 @@ namespace GateWashDataService.Controllers
             PagedList<IncreaseCommulativeTotalModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet("commulative-total/graphic")]
+        public async Task<IActionResult> GetCommulativeTotalSplitTerminalsGraphic([FromQuery] GetIncreaseParameters parameters)
+        {
+            var washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            IQueryable<IncreaseCommulativeTotalModel> increases = IncreasesRepository.GetCommulativeTotalSplitTerminals(_context, parameters, washes);
+
+            string sortingRule = "";
+            if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
+                sortingRule = "Dtime asc";
+            else
+                sortingRule = $"{parameters.Sorting.Field} {parameters.Sorting.Direction},Dtime desc,TerminalCode asc";
+
+            //increases = Sort(increases, sortingRule);
+
+            PagedList<IncreaseCommulativeTotalModel> result = PagedList<IncreaseCommulativeTotalModel>.ToPagedList(increases, parameters.Paging);
+
+            PagedList<IncreaseCommulativeTotalModel>.PrepareHTTPResponseMetadata(Response, result);
+
+            GraphicsDataModel graphic = new GraphicsDataModel();
+            graphic.Labels = result.Select(o => o.DTime).Distinct().ToList();
+            List<string> datasetLabels = result.Select(o => o.Terminal).Distinct().ToList();
+            graphic.Datasets = new List<Dataset>();
+            foreach (string label in datasetLabels)
+            {
+                graphic.Datasets.Add(new Dataset() { Data = new List<int>(), Label = label });
+            }
+
+            foreach(DateTime dt in graphic.Labels)
+            {
+                var x = result.Where(o => (o.DTime - dt).Duration() <= TimeSpan.Parse("00:00:01")).ToList();
+                foreach(Dataset dataset in graphic.Datasets)
+                {
+                    var val = x.Find(o => o.Terminal == dataset.Label);
+                    if (val != null)
+                    {
+                        dataset.Data.Add(val.Amount);
+                    }
+                    else
+                    {
+                        if(dataset.Data.Count == 0)
+                        {
+                            dataset.Data.Add(0);
+                        }
+                        else
+                        {
+                            dataset.Data.Add(dataset.Data.Last());
+                        }
+                    }
+                }
+            }
+
+            return Ok(graphic);
         }
 
         [Authorize]
