@@ -3,6 +3,7 @@ using GateWashDataService.Models.GateWashContext;
 using GateWashDataService.Models.GateWashContext.StoredProcedures;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,14 @@ namespace GateWashDataService.Repositories
 {
     public class GraphicsRepository
     {
+        private readonly ILogger<GraphicsRepository> _logger;
+
         private readonly GateWashDbContext _model;
         private readonly WashesRepository _washesRepository;
 
-        public GraphicsRepository(GateWashDbContext model, WashesRepository washesRepository)
+        public GraphicsRepository(ILogger<GraphicsRepository> logger, GateWashDbContext model, WashesRepository washesRepository)
         {
+            _logger = logger;
             _model = model;
             _washesRepository = washesRepository;
         }
@@ -31,43 +35,51 @@ namespace GateWashDataService.Repositories
         /// <returns>Данные для отображения графика</returns>
         public async Task<GraphicsDataModel> GetCommulativeTotalSplitTerminalsGrapgicDataAsync(DateTime dtimeStart, DateTime dtimeEnd, IEnumerable<string> washCodes, string eventKindCode = null)
         {
-            var dataToMakeGraphic = await GetCommulativeTotalSplitTerminalsAsync(dtimeStart, dtimeEnd, washCodes, eventKindCode);
-
-            GraphicsDataModel graphic = new GraphicsDataModel();
-            graphic.Labels = await dataToMakeGraphic.Select(o => o.DTime).Distinct().ToListAsync();
-            List<string> datasetLabels = await dataToMakeGraphic.Select(o => o.Terminal).Distinct().ToListAsync();
-            graphic.Datasets = new List<Dataset>();
-
-            foreach (string label in datasetLabels)
+            try
             {
-                graphic.Datasets.Add(new Dataset() { Data = new List<int>(), Label = label });
-            }
+                var dataToMakeGraphic = await GetCommulativeTotalSplitTerminalsAsync(dtimeStart, dtimeEnd, washCodes, eventKindCode);
 
-            foreach (DateTime dt in graphic.Labels)
-            {
-                var pointXAxis = await dataToMakeGraphic.Where(o => (o.DTime - dt).Duration() <= TimeSpan.Parse("00:00:01")).ToListAsync();
-                foreach (Dataset dataset in graphic.Datasets)
+                GraphicsDataModel graphic = new GraphicsDataModel();
+                graphic.Labels = dataToMakeGraphic.Select(o => o.DTime).Distinct().ToList();
+                List<string> datasetLabels = dataToMakeGraphic.Select(o => o.Terminal).Distinct().ToList();
+                graphic.Datasets = new List<Dataset>();
+
+                foreach (string label in datasetLabels)
                 {
-                    var val = pointXAxis.Find(o => o.Terminal == dataset.Label);
-                    if (val != null)
+                    graphic.Datasets.Add(new Dataset() { Data = new List<int>(), Label = label });
+                }
+
+                foreach (DateTime dt in graphic.Labels)
+                {
+                    var pointXAxis = dataToMakeGraphic.Where(o => (o.DTime - dt).Duration() <= TimeSpan.Parse("00:00:01")).ToList();
+                    foreach (Dataset dataset in graphic.Datasets)
                     {
-                        dataset.Data.Add(val.Amount);
-                    }
-                    else
-                    {
-                        if (dataset.Data.Count == 0)
+                        var val = pointXAxis.Find(o => o.Terminal == dataset.Label);
+                        if (val != null)
                         {
-                            dataset.Data.Add(0);
+                            dataset.Data.Add(val.Amount);
                         }
                         else
                         {
-                            dataset.Data.Add(dataset.Data.Last());
+                            if (dataset.Data.Count == 0)
+                            {
+                                dataset.Data.Add(0);
+                            }
+                            else
+                            {
+                                dataset.Data.Add(dataset.Data.Last());
+                            }
                         }
                     }
                 }
-            }
 
-            return graphic;
+                return graphic;
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message + e.StackTrace);
+                return null;
+            }
         }
 
         /// <summary>
@@ -80,7 +92,7 @@ namespace GateWashDataService.Repositories
         {
             string terminalCodes = "";
             var terminals = await _washesRepository.GetTerminalsByWashesAsync(washes);
-            terminalCodes = string.Join(", ", terminals);
+            terminalCodes = string.Join(", ", terminals.Select(t => t.Code));
 
             SqlParameter p_DTimeBegin = new SqlParameter("@p_DTimeBegin", dtimeStart);
             SqlParameter p_DTimeEnd = new SqlParameter("@p_DTimeEnd", dtimeEnd);
@@ -96,7 +108,7 @@ namespace GateWashDataService.Repositories
                     Terminal = i.TerminalName,
                     TerminalCode = i.Code,
                     Amount = i.Total,
-                });
+                }).ToList();
 
             return res.AsQueryable();
         }

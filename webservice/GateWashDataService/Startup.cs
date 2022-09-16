@@ -1,6 +1,7 @@
 using GateWashDataService.Extentions;
 using GateWashDataService.Models;
 using GateWashDataService.Models.GateWashContext;
+using GateWashDataService.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -95,6 +96,10 @@ namespace GateWashDataService
 
                 c.OperationFilter<AuthOperationFilter>();
             });
+
+            services.AddTransient<WashesRepository>();
+
+            services.AddTransient<GraphicsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
