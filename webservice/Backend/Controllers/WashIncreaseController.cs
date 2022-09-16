@@ -23,10 +23,10 @@ namespace Backend.Controllers
         private readonly ILogger<WashIncreaseController> _logger;
         private ModelDbContext _model;
 
-        public WashIncreaseController(ILogger<WashIncreaseController> logger)
+        public WashIncreaseController(ILogger<WashIncreaseController> logger, ModelDbContext model)
         {
             _logger = logger;
-            _model = new ModelDbContext();
+            _model = model;
         }
         
 
@@ -64,9 +64,9 @@ namespace Backend.Controllers
                 SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
 
-                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashs1 @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode);
+                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashs1 @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode).ToList();
 
-                PagedList<GetIncreaseByWashs_Result> pagedResult = PagedList<GetIncreaseByWashs_Result>.ToPagedList(result, paging);
+                PagedList<GetIncreaseByWashs_Result> pagedResult = PagedList<GetIncreaseByWashs_Result>.ToPagedList(result.AsQueryable(), paging);
 
                 PagedList<GetIncreaseByWashs_Result>.PrepareHTTPResponseMetadata(Response, pagedResult);
 
@@ -155,9 +155,9 @@ namespace Backend.Controllers
                 SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
 
-                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashsAfterLastCollect1 @p_RegionCode, @p_WashCode", p_RegionCode, p_WashCode);
+                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashsAfterLastCollect1 @p_RegionCode, @p_WashCode", p_RegionCode, p_WashCode).ToList();
 
-                PagedList<GetIncreaseByWashs_Result> pagedResult = PagedList<GetIncreaseByWashs_Result>.ToPagedList(result, paging);
+                PagedList<GetIncreaseByWashs_Result> pagedResult = PagedList<GetIncreaseByWashs_Result>.ToPagedList(result.AsQueryable(), paging);
                 PagedList<GetIncreaseByWashs_Result>.PrepareHTTPResponseMetadata(Response, pagedResult);
 
                 return Ok(pagedResult);
@@ -242,9 +242,9 @@ namespace Backend.Controllers
                 SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
 
-                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashsBetweenTwoLastCollects1 @p_RegionCode, @p_WashCode", p_RegionCode, p_WashCode);
+                var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashsBetweenTwoLastCollects1 @p_RegionCode, @p_WashCode", p_RegionCode, p_WashCode).ToList();
 
-                PagedList<GetIncreaseByWashs_Result> pagedResult = PagedList<GetIncreaseByWashs_Result>.ToPagedList(result, paging);
+                PagedList<GetIncreaseByWashs_Result> pagedResult = PagedList<GetIncreaseByWashs_Result>.ToPagedList(result.AsQueryable(), paging);
                 PagedList<GetIncreaseByWashs_Result>.PrepareHTTPResponseMetadata(Response, pagedResult);
 
                 return Ok(pagedResult);
@@ -315,9 +315,9 @@ namespace Backend.Controllers
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                 SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                var procedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPosts1 @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode);
+                var procedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPosts1 @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode).ToList();
 
-                PagedList<GetIncreaseByPosts_Result> pagedResult = PagedList<GetIncreaseByPosts_Result>.ToPagedList(procedureResult, paging);
+                PagedList<GetIncreaseByPosts_Result> pagedResult = PagedList<GetIncreaseByPosts_Result>.ToPagedList(procedureResult.AsQueryable(), paging);
                 PagedList<GetIncreaseByPosts_Result>.PrepareHTTPResponseMetadata(Response, pagedResult);
 
                 return Ok(pagedResult);
@@ -373,9 +373,9 @@ namespace Backend.Controllers
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                 SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                var procedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPostsAfterLastCollect1 @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
+                var procedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPostsAfterLastCollect1 @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode).ToList();
 
-                PagedList<GetIncreaseByPosts_Result> pagedResult = PagedList<GetIncreaseByPosts_Result>.ToPagedList(procedureResult, paging);
+                PagedList<GetIncreaseByPosts_Result> pagedResult = PagedList<GetIncreaseByPosts_Result>.ToPagedList(procedureResult.AsQueryable(), paging);
                 PagedList<GetIncreaseByPosts_Result>.PrepareHTTPResponseMetadata(Response, pagedResult);
 
                 return Ok(pagedResult);
@@ -428,9 +428,9 @@ namespace Backend.Controllers
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                 SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                var procedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPostsBetweenTwoLastCollects1 @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
+                var procedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPostsBetweenTwoLastCollects1 @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode).ToList();
 
-                PagedList<GetIncreaseByPosts_Result> pagedResult = PagedList<GetIncreaseByPosts_Result>.ToPagedList(procedureResult, paging);
+                PagedList<GetIncreaseByPosts_Result> pagedResult = PagedList<GetIncreaseByPosts_Result>.ToPagedList(procedureResult.AsQueryable(), paging);
                 PagedList<GetIncreaseByPosts_Result>.PrepareHTTPResponseMetadata(Response, pagedResult);
 
                 return Ok(pagedResult);
@@ -485,9 +485,9 @@ namespace Backend.Controllers
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                 SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                var result = _model.Set<GetIncreaseByEvents_Result>().FromSqlRaw("GetIncreaseByEvents @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode);
+                var result = _model.Set<GetIncreaseByEvents_Result>().FromSqlRaw("GetIncreaseByEvents @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode).ToList();
 
-                PagedList<GetIncreaseByEvents_Result> pagedResult = PagedList<GetIncreaseByEvents_Result>.ToPagedList(result, paging);
+                PagedList<GetIncreaseByEvents_Result> pagedResult = PagedList<GetIncreaseByEvents_Result>.ToPagedList(result.AsQueryable(), paging);
                 PagedList<GetIncreaseByEvents_Result>.PrepareHTTPResponseMetadata(Response, pagedResult);
 
                 return Ok(pagedResult);
@@ -542,9 +542,9 @@ namespace Backend.Controllers
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                 SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                var procedureResult = _model.Set<GetIncreaseByEvents_Result>().FromSqlRaw("GetIncreaseByEventsAfterLastCollect @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
+                var procedureResult = _model.Set<GetIncreaseByEvents_Result>().FromSqlRaw("GetIncreaseByEventsAfterLastCollect @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode).ToList();
 
-                PagedList<GetIncreaseByEvents_Result> pagedResult = PagedList<GetIncreaseByEvents_Result>.ToPagedList(procedureResult, paging);
+                PagedList<GetIncreaseByEvents_Result> pagedResult = PagedList<GetIncreaseByEvents_Result>.ToPagedList(procedureResult.AsQueryable(), paging);
                 PagedList<GetIncreaseByEvents_Result>.PrepareHTTPResponseMetadata(Response, pagedResult);
 
                 return Ok(pagedResult);
@@ -597,9 +597,9 @@ namespace Backend.Controllers
                 SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
                 SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
 
-                var procedureResult = _model.Set<GetIncreaseByEvents_Result>().FromSqlRaw("GetIncreaseByEventsBetweenTwoLastCollects @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
+                var procedureResult = _model.Set<GetIncreaseByEvents_Result>().FromSqlRaw("GetIncreaseByEventsBetweenTwoLastCollects @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode).ToList();
 
-                PagedList<GetIncreaseByEvents_Result> pagedResult = PagedList<GetIncreaseByEvents_Result>.ToPagedList(procedureResult, paging);
+                PagedList<GetIncreaseByEvents_Result> pagedResult = PagedList<GetIncreaseByEvents_Result>.ToPagedList(procedureResult.AsQueryable(), paging);
                 PagedList<GetIncreaseByEvents_Result>.PrepareHTTPResponseMetadata(Response, pagedResult);
 
                 return Ok(pagedResult);
