@@ -100,5 +100,46 @@ namespace AuthenticationService.Controllers
                 return BadRequest(new ErrorModel() { ErrorType = "badvalue", Alert = "Некорректные входные параметры", ErrorCode = "Ошибка валидации", ErrorMessage = "Проверьте правильность введенных данных и попробуйте снова" });
             return Token(login);
         }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить всех пользователей")]
+        [SwaggerResponse(200, Type = typeof(List<AccountViewModel>))]
+        [SwaggerResponse(500, Type = typeof(ErrorModel))]
+        #endregion
+        [HttpGet]
+        public IActionResult Get()
+        {
+            try
+            {
+                List<AccountViewModel> result = new List<AccountViewModel>();
+
+                List<User> users = _context.Users.ToList();
+                foreach (User u in users)
+                {
+                    List<string> washes = new List<string>();
+
+                    List<UserWash> washIDs = _context.UserWashes.Where(uw => uw.Iduser == u.Iduser).ToList();
+                    foreach (UserWash w in washIDs)
+                        washes.Add(w.WashCode);
+
+                    result.Add(new AccountViewModel
+                    {
+                        Login = u.Login,
+                        Name = u.Name,
+                        Email = u.Email,
+                        Phone = u.Phone,
+                        Role = _context.Roles.Find(u.Idrole).Code,
+                        Washes = washes
+                    });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                //_logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new ErrorModel() { ErrorType = "unexpected", Alert = "Что-то пошло не так в ходе работы сервера", ErrorCode = "Ошибка при обращении к серверу", ErrorMessage = "Попробуйте снова или обратитесь к специалисту" });
+            }
+        }
     }
 }
