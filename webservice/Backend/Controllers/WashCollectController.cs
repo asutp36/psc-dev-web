@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Backend.Controllers.Supplies;
 using Backend.Controllers.Supplies.Stored_Procedures;
+using Backend.Extentions;
 using Backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -27,7 +28,55 @@ namespace Backend.Controllers
         #endregion
         [Authorize]
         [HttpGet("washs")]
-        public IActionResult GetByWashs(string startDate, string endDate, int regionCode = 0, string washCode = "")
+        public IActionResult GetByWashs([FromQuery]PagingParameter paging, string startDate, string endDate, int regionCode = 0, string washCode = "")
+        {
+            try
+            {
+                if (washCode == "")
+                {
+                    UserInfo uInfo = new UserInfo(User.Claims.ToList());
+                    List<WashViewModel> washes = uInfo.GetWashes();
+
+                    for (int i = 0; i < washes.Count; i++)
+                    {
+                        if (i == washes.Count - 1)
+                        {
+                            washCode += washes.ElementAt(i).code;
+                            continue;
+                        }
+
+                        washCode += washes.ElementAt(i).code + ", ";
+                    }
+                }
+
+                SqlParameter p_dateBeg = new SqlParameter("@p_DateBeg", startDate);
+                SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", endDate);
+                SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+
+                var result = _model.Set<GetCollectByWashs_Result>().FromSqlRaw("GetCollectByWashs @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode).ToList();
+
+                PagedList<GetCollectByWashs_Result> pagedResult = PagedList<GetCollectByWashs_Result>.ToPagedList(result.AsQueryable(), paging);
+
+                PagedList<GetCollectByWashs_Result>.PrepareHTTPResponseMetadata(Response, pagedResult);
+
+                return Ok(pagedResult);
+            }
+            catch (Exception e)
+            {
+                //_logger.LogError("GetByWashs: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
+            }
+        }
+
+        #region Swagger description
+        [SwaggerOperation(Summary = "Данные для страницы инкассации по мойкам: количество строк")]
+        [SwaggerResponse(200, Type = typeof(GetCollectByWashs_Result))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpGet("washs/total_count")]
+        public IActionResult GetByWashsTotalCount(string startDate, string endDate, int regionCode = 0, string washCode = "")
         {
             try
             {
@@ -55,7 +104,7 @@ namespace Backend.Controllers
 
                 var result = _model.Set<GetCollectByWashs_Result>().FromSqlRaw("GetCollectByWashs @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode);
 
-                return Ok(result);
+                return Ok(result.AsEnumerable().Count());
             }
             catch (Exception e)
             {
@@ -71,7 +120,38 @@ namespace Backend.Controllers
         #endregion
         [Authorize]
         [HttpGet("posts")]
-        public IActionResult GetByPosts(string startDate, string endDate, int regionCode = 0, string washCode = "", string postCode = "")
+        public IActionResult GetByPosts([FromQuery] PagingParameter paging, string startDate, string endDate, int regionCode = 0, string washCode = "", string postCode = "")
+        {
+            try
+            {
+                SqlParameter p_dateBeg = new SqlParameter("@p_DateBeg", startDate);
+                SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", endDate);
+                SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+                SqlParameter p_PostCode = new SqlParameter("@p_PostCode", postCode);
+
+                var result = _model.Set<GetCollectByPosts_Result>().FromSqlRaw("GetCollectByPosts @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode).ToList();
+                
+                PagedList<GetCollectByPosts_Result> pagedResult = PagedList<GetCollectByPosts_Result>.ToPagedList(result.AsQueryable(), paging);
+
+                PagedList<GetCollectByPosts_Result>.PrepareHTTPResponseMetadata(Response, pagedResult);
+
+                return Ok(pagedResult);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
+            }
+        }
+
+        #region Swagger description
+        [SwaggerOperation(Summary = "Данные для страницы инкассации по постам: количество строк")]
+        [SwaggerResponse(200, Type = typeof(GetCollectByPosts_Result))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpGet("posts/total_count")]
+        public IActionResult GetByPostsTotalCount(string startDate, string endDate, int regionCode = 0, string washCode = "", string postCode = "")
         {
             try
             {
@@ -83,7 +163,7 @@ namespace Backend.Controllers
 
                 var result = _model.Set<GetCollectByPosts_Result>().FromSqlRaw("GetCollectByPosts @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode);
 
-                return Ok(result);
+                return Ok(result.AsEnumerable().Count());
             }
             catch (Exception e)
             {
@@ -98,7 +178,37 @@ namespace Backend.Controllers
         #endregion
         [Authorize]
         [HttpGet("days")]
-        public IActionResult GetByDays(string startDate, string endDate, int regionCode = 0, string washCode = "")
+        public IActionResult GetByDays([FromQuery] PagingParameter paging, string startDate, string endDate, int regionCode = 0, string washCode = "")
+        {
+            try
+            {
+                SqlParameter p_dateBeg = new SqlParameter("@p_DateBeg", startDate);
+                SqlParameter p_DateEnd = new SqlParameter("@p_DateEnd", endDate);
+                SqlParameter p_RegionCode = new SqlParameter("@p_RegionCode", regionCode);
+                SqlParameter p_WashCode = new SqlParameter("@p_WashCode", washCode);
+
+                var result = _model.Set<GetCollectByDays_Result>().FromSqlRaw("GetCollectByDays @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode).ToList();
+
+                PagedList<GetCollectByDays_Result> pagedResult = PagedList<GetCollectByDays_Result>.ToPagedList(result.AsQueryable(), paging);
+
+                PagedList<GetCollectByDays_Result>.PrepareHTTPResponseMetadata(Response, pagedResult);
+
+                return Ok(pagedResult);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new Error() { errorType = "unexpected", alert = "Что-то пошло не так в ходе работы сервера", errorCode = "Ошибка при обращении к серверу", errorMessage = "Попробуйте снова или обратитесь к специалисту" });
+            }
+        }
+
+        #region Swagger description
+        [SwaggerOperation(Summary = "Данные для страницы инкассации по дням: количество строк")]
+        [SwaggerResponse(200, Type = typeof(GetCollectByDays_Result))]
+        [SwaggerResponse(500, Type = typeof(Error))]
+        #endregion
+        [Authorize]
+        [HttpGet("days/total_count")]
+        public IActionResult GetByDaysTotalCount(string startDate, string endDate, int regionCode = 0, string washCode = "")
         {
             try
             {
@@ -109,7 +219,7 @@ namespace Backend.Controllers
 
                 var result = _model.Set<GetCollectByDays_Result>().FromSqlRaw("GetCollectByDays @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode);
 
-                return Ok(result);
+                return Ok(result.AsEnumerable().Count());
             }
             catch (Exception e)
             {

@@ -86,7 +86,7 @@ namespace Backend.Controllers
         #endregion
         [Authorize]
         [HttpGet("washs/total_count")]
-        public IActionResult GetByWashsTotalCount([FromQuery]PagingParameter paging, string startDate, string endDate, int regionCode = 0, string washCode = "")
+        public IActionResult GetByWashsTotalCount([FromQuery]string startDate, string endDate, int regionCode = 0, string washCode = "")
         {
             try
             {
@@ -115,7 +115,7 @@ namespace Backend.Controllers
 
                 var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashs1 @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode);
 
-                return Ok(result.Count());
+                return Ok(result.AsEnumerable().Count());
             }
             catch (Exception e)
             {
@@ -176,7 +176,7 @@ namespace Backend.Controllers
         #endregion
         [Authorize]
         [HttpGet("washs/after_collect/total_count")]
-        public IActionResult GetByWashsAfterLastCollectTotalCount([FromQuery]PagingParameter paging, int regionCode = 0, string washCode = "")
+        public IActionResult GetByWashsAfterLastCollectTotalCount([FromQuery]int regionCode = 0, string washCode = "")
         {
             try
             {
@@ -202,7 +202,7 @@ namespace Backend.Controllers
 
                 var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashsAfterLastCollect1 @p_RegionCode, @p_WashCode", p_RegionCode, p_WashCode);
 
-                return Ok(result.Count());
+                return Ok(result.AsEnumerable().Count());
             }
             catch (Exception e)
             {
@@ -263,7 +263,7 @@ namespace Backend.Controllers
         #endregion
         [Authorize]
         [HttpGet("washs/between2last/total_count")]
-        public IActionResult GetByWashsBetweenTwoLastCollectsTotalCount([FromQuery]PagingParameter paging, int regionCode = 0, string washCode = "")
+        public IActionResult GetByWashsBetweenTwoLastCollectsTotalCount([FromQuery]int regionCode = 0, string washCode = "")
         {
             try
             {
@@ -289,7 +289,7 @@ namespace Backend.Controllers
 
                 var result = _model.Set<GetIncreaseByWashs_Result>().FromSqlRaw("GetIncreaseByWashsBetweenTwoLastCollects1 @p_RegionCode, @p_WashCode", p_RegionCode, p_WashCode);
 
-                return Ok(result.Count());
+                return Ok(result.AsEnumerable().Count());
             }
             catch (Exception e)
             {
@@ -336,7 +336,7 @@ namespace Backend.Controllers
         #endregion
         [Authorize]
         [HttpGet("posts/total_count")]
-        public IActionResult GetByPostsTotalCount([FromQuery]PagingParameter paging, string startDate, string endDate, int regionCode = 0, string washCode = "", string postCode = "")
+        public IActionResult GetByPostsTotalCount([FromQuery]string startDate, string endDate, int regionCode = 0, string washCode = "", string postCode = "")
         {
             try
             {
@@ -349,7 +349,7 @@ namespace Backend.Controllers
                 var procedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPosts1 @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode);
 
 
-                return Ok(procedureResult.Count());
+                return Ok(procedureResult.AsEnumerable().Count());
             }
             catch (Exception e)
             {
@@ -394,7 +394,7 @@ namespace Backend.Controllers
         #endregion
         [Authorize]
         [HttpGet("posts/after_collect/total_count")]
-        public IActionResult GetByPostsAfterLastCollectTotalCount([FromQuery]PagingParameter paging, int regionCode = 0, string washCode = "", string postCode = "")
+        public IActionResult GetByPostsAfterLastCollectTotalCount([FromQuery]int regionCode = 0, string washCode = "", string postCode = "")
         {
             try
             {
@@ -404,7 +404,7 @@ namespace Backend.Controllers
 
                 var procedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPostsAfterLastCollect1 @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
 
-                return Ok(procedureResult.Count());
+                return Ok(procedureResult.AsEnumerable().Count());
             }
             catch (Exception e)
             {
@@ -449,7 +449,7 @@ namespace Backend.Controllers
         #endregion
         [Authorize]
         [HttpGet("posts/between2last/total_count")]
-        public IActionResult GetByPostsBetweenTwoLastCollectsTotalCount([FromQuery]PagingParameter paging, int regionCode = 0, string washCode = "", string postCode = "")
+        public IActionResult GetByPostsBetweenTwoLastCollectsTotalCount([FromQuery]int regionCode = 0, string washCode = "", string postCode = "")
         {
             try
             {
@@ -459,7 +459,7 @@ namespace Backend.Controllers
 
                 var procedureResult = _model.Set<GetIncreaseByPosts_Result>().FromSqlRaw("GetIncreaseByPostsBetweenTwoLastCollects1 @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
 
-                return Ok(procedureResult.Count());
+                return Ok(procedureResult.AsEnumerable().Count());
             }
             catch (Exception e)
             {
@@ -506,7 +506,7 @@ namespace Backend.Controllers
         #endregion
         [Authorize]
         [HttpGet("events/total_count")]
-        public IActionResult GetByEventsTotalCount([FromQuery]PagingParameter paging, string startDate, string endDate, int regionCode = 0, string washCode = "", string postCode = "")
+        public IActionResult GetByEventsTotalCount([FromQuery]string startDate, string endDate, int regionCode = 0, string washCode = "", string postCode = "")
         {
             try
             {
@@ -518,7 +518,7 @@ namespace Backend.Controllers
 
                 var result = _model.Set<GetIncreaseByEvents_Result>().FromSqlRaw("GetIncreaseByEvents @p_DateBeg, @p_DateEnd, @p_RegionCode, @p_WashCode, @p_PostCode", p_dateBeg, p_DateEnd, p_RegionCode, p_WashCode, p_PostCode);
 
-                return Ok(result.Count());
+                return Ok(result.AsEnumerable().Count());
             }
             catch (Exception e)
             {
@@ -563,7 +563,7 @@ namespace Backend.Controllers
         #endregion
         [Authorize]
         [HttpGet("events/after_collect/total_count")]
-        public IActionResult GetByEventsAfterLastCollectTotalCount([FromQuery]PagingParameter paging, int regionCode = 0, string washCode = "", string postCode = "")
+        public IActionResult GetByEventsAfterLastCollectTotalCount([FromQuery]int regionCode = 0, string washCode = "", string postCode = "")
         {
             try
             {
@@ -573,7 +573,7 @@ namespace Backend.Controllers
 
                 var procedureResult = _model.Set<GetIncreaseByEvents_Result>().FromSqlRaw("GetIncreaseByEventsAfterLastCollect @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
 
-                return Ok(procedureResult.Count());
+                return Ok(procedureResult.AsEnumerable().Count());
             }
             catch (Exception e)
             {
@@ -618,7 +618,7 @@ namespace Backend.Controllers
         #endregion
         [Authorize]
         [HttpGet("events/between2last/total_count")]
-        public IActionResult GetByEventsBetweenTwoLastCollectsTotalCount([FromQuery]PagingParameter paging, int regionCode = 0, string washCode = "", string postCode = "")
+        public IActionResult GetByEventsBetweenTwoLastCollectsTotalCount([FromQuery]int regionCode = 0, string washCode = "", string postCode = "")
         {
             try
             {
@@ -628,7 +628,7 @@ namespace Backend.Controllers
 
                 var procedureResult = _model.Set<GetIncreaseByEvents_Result>().FromSqlRaw("GetIncreaseByEventsBetweenTwoLastCollects @p_RegionCode, @p_WashCode, @p_PostCode", p_RegionCode, p_WashCode, p_PostCode);
 
-                return Ok(procedureResult.Count());
+                return Ok(procedureResult.AsEnumerable().Count());
             }
             catch (Exception e)
             {
