@@ -97,6 +97,8 @@ namespace AuthenticationService
                 options => options.UseSqlServer(Configuration.GetConnectionString("UserAuthentication")));
 
             services.AddTransient<RolesService>();
+
+            services.AddTransient<AccountsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,5 +1,6 @@
 ﻿using AuthenticationService.Models;
 using AuthenticationService.Models.UserAuthenticationDb;
+using AuthenticationService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +20,12 @@ namespace AuthenticationService.Controllers
     public class AccountsController : ControllerBase
     {
         private readonly UserAuthenticationDbContext _context;
+        private readonly AccountsService _accountsService;
 
-        public AccountsController(UserAuthenticationDbContext context)
+        public AccountsController(UserAuthenticationDbContext context, AccountsService accountsService)
         {
             _context = context;
+            _accountsService = accountsService;
         }
 
         private ClaimsIdentity GetIdentity(LoginModel login)
@@ -127,7 +130,7 @@ namespace AuthenticationService.Controllers
                         Login = u.Login,
                         Name = u.Name,
                         Email = u.Email,
-                        Phone = u.Phone,
+                        Phone = u.PhoneInt - 70000000000,
                         Role = _context.Roles.Find(u.Idrole).Code,
                         Washes = washes
                     });

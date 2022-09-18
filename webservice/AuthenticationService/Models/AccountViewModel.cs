@@ -10,8 +10,8 @@ namespace AuthenticationService.Models
         public string Login { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Phone { get; set; }
+        public long? Phone { get; set; }
         public string Role { get; set; }
-        public List<string> Washes { get; set; }
+        public IEnumerable<string> Washes { get; set; }
     }
 }

@@ -9,5 +9,7 @@ namespace AuthenticationService.Models.UserAuthenticationDb
     {
         public int Iduser { get; set; }
         public string WashCode { get; set; }
+
+        public virtual User IduserNavigation { get; set; }
     }
 }

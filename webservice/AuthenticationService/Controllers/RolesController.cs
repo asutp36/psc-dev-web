@@ -2,6 +2,7 @@
 using AuthenticationService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,10 @@ namespace AuthenticationService.Controllers
             _rolesService = rolesService;
         }
 
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить все роли")]
+        [SwaggerResponse(200, Type = typeof(List<RoleDto>))]
+        #endregion
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
