@@ -1,5 +1,6 @@
 using AuthenticationService.Models;
 using AuthenticationService.Models.UserAuthenticationDb;
+using AuthenticationService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NLog.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,9 +26,16 @@ namespace AuthenticationService
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            // Get the factory for ILogger instances.
+            var nlogLoggerProvider = new NLogLoggerProvider();
+
+            // Create an ILogger.
+            Logger = nlogLoggerProvider.CreateLogger(typeof(Startup).FullName);
         }
 
         public IConfiguration Configuration { get; }
+        public ILogger Logger { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -86,6 +95,8 @@ namespace AuthenticationService
 
             services.AddDbContext<UserAuthenticationDbContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("UserAuthentication")));
+
+            services.AddTransient<RolesService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
