@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace GateWashDataService.Repositories
@@ -33,53 +34,165 @@ namespace GateWashDataService.Repositories
         /// <param name="washCodes">Коды моек</param>
         /// <param name="eventKindCode">Код типа внесения (optional)</param>
         /// <returns>Данные для отображения графика</returns>
-        public async Task<GraphicsDataModel> GetCommulativeTotalSplitTerminalsGrapgicDataAsync(DateTime dtimeStart, DateTime dtimeEnd, IEnumerable<string> washCodes, string eventKindCode = null)
+        public async Task<GraphicsDataModel> GetCommulativeTotalSplitTerminalsGraphicDataAsync(DateTime dtimeStart, DateTime dtimeEnd, IEnumerable<string> washCodes, string eventKindCode = null)
         {
             try
             {
-                var dataToMakeGraphic = await GetCommulativeTotalSplitTerminalsAsync(dtimeStart, dtimeEnd, washCodes, eventKindCode);
+                var data = await GetCommulativeTotalSplitTerminalsAsync(dtimeStart, dtimeEnd, washCodes, eventKindCode);
 
-                GraphicsDataModel graphic = new GraphicsDataModel();
-                graphic.Labels = dataToMakeGraphic.Select(o => o.DTime).Distinct().ToList();
-                List<string> datasetLabels = dataToMakeGraphic.Select(o => o.Terminal).Distinct().ToList();
-                graphic.Datasets = new List<Dataset>();
-
-                foreach (string label in datasetLabels)
-                {
-                    graphic.Datasets.Add(new Dataset() { Data = new List<int>(), Label = label });
-                }
-
-                foreach (DateTime dt in graphic.Labels)
-                {
-                    var pointXAxis = dataToMakeGraphic.Where(o => (o.DTime - dt).Duration() <= TimeSpan.Parse("00:00:01")).ToList();
-                    foreach (Dataset dataset in graphic.Datasets)
-                    {
-                        var val = pointXAxis.Find(o => o.Terminal == dataset.Label);
-                        if (val != null)
-                        {
-                            dataset.Data.Add(val.Amount);
-                        }
-                        else
-                        {
-                            if (dataset.Data.Count == 0)
-                            {
-                                dataset.Data.Add(0);
-                            }
-                            else
-                            {
-                                dataset.Data.Add(dataset.Data.Last());
-                            }
-                        }
-                    }
-                }
-
-                return graphic;
+                return ConvertToGraphicDataModel(data);
             }
             catch(Exception e)
             {
                 _logger.LogError(e.Message + e.StackTrace);
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Данные для графика из хранимки GetCommulativeIncreasesSplitTerminals, сгруппированные по дням
+        /// </summary>
+        /// <param name="dtimeStart">Начало периода</param>
+        /// <param name="dtimeEnd">Конец периода</param>
+        /// <param name="washCodes">Коды моек</param>
+        /// <param name="eventKindCode">Код типа внесения (optional)</param>
+        /// <returns>Данные для отображения графика</returns>
+        public async Task<GraphicsDataModel> GetCommulativeTotalSplitTerminalsGraphicData_ByDayAsync(DateTime dtimeStart, DateTime dtimeEnd, IEnumerable<string> washCodes, string eventKindCode = null)
+        {
+            try
+            {
+                var data = await GetCommulativeTotalSplitTerminalsAsync(dtimeStart, dtimeEnd, washCodes, eventKindCode);
+
+                var grouped = data.GroupBy(key => new { key.DTime.Date, key.TerminalCode, key.Terminal },
+                             val => val.Amount,
+                             (key, val) => new IncreaseCommulativeTotalModel
+                                 {
+                                     Terminal = key.Terminal,
+                                     TerminalCode = key.TerminalCode,
+                                     DTime = key.Date,
+                                     Amount = val.Max() // сгруппировано по дням, тк нарастающий итог, то сумма за весь день = максимальное значение в этот день
+                                 }
+                             ).AsQueryable();
+
+                return ConvertToGraphicDataModel(grouped);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + e.StackTrace);
+                return null;
+            }
+        }
+       
+        /// <summary>
+        /// Данные для графика из хранимки GetCommulativeIncreasesSplitTerminals, сгруппированные по месяцам
+        /// </summary>
+        /// <param name="dtimeStart">Начало периода</param>
+        /// <param name="dtimeEnd">Конец периода</param>
+        /// <param name="washCodes">Коды моек</param>
+        /// <param name="eventKindCode">Код типа внесения (optional)</param>
+        /// <returns>Данные для отображения графика</returns>
+        public async Task<GraphicsDataModel> GetCommulativeTotalSplitTerminalsGraphicData_ByMonthAsync(DateTime dtimeStart, DateTime dtimeEnd, IEnumerable<string> washCodes, string eventKindCode = null)
+        {
+            try
+            {
+                var data = await GetCommulativeTotalSplitTerminalsAsync(dtimeStart, dtimeEnd, washCodes, eventKindCode);
+
+                var grouped = data.GroupBy(key => new { key.DTime.Year, key.DTime.Month, key.TerminalCode, key.Terminal },
+                             val => val.Amount,
+                             (key, val) => new IncreaseCommulativeTotalModel
+                                 {
+                                     Terminal = key.Terminal,
+                                     TerminalCode = key.TerminalCode,
+                                     DTime = new DateTime(key.Year, key.Month, 1),
+                                     Amount = val.Max() // сгруппировано по месяцам, тк нарастающий итог, то сумма за весь месяц = максимальное значение в этот месяц
+                                 }
+                             ).AsQueryable();
+
+                return ConvertToGraphicDataModel(grouped);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + e.StackTrace);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Данные для графика из хранимки GetCommulativeIncreasesSplitTerminals, сгруппированные по по часам
+        /// </summary>
+        /// <param name="dtimeStart">Начало периода</param>
+        /// <param name="dtimeEnd">Конец периода</param>
+        /// <param name="washCodes">Коды моек</param>
+        /// <param name="eventKindCode">Код типа внесения (optional)</param>
+        /// <returns>Данные для отображения графика</returns>
+        public async Task<GraphicsDataModel> GetCommulativeTotalSplitTerminalsGraphicData_ByHourAsync(DateTime dtimeStart, DateTime dtimeEnd, IEnumerable<string> washCodes, string eventKindCode = null)
+        {
+            try
+            {
+                var data = await GetCommulativeTotalSplitTerminalsAsync(dtimeStart, dtimeEnd, washCodes, eventKindCode);
+
+                var grouped = data.GroupBy(key => new { key.DTime.Date, key.DTime.Hour, TerminalCode = key.TerminalCode, Terminal = key.Terminal },
+                             val => val.Amount,
+                             (key, val) => new IncreaseCommulativeTotalModel
+                             {
+                                 Terminal = key.Terminal,
+                                 TerminalCode = key.TerminalCode,
+                                 DTime = key.Date.AddHours(key.Hour),
+                                 Amount = val.Max() // сгруппировано по часам, тк нарастающий итог, то сумма за весь час = максимальное значение в этот час
+                             }
+                             ).AsQueryable();
+
+                return ConvertToGraphicDataModel(grouped);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + e.StackTrace);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Преобразовать данные из хранимой процедуры к формату для отображения на графике
+        /// </summary>
+        /// <param name="data">Данные из хранимой процедуры</param>
+        /// <returns>Модель данных графика</returns>
+        private GraphicsDataModel ConvertToGraphicDataModel(IQueryable<IncreaseCommulativeTotalModel> data)
+        {
+            GraphicsDataModel graphic = new GraphicsDataModel();
+            graphic.Labels = data.Select(o => o.DTime).Distinct().ToList();
+            List<string> datasetLabels = data.Select(o => o.Terminal).Distinct().ToList();
+            graphic.Datasets = new List<Dataset>();
+
+            foreach (string label in datasetLabels)
+            {
+                graphic.Datasets.Add(new Dataset() { Data = new List<int>(), Label = label });
+            }
+
+            foreach (DateTime dt in graphic.Labels)
+            {
+                var pointXAxis = data.Where(o => (o.DTime - dt).Duration() <= TimeSpan.Parse("00:00:01")).ToList();
+                foreach (Dataset dataset in graphic.Datasets)
+                {
+                    var val = pointXAxis.Find(o => o.Terminal == dataset.Label);
+                    if (val != null)
+                    {
+                        dataset.Data.Add(val.Amount);
+                    }
+                    else
+                    {
+                        if (dataset.Data.Count == 0)
+                        {
+                            dataset.Data.Add(0);
+                        }
+                        else
+                        {
+                            dataset.Data.Add(dataset.Data.Last());
+                        }
+                    }
+                }
+            }
+
+            return graphic;
         }
 
         /// <summary>

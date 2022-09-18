@@ -1,4 +1,5 @@
-﻿using GateWashDataService.Repositories;
+﻿using GateWashDataService.Models;
+using GateWashDataService.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,12 +23,41 @@ namespace GateWashDataService.Controllers
             _graphicsRepository = graphicsRepository;
         }
 
-        [HttpGet("each_increase")]
-        public async Task<IActionResult> GetEachIncrease([FromQuery] DateTime startDate, DateTime endDate, string eventKindCode = null)
+        [HttpGet]
+        public async Task<IActionResult> GetEachIncrease([FromQuery]DateTime startDate, DateTime endDate, string eventKindCode = null, string groupingType = null)
         {
             List<string> washCodes = new List<string> { "M41" };
-            var result = await _graphicsRepository.GetCommulativeTotalSplitTerminalsGrapgicDataAsync(startDate, endDate, washCodes);
-            return Ok(result);
+            GraphicsDataModel graphic;
+           
+            switch (groupingType)
+            {
+                case null:
+                    graphic = await _graphicsRepository.GetCommulativeTotalSplitTerminalsGraphicDataAsync(startDate, endDate, washCodes);
+                    break;
+
+                case "byhour":
+                    graphic = await _graphicsRepository.GetCommulativeTotalSplitTerminalsGraphicData_ByHourAsync(startDate, endDate, washCodes);
+                    break;
+
+                case "byday":
+                    graphic = await _graphicsRepository.GetCommulativeTotalSplitTerminalsGraphicData_ByDayAsync(startDate, endDate, washCodes);
+                    break;
+
+                case "bymonth":
+                    graphic = await _graphicsRepository.GetCommulativeTotalSplitTerminalsGraphicData_ByMonthAsync(startDate, endDate, washCodes);
+                    break;
+
+                default:
+                    graphic = null;
+                    break;
+            }
+            
+            if(graphic == null)
+            {
+                return NoContent();
+            }
+
+            return Ok(graphic);
         }
     }
 }
