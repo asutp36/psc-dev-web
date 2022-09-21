@@ -28,7 +28,7 @@ namespace AuthenticationService.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            IEnumerable<RoleDto> roles = await _rolesService.GatAll();
+            IEnumerable<RoleDto> roles = await _rolesService.GetAsync();
 
             return Ok(roles);
         }

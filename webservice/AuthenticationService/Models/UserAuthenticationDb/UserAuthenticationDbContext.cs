@@ -82,21 +82,16 @@ namespace AuthenticationService.Models.UserAuthenticationDb
 
             modelBuilder.Entity<UserWash>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => new { e.Iduser, e.WashCode });
 
                 entity.ToTable("UserWash");
 
-                entity.HasIndex(e => new { e.Iduser, e.WashCode }, "UC_UserWash")
-                    .IsUnique();
-
                 entity.Property(e => e.Iduser).HasColumnName("IDUser");
 
-                entity.Property(e => e.WashCode)
-                    .IsRequired()
-                    .HasMaxLength(10);
+                entity.Property(e => e.WashCode).HasMaxLength(10);
 
                 entity.HasOne(d => d.IduserNavigation)
-                    .WithMany()
+                    .WithMany(p => p.UserWashes)
                     .HasForeignKey(d => d.Iduser)
                     .HasConstraintName("FK_UserWash_Users");
             });

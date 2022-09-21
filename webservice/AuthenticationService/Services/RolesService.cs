@@ -20,15 +20,37 @@ namespace AuthenticationService.Services
             _model = model;
         }
 
-        public async Task<IEnumerable<RoleDto>> GatAll()
+        /// <summary>
+        /// Получить все роли
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<RoleDto>> GetAsync()
         {
             var roles = await _model.Roles.Select(o => new RoleDto
             {
+                Id = o.Idrole,
                 Code = o.Code,
                 Name = o.Name
             }).ToListAsync();
 
             return roles;
+        }
+
+        /// <summary>
+        /// Получить роль по её коду
+        /// </summary>
+        /// <param name="code">Код роли</param>
+        /// <returns>Роль ил null</returns>
+        public async Task<RoleDto> GetAsync(string code)
+        {
+            return await _model.Roles.Where(o => o.Code == code)
+                .Select(o => new RoleDto 
+                { 
+                    Id = o.Idrole, 
+                    Code = o.Code, 
+                    Name = o.Name 
+                })
+                .FirstOrDefaultAsync();
         }
     }
 }

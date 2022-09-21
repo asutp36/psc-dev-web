@@ -127,11 +127,13 @@ namespace AuthenticationService.Controllers
 
                     result.Add(new AccountViewModel
                     {
+                        id = u.Iduser,
                         Login = u.Login,
                         Name = u.Name,
                         Email = u.Email,
                         Phone = u.PhoneInt - 70000000000,
                         Role = _context.Roles.Find(u.Idrole).Code,
+                        RoleName = _context.Roles.Find(u.Idrole).Name,
                         Washes = washes
                     });
                 }
@@ -143,6 +145,51 @@ namespace AuthenticationService.Controllers
                 //_logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 return StatusCode(500, new ErrorModel() { ErrorType = "unexpected", Alert = "Что-то пошло не так в ходе работы сервера", ErrorCode = "Ошибка при обращении к серверу", ErrorMessage = "Попробуйте снова или обратитесь к специалисту" });
             }
+        }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Зарегистрировать нового")]
+        [SwaggerResponse(200, Type = typeof(AccountViewModel))]
+        #endregion
+        [HttpPost]
+        public async Task<IActionResult> Register([FromBody] NewAccountViewModel account)
+        {
+            await _accountsService.CreateAsync(account);
+
+            return Ok();
+        }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Удалить по логину")]
+        [SwaggerResponse(200)]
+        #endregion
+        [HttpDelete("{login}")]
+        public async Task<IActionResult> Delete(string login)
+        {
+            await _accountsService.DeleteAsync(login);
+            return Ok();
+        }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить по логину")]
+        [SwaggerResponse(200, Type = typeof(AccountViewModel))]
+        #endregion
+        [HttpGet("{login}")]
+        public async Task<IActionResult> GetByLogin([FromRoute]string login)
+        {
+            AccountViewModel account = await _accountsService.GetAsync(login);
+
+            return Ok(account);
+        }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Проверить логин")]
+        [SwaggerResponse(200, Type = typeof(bool))]
+        #endregion
+        [HttpGet("check-login")]
+        public async Task<IActionResult> CheckLogin([FromQuery] string login, int? id = null)
+        {
+            return Ok(await _accountsService.IsNameExistAsync(login, id));
         }
     }
 }

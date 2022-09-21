@@ -7,6 +7,11 @@ namespace AuthenticationService.Models.UserAuthenticationDb
 {
     public partial class User
     {
+        public User()
+        {
+            UserWashes = new HashSet<UserWash>();
+        }
+
         public int Iduser { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
@@ -17,5 +22,6 @@ namespace AuthenticationService.Models.UserAuthenticationDb
         public int Idrole { get; set; }
 
         public virtual Role IdroleNavigation { get; set; }
+        public virtual ICollection<UserWash> UserWashes { get; set; }
     }
 }

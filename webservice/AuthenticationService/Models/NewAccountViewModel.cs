@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace AuthenticationService.Models
 {
-    public class RoleDto
+    public class NewAccountViewModel : AccountViewModel
     {
-        public int Id { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
+        public string Password { get; set; }
     }
 }
