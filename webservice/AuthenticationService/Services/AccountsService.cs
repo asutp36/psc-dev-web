@@ -23,21 +23,20 @@ namespace AuthenticationService.Services
             _rolesService = rolesService;
         }
 
-        public async Task<IEnumerable<AccountInfoDto>> Get()
+        public async Task<IEnumerable<AccountInfoDto>> GetAsync()
         {
             var accounts = await _model.Users.Include(o => o.IdroleNavigation)
-                .GroupJoin(_model.UserWashes,
-                           u => u.Iduser,
-                           uw => uw.Iduser,
-                           (u, washes) => new AccountInfoDto
-                           {
-                                Login = u.Login,
-                                Name = u.Name,
-                                Email = u.Email,
-                                Phone = u.PhoneInt,
-                                Role = new RoleInfoDto() { Code = u.IdroleNavigation.Code, Name = u.IdroleNavigation.Name},
-                                Washes = washes.Select(e => e.WashCode)
-                           }).ToListAsync();
+                .Select(o => new AccountInfoDto
+                {
+                    id = o.Iduser,
+                    Login = o.Login,
+                    Name = o.Name,
+                    Phone = o.PhoneInt,
+                    Email = o.Email,
+                    Role = new RoleInfoDto(o.IdroleNavigation.Code, o.IdroleNavigation.Name),
+                    Washes = o.UserWashes.Select(w => w.WashCode)
+                }).ToListAsync();
+                
 
             return accounts;
         }
@@ -91,8 +90,7 @@ namespace AuthenticationService.Services
                 Name = account.Name,
                 Password = account.Password,
                 Email = account.Email,
-                PhoneInt = account.Phone,
-                Idrole = role.Id
+                PhoneInt = account.Phone
             };
 
             try

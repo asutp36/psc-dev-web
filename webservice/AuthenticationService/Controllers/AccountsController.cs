@@ -111,34 +111,13 @@ namespace AuthenticationService.Controllers
         [SwaggerResponse(500, Type = typeof(ErrorModel))]
         #endregion
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
-                List<AccountInfoDto> result = new List<AccountInfoDto>();
+                IEnumerable<AccountInfoDto> accounts = await _accountsService.GetAsync();
 
-                List<User> users = _context.Users.ToList();
-                foreach (User u in users)
-                {
-                    List<string> washes = new List<string>();
-
-                    List<UserWash> washIDs = _context.UserWashes.Where(uw => uw.Iduser == u.Iduser).ToList();
-                    foreach (UserWash w in washIDs)
-                        washes.Add(w.WashCode);
-
-                    result.Add(new AccountInfoDto
-                    {
-                        id = u.Iduser,
-                        Login = u.Login,
-                        Name = u.Name,
-                        Email = u.Email,
-                        Phone = u.PhoneInt - 70000000000,
-                        Role = new RoleInfoDto() { Code = _context.Roles.Find(u.Idrole).Code, Name = _context.Roles.Find(u.Idrole).Name },
-                        Washes = washes
-                    });
-                }
-
-                return Ok(result);
+                return Ok(accounts);
             }
             catch (Exception e)
             {
