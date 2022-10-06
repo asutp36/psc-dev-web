@@ -1,4 +1,5 @@
 ﻿using AuthenticationService.Models;
+using AuthenticationService.Models.DTOs;
 using AuthenticationService.Models.UserAuthenticationDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -23,12 +24,11 @@ namespace AuthenticationService.Services
         /// <summary>
         /// Получить все роли
         /// </summary>
-        /// <returns></returns>
-        public async Task<IEnumerable<RoleDto>> GetAsync()
+        /// <returns>Информацию о роли</returns>
+        public async Task<IEnumerable<RoleInfoDto>> GetAsync()
         {
-            var roles = await _model.Roles.Select(o => new RoleDto
+            var roles = await _model.Roles.Select(o => new RoleInfoDto
             {
-                Id = o.Idrole,
                 Code = o.Code,
                 Name = o.Name
             }).ToListAsync();
@@ -37,20 +37,51 @@ namespace AuthenticationService.Services
         }
 
         /// <summary>
-        /// Получить роль по её коду
+        /// Получить информацио о роли по её коду
         /// </summary>
         /// <param name="code">Код роли</param>
-        /// <returns>Роль ил null</returns>
-        public async Task<RoleDto> GetAsync(string code)
+        /// <returns>Информация о роли или null</returns>
+        public async Task<RoleInfoDto> GetAsync(string code)
         {
             return await _model.Roles.Where(o => o.Code == code)
-                .Select(o => new RoleDto 
+                .Select(o => new RoleInfoDto 
                 { 
-                    Id = o.Idrole, 
                     Code = o.Code, 
                     Name = o.Name 
                 })
                 .FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Получить информацию о роли по её id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>информац о роли или null</returns>
+        public async Task<RoleInfoDto> GetAsync(int id)
+        {
+            return await _model.Roles.Where(o => o.Idrole == id)
+                .Select(o => new RoleInfoDto
+                {
+                    Code = o.Code,
+                    Name = o.Name
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Получить информацию о роли по её id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>информац о роли или null</returns>
+        public RoleInfoDto Get(int id)
+        {
+            return _model.Roles.Where(o => o.Idrole == id)
+                .Select(o => new RoleInfoDto
+                {
+                    Code = o.Code,
+                    Name = o.Name
+                })
+                .FirstOrDefault();
         }
     }
 }

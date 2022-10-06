@@ -1,4 +1,5 @@
 ﻿using AuthenticationService.Models;
+using AuthenticationService.Models.DTOs;
 using AuthenticationService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,12 +24,12 @@ namespace AuthenticationService.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить все роли")]
-        [SwaggerResponse(200, Type = typeof(List<RoleDto>))]
+        [SwaggerResponse(200, Type = typeof(List<RoleInfoDto>))]
         #endregion
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            IEnumerable<RoleDto> roles = await _rolesService.GetAsync();
+            IEnumerable<RoleInfoDto> roles = await _rolesService.GetAsync();
 
             return Ok(roles);
         }

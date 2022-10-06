@@ -1,4 +1,5 @@
 ﻿using AuthenticationService.Models;
+using AuthenticationService.Models.DTOs;
 using AuthenticationService.Models.UserAuthenticationDb;
 using AuthenticationService.Services;
 using Microsoft.AspNetCore.Http;
@@ -106,7 +107,7 @@ namespace AuthenticationService.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить всех пользователей")]
-        [SwaggerResponse(200, Type = typeof(List<AccountViewModel>))]
+        [SwaggerResponse(200, Type = typeof(List<AccountInfoDto>))]
         [SwaggerResponse(500, Type = typeof(ErrorModel))]
         #endregion
         [HttpGet]
@@ -114,7 +115,7 @@ namespace AuthenticationService.Controllers
         {
             try
             {
-                List<AccountViewModel> result = new List<AccountViewModel>();
+                List<AccountInfoDto> result = new List<AccountInfoDto>();
 
                 List<User> users = _context.Users.ToList();
                 foreach (User u in users)
@@ -125,15 +126,14 @@ namespace AuthenticationService.Controllers
                     foreach (UserWash w in washIDs)
                         washes.Add(w.WashCode);
 
-                    result.Add(new AccountViewModel
+                    result.Add(new AccountInfoDto
                     {
                         id = u.Iduser,
                         Login = u.Login,
                         Name = u.Name,
                         Email = u.Email,
                         Phone = u.PhoneInt - 70000000000,
-                        Role = _context.Roles.Find(u.Idrole).Code,
-                        RoleName = _context.Roles.Find(u.Idrole).Name,
+                        Role = new RoleInfoDto() { Code = _context.Roles.Find(u.Idrole).Code, Name = _context.Roles.Find(u.Idrole).Name },
                         Washes = washes
                     });
                 }
@@ -149,11 +149,17 @@ namespace AuthenticationService.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Зарегистрировать нового")]
-        [SwaggerResponse(200, Type = typeof(AccountViewModel))]
+        [SwaggerResponse(200, Type = typeof(AccountInfoDto))]
+        [SwaggerResponse(409, Type = typeof(ErrorModel))]
         #endregion
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] NewAccountViewModel account)
+        public async Task<IActionResult> Register([FromBody] NewAccountInfoDto account)
         {
+            if(await _accountsService.IsNameExistAsync(account.Login))
+            {
+                return Conflict(new ErrorModel() { ErrorType = "badvalue", Alert = "Некорректные входные параметры", ErrorCode = "Такой логин уже существует", ErrorMessage = "Попробуйте ввести другой логин" });
+            }
+
             await _accountsService.CreateAsync(account);
 
             return Ok();
@@ -172,12 +178,12 @@ namespace AuthenticationService.Controllers
 
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Получить по логину")]
-        [SwaggerResponse(200, Type = typeof(AccountViewModel))]
+        [SwaggerResponse(200, Type = typeof(AccountInfoDto))]
         #endregion
         [HttpGet("{login}")]
         public async Task<IActionResult> GetByLogin([FromRoute]string login)
         {
-            AccountViewModel account = await _accountsService.GetAsync(login);
+            AccountInfoDto account = await _accountsService.GetAsync(login);
 
             return Ok(account);
         }

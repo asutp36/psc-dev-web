@@ -1,4 +1,5 @@
 ﻿using AuthenticationService.Models;
+using AuthenticationService.Models.DTOs;
 using AuthenticationService.Models.UserAuthenticationDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -22,30 +23,28 @@ namespace AuthenticationService.Services
             _rolesService = rolesService;
         }
 
-        public async Task<IEnumerable<AccountViewModel>> Get()
+        public async Task<IEnumerable<AccountInfoDto>> Get()
         {
             var accounts = await _model.Users.Include(o => o.IdroleNavigation)
                 .GroupJoin(_model.UserWashes,
                            u => u.Iduser,
                            uw => uw.Iduser,
-                           (u, washes) => new AccountViewModel
+                           (u, washes) => new AccountInfoDto
                            {
                                 Login = u.Login,
                                 Name = u.Name,
                                 Email = u.Email,
                                 Phone = u.PhoneInt,
-                                Role = u.IdroleNavigation.Code,
+                                Role = new RoleInfoDto() { Code = u.IdroleNavigation.Code, Name = u.IdroleNavigation.Name},
                                 Washes = washes.Select(e => e.WashCode)
                            }).ToListAsync();
 
             return accounts;
         }
 
-        public void Get(int id) { }
-
-        public async Task<AccountViewModel> GetAsync(string login) 
+        public async Task<AccountInfoDto> Get(int id) 
         {
-            return await _model.Users.Where(o => o.Login == login).Select(o => new AccountViewModel
+            return await _model.Users.Where(o => o.Iduser == id).Select(o => new AccountInfoDto
             {
                 id = o.Iduser,
                 Login = o.Login,
@@ -53,8 +52,22 @@ namespace AuthenticationService.Services
                 Name = o.Name,
                 Phone = o.PhoneInt,
                 Washes = o.UserWashes.Select(e => e.WashCode),
-                Role = o.IdroleNavigation.Code,
-                RoleName = o.IdroleNavigation.Name
+                Role = new RoleInfoDto() { Code = o.IdroleNavigation.Code, Name = o.IdroleNavigation.Name }
+            }
+            ).FirstOrDefaultAsync();
+        }
+
+        public async Task<AccountInfoDto> GetAsync(string login) 
+        {
+            return await _model.Users.Where(o => o.Login == login).Select(o => new AccountInfoDto
+            {
+                id = o.Iduser,
+                Login = o.Login,
+                Email = o.Email,
+                Name = o.Name,
+                Phone = o.PhoneInt,
+                Washes = o.UserWashes.Select(e => e.WashCode),
+                Role = _rolesService.Get(o.Idrole)
             }).FirstOrDefaultAsync();
         }
 
@@ -68,9 +81,9 @@ namespace AuthenticationService.Services
             await _model.SaveChangesAsync();
         }
 
-        public async Task CreateAsync(NewAccountViewModel account) 
+        public async Task CreateAsync(NewAccountInfoDto account) 
         {
-            var role = await _rolesService.GetAsync(account.Role);
+            var role = await _rolesService.GetAsync(account.Role.Code);
 
             User user = new User()
             {
@@ -101,10 +114,12 @@ namespace AuthenticationService.Services
             }
         }
 
-        public async Task<bool> IsNameExistAsync(string name, int? currentId = null)
+        public async Task<bool> IsNameExistAsync(string login, int? currentId = null)
         {
-            if (string.IsNullOrEmpty(name)) return false;
-            return await _model.Users.AnyAsync(e => e.Iduser != currentId && e.Name == name);
+            if (string.IsNullOrEmpty(login)) 
+                return false;
+
+            return await _model.Users.AnyAsync(e => e.Iduser != currentId && e.Name == login);
         }
     }
 }
