@@ -23,6 +23,10 @@ namespace AuthenticationService.Services
             _rolesService = rolesService;
         }
 
+        /// <summary>
+        /// Получить всех пользователей
+        /// </summary>
+        /// <returns>Список пользователей</returns>
         public async Task<IEnumerable<AccountInfoDto>> GetAsync()
         {
             var accounts = await _model.Users.Include(o => o.IdroleNavigation)
