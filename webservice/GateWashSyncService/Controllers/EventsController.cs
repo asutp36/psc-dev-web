@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GateWashSyncService.Models.GateWash;
 using Newtonsoft.Json;
+using GateWashSyncService.Services;
 
 namespace GateWashSyncService.Controllers
 {
@@ -18,11 +19,13 @@ namespace GateWashSyncService.Controllers
     {
         private readonly ILogger<EventsController> _logger;
         private readonly GateWashDbContext _model;
+        EventIncreaseService _eventIncreaseService;
 
-        public EventsController(ILogger<EventsController> logger, GateWashDbContext model)
+        public EventsController(ILogger<EventsController> logger, GateWashDbContext model, EventIncreaseService eventIncreaseService)
         {
             _logger = logger;
             _model = model;
+            _eventIncreaseService = eventIncreaseService;
         }
 
         [HttpPost]
@@ -125,30 +128,32 @@ namespace GateWashSyncService.Controllers
         {
             try
             {
-                GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
+                //GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
 
-                if (!sqlHelper.IsDeviceExsists(eincr.deviceCode))
-                {
-                    _logger.LogError($"Не найден девайс {eincr.deviceCode}");
-                    return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден девайс {eincr.deviceCode}" });
-                }
-                if (sqlHelper.IsEventIncreaseExists(eincr.deviceCode, eincr.idEventOnPost))
-                {
-                    _logger.LogError($"Событие с id={eincr.idEventOnPost} на посту {eincr.deviceCode} уже записано");
-                    return Conflict(new Error() { errorCode = "badvalue", errorMessage = $"Событие с id={eincr.idEventOnPost} на посту {eincr.deviceCode} уже записано" });
-                }
-                if (!sqlHelper.IsEventKindExsists(eincr.eventKindCode))
-                {
-                    _logger.LogError($"Не найден тип события {eincr.eventKindCode}");
-                    return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден тип события {eincr.eventKindCode}" });
-                }
-                if (!sqlHelper.IsPaySessionExsists(eincr.deviceCode, eincr.idSessionOnPost))
-                {
-                    _logger.LogError($"Не найдена сессия на посту {eincr.deviceCode} с id={eincr.idSessionOnPost}");
-                    return StatusCode(406, new Error() { errorCode = "badvalue", errorMessage = $"Не найдена сессия на посту {eincr.deviceCode} с id={eincr.idSessionOnPost}" });
-                }
+                //if (!sqlHelper.IsDeviceExsists(eincr.deviceCode))
+                //{
+                //    _logger.LogError($"Не найден девайс {eincr.deviceCode}");
+                //    return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден девайс {eincr.deviceCode}" });
+                //}
+                //if (sqlHelper.IsEventIncreaseExists(eincr.deviceCode, eincr.idEventOnPost))
+                //{
+                //    _logger.LogError($"Событие с id={eincr.idEventOnPost} на посту {eincr.deviceCode} уже записано");
+                //    return Conflict(new Error() { errorCode = "badvalue", errorMessage = $"Событие с id={eincr.idEventOnPost} на посту {eincr.deviceCode} уже записано" });
+                //}
+                //if (!sqlHelper.IsEventKindExsists(eincr.eventKindCode))
+                //{
+                //    _logger.LogError($"Не найден тип события {eincr.eventKindCode}");
+                //    return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден тип события {eincr.eventKindCode}" });
+                //}
+                //if (!sqlHelper.IsPaySessionExsists(eincr.deviceCode, eincr.idSessionOnPost))
+                //{
+                //    _logger.LogError($"Не найдена сессия на посту {eincr.deviceCode} с id={eincr.idSessionOnPost}");
+                //    return StatusCode(406, new Error() { errorCode = "badvalue", errorMessage = $"Не найдена сессия на посту {eincr.deviceCode} с id={eincr.idSessionOnPost}" });
+                //}
 
-                int id = await sqlHelper.WriteEventIncreaseAsync(eincr);
+                //int id = await sqlHelper.WriteEventIncreaseAsync(eincr);
+
+                int id = await _eventIncreaseService.InsertAsync(eincr);
 
                 Response.Headers.Add("ServerID", id.ToString());
                 return Created(id.ToString(), null);

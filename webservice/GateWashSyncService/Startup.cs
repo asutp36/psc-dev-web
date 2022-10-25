@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GateWashSyncService.Models.GateWash;
 using Microsoft.EntityFrameworkCore;
+using GateWashSyncService.Services;
 
 namespace GateWashSyncService
 {
@@ -54,6 +55,11 @@ namespace GateWashSyncService
 
             services.AddDbContext<GateWashDbContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("GateWash")));
+
+            services.AddTransient<EventKindsService>();
+            services.AddTransient<DevicesService>();
+            services.AddTransient<PaySessionsService>();
+            services.AddTransient<EventIncreaseService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
