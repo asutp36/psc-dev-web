@@ -1,4 +1,5 @@
 ﻿using GateWashSyncService.Controllers.BindingModels;
+using GateWashSyncService.Exceptions;
 using GateWashSyncService.Models.GateWash;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -34,25 +35,25 @@ namespace GateWashSyncService.Services
                 if(!(await _devicesSevice.CheckIfExistsByCodeAsync(model.deviceCode)))
                 {
                     _logger.LogError($"EventIncreaseService.InsertAsync: не найден девайс {model.deviceCode}");
-                    return -1;
+                    throw new CustomStatusCodeException($"Не найден девайс {model.deviceCode}", 404);
                 }
 
                 if(!(await _eventKindsService.CheckIfExistsByCodeAsync(model.eventKindCode)))
                 {
                     _logger.LogError($"EventIncreaseService.InsertAsync: не найден тип внесения {model.eventKindCode}");
-                    return -1;
+                    throw new CustomStatusCodeException($"Не найден тип внесения {model.eventKindCode}", 404);
                 }
 
                 if(!(await _paySessionsService.CheckIfExistsAsync(model.idSessionOnPost, model.deviceCode)))
                 {
                     _logger.LogError($"EventIncreaseService.InsertAsync: сессия с id={model.idSessionOnPost} на девайсе {model.deviceCode} не записана");
-                    return -1;
+                    throw new CustomStatusCodeException($"Сессия с id={model.idSessionOnPost} на девайсе {model.deviceCode} не записана", 404);
                 }
 
                 if(await this.CheckIfExistsAsync(model.idEventOnPost, model.deviceCode))
                 {
                     _logger.LogError($"EventIncreaseService.InsertAsync: уже записано событие id={model.idEventOnPost} на девайсе {model.deviceCode}");
-                    return -1;
+                    throw new CustomStatusCodeException($"Уже записано событие id={model.idEventOnPost} на девайсе {model.deviceCode}", 409);
                 }
 
                 EventIncrease ei = new EventIncrease
@@ -86,7 +87,7 @@ namespace GateWashSyncService.Services
             catch (Exception e) 
             {
                 _logger.LogError($"EventIncreaseService.InsertAsync: {e.Message}");
-                return -1;
+                throw new CustomStatusCodeException($"{e.Message}", 500);
             }
         }
 
