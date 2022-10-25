@@ -113,17 +113,9 @@ namespace AuthenticationService.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            try
-            {
-                IEnumerable<AccountInfoDto> accounts = await _accountsService.GetAsync();
+            IEnumerable<AccountInfoDto> accounts = await _accountsService.GetAsync();
 
-                return Ok(accounts);
-            }
-            catch (Exception e)
-            {
-                //_logger.LogError(e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                return StatusCode(500, new ErrorModel() { ErrorType = "unexpected", Alert = "Что-то пошло не так в ходе работы сервера", ErrorCode = "Ошибка при обращении к серверу", ErrorMessage = "Попробуйте снова или обратитесь к специалисту" });
-            }
+            return Ok(accounts);
         }
 
         #region Swagger Annotations

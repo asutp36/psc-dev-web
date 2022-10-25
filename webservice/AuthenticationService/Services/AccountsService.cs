@@ -29,20 +29,29 @@ namespace AuthenticationService.Services
         /// <returns>Список пользователей</returns>
         public async Task<IEnumerable<AccountInfoDto>> GetAsync()
         {
-            var accounts = await _model.Users.Include(o => o.IdroleNavigation)
-                .Select(o => new AccountInfoDto
-                {
-                    id = o.Iduser,
-                    Login = o.Login,
-                    Name = o.Name,
-                    Phone = o.PhoneInt,
-                    Email = o.Email,
-                    Role = new RoleInfoDto(o.IdroleNavigation.Code, o.IdroleNavigation.Name),
-                    Washes = o.UserWashes.Select(w => w.WashCode)
-                }).ToListAsync();
-                
+            try
+            {
+                var accounts = await _model.Users.Include(o => o.IdroleNavigation)
+                    .Select(o => new AccountInfoDto
+                    {
+                        id = o.Iduser,
+                        Login = o.Login,
+                        Name = o.Name,
+                        Phone = o.PhoneInt,
+                        Email = o.Email,
+                        Role = new RoleInfoDto(o.IdroleNavigation.Code, o.IdroleNavigation.Name),
+                        Washes = o.UserWashes.Select(w => w.WashCode)
+                    }).ToListAsync();
 
-            return accounts;
+                throw new Exception("посмотрим что будет в логах");
+
+                return accounts;
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace);
+                throw new Exception("Исключение во внешний мир", e);
+            }
         }
 
         public async Task<AccountInfoDto> Get(int id) 
