@@ -26,6 +26,7 @@ namespace GateWashSyncService.Models.GateWash
         public virtual DbSet<Event> Event { get; set; }
         public virtual DbSet<EventIncrease> EventIncrease { get; set; }
         public virtual DbSet<EventKind> EventKind { get; set; }
+        public virtual DbSet<EventKindWashFee> EventKindWashFee { get; set; }
         public virtual DbSet<EventPayout> EventPayout { get; set; }
         public virtual DbSet<PayEvent> PayEvent { get; set; }
         public virtual DbSet<PaySession> PaySession { get; set; }
@@ -204,6 +205,8 @@ namespace GateWashSyncService.Models.GateWash
 
                 entity.Property(e => e.M10).HasColumnName("m10");
 
+                entity.Property(e => e.Profit).HasColumnName("profit");
+
                 entity.HasOne(d => d.IdpayEventNavigation)
                     .WithOne(p => p.EventIncrease)
                     .HasForeignKey<EventIncrease>(d => d.IdpayEvent)
@@ -225,6 +228,25 @@ namespace GateWashSyncService.Models.GateWash
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<EventKindWashFee>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.Property(e => e.IdeventKind).HasColumnName("IDEventKind");
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.HasOne(d => d.IdeventKindNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdeventKind)
+                    .HasConstraintName("FK_EventKindWashFee_EventKind");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_EventKindWashFee_Wash");
             });
 
             modelBuilder.Entity<EventPayout>(entity =>

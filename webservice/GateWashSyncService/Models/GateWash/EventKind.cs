@@ -19,6 +19,7 @@ namespace GateWashSyncService.Models.GateWash
         public string Code { get; set; }
         public string Name { get; set; }
         public int DisplayOrder { get; set; }
+        public float? Fee { get; set; }
 
         public virtual ICollection<Event> Event { get; set; }
         public virtual ICollection<PayEvent> PayEvent { get; set; }
