@@ -17,9 +17,12 @@ namespace AuthenticationService.Models.UserAuthenticationDb
         {
         }
 
+        public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserWash> UserWashes { get; set; }
+        public virtual DbSet<Wash> Washes { get; set; }
+        public virtual DbSet<WashType> WashTypes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -33,6 +36,17 @@ namespace AuthenticationService.Models.UserAuthenticationDb
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "Cyrillic_General_CI_AS");
+
+            modelBuilder.Entity<Region>(entity =>
+            {
+                entity.HasKey(e => e.Idregion);
+
+                entity.Property(e => e.Idregion).HasColumnName("IDRegion");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+            });
 
             modelBuilder.Entity<Role>(entity =>
             {
@@ -82,18 +96,74 @@ namespace AuthenticationService.Models.UserAuthenticationDb
 
             modelBuilder.Entity<UserWash>(entity =>
             {
-                entity.HasKey(e => new { e.Iduser, e.WashCode });
+                entity.HasKey(e => new { e.Iduser, e.Idwash })
+                    .HasName("PK_UserWash_1");
 
                 entity.ToTable("UserWash");
 
                 entity.Property(e => e.Iduser).HasColumnName("IDUser");
 
-                entity.Property(e => e.WashCode).HasMaxLength(10);
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
 
                 entity.HasOne(d => d.IduserNavigation)
                     .WithMany(p => p.UserWashes)
                     .HasForeignKey(d => d.Iduser)
                     .HasConstraintName("FK_UserWash_Users");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany(p => p.UserWashes)
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_UserWash_Washes");
+            });
+
+            modelBuilder.Entity<Wash>(entity =>
+            {
+                entity.HasKey(e => e.Idwash);
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.Property(e => e.Address)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.Idregion).HasColumnName("IDRegion");
+
+                entity.Property(e => e.IdwashType).HasColumnName("IDWashType");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.HasOne(d => d.IdregionNavigation)
+                    .WithMany(p => p.Washes)
+                    .HasForeignKey(d => d.Idregion)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Washes_Regions");
+
+                entity.HasOne(d => d.IdwashTypeNavigation)
+                    .WithMany(p => p.Washes)
+                    .HasForeignKey(d => d.IdwashType)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Washes_WashTypes");
+            });
+
+            modelBuilder.Entity<WashType>(entity =>
+            {
+                entity.HasKey(e => e.IdwashType);
+
+                entity.Property(e => e.IdwashType).HasColumnName("IDWashType");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
             });
 
             OnModelCreatingPartial(modelBuilder);
