@@ -1,3 +1,4 @@
+using AuthenticationService.Middlewares;
 using AuthenticationService.Models;
 using AuthenticationService.Models.UserAuthenticationDb;
 using AuthenticationService.Services;
@@ -99,6 +100,8 @@ namespace AuthenticationService
             services.AddTransient<RolesService>();
 
             services.AddTransient<AccountsService>();
+
+            services.AddTransient<GlobalEcxeptionHandlingMiddleware>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -124,6 +127,8 @@ namespace AuthenticationService
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
             app.UseAuthorization();
+
+            app.UseMiddleware<GlobalEcxeptionHandlingMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
