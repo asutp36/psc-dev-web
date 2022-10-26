@@ -29,22 +29,21 @@ namespace AuthenticationService.Controllers
             _accountsService = accountsService;
         }
 
-        private ClaimsIdentity GetIdentity(LoginModel login)
+        private async Task<ClaimsIdentity> GetIdentityAsync(LoginModel login)
         {
-            User user = _context.Users.FirstOrDefault(u => u.Login == login.Login && u.Password == login.Password);
+            AccountInfoDto user = await _accountsService.GetAsync(login.Login);
             if (user != null)
             {
                 var claims = new List<Claim>();
                 Claim c1 = new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login);
                 claims.Add(c1);
 
-                Claim c = new Claim(ClaimsIdentity.DefaultRoleClaimType, _context.Roles.Find(user.Idrole).Code);
+                Claim c = new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Code);
                 claims.Add(c);
 
-                List<UserWash> washes = _context.UserWashes.Where(uw => uw.Iduser == user.Iduser).ToList();
-                foreach (UserWash w in washes)
+                foreach (WashInfo w in user.Washes)
                 {
-                    claims.Add(new Claim("Wash", w.WashCode));
+                    claims.Add(new Claim(w.TypeCode, w.Code));
                 }
 
                 claims.Add(new Claim("UserName", user.Name));
@@ -59,12 +58,12 @@ namespace AuthenticationService.Controllers
             return null;
         }
 
-        private IActionResult Token(LoginModel login)
+        private async Task<IActionResult> TokenAsync(LoginModel login)
         {
             if (!ModelState.IsValid)
                 return BadRequest(new ErrorModel() { ErrorType = "badvalue", Alert = "Некорректные входные параметры", ErrorCode = "Ошибка валидации", ErrorMessage = "Проверьте правильность введенных данных и попробуйте снова" });
 
-            var identity = GetIdentity(login);
+            var identity = await GetIdentityAsync(login);
             if (identity == null)
             {
                 return BadRequest(new ErrorModel() { ErrorType = "login", Alert = "Неверный логин или пароль", ErrorCode = "Ошибка введённых данных", ErrorMessage = "Проверьте правильность введённых логина и пароля" });
@@ -98,11 +97,11 @@ namespace AuthenticationService.Controllers
         [SwaggerResponse(400, Type = typeof(ErrorModel))]
         #endregion
         [HttpPost("login")]
-        public IActionResult Login(LoginModel login)
+        public async Task<IActionResult> Login(LoginModel login)
         {
             if (!ModelState.IsValid)
                 return BadRequest(new ErrorModel() { ErrorType = "badvalue", Alert = "Некорректные входные параметры", ErrorCode = "Ошибка валидации", ErrorMessage = "Проверьте правильность введенных данных и попробуйте снова" });
-            return Token(login);
+            return await TokenAsync(login);
         }
 
         #region Swagger Annotations

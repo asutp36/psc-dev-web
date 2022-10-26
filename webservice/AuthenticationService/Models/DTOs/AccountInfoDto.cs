@@ -14,6 +14,6 @@ namespace AuthenticationService.Models.DTOs
         public string Email { get; set; }
         public long? Phone { get; set; }
         public RoleInfoDto Role { get; set; }
-        public IEnumerable<string> Washes { get; set; }
+        public IEnumerable<WashInfo> Washes { get; set; }
     }
 }

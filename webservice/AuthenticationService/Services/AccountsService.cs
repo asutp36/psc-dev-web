@@ -31,26 +31,30 @@ namespace AuthenticationService.Services
         {
             try
             {
-                var accounts = await _model.Users.Include(o => o.IdroleNavigation)
-                    .Select(o => new AccountInfoDto
-                    {
-                        id = o.Iduser,
-                        Login = o.Login,
-                        Name = o.Name,
-                        Phone = o.PhoneInt,
-                        Email = o.Email,
-                        Role = new RoleInfoDto(o.IdroleNavigation.Code, o.IdroleNavigation.Name),
-                        Washes = o.UserWashes.Select(w => w.WashCode)
-                    }).ToListAsync();
-
-                throw new Exception("посмотрим что будет в логах");
+                var accounts = await _model.Users.Include(o => o.UserWashes).ThenInclude(o => o.IdwashNavigation).ThenInclude(o => o.IdwashTypeNavigation)
+                                    .Include(o => o.IdroleNavigation)
+                                    .Select(o => new AccountInfoDto
+                                    {
+                                        id = o.Iduser,
+                                        Login = o.Login,
+                                        Name = o.Name,
+                                        Phone = o.PhoneInt,
+                                        Email = o.Email,
+                                        Role = new RoleInfoDto(o.IdroleNavigation.Code, o.IdroleNavigation.Name),
+                                        Washes = o.UserWashes.Select(w => new WashInfo
+                                        {
+                                            Code = w.IdwashNavigation.Code,
+                                            Name = w.IdwashNavigation.Name,
+                                            TypeCode = w.IdwashNavigation.IdwashTypeNavigation.Code
+                                        })
+                                    }).ToListAsync();
 
                 return accounts;
             }
             catch(Exception e)
             {
                 _logger.LogError(e.Message + Environment.NewLine + e.StackTrace);
-                throw new Exception("Исключение во внешний мир", e);
+                return null;
             }
         }
 
@@ -63,7 +67,7 @@ namespace AuthenticationService.Services
                 Email = o.Email,
                 Name = o.Name,
                 Phone = o.PhoneInt,
-                Washes = o.UserWashes.Select(e => e.WashCode),
+                //Washes = o.UserWashes.Select(e => e.WashCode),
                 Role = new RoleInfoDto() { Code = o.IdroleNavigation.Code, Name = o.IdroleNavigation.Name }
             }
             ).FirstOrDefaultAsync();
@@ -71,14 +75,15 @@ namespace AuthenticationService.Services
 
         public async Task<AccountInfoDto> GetAsync(string login) 
         {
-            return await _model.Users.Where(o => o.Login == login).Select(o => new AccountInfoDto
+            return await _model.Users.Where(o => o.Login == login)
+                .Select(o => new AccountInfoDto
             {
                 id = o.Iduser,
                 Login = o.Login,
                 Email = o.Email,
                 Name = o.Name,
                 Phone = o.PhoneInt,
-                Washes = o.UserWashes.Select(e => e.WashCode),
+                Washes = o.UserWashes.Select(w => new WashInfo { Code = w.IdwashNavigation.Code, Name = w.IdwashNavigation.Name, TypeCode = w.IdwashNavigation.IdwashTypeNavigation.Code }),
                 Role = _rolesService.Get(o.Idrole)
             }).FirstOrDefaultAsync();
         }
@@ -113,8 +118,8 @@ namespace AuthenticationService.Services
 
                 await _model.SaveChangesAsync();
 
-                IEnumerable<UserWash> uw = account.Washes.Select(o => new UserWash { Iduser = user.Iduser, WashCode = o });
-                await _model.UserWashes.AddRangeAsync(uw);
+                //IEnumerable<UserWash> uw = account.Washes.Select(o => new UserWash { Iduser = user.Iduser, WashCode = o });
+                //await _model.UserWashes.AddRangeAsync(uw);
                 await _model.SaveChangesAsync();
 
                 await _model.Database.CommitTransactionAsync();
