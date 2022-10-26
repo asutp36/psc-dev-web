@@ -39,7 +39,7 @@ namespace GateWashDataService.Controllers
                 filters.Programs = new List<ProgramModel>();
                 filters.Washes = new List<WashModel>();
                 filters.EventKinds = new List<EventKindModel>();
-                foreach (Claim c in User.Claims.Where(cl => cl.Type == "Wash").ToList())
+                foreach (Claim c in User.Claims.Where(cl => cl.Type == "GateWash" || cl.Type == "RobotWash").ToList())
                 {
                     filters.Washes.Add(_context.Washes.Where(w => w.Code == c.Value).Select(w => new WashModel { IdWash = w.Idwash, IdRegion = w.Idregion, Code = w.Code, Name = w.Name }).FirstOrDefault());
                     var terminals = _context.Terminals.Where(t => t.IdwashNavigation.Code == c.Value)

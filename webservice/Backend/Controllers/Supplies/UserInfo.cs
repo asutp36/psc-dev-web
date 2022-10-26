@@ -46,7 +46,7 @@ namespace Backend.Controllers.Supplies
                     break;
                 }
                 else
-                    if (c.Type == "Wash")
+                    if (c.Type == "MSO")
                     {
                         Wash w = _model.Wash.Where(w => w.Code == c.Value).FirstOrDefault();
                         result.Add(new WashViewModel()
