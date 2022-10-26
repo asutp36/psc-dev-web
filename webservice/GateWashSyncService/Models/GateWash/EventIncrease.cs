@@ -11,7 +11,7 @@ namespace GateWashSyncService.Models.GateWash
     {
         public int IdpayEvent { get; set; }
         public int Amount { get; set; }
-        public int? Profit { get; set; }
+        public double? Profit { get; set; }
         public int M10 { get; set; }
         public int B50 { get; set; }
         public int B100 { get; set; }

@@ -27,7 +27,7 @@ namespace GateWashDataService.Repositories
                                                   Terminal = s.IddeviceNavigation.Name,
                                                   TerminalCode = s.IddeviceNavigation.Code,
                                                   Program = s.IdprogramNavigation.Name,
-                                                  Revenue = Math.Round(s.PayEvents.Sum(e => e.EventIncrease.Amount) * (1f - (s.PayEvents.OrderBy(e => e.Dtime).FirstOrDefault().IdeventKindNavigation.Fee ?? 0f)), 2, MidpointRounding.ToEven),
+                                                  Revenue = Math.Round(s.PayEvents.Sum(e => e.EventIncrease.Profit ?? 0), 0, MidpointRounding.AwayFromZero),
                                                   Payout = s.PayEvents.Sum(e => e.EventPayout.Amount),
                                                   Cheque = s.Qr != null && s.Qr != "",
                                                   Note = s.Details,
@@ -61,7 +61,7 @@ namespace GateWashDataService.Repositories
                                                                         TypeCode = o.TypeCode,
                                                                         TypeName = o.TypeName,
                                                                         DisplayOrder = o.DisplayOrder,
-                                                                        Value = Math.Round(o.Value * (1 - o.Fee), 2, MidpointRounding.ToEven)
+                                                                        Value = Math.Round(o.Value, 0, MidpointRounding.AwayFromZero)
                                                                     });
 
             var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
@@ -135,7 +135,7 @@ namespace GateWashDataService.Repositories
                                                                         TypeCode = o.TypeCode,
                                                                         TypeName = o.TypeName,
                                                                         DisplayOrder = o.DisplayOrder,
-                                                                        Value = Math.Round(o.Value * (1 - o.Fee), 2, MidpointRounding.ToEven)
+                                                                        Value = Math.Round(o.Value, 0, MidpointRounding.AwayFromZero)
                                                                     });
             var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
@@ -186,7 +186,7 @@ namespace GateWashDataService.Repositories
                                                                         TypeCode = o.TypeCode,
                                                                         TypeName = o.TypeName,
                                                                         DisplayOrder = o.DisplayOrder,
-                                                                        Value = Math.Round(o.Value * (1 - o.Fee), 2, MidpointRounding.ToEven)
+                                                                        Value = Math.Round(o.Value, 0, MidpointRounding.AwayFromZero)
                                                                     });
             var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
@@ -259,7 +259,7 @@ namespace GateWashDataService.Repositories
                                                                         TypeCode = o.TypeCode,
                                                                         TypeName = o.TypeName,
                                                                         DisplayOrder = o.DisplayOrder,
-                                                                        Value = Math.Round(o.Value * (1 - o.Fee), 2, MidpointRounding.ToEven)
+                                                                        Value = Math.Round(o.Value, 0, MidpointRounding.AwayFromZero)
                                                                     });
 
             var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
@@ -365,7 +365,7 @@ namespace GateWashDataService.Repositories
                                               .Include(t => t.IdpayEventNavigation.IdeventKindNavigation)
                                               .Where(d => terminals.Contains(d.IdpayEventNavigation.IddeviceNavigation.Code))
                                               .GroupBy(k => new { k.IdpayEventNavigation.Dtime.Date, k.IdpayEventNavigation.Dtime.Hour, k.IdpayEventNavigation.Iddevice, DeviceCode = k.IdpayEventNavigation.IddeviceNavigation.Code, DeviceName = k.IdpayEventNavigation.IddeviceNavigation.Name, k.IdpayEventNavigation.IdeventKindNavigation.Code, k.IdpayEventNavigation.IdeventKindNavigation.Name, k.IdpayEventNavigation.IdeventKindNavigation.DisplayOrder, k.IdpayEventNavigation.IdeventKindNavigation.Fee },
-                                                       v => v.Amount,
+                                                       v => v.Profit,
                                                        (key, val) => new GroupedIncreaseTypeDto
                                                        {
                                                            DTime = key.Date,
@@ -376,7 +376,7 @@ namespace GateWashDataService.Repositories
                                                            TypeCode = key.Code,
                                                            TypeName = key.Name,
                                                            DisplayOrder = key.DisplayOrder,
-                                                           Value = val.Sum(),
+                                                           Value = val.Sum() ?? 0,
                                                            Fee = key.Fee ?? 0
                                                        });
 
@@ -422,7 +422,7 @@ namespace GateWashDataService.Repositories
                                                                         TypeCode = o.TypeCode,
                                                                         TypeName = o.TypeName,
                                                                         DisplayOrder = o.DisplayOrder,
-                                                                        Value = Math.Round(o.Value * (1 - o.Fee), 2, MidpointRounding.ToEven)
+                                                                        Value = Math.Round(o.Value, 0, MidpointRounding.AwayFromZero)
                                                                     });
             var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))
@@ -494,7 +494,7 @@ namespace GateWashDataService.Repositories
                                                                         TypeCode = o.TypeCode,
                                                                         TypeName = o.TypeName,
                                                                         DisplayOrder = o.DisplayOrder,
-                                                                        Value = Math.Round(o.Value * (1 - o.Fee), 2, MidpointRounding.ToEven)
+                                                                        Value = Math.Round(o.Value, 0, MidpointRounding.AwayFromZero)
                                                                     });
             var payouts = GetPayoutsByDaySplitTerminals(context, terminals).Where(t => ((t.DTime > param.StartDate.Date) || (t.DTime == param.StartDate.Date && t.Hour >= param.StartDate.Hour)) && ((t.DTime < param.EndDate.Date) || (t.DTime == param.EndDate.Date && t.Hour <= param.EndDate.Hour))
                                                                            && (param.Terminal == null || t.TerminalCode == param.Terminal))

@@ -217,6 +217,8 @@ namespace GateWashDataService.Models.GateWashContext
 
                 entity.Property(e => e.M10).HasColumnName("m10");
 
+                entity.Property(e => e.Profit).HasColumnName("profit");
+
                 entity.HasOne(d => d.IdpayEventNavigation)
                     .WithOne(p => p.EventIncrease)
                     .HasForeignKey<EventIncrease>(d => d.IdpayEvent)
