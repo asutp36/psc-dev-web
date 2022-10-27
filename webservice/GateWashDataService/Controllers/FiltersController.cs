@@ -39,42 +39,86 @@ namespace GateWashDataService.Controllers
                 filters.Programs = new List<ProgramModel>();
                 filters.Washes = new List<WashModel>();
                 filters.EventKinds = new List<EventKindModel>();
-                foreach (Claim c in User.Claims.Where(cl => cl.Type == "GateWash" || cl.Type == "RobotWash").ToList())
+                
+                if (User.Claims.Any(c => c.Type == "Wash"))
                 {
-                    filters.Washes.Add(_context.Washes.Where(w => w.Code == c.Value).Select(w => new WashModel { IdWash = w.Idwash, IdRegion = w.Idregion, Code = w.Code, Name = w.Name }).FirstOrDefault());
-                    var terminals = _context.Terminals.Where(t => t.IdwashNavigation.Code == c.Value)
-                        .Include(d => d.IddeviceNavigation)
-                        .Select(t => new PayTerminalModel
+                    foreach (Claim c in User.Claims.Where(cl => cl.Type == "Wash").ToList())
+                    {
+                        filters.Washes.Add(_context.Washes.Where(w => w.Code == c.Value).Select(w => new WashModel { IdWash = w.Idwash, IdRegion = w.Idregion, Code = w.Code, Name = w.Name }).FirstOrDefault());
+                        var terminals = _context.Terminals.Where(t => t.IdwashNavigation.Code == c.Value)
+                            .Include(d => d.IddeviceNavigation)
+                            .Select(t => new PayTerminalModel
+                            {
+                                IdDevice = t.Iddevice,
+                                Code = t.IddeviceNavigation.Code,
+                                Name = t.IddeviceNavigation.Name,
+                                IdWash = t.Idwash
+                            })
+                            .ToList();
+                        filters.PayTerminals.AddRange(terminals);
+
+                        var programs = _context.ProgramWashes.Where(pw => pw.IdwashNavigation.Code == c.Value).Select(p => new ProgramModel
                         {
-                            IdDevice = t.Iddevice,
-                            Code = t.IddeviceNavigation.Code,
-                            Name = t.IddeviceNavigation.Name,
-                            IdWash = t.Idwash
-                        })
-                        .ToList();
-                    filters.PayTerminals.AddRange(terminals);
+                            IdWash = p.Idwash,
+                            Code = p.IdprogramNavigation.Code,
+                            Cost = p.IdprogramNavigation.Cost,
+                            Name = p.IdprogramNavigation.Name
+                        }).ToList();
+                        filters.Programs.AddRange(programs);
 
-                    var programs = _context.ProgramWashes.Where(pw => pw.IdwashNavigation.Code == c.Value).Select(p => new ProgramModel
+                        var eventkinds = _context.EventKindWashes.Where(ekw => ekw.IdwashNavigation.Code == c.Value).Select(ek => new EventKindModel
+                        {
+                            IdEventKind = ek.IdeventKind,
+                            Code = ek.IdeventKindNavigation.Code,
+                            Name = ek.IdeventKindNavigation.Name,
+                            IdWash = new List<int>() { ek.Idwash }
+                        }).ToList();
+                        foreach (EventKindModel ek in eventkinds)
+                            if (filters.EventKinds.Find(e => e.IdEventKind == ek.IdEventKind && e.IdWash.FirstOrDefault() != ek.IdWash.FirstOrDefault()) == null)
+                                filters.EventKinds.Add(ek);
+                            else
+                                filters.EventKinds.Find(e => e.IdEventKind == ek.IdEventKind).IdWash.Add(ek.IdWash.First());
+                    }
+                }
+                else
+                {
+                    foreach (Claim c in User.Claims.Where(cl => cl.Type == "GateWash" || cl.Type == "RobotWash").ToList())
                     {
-                        IdWash = p.Idwash,
-                        Code = p.IdprogramNavigation.Code,
-                        Cost = p.IdprogramNavigation.Cost,
-                        Name = p.IdprogramNavigation.Name
-                    }).ToList();
-                    filters.Programs.AddRange(programs);
+                        filters.Washes.Add(_context.Washes.Where(w => w.Code == c.Value).Select(w => new WashModel { IdWash = w.Idwash, IdRegion = w.Idregion, Code = w.Code, Name = w.Name }).FirstOrDefault());
+                        var terminals = _context.Terminals.Where(t => t.IdwashNavigation.Code == c.Value)
+                            .Include(d => d.IddeviceNavigation)
+                            .Select(t => new PayTerminalModel
+                            {
+                                IdDevice = t.Iddevice,
+                                Code = t.IddeviceNavigation.Code,
+                                Name = t.IddeviceNavigation.Name,
+                                IdWash = t.Idwash
+                            })
+                            .ToList();
+                        filters.PayTerminals.AddRange(terminals);
 
-                    var eventkinds = _context.EventKindWashes.Where(ekw => ekw.IdwashNavigation.Code == c.Value).Select(ek => new EventKindModel
-                    {
-                        IdEventKind = ek.IdeventKind,
-                        Code = ek.IdeventKindNavigation.Code,
-                        Name = ek.IdeventKindNavigation.Name,
-                        IdWash = new List<int>() { ek.Idwash }
-                    }).ToList();
-                    foreach (EventKindModel ek in eventkinds)
-                        if (filters.EventKinds.Find(e => e.IdEventKind == ek.IdEventKind && e.IdWash.FirstOrDefault() != ek.IdWash.FirstOrDefault()) == null)
-                            filters.EventKinds.Add(ek);
-                        else
-                            filters.EventKinds.Find(e => e.IdEventKind == ek.IdEventKind).IdWash.Add(ek.IdWash.First());
+                        var programs = _context.ProgramWashes.Where(pw => pw.IdwashNavigation.Code == c.Value).Select(p => new ProgramModel
+                        {
+                            IdWash = p.Idwash,
+                            Code = p.IdprogramNavigation.Code,
+                            Cost = p.IdprogramNavigation.Cost,
+                            Name = p.IdprogramNavigation.Name
+                        }).ToList();
+                        filters.Programs.AddRange(programs);
+
+                        var eventkinds = _context.EventKindWashes.Where(ekw => ekw.IdwashNavigation.Code == c.Value).Select(ek => new EventKindModel
+                        {
+                            IdEventKind = ek.IdeventKind,
+                            Code = ek.IdeventKindNavigation.Code,
+                            Name = ek.IdeventKindNavigation.Name,
+                            IdWash = new List<int>() { ek.Idwash }
+                        }).ToList();
+                        foreach (EventKindModel ek in eventkinds)
+                            if (filters.EventKinds.Find(e => e.IdEventKind == ek.IdEventKind && e.IdWash.FirstOrDefault() != ek.IdWash.FirstOrDefault()) == null)
+                                filters.EventKinds.Add(ek);
+                            else
+                                filters.EventKinds.Find(e => e.IdEventKind == ek.IdEventKind).IdWash.Add(ek.IdWash.First());
+                    }
                 }
 
 

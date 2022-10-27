@@ -80,7 +80,15 @@ namespace GateWashDataService.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             IQueryable<IncreaseModel> increases = IncreasesRepository.GetAll(_context, parameters, washes).ToList().AsQueryable();
 
             string sortingRule = "";
@@ -102,7 +110,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("total_count")]
         public async Task<IActionResult> GetTotalCount([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             IQueryable<IncreaseModel> increases = IncreasesRepository.GetAll(_context, parameters, washes).ToList().AsQueryable();
 
             return Ok(increases.Count());
@@ -112,7 +128,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("commulative-total")]
         public async Task<IActionResult> GetCommulativeTotalSplitTerminals([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             IQueryable<IncreaseCommulativeTotalModel> increases = IncreasesRepository.GetCommulativeTotalSplitTerminals(_context, parameters, washes);
 
             string sortingRule = "";
@@ -134,7 +158,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("commulative-total/graphic")]
         public async Task<IActionResult> GetCommulativeTotalSplitTerminalsGraphic([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             IQueryable<IncreaseCommulativeTotalModel> increases = IncreasesRepository.GetCommulativeTotalSplitTerminals(_context, parameters, washes);
 
             string sortingRule = "";
@@ -189,7 +221,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("hours")]
         public async Task<IActionResult> GetByHours([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             var increases = IncreasesRepository.GetGroupedByHour(_context, parameters, washes)
                                             .Select(i => new GroupedIncreaseModel
                                             {
@@ -219,7 +259,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("hours/total_count")]
         public async Task<IActionResult> GetByHoursTotalCount([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             var increases = IncreasesRepository.GetGroupedByHour(_context, parameters, washes)
                                             .Select(i => new GroupedIncreaseModel
                                             {
@@ -237,7 +285,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("hours/split-terminals")]
         public async Task<IActionResult> GetByHoursSplitTerminals([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             var increases = IncreasesRepository.GetGroupedByHourSplitTerminals(_context, parameters, washes)
                                             .Select(i => new GroupedIncreaseModel
                                             {
@@ -269,7 +325,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("hours/split-terminals/total_count")]
         public async Task<IActionResult> GetByHoursSplitTerminalsTotalCount([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             var increases = IncreasesRepository.GetGroupedByHourSplitTerminals(_context, parameters, washes)
                                             .Select(i => new GroupedIncreaseModel
                                             {
@@ -289,7 +353,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("days")]
         public async Task<IActionResult> GetByDays([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             var increases = IncreasesRepository.GetGroupedByDay(_context, parameters, washes)
                                             .Select(i => new GroupedIncreaseModel
                                             {
@@ -319,7 +391,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("days/total_count")]
         public async Task<IActionResult> GetByDaysTotalCount([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             var increases = IncreasesRepository.GetGroupedByDay(_context, parameters, washes)
                                             .Select(i => new GroupedIncreaseModel
                                             {
@@ -337,7 +417,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("days/split-terminals")]
         public async Task<IActionResult> GetByDaysSplitTerminals([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             var increases = IncreasesRepository.GetGroupedByDaySplitTerminals(_context, parameters, washes)
                                             .Select(i => new GroupedIncreaseModel
                                             {
@@ -369,7 +457,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("days/split-terminals/total_count")]
         public async Task<IActionResult> GetByDaysSplitTerminalsTotalCount([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             var increases = IncreasesRepository.GetGroupedByDaySplitTerminals(_context, parameters, washes)
                                             .Select(i => new GroupedIncreaseModel
                                             {
@@ -389,7 +485,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("months")]
         public async Task<IActionResult> GetByMonths([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             var increases = IncreasesRepository.GetGroupedByMonth(_context, parameters, washes)
                                              .Select(i => new GroupedIncreaseModel
                                              {
@@ -419,7 +523,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("months/total_count")]
         public async Task<IActionResult> GetByMonthsTotalCount([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             var increases = IncreasesRepository.GetGroupedByMonth(_context, parameters, washes)
                                              .Select(i => new GroupedIncreaseModel
                                              {
@@ -437,7 +549,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("months/split-terminals")]
         public async Task<IActionResult> GetByMonthsSplitTerminals([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             var increases = IncreasesRepository.GetGroupedByMonthSplitTerminals(_context, parameters, washes)
                                              .Select(i => new GroupedIncreaseModel
                                              {
@@ -469,7 +589,15 @@ namespace GateWashDataService.Controllers
         [HttpGet("months/split-terminals/total_count")]
         public async Task<IActionResult> GetByMonthsSplitTerminalsTotalCount([FromQuery] GetIncreaseParameters parameters)
         {
-            var washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            List<string> washes = new List<string>();
+            if (User.Claims.Any(c => c.Type == "Wash"))
+            {
+                washes = User.Claims.Where(c => c.Type == "Wash").Select(c => c.Value).ToList();
+            }
+            else
+            {
+                washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value).ToList();
+            }
             var increases = IncreasesRepository.GetGroupedByMonthSplitTerminals(_context, parameters, washes)
                                              .Select(i => new GroupedIncreaseModel
                                              {

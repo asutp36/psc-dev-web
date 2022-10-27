@@ -29,34 +29,17 @@ namespace Backend.Controllers.Supplies
 
             foreach (Claim c in claims)
             {
-                if (c.Type == ClaimsIdentity.DefaultRoleClaimType && c.Value == "dev")
+                if (c.Type == "MSO")
                 {
-                    var washes = _model.Wash.ToList();
-
-                    foreach (Wash w in washes)
+                    Wash w = _model.Wash.Where(w => w.Code == c.Value).FirstOrDefault();
+                    result.Add(new WashViewModel()
                     {
-                        result.Add(new WashViewModel()
-                        {
-                            idWash = w.Idwash,
-                            code = w.Code,
-                            name = w.Name,
-                            idRegion = w.Idregion
-                        });
-                    }
-                    break;
+                        idWash = w.Idwash,
+                        code = w.Code,
+                        name = w.Name,
+                        idRegion = w.Idregion
+                    });
                 }
-                else
-                    if (c.Type == "MSO")
-                    {
-                        Wash w = _model.Wash.Where(w => w.Code == c.Value).FirstOrDefault();
-                        result.Add(new WashViewModel()
-                        {
-                            idWash = w.Idwash,
-                            code = w.Code,
-                            name = w.Name,
-                            idRegion = w.Idregion
-                        });
-                    }
             }
 
             _washes = result;

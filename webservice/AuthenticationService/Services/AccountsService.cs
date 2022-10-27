@@ -85,7 +85,7 @@ namespace AuthenticationService.Services
                 Name = o.Name,
                 Phone = o.PhoneInt,
                 Washes = o.UserWashes.Select(w => new WashInfo { Code = w.IdwashNavigation.Code, Name = w.IdwashNavigation.Name, TypeCode = w.IdwashNavigation.IdwashTypeNavigation.Code }),
-                Role = _rolesService.Get(o.Idrole)
+                Role = new RoleInfoDto(o.IdroleNavigation.Code, o.IdroleNavigation.Name)
             }).FirstOrDefaultAsync();
         }
 

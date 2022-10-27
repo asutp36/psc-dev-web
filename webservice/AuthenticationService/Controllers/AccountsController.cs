@@ -60,13 +60,10 @@ namespace AuthenticationService.Controllers
 
         private async Task<IActionResult> TokenAsync(LoginModel login)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ErrorModel() { ErrorType = "badvalue", Alert = "Некорректные входные параметры", ErrorCode = "Ошибка валидации", ErrorMessage = "Проверьте правильность введенных данных и попробуйте снова" });
-
             var identity = await GetIdentityAsync(login);
             if (identity == null)
             {
-                return BadRequest(new ErrorModel() { ErrorType = "login", Alert = "Неверный логин или пароль", ErrorCode = "Ошибка введённых данных", ErrorMessage = "Проверьте правильность введённых логина и пароля" });
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Неверный логин или пароль", "Проверьте правильность введённых данных и повторите снова");
             }
 
             var now = DateTime.UtcNow;
@@ -99,8 +96,6 @@ namespace AuthenticationService.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginModel login)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ErrorModel() { ErrorType = "badvalue", Alert = "Некорректные входные параметры", ErrorCode = "Ошибка валидации", ErrorMessage = "Проверьте правильность введенных данных и попробуйте снова" });
             return await TokenAsync(login);
         }
 
