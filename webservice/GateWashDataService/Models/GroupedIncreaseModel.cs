@@ -14,11 +14,11 @@ namespace GateWashDataService.Models
         public string TypesDescription { get; set; }
         public double Amount { get; set; }
         public int ProgramCount { get; set; }
-        public decimal ARPU
+        public int ARPU
         {
             get
             {
-                return (decimal)this.Amount / this.ProgramCount;
+                return (int)Math.Round(this.Amount / this.ProgramCount, 0, MidpointRounding.AwayFromZero);
             }
             private set { }
         }
