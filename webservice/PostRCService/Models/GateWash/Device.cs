@@ -3,10 +3,15 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace PostRCService.Models.GateWashContext
+namespace PostRCService.Models.GateWash
 {
     public partial class Device
     {
+        public Device()
+        {
+            Posts = new HashSet<Post>();
+        }
+
         public int Iddevice { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
@@ -15,5 +20,6 @@ namespace PostRCService.Models.GateWashContext
         public string IpAddress { get; set; }
 
         public virtual DeviceType IddeviceTypeNavigation { get; set; }
+        public virtual ICollection<Post> Posts { get; set; }
     }
 }

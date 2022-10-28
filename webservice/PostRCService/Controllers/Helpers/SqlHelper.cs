@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PostRCService.Models;
+using PostRCService.Models.WashCompany;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace PostRCService.Controllers.Helpers
     {
         public static bool IsWashExists(string washCode)
         {
-            using(ModelDbContext model = new ModelDbContext())
+            using(WashCompanyDbContext model = new WashCompanyDbContext())
             {
                 var wash = model.Washes.Where(w => w.Code == washCode).FirstOrDefault();
 
@@ -21,7 +22,7 @@ namespace PostRCService.Controllers.Helpers
 
         public static bool IsPostExists(string postCode)
         {
-            using (ModelDbContext model = new ModelDbContext())
+            using (WashCompanyDbContext model = new WashCompanyDbContext())
             {
                 var post = model.Devices.Where(d => d.Code == postCode).FirstOrDefault();
 
@@ -31,7 +32,7 @@ namespace PostRCService.Controllers.Helpers
 
         public static string GetPostIp(string postCode)
         {
-            using(ModelDbContext model = new ModelDbContext())
+            using(WashCompanyDbContext model = new WashCompanyDbContext())
             {
                 var device = model.Devices.Where(d => d.Code == postCode).FirstOrDefault();
 
@@ -44,7 +45,7 @@ namespace PostRCService.Controllers.Helpers
 
         public static List<string> GetPostCodes(string washCode)
         {
-            using(ModelDbContext model = new ModelDbContext())
+            using(WashCompanyDbContext model = new WashCompanyDbContext())
             {
                 List<string> codes = model.Posts.Include(p => p.IddeviceNavigation).Include(p => p.IdwashNavigation).Where(w => w.IdwashNavigation.Code == washCode).Select(x => x.IddeviceNavigation.Code).ToList();
 

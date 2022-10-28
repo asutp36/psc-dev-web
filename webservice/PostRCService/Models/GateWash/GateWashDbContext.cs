@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace PostRCService.Models.GateWashContext
+namespace PostRCService.Models.GateWash
 {
     public partial class GateWashDbContext : DbContext
     {
@@ -19,6 +19,9 @@ namespace PostRCService.Models.GateWashContext
 
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<DeviceType> DeviceTypes { get; set; }
+        public virtual DbSet<Post> Posts { get; set; }
+        public virtual DbSet<Region> Regions { get; set; }
+        public virtual DbSet<Wash> Washes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -77,6 +80,72 @@ namespace PostRCService.Models.GateWashContext
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<Post>(entity =>
+            {
+                entity.HasKey(e => e.Idpost);
+
+                entity.Property(e => e.Idpost).HasColumnName("IDPost");
+
+                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Qrcode)
+                    .HasMaxLength(25)
+                    .HasColumnName("QRCode");
+
+                entity.HasOne(d => d.IddeviceNavigation)
+                    .WithMany(p => p.Posts)
+                    .HasForeignKey(d => d.Iddevice)
+                    .HasConstraintName("FK_Posts_Device");
+
+                entity.HasOne(d => d.IdwashNavigation)
+                    .WithMany(p => p.Posts)
+                    .HasForeignKey(d => d.Idwash)
+                    .HasConstraintName("FK_Posts_Wash");
+            });
+
+            modelBuilder.Entity<Region>(entity =>
+            {
+                entity.HasKey(e => e.Idregion);
+
+                entity.Property(e => e.Idregion).HasColumnName("IDRegion");
+
+                entity.Property(e => e.Idcompany).HasColumnName("IDCompany");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<Wash>(entity =>
+            {
+                entity.HasKey(e => e.Idwash);
+
+                entity.ToTable("Wash");
+
+                entity.Property(e => e.Idwash).HasColumnName("IDWash");
+
+                entity.Property(e => e.Address).HasMaxLength(100);
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.Idregion).HasColumnName("IDRegion");
+
+                entity.Property(e => e.Name).HasMaxLength(100);
+
+                entity.HasOne(d => d.IdregionNavigation)
+                    .WithMany(p => p.Washes)
+                    .HasForeignKey(d => d.Idregion)
+                    .HasConstraintName("FK_Wash_Regions");
             });
 
             OnModelCreatingPartial(modelBuilder);

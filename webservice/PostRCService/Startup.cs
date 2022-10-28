@@ -8,7 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using PostRCService.Models.GateWashContext;
+using PostRCService.Middlewares;
+using PostRCService.Models.GateWash;
+using PostRCService.Models.WashCompany;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -58,7 +60,11 @@ namespace PostRCService
                 c.EnableAnnotations();
             });
 
+            services.AddTransient<GlobalEcxeptionHandlingMiddleware>();
+
             services.AddDbContext<GateWashDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("GateWash")));
+
+            services.AddDbContext<WashCompanyDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("WashCompany")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,6 +93,8 @@ namespace PostRCService
             app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthorization();
+
+            app.UseMiddleware<GlobalEcxeptionHandlingMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

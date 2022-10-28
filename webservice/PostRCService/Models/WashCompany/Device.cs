@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace PostRCService.Models
+namespace PostRCService.Models.WashCompany
 {
     public partial class Device
     {

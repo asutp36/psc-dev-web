@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace PostRCService.Models.WashCompany
+namespace PostRCService.Models.GateWash
 {
     public partial class Region
     {
