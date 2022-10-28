@@ -20,6 +20,10 @@ namespace AuthenticationService.Services
             _model = model;
         }
 
+        /// <summary>
+        /// Получить все регионы с мойками
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<RegionDTO>> GetAsync()
         {
             var result = await _model.Regions.Include(o => o.Washes).ThenInclude(o => o.IdwashTypeNavigation)

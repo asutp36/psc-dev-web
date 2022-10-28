@@ -16,7 +16,6 @@ namespace AuthenticationService.Controllers
     {
         private readonly ILogger<WashesController> _logger;
         private readonly WashesService _washesService;
-        private readonly RegionsService _regionsService;
 
         public WashesController(ILogger<WashesController> logger, WashesService washesService)
         {
@@ -28,6 +27,12 @@ namespace AuthenticationService.Controllers
         public async Task<IActionResult> GetAsync()
         {
             return Ok(await _washesService.GetAsync());
+        }
+
+        [HttpGet("{code}")]
+        public async Task<IActionResult> GetByCodeAsync(string code)
+        {
+            return Ok(await _washesService.GetByCodeAsync(code));
         }
 
 
