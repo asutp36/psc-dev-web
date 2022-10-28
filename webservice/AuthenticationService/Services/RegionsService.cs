@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace AuthenticationService.Services
 {
-    public class WashesService
+    public class RegionsService
     {
-        private readonly ILogger<WashesService> _logger;
+        private readonly ILogger<RegionsService> _logger;
         private readonly UserAuthenticationDbContext _model;
 
-        public WashesService(ILogger<WashesService> logger, UserAuthenticationDbContext model)
+        public RegionsService(ILogger<RegionsService> logger, UserAuthenticationDbContext model)
         {
             _logger = logger;
             _model = model;

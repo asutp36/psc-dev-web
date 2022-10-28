@@ -101,6 +101,10 @@ namespace AuthenticationService
 
             services.AddTransient<AccountsService>();
 
+            services.AddTransient<RegionsService>();
+
+            services.AddTransient<WashesService>();
+
             services.AddTransient<GlobalEcxeptionHandlingMiddleware>();
         }
 

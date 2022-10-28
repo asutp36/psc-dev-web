@@ -1,6 +1,8 @@
 ﻿using AuthenticationService.Models.Test;
+using AuthenticationService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,23 @@ namespace AuthenticationService.Controllers
     [ApiController]
     public class WashesController : ControllerBase
     {
+        private readonly ILogger<WashesController> _logger;
+        private readonly WashesService _washesService;
+        private readonly RegionsService _regionsService;
+
+        public WashesController(ILogger<WashesController> logger, WashesService washesService)
+        {
+            _logger = logger;
+            _washesService = washesService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAsync()
+        {
+            return Ok();
+        }
+
+
 
         [HttpGet("fake")]
         public IActionResult Get()
