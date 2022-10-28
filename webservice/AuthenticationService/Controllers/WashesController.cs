@@ -27,7 +27,7 @@ namespace AuthenticationService.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
-            return Ok();
+            return Ok(await _washesService.GetAsync());
         }
 
 

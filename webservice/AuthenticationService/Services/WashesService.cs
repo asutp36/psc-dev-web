@@ -20,22 +20,17 @@ namespace AuthenticationService.Services
             _model = model;
         }
 
-        public async Task<IEnumerable<RegionDTO>> GetAsync()
+        public async Task<IEnumerable<WashDTO>> GetAsync()
         {
-            var result = await _model.Regions.Include(o => o.Washes).ThenInclude(o => o.IdwashTypeNavigation)
-                .Select(o => new RegionDTO
+            var result = await _model.Washes.Include(o => o.IdwashTypeNavigation)
+                .Select(o => new WashDTO
                 {
-                    IdRegion = o.Idregion,
+                    IdWash = o.Idwash,
                     Code = o.Code,
                     Name = o.Name,
-                    Washes = o.Washes.Select(e => new WashDTO
-                    {
-                        IdWash = e.Idwash,
-                        Code = e.Code,
-                        Name = e.Name,
-                        Type = new WashTypeDTO() { IdWashType = e.IdwashType, Code = e.IdwashTypeNavigation.Code, Name = e.IdwashTypeNavigation.Name }
-                    })
+                    Type = new WashTypeDTO() { IdWashType = o.IdwashType, Code = o.IdwashTypeNavigation.Code, Name = o.IdwashTypeNavigation.Name }
                 }).ToListAsync();
+
             return result;
         }
     }
