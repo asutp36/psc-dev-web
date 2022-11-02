@@ -32,5 +32,12 @@ namespace GateWashDataService.Repositories
                             })
                             .ToListAsync();
         }
+
+        public async Task<IEnumerable<short>> GetRegionCodessByWashCodes(IEnumerable<string> washCodes)
+        {
+            var regions = _model.Washes.Include(o => o.IdregionNavigation)
+                .Where(o => washCodes.Contains(o.Code)).Select(o => o.IdregionNavigation.Code).Distinct();
+            return regions;
+        }
     }
 }

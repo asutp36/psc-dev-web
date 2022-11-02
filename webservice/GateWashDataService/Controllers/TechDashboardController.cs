@@ -34,5 +34,21 @@ namespace GateWashDataService.Controllers
             var result = await _techDashboardService.GetWashesWithTerminalsActions(User.Claims.Where(o => o.Type == "GateWash").Select(o => o.Value));
             return Ok(result);
         }
+
+        [Authorize]
+        [HttpGet("wash/{code}")]
+        public async Task<IActionResult> GetWash(string code)
+        {
+            var result = await _techDashboardService.GetWashWithTerminalsActionsByCode(code);
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet("region")]
+        public async Task<IActionResult> GetRegions()
+        {
+            var result = await _techDashboardService.GetRegionsWithWashesTerminalAction(User.Claims.Where(o => o.Type == "GateWash").Select(o => o.Value));
+            return Ok(result);
+        }
     }
 }
