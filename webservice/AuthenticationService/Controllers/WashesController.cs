@@ -24,18 +24,14 @@ namespace AuthenticationService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAsync(string code = null, int id = 0)
         {
-            return Ok(await _washesService.GetAsync());
+            if(code == null && id == 0)
+            {
+                return Ok(await _washesService.GetAsync());
+            }
+            return Ok(await _washesService.GetAsync(code, id));
         }
-
-        [HttpGet("{code}")]
-        public async Task<IActionResult> GetByCodeAsync(string code)
-        {
-            return Ok(await _washesService.GetByCodeAsync(code));
-        }
-
-
 
         [HttpGet("fake")]
         public IActionResult Get()

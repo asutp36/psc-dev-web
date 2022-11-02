@@ -329,7 +329,10 @@ namespace GateWashSyncService.Models.GateWash
 
                 entity.Property(e => e.FiscalError).HasMaxLength(100);
 
-                entity.Property(e => e.Guid).HasColumnName("GUID");
+                entity.Property(e => e.Guid)
+                    .HasColumnName("GUID")
+                    .HasMaxLength(32)
+                    .IsFixedLength();
 
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 

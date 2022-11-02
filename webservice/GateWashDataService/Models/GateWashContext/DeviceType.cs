@@ -17,6 +17,7 @@ namespace GateWashDataService.Models.GateWashContext
         public string Name { get; set; }
         public string Description { get; set; }
 
+        public virtual DeviceTypeAction DeviceTypeAction { get; set; }
         public virtual ICollection<Device> Devices { get; set; }
     }
 }

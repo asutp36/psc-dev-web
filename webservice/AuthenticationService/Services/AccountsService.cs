@@ -41,7 +41,7 @@ namespace AuthenticationService.Services
                                         Name = o.Name,
                                         Phone = o.PhoneInt,
                                         Email = o.Email,
-                                        Role = new RoleInfoDto(o.IdroleNavigation.Code, o.IdroleNavigation.Name),
+                                        Role = new RoleDTO(o.Idrole, o.IdroleNavigation.Code, o.IdroleNavigation.Name),
                                         Washes = o.UserWashes.Select(w => new WashInfo
                                         {
                                             Code = w.IdwashNavigation.Code,
@@ -69,7 +69,7 @@ namespace AuthenticationService.Services
                 Name = o.Name,
                 Phone = o.PhoneInt,
                 //Washes = o.UserWashes.Select(e => e.WashCode),
-                Role = new RoleInfoDto() { Code = o.IdroleNavigation.Code, Name = o.IdroleNavigation.Name }
+                Role = new RoleDTO() { Code = o.IdroleNavigation.Code, Name = o.IdroleNavigation.Name }
             }
             ).FirstOrDefaultAsync();
         }
@@ -85,7 +85,7 @@ namespace AuthenticationService.Services
                 Name = o.Name,
                 Phone = o.PhoneInt,
                 Washes = o.UserWashes.Select(w => new WashInfo { Code = w.IdwashNavigation.Code, Name = w.IdwashNavigation.Name, TypeCode = w.IdwashNavigation.IdwashTypeNavigation.Code }),
-                Role = new RoleInfoDto(o.IdroleNavigation.Code, o.IdroleNavigation.Name)
+                Role = new RoleDTO(o.Idrole, o.IdroleNavigation.Code, o.IdroleNavigation.Name)
             }).FirstOrDefaultAsync();
         }
 

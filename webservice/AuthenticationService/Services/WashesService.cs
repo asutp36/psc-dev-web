@@ -39,12 +39,27 @@ namespace AuthenticationService.Services
             return result;
         }
 
+        public async Task<WashDTO> GetAsync(string code, int id) 
+        {
+            if (id > 0)
+            {
+                return await GetAsync(id);
+            }
+
+            if (!string.IsNullOrEmpty(code))
+            {
+                return await GetAsync(code);
+            }
+
+            throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Некорректные входные параметры", "Входные параметры заданы некорректно, проверьте правильность ввода");
+        }
+
         /// <summary>
         /// Получить мойку по её коду
         /// </summary>
         /// <param name="code">Код мойки</param>
         /// <returns></returns>
-        public async Task<WashDTO> GetByCodeAsync(string code)
+        public async Task<WashDTO> GetAsync(string code)
         {
             if (string.IsNullOrEmpty(code))
             {
@@ -59,6 +74,32 @@ namespace AuthenticationService.Services
             }
 
             var wash = await _model.Washes.Where(o => o.Code == code).Include(o => o.IdwashTypeNavigation)
+                .Select(o => new WashDTO
+                {
+                    IdWash = o.Idwash,
+                    Code = o.Code,
+                    Name = o.Name,
+                    Type = new WashTypeDTO() { IdWashType = o.IdwashType, Code = o.IdwashTypeNavigation.Code, Name = o.IdwashTypeNavigation.Name }
+                })
+                .FirstOrDefaultAsync();
+
+            return wash;
+        }
+
+        /// <summary>
+        /// Получить мойку по её id
+        /// </summary>
+        /// <param name="id">Id мойки</param>
+        /// <returns></returns>
+        public async Task<WashDTO> GetAsync(int id)
+        {
+            if (!await _model.Washes.AnyAsync(o => o.Idwash == id))
+            {
+                _logger.LogError($"Не удалось найти мойку с id={id}");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.NotFound, "Мойка не найдена", "Не удалось найти мойку по запрошенному id");
+            }
+
+            var wash = await _model.Washes.Where(o => o.Idwash == id).Include(o => o.IdwashTypeNavigation)
                 .Select(o => new WashDTO
                 {
                     IdWash = o.Idwash,

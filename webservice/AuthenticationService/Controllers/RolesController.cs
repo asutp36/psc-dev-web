@@ -23,15 +23,21 @@ namespace AuthenticationService.Controllers
         }
 
         #region Swagger Annotations
-        [SwaggerOperation(Summary = "Получить все роли")]
-        [SwaggerResponse(200, Type = typeof(List<RoleInfoDto>))]
+        [SwaggerOperation(Summary = "Получить роль по коду или id")]
+        [SwaggerResponse(200, Type = typeof(RoleDTO))]
+        [SwaggerResponse(400, Description = "Некорректные входные параметры")]
+        [SwaggerResponse(404, Description = "Роль не найдена")]
+        [SwaggerResponse(500, Description = "Что-то пошло не так")]
         #endregion
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> Get(string code = null, int id = 0)
         {
-            IEnumerable<RoleInfoDto> roles = await _rolesService.GetAsync();
+            if (code == null && id == 0)
+            {
+                return Ok(await _rolesService.GetAsync());
+            }
 
-            return Ok(roles);
+            return Ok(await _rolesService.GetAsync(code, id));
         }
     }
 }

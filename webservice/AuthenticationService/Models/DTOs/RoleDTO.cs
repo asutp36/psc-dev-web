@@ -5,15 +5,16 @@ using System.Threading.Tasks;
 
 namespace AuthenticationService.Models.DTOs
 {
-    public class RoleInfoDto
+    public class RoleDTO
     {
+        public int IdRole { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
 
         /// <summary>
         /// Пустой конструктор
         /// </summary>
-        public RoleInfoDto()
+        public RoleDTO()
         {
 
         }
@@ -23,8 +24,9 @@ namespace AuthenticationService.Models.DTOs
         /// </summary>
         /// <param name="code">Код роли</param>
         /// <param name="name">Отображаемое имя</param>
-        public RoleInfoDto(string code, string name)
+        public RoleDTO(int idRole, string code, string name)
         {
+            IdRole = IdRole;
             Code = code;
             Name = name;
         }

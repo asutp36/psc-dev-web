@@ -2,6 +2,7 @@ using GateWashDataService.Extentions;
 using GateWashDataService.Models;
 using GateWashDataService.Models.GateWashContext;
 using GateWashDataService.Repositories;
+using GateWashDataService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -100,6 +101,8 @@ namespace GateWashDataService
             services.AddTransient<WashesRepository>();
 
             services.AddTransient<GraphicsRepository>();
+
+            services.AddTransient<TechDashboardService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

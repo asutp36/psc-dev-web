@@ -21,6 +21,7 @@ namespace GateWashDataService.Models.GateWashContext
         public virtual DbSet<Collect> Collects { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<DeviceType> DeviceTypes { get; set; }
+        public virtual DbSet<DeviceTypeAction> DeviceTypeActions { get; set; }
         public virtual DbSet<Event> Events { get; set; }
         public virtual DbSet<EventIncrease> EventIncreases { get; set; }
         public virtual DbSet<EventKind> EventKinds { get; set; }
@@ -153,6 +154,21 @@ namespace GateWashDataService.Models.GateWashContext
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<DeviceTypeAction>(entity =>
+            {
+                entity.HasKey(e => e.IddeviceType)
+                    .HasName("PK_DeviceTypeAction");
+
+                entity.Property(e => e.IddeviceType)
+                    .ValueGeneratedNever()
+                    .HasColumnName("IDDeviceType");
+
+                entity.HasOne(d => d.IddeviceTypeNavigation)
+                    .WithOne(p => p.DeviceTypeAction)
+                    .HasForeignKey<DeviceTypeAction>(d => d.IddeviceType)
+                    .HasConstraintName("FK_DeviceTypeActions_DeviceTypes");
             });
 
             modelBuilder.Entity<Event>(entity =>
@@ -351,7 +367,10 @@ namespace GateWashDataService.Models.GateWashContext
 
                 entity.Property(e => e.FiscalError).HasMaxLength(100);
 
-                entity.Property(e => e.Guid).HasColumnName("GUID");
+                entity.Property(e => e.Guid)
+                    .HasMaxLength(32)
+                    .HasColumnName("GUID")
+                    .IsFixedLength(true);
 
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 
