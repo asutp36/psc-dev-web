@@ -21,12 +21,6 @@ namespace GateWashDataService.Controllers
             _techDashboardService = techDashboardService;
         }
 
-        [HttpPost("payoutcash/{payoutCash}")]
-        public async Task GetTerminals(PayoutCashInsertionModel payoutCash)
-        {
-
-        }
-
         [Authorize]
         [HttpGet("wash")]
         public async Task<IActionResult> GetWashes()
@@ -49,6 +43,20 @@ namespace GateWashDataService.Controllers
         {
             var result = await _techDashboardService.GetRegionsWithWashesTerminalAction(User.Claims.Where(o => o.Type == "GateWash").Select(o => o.Value));
             return Ok(result);
+        }
+
+        [HttpPost("cash")]
+        public async Task<IActionResult> SendPayoutCashInsertion(PayoutCashInsertionModel insertion)
+        {
+            await _techDashboardService.SendNotificationPayoutInsertion(insertion);
+            return Ok();
+        }
+
+        [HttpPost("cards")]
+        public async Task<IActionResult> SendCardsInsertion(TerminalCardsInsertionModel insertion)
+        {
+            await _techDashboardService.SendNotificationCardsInsertion(insertion);
+            return Ok();
         }
     }
 }

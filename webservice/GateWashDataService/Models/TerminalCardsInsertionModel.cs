@@ -5,11 +5,10 @@ using System.Threading.Tasks;
 
 namespace GateWashDataService.Models
 {
-    public class PayoutCashInsertionModel
+    public class TerminalCardsInsertionModel
     {
         public string TerminalCode { get; set; }
-        public int M10 { get; set; }
-        public int B50 { get; set; }
-        public int B100 { get; set; }
+        public int RightDispenser { get; set; }
+        public int LeftDispenser { get; set; }
     }
 }
