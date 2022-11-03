@@ -7,9 +7,13 @@ namespace AuthenticationService.Models.DTOs
 {
     public class RoleDTO
     {
-        public int IdRole { get; set; }
+        public int Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
+        public bool IsAdmin { get; set; }
+        public AccessLevel Eco { get; set; }
+        public AccessLevel GateWash { get; set; }
+        public bool RefillGateWash { get; set; }
 
         /// <summary>
         /// Пустой конструктор
@@ -26,7 +30,7 @@ namespace AuthenticationService.Models.DTOs
         /// <param name="name">Отображаемое имя</param>
         public RoleDTO(int idRole, string code, string name)
         {
-            IdRole = IdRole;
+            Id = idRole;
             Code = code;
             Name = name;
         }

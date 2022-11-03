@@ -59,6 +59,8 @@ namespace AuthenticationService.Models.UserAuthenticationDb
                     .IsRequired()
                     .HasMaxLength(20);
 
+                entity.Property(e => e.Eco).HasColumnName("ECO");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);

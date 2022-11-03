@@ -39,5 +39,39 @@ namespace AuthenticationService.Controllers
 
             return Ok(await _rolesService.GetAsync(code, id));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> PostRole(RoleDTO role)
+        {
+            int idRole = await _rolesService.CreateRoleAsync(role);
+
+            return Created("", idRole);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> PutRole(RoleDTO role)
+        {
+            int idRole = await _rolesService.UpdateRoleAsync(role);
+
+            return Ok(idRole);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRole(string code = null, int id = 0)
+        {
+            if(id != 0)
+            {
+                await _rolesService.DeleteRoleAsync(id);
+                return Ok();
+            }
+
+            if (code != null)
+            {
+                await _rolesService.DeleteRoleAsync(code);
+                return Ok();
+            }
+
+            return BadRequest(new { Message = "Не удалось удалить роль", Description = "Для удаления роли необходимо передать либо её id, либо её код" });
+        }
     }
 }

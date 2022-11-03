@@ -29,9 +29,13 @@ namespace AuthenticationService.Services
         {
             var roles = await _model.Roles.Select(o => new RoleDTO
             {
-                IdRole = o.Idrole,
+                Id = o.Idrole,
                 Code = o.Code,
-                Name = o.Name
+                Name = o.Name,
+                IsAdmin = o.IsAdmin,
+                Eco = (AccessLevel)o.Eco,
+                GateWash = (AccessLevel)o.GateWash,
+                RefillGateWash = o.RefillGateWash
             }).ToListAsync();
 
             return roles;
@@ -62,9 +66,13 @@ namespace AuthenticationService.Services
             return await _model.Roles.Where(o => o.Code == code)
                 .Select(o => new RoleDTO 
                 { 
-                    IdRole = o.Idrole,
+                    Id = o.Idrole,
                     Code = o.Code, 
-                    Name = o.Name 
+                    Name = o.Name,
+                    IsAdmin = o.IsAdmin,
+                    Eco = (AccessLevel)o.Eco,
+                    GateWash = (AccessLevel)o.GateWash,
+                    RefillGateWash = o.RefillGateWash
                 })
                 .FirstOrDefaultAsync();
         }
@@ -85,11 +93,169 @@ namespace AuthenticationService.Services
             return await _model.Roles.Where(o => o.Idrole == id)
                 .Select(o => new RoleDTO
                 {
-                    IdRole = o.Idrole,
+                    Id = o.Idrole,
                     Code = o.Code,
-                    Name = o.Name
+                    Name = o.Name,
+                    Eco = (AccessLevel)o.Eco,
+                    GateWash = (AccessLevel)o.GateWash,
+                    RefillGateWash = o.RefillGateWash
                 })
                 .FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Создать новую роль
+        /// </summary>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        public async Task<int> CreateRoleAsync(RoleDTO role)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(role.Code))
+                {
+                    _logger.LogError($"Не задан код роли");
+                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Невозможно создать роль", "Не задан код роли");
+                }
+
+                if(await _model.Roles.AnyAsync(o => o.Code == role.Code))
+                {
+                    _logger.LogError($"Роль с кодом {role.Code} уже существует");
+                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.Conflict, "Невозможно создать роль", $"Роль с кодом {role.Code} уже существует");
+                }
+
+                if (string.IsNullOrEmpty(role.Name))
+                {
+                    _logger.LogError("Не задано имя роли");
+                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Невозможно создать роль", "Не задано имя роли");
+                }
+
+                Role r = new Role()
+                {
+                    Code = role.Code,
+                    Name = role.Name,
+                    IsAdmin = role.IsAdmin,
+                    Eco = (int)role.Eco,
+                    GateWash = (int)role.GateWash,
+                    RefillGateWash = role.RefillGateWash
+                };
+
+                await _model.Roles.AddAsync(r);
+                await _model.SaveChangesAsync();
+
+                return r.Idrole;
+            }
+            catch(DbUpdateException e)
+            {
+                _logger.LogError($"Ошибка при добавлении роли в базу: {e.Message}");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.InternalServerError, "Не удалось создать роль", 
+                    "В данный момент не удалось записать роль в базу, попробуйте позже и сообщите об этой ошибке специалистам");
+            }
+        }
+
+        /// <summary>
+        /// Изменить роль
+        /// </summary>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        public async Task<int> UpdateRoleAsync(RoleDTO role)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(role.Code))
+                {
+                    _logger.LogError("Не задан код изменяемой роли");
+                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Не удалось изменить роль", "Не задан код роли");
+                }
+
+                if (string.IsNullOrEmpty(role.Name))
+                {
+                    _logger.LogError("Не задано имя изменяемой роли");
+                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Не удалось изменить роль", "Не задано имя роли");
+                }
+
+                Role r = await _model.Roles.FindAsync(role.Id);
+
+                if (r == null)
+                {
+                    _logger.LogError($"Роль с id={role.Id} не найдена");
+                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.NotFound, "Невозможно изменить роль", "Роль, которую хотите изменить, не найдена");
+                }
+
+                r.Code = role.Code;
+                r.Name = role.Name;
+                r.IsAdmin = role.IsAdmin;
+                r.Eco = (int)role.Eco;
+                r.GateWash = (int)role.GateWash;
+                r.RefillGateWash = role.RefillGateWash;
+
+                _model.Roles.Update(r);
+                await _model.SaveChangesAsync();
+
+                return r.Idrole;
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError($"Ошибка при изменении роли в базе: {e.Message}");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.InternalServerError, "Не удалось изменить роль",
+                    "В данный момент не удалось изменить роль, попробуйте позже и сообщите об этой ошибке специалистам");
+            }
+        }
+
+        public async Task DeleteRoleAsync(int id)
+        {
+            try
+            {
+                if (id < 0)
+                {
+                    _logger.LogError($"Не удалось удалить роль, id<0");
+                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Не удалось удалить роль", "Некорректное значение id роли");
+                }
+
+                Role r = await _model.Roles.FindAsync(id);
+                if(r == null)
+                {
+                    _logger.LogError($"Роль с id={id} не найдена");
+                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.NotFound, "Не удалось удалить роль", "Роль с таким id не найдена");
+                }
+
+                _model.Roles.Remove(r);
+                await _model.SaveChangesAsync();
+            }
+            catch(DbUpdateException e)
+            {
+                _logger.LogError($"Ошибка при удалении роли в базе: {e.Message}");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.InternalServerError, "Не удалось удалить роль",
+                    "В данный момент не удалось удалить роль, попробуйте позже и сообщите об этой ошибке специалистам");
+            }
+        }
+
+        public async Task DeleteRoleAsync(string code)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(code))
+                {
+                    _logger.LogError($"Не удалось удалить роль, code не задан");
+                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Не удалось удалить роль", "Некорректное значение кода роли");
+                }
+
+                Role r = await _model.Roles.Where(o => o.Code == code).FirstOrDefaultAsync();
+                if (r == null)
+                {
+                    _logger.LogError($"Роль {code} не найдена");
+                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.NotFound, "Не удалось удалить роль", "Роль с таким кодом не найдена");
+                }
+
+                _model.Roles.Remove(r);
+                await _model.SaveChangesAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError($"Ошибка при удалении роли в базе: {e.Message}");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.InternalServerError, "Не удалось удалить роль",
+                    "В данный момент не удалось удалить роль, попробуйте позже и сообщите об этой ошибке специалистам");
+            }
         }
     }
 }
