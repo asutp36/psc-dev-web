@@ -1,4 +1,5 @@
 using GateWashDataService.Extentions;
+using GateWashDataService.Middlewares;
 using GateWashDataService.Models;
 using GateWashDataService.Models.GateWashContext;
 using GateWashDataService.Repositories;
@@ -121,8 +122,6 @@ namespace GateWashDataService
                 app.UseDeveloperExceptionPage();
             }
 
-            app.ConfigureExceptionHandler(this.Logger);
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -132,6 +131,8 @@ namespace GateWashDataService
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
