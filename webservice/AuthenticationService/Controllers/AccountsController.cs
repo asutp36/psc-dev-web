@@ -2,6 +2,7 @@
 using AuthenticationService.Models.DTOs;
 using AuthenticationService.Models.UserAuthenticationDb;
 using AuthenticationService.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -55,7 +56,7 @@ namespace AuthenticationService.Controllers
             }
 
             // если пользователя не найдено
-            return null;
+            throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Неверный логин или пароль", "Проверьте правильность введённых данных и повторите снова");
         }
 
         private async Task<IActionResult> TokenAsync(LoginModel login)
@@ -161,6 +162,13 @@ namespace AuthenticationService.Controllers
         public async Task<IActionResult> CheckLogin([FromQuery] string login, int? id = null)
         {
             return Ok(await _accountsService.IsNameExistAsync(login, id));
+        }
+
+        [Authorize]
+        [HttpGet("claims")]
+        public async Task<IActionResult> GetClaims()
+        {
+            return Ok(User.Claims.Select(o => new { o.Type, o.Value }));
         }
     }
 }

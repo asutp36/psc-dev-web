@@ -40,7 +40,7 @@ namespace AuthenticationService.Middlewares
 
                 context.Response.StatusCode = (int)customException.StatusCode;
 
-                string json = JsonConvert.SerializeObject(customException);
+                string json = JsonConvert.SerializeObject(new { customException.Message, customException.Description });
 
                 await context.Response.WriteAsync(json);
 

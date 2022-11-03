@@ -99,6 +99,8 @@ namespace GateWashDataService
                 c.OperationFilter<AuthOperationFilter>();
             });
 
+            services.AddTransient<GlobalExceptionHandlerMiddleware>();
+
             services.AddTransient<WashesRepository>();
 
             services.AddTransient<GraphicsRepository>();

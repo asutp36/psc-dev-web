@@ -74,19 +74,27 @@ namespace AuthenticationService.Services
             ).FirstOrDefaultAsync();
         }
 
-        public async Task<AccountInfoDto> GetAsync(string login) 
+        public async Task<AccountInfoDto> GetAsync(string login)
         {
-            return await _model.Users.Where(o => o.Login == login)
+            var user = await _model.Users.Where(o => o.Login == login)
                 .Select(o => new AccountInfoDto
+                {
+                    id = o.Iduser,
+                    Login = o.Login,
+                    Email = o.Email,
+                    Name = o.Name,
+                    Phone = o.PhoneInt,
+                    Washes = o.UserWashes.Select(w => new WashInfo { Code = w.IdwashNavigation.Code, Name = w.IdwashNavigation.Name, TypeCode = w.IdwashNavigation.IdwashTypeNavigation.Code }),
+                    Role = new RoleDTO(o.Idrole, o.IdroleNavigation.Code, o.IdroleNavigation.Name)
+                }).FirstOrDefaultAsync();
+
+            if (user.Washes.Count() == 0)
             {
-                id = o.Iduser,
-                Login = o.Login,
-                Email = o.Email,
-                Name = o.Name,
-                Phone = o.PhoneInt,
-                Washes = o.UserWashes.Select(w => new WashInfo { Code = w.IdwashNavigation.Code, Name = w.IdwashNavigation.Name, TypeCode = w.IdwashNavigation.IdwashTypeNavigation.Code }),
-                Role = new RoleDTO(o.Idrole, o.IdroleNavigation.Code, o.IdroleNavigation.Name)
-            }).FirstOrDefaultAsync();
+                _logger.LogError($"Не найдено ни одной мойки у пользователя {user.Login}");
+                throw new CustomStatusCodeException(HttpStatusCode.PreconditionFailed, "Не найдено моек", $"У пользователя {user.Login} не найдено ни одной мойки");
+            }
+
+            return user;
         }
 
         public async Task Update() { }

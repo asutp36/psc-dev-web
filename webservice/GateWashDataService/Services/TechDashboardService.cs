@@ -30,25 +30,32 @@ namespace GateWashDataService.Services
 
         public async Task<List<WashWithTerminalsActions>> GetWashesWithTerminalsActions(IEnumerable<string> washCodes)
         {
-            List<WashWithTerminalsActions> washes = await _context.Washes.Where(o => washCodes.Contains(o.Code))
-                .Include(o => o.Terminals).ThenInclude(o => o.IddeviceNavigation).ThenInclude(o => o.IddeviceTypeNavigation).ThenInclude(o => o.DeviceTypeAction)
-                .Select(o => new WashWithTerminalsActions
-                {
-                    IdWash = o.Idwash,
-                    Code = o.Code,
-                    Name = o.Name,
-                    Address = o.Address,
-                    Terminals = o.Terminals.Select(e => new TerminalWithActions
+            try
+            {
+                List<WashWithTerminalsActions> washes = await _context.Washes.Where(o => washCodes.Contains(o.Code))
+                    .Include(o => o.Terminals).ThenInclude(o => o.IddeviceNavigation).ThenInclude(o => o.IddeviceTypeNavigation).ThenInclude(o => o.DeviceTypeAction)
+                    .Select(o => new WashWithTerminalsActions
                     {
-                        IdTerminal = e.Idterminal,
-                        Code = e.IddeviceNavigation.Code,
-                        Name = e.IddeviceNavigation.Name,
-                        Type = new TerminalType() { Code = e.IddeviceNavigation.IddeviceTypeNavigation.Code, Name = e.IddeviceNavigation.IddeviceTypeNavigation.Name },
-                        InsertAction = e.IddeviceNavigation.IddeviceTypeNavigation.DeviceTypeAction.InsertPayoutCash ? "cash" : e.IddeviceNavigation.IddeviceTypeNavigation.DeviceTypeAction.InsertWashCards ? "cards" : null
-                    })
-                }).ToListAsync();
+                        IdWash = o.Idwash,
+                        Code = o.Code,
+                        Name = o.Name,
+                        Address = o.Address,
+                        Terminals = o.Terminals.Select(e => new TerminalWithActions
+                        {
+                            IdTerminal = e.Idterminal,
+                            Code = e.IddeviceNavigation.Code,
+                            Name = e.IddeviceNavigation.Name,
+                            Type = new TerminalType() { Code = e.IddeviceNavigation.IddeviceTypeNavigation.Code, Name = e.IddeviceNavigation.IddeviceTypeNavigation.Name },
+                            InsertAction = e.IddeviceNavigation.IddeviceTypeNavigation.DeviceTypeAction.InsertPayoutCash ? "cash" : e.IddeviceNavigation.IddeviceTypeNavigation.DeviceTypeAction.InsertWashCards ? "cards" : null
+                        })
+                    }).ToListAsync();
 
-            return washes;
+                return washes;
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
         }
 
         public async Task<List<RegionWithWashTerminalActions>> GetRegionsWithWashesTerminalAction(IEnumerable<string> washCodes)

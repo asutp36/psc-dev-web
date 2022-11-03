@@ -95,7 +95,10 @@ namespace AuthenticationService
             });
 
             services.AddDbContext<UserAuthenticationDbContext>(
-                options => options.UseSqlServer(Configuration.GetConnectionString("UserAuthentication")));
+                options => options.UseSqlServer(
+                    Configuration.GetConnectionString("UserAuthentication"), 
+                    actionOption => actionOption.EnableRetryOnFailure())
+                );
 
             services.AddTransient<RolesService>();
 
@@ -129,6 +132,8 @@ namespace AuthenticationService
             app.UseRouting();
 
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
