@@ -1,7 +1,9 @@
-﻿using GateWashDataService.Models;
+﻿using GateWashDataService.Exceptions;
+using GateWashDataService.Models;
 using GateWashDataService.Models.GateWashContext;
 using GateWashDataService.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -16,11 +18,13 @@ namespace GateWashDataService.Services
     {
         private readonly GateWashDbContext _context;
         private readonly WashesRepository _washesRepository;
+        private readonly ILogger<TechDashboardService> _logger;
 
-        public TechDashboardService(GateWashDbContext context, WashesRepository washesRepository)
+        public TechDashboardService(GateWashDbContext context, WashesRepository washesRepository, ILogger<TechDashboardService> logger)
         {
             _context = context;
             _washesRepository = washesRepository;
+            _logger = logger;
         }
 
         public async Task InsertPayoutCash()
@@ -88,11 +92,14 @@ namespace GateWashDataService.Services
         {
             if (string.IsNullOrEmpty(code))
             {
-                throw new Exception("bad value");
+                _logger.LogError($"Код мойки не задан");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Не задан код мойки", "Код мойки равен null или пустая строка");
             }
+
             if (!(await _context.Washes.AnyAsync(o => o.Code == code)))
             {
-                throw new Exception("not found");
+                _logger.LogError($"Не найдена мойка {code}");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.NotFound, "Нет такой мойки", $"Мойка {code} не найдена");
             }
 
             var wash = await _context.Washes.Where(o => o.Code == code)
@@ -106,7 +113,7 @@ namespace GateWashDataService.Services
                     Code = o.Code,
                     Name = o.Name,
                     Address = o.Address,
-                    Terminals = o.Terminals.Select(e => new TerminalWithActions
+                    Terminals = o.Terminals.Where(t => t.IddeviceNavigation.IddeviceTypeNavigation.DeviceTypeAction.InsertPayoutCash || t.IddeviceNavigation.IddeviceTypeNavigation.DeviceTypeAction.InsertWashCards).Select(e => new TerminalWithActions
                     {
                         IdTerminal = e.Idterminal,
                         Code = e.IddeviceNavigation.Code,
