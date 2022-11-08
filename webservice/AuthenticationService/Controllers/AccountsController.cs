@@ -30,74 +30,17 @@ namespace AuthenticationService.Controllers
             _accountsService = accountsService;
         }
 
-        private async Task<ClaimsIdentity> GetIdentityAsync(LoginModel login)
-        {
-            AccountInfoDto user = await _accountsService.GetAsync(login.Login);
-            if (user != null)
-            {
-                var claims = new List<Claim>();
-                Claim c1 = new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login);
-                claims.Add(c1);
-
-                Claim c = new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Code);
-                claims.Add(c);
-
-                foreach (WashInfo w in user.Washes)
-                {
-                    claims.Add(new Claim(w.TypeCode, w.Code));
-                }
-
-                claims.Add(new Claim("UserName", user.Name));
-
-                ClaimsIdentity claimsIdentity =
-                new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
-                    ClaimsIdentity.DefaultRoleClaimType);
-                return claimsIdentity;
-            }
-
-            // если пользователя не найдено
-            throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Неверный логин или пароль", "Проверьте правильность введённых данных и повторите снова");
-        }
-
-        private async Task<IActionResult> TokenAsync(LoginModel login)
-        {
-            var identity = await GetIdentityAsync(login);
-            if (identity == null)
-            {
-                throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Неверный логин или пароль", "Проверьте правильность введённых данных и повторите снова");
-            }
-
-            var now = DateTime.UtcNow;
-            // создаем JWT-токен
-            var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    notBefore: now,
-                    claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-            Token response = new Token()
-            {
-                AccessToken = encodedJwt,
-                Login = identity.Name,
-                Role = identity.Claims.Where(c => c.Type == ClaimsIdentity.DefaultRoleClaimType).FirstOrDefault().Value,
-                Name = identity.Claims.Where(c => c.Type == "UserName").FirstOrDefault().Value
-            };
-
-            return Ok(response);
-        }
-
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Залогиниться")]
         [SwaggerResponse(200, Type = typeof(Token))]
         [SwaggerResponse(400, Type = typeof(ErrorModel))]
         #endregion
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginModel login)
         {
-            return await TokenAsync(login);
+            var token = await _accountsService.LoginAsync(login);
+            return Ok(token);
         }
 
         #region Swagger Annotations
@@ -105,12 +48,20 @@ namespace AuthenticationService.Controllers
         [SwaggerResponse(200, Type = typeof(List<AccountInfoDto>))]
         [SwaggerResponse(500, Type = typeof(ErrorModel))]
         #endregion
+        [Authorize(Policy = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             IEnumerable<AccountInfoDto> accounts = await _accountsService.GetAsync();
 
             return Ok(accounts);
+        }
+
+        [Authorize]
+        [HttpGet("test")]
+        public async Task<IActionResult> Test()
+        {
+            return Ok(User.Claims.Select(o => new { o.Type, o.Value }).ToList());
         }
 
         #region Swagger Annotations

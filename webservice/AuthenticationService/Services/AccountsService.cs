@@ -3,10 +3,13 @@ using AuthenticationService.Models.DTOs;
 using AuthenticationService.Models.UserAuthenticationDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace AuthenticationService.Services
@@ -85,7 +88,15 @@ namespace AuthenticationService.Services
                     Name = o.Name,
                     Phone = o.PhoneInt,
                     Washes = o.UserWashes.Select(w => new WashInfo { Code = w.IdwashNavigation.Code, Name = w.IdwashNavigation.Name, TypeCode = w.IdwashNavigation.IdwashTypeNavigation.Code }),
-                    Role = new RoleDTO(o.Idrole, o.IdroleNavigation.Code, o.IdroleNavigation.Name)
+                    Role = new RoleDTO {
+                        Id = o.Idrole,
+                        Code = o.IdroleNavigation.Code,
+                        Name = o.IdroleNavigation.Name,
+                        IsAdmin = o.IdroleNavigation.IsAdmin,
+                        Eco = (AccessLevel)o.IdroleNavigation.Eco,
+                        GateWash = (AccessLevel)o.IdroleNavigation.GateWash,
+                        RefillGateWash = o.IdroleNavigation.RefillGateWash
+                    }
                 }).FirstOrDefaultAsync();
 
             if (user.Washes.Count() == 0)
@@ -145,6 +156,84 @@ namespace AuthenticationService.Services
                 return false;
 
             return await _model.Users.AnyAsync(e => e.Iduser != currentId && e.Name == login);
+        }
+
+        public async Task<Token> LoginAsync(LoginModel login)
+        {
+            if (string.IsNullOrEmpty(login.Login))
+            {
+                _logger.LogError("Логин пользователя пустой");
+                throw new CustomStatusCodeException(HttpStatusCode.BadRequest, "Не удалось войти в систему", "Логин не задан");
+            }
+
+            if (string.IsNullOrEmpty(login.Password))
+            {
+                _logger.LogError("Пароль пустой");
+                throw new CustomStatusCodeException(HttpStatusCode.BadRequest, "Не удалось войти в систему", "Пароль не задан");
+            }
+
+            if (!(await _model.Users.AnyAsync(o => o.Login == login.Login && o.Password == login.Password)))
+            {
+                _logger.LogInformation($"Не найдена пара логин-пароль: {login.Login} - {login.Password}");
+                throw new CustomStatusCodeException(HttpStatusCode.NotFound, "Неверный логин или пароль", "Проверьте правильность введённых данных и попробуйте снова");
+            }
+
+            ClaimsIdentity identity = await GenerateIdenityAsync(login.Login);
+
+            var now = DateTime.UtcNow;
+            // создаем JWT-токен
+            var jwt = new JwtSecurityToken(
+                    issuer: AuthOptions.ISSUER,
+                    audience: AuthOptions.AUDIENCE,
+                    notBefore: now,
+                    claims: identity.Claims,
+                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            Token response = new Token()
+            {
+                AccessToken = encodedJwt,
+                Login = identity.Name,
+                Role = await _rolesService.GetAsync(identity.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).FirstOrDefault()),
+                Name = identity.Claims.Where(c => c.Type == "UserName").Select(o => o.Value).FirstOrDefault()
+            };
+
+            return response;
+        }
+
+        private async Task<ClaimsIdentity> GenerateIdenityAsync(string login)
+        {
+            AccountInfoDto user = await GetAsync(login);
+            if (user != null)
+            {
+                var claims = new List<Claim>();
+                Claim c1 = new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login);
+                claims.Add(c1);
+
+                Claim c = new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Code);
+                claims.Add(c);
+
+                foreach (WashInfo w in user.Washes)
+                {
+                    claims.Add(new Claim(w.TypeCode, w.Code));
+                }
+
+                claims.Add(new Claim("UserName", user.Name));
+
+                claims.Add(new Claim("IsAdmin", user.Role.IsAdmin.ToString()));
+                claims.Add(new Claim("GateWash", user.Role.GateWash.ToString()));
+                claims.Add(new Claim("Eco", user.Role.Eco.ToString()));
+                claims.Add(new Claim("RefillGateWash", user.Role.RefillGateWash.ToString()));
+
+                ClaimsIdentity claimsIdentity =
+                new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+
+                return claimsIdentity;
+            }
+            
+            _logger.LogError($"user == null");
+            throw new CustomStatusCodeException(HttpStatusCode.NotFound, "Неверный логин или пароль", "Проверьте правильность введённых данных и попробуйте снова");
         }
     }
 }

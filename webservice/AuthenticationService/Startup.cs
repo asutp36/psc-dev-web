@@ -68,6 +68,10 @@ namespace AuthenticationService
                         };
                     });
 
+            services.AddAuthorization(options => {
+                options.AddPolicy("Admin", policy => policy.RequireClaim("IsAdmin", true.ToString()));
+            });
+
             services.AddControllers();
 
             services.AddSwaggerGen(s =>
