@@ -92,7 +92,7 @@ namespace LoyalityService.Services
                                                                 && (condition.Days == 0 || o.Dtime.Date <= DateTime.Now.Date.AddDays(-condition.Days)));
 
             // если количество моек > 0 и эта мойка будет энной, скидка будет из условия или 0
-            return clientWashingsCount > 0 && clientWashingsCount + 1 % condition.EachN == 0;
+            return clientWashingsCount + 1 % condition.EachN == 0;
         }
 
         /// <summary>
