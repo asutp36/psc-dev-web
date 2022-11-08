@@ -57,18 +57,12 @@ namespace AuthenticationService.Controllers
             return Ok(accounts);
         }
 
-        [Authorize]
-        [HttpGet("test")]
-        public async Task<IActionResult> Test()
-        {
-            return Ok(User.Claims.Select(o => new { o.Type, o.Value }).ToList());
-        }
-
         #region Swagger Annotations
         [SwaggerOperation(Summary = "Зарегистрировать нового")]
         [SwaggerResponse(200, Type = typeof(AccountInfoDto))]
         [SwaggerResponse(409, Type = typeof(ErrorModel))]
         #endregion
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] NewAccountInfoDto account)
         {
@@ -86,6 +80,7 @@ namespace AuthenticationService.Controllers
         [SwaggerOperation(Summary = "Удалить по логину")]
         [SwaggerResponse(200)]
         #endregion
+        [Authorize(Policy = "Admin")]
         [HttpDelete("{login}")]
         public async Task<IActionResult> Delete(string login)
         {

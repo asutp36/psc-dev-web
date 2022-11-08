@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace GateWashDataService.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Policy = "CanRefillGateWash")]
     [ApiController]
     public class TechDashboardController : ControllerBase
     {
@@ -21,7 +22,6 @@ namespace GateWashDataService.Controllers
             _techDashboardService = techDashboardService;
         }
 
-        [Authorize]
         [HttpGet("wash")]
         public async Task<IActionResult> GetWashes()
         {
@@ -29,7 +29,6 @@ namespace GateWashDataService.Controllers
             return Ok(result);
         }
 
-        [Authorize]
         [HttpGet("wash/{code}")]
         public async Task<IActionResult> GetWash(string code)
         {
@@ -37,7 +36,6 @@ namespace GateWashDataService.Controllers
             return Ok(result);
         }
 
-        [Authorize]
         [HttpGet("region")]
         public async Task<IActionResult> GetRegions()
         {

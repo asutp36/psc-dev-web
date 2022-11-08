@@ -70,6 +70,13 @@ namespace GateWashDataService
                         };
                     });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin", policy => policy.RequireClaim("IsAdmin", true.ToString()));
+                options.AddPolicy("GateWash", policy => policy.RequireClaim("GateWash", new string[] { AccessLevel.Read.ToString(), AccessLevel.Write.ToString() }));
+                options.AddPolicy("CanRefillGateWash", policy => policy.RequireClaim("RefillGateWash", true.ToString()));
+            });
+
             services.AddControllers();
 
             services.AddDbContext<GateWashDbContext>(
