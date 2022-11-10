@@ -73,5 +73,17 @@ namespace AuthenticationService.Controllers
 
             return BadRequest(new { Message = "Не удалось удалить роль", Description = "Для удаления роли необходимо передать либо её id, либо её код" });
         }
+
+        [HttpGet("DeleteEffect")]
+        public async Task<IActionResult> GetDeleteEffect(string code = null, int id = 0)
+        {
+            return Ok(await _rolesService.GetAssociatedUsers(code, id));
+        }
+
+        [HttpGet("isCodeForbidden")]
+        public async Task<IActionResult> CheckCode([FromQuery] string code, int? id = null)
+        {
+            return Ok(await _rolesService.IsCodeExistAsync(code, id));
+        }
     }
 }

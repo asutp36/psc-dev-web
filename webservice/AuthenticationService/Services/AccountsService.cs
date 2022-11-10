@@ -19,12 +19,14 @@ namespace AuthenticationService.Services
         private readonly ILogger<AccountsService> _logger;
         private readonly UserAuthenticationDbContext _model;
         private readonly RolesService _rolesService;
+        private readonly WashesService _washesService;
 
-        public AccountsService(ILogger<AccountsService> logger, UserAuthenticationDbContext model, RolesService rolesService)
+        public AccountsService(ILogger<AccountsService> logger, UserAuthenticationDbContext model, RolesService rolesService, WashesService washesService)
         {
             _logger = logger;
             _model = model;
             _rolesService = rolesService;
+            _washesService = washesService;
         }
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace AuthenticationService.Services
                                         id = o.Iduser,
                                         Login = o.Login,
                                         Name = o.Name,
-                                        Phone = o.PhoneInt,
+                                        Phone = o.PhoneInt - 70000000000,
                                         Email = o.Email,
                                         Role = new RoleDTO(o.Idrole, o.IdroleNavigation.Code, o.IdroleNavigation.Name),
                                         Washes = o.UserWashes.Select(w => new WashInfo
@@ -70,7 +72,7 @@ namespace AuthenticationService.Services
                 Login = o.Login,
                 Email = o.Email,
                 Name = o.Name,
-                Phone = o.PhoneInt,
+                Phone = o.PhoneInt - 70000000000,
                 //Washes = o.UserWashes.Select(e => e.WashCode),
                 Role = new RoleDTO() { Code = o.IdroleNavigation.Code, Name = o.IdroleNavigation.Name }
             }
@@ -118,9 +120,15 @@ namespace AuthenticationService.Services
             await _model.SaveChangesAsync();
         }
 
-        public async Task CreateAsync(NewAccountInfoDto account) 
+        public async Task<int> CreateAsync(NewAccountInfoDto account) 
         {
-            var role = await _rolesService.GetAsync(account.Role.Code);
+            var role = await _rolesService.GetAsync(account.IdRole);
+
+            List<WashDTO> washes = new List<WashDTO>();
+            foreach(string w in account.Washes)
+            {
+                washes.Add(await _washesService.GetAsync(w));
+            }
 
             User user = new User()
             {
@@ -128,34 +136,40 @@ namespace AuthenticationService.Services
                 Name = account.Name,
                 Password = account.Password,
                 Email = account.Email,
-                PhoneInt = account.Phone
+                PhoneInt = 70000000000 + account.Phone,
+                Idrole = role.Id
             };
+
+            var transaction = await _model.Database.BeginTransactionAsync();
 
             try
             {
-                await _model.Database.BeginTransactionAsync();
                 await _model.Users.AddAsync(user);
 
+                foreach (WashDTO w in washes)
+                {
+                    _model.UserWashes.Add(new UserWash { IduserNavigation = user, Idwash = w.IdWash });
+                }
+
                 await _model.SaveChangesAsync();
 
-                //IEnumerable<UserWash> uw = account.Washes.Select(o => new UserWash { Iduser = user.Iduser, WashCode = o });
-                //await _model.UserWashes.AddRangeAsync(uw);
-                await _model.SaveChangesAsync();
-
-                await _model.Database.CommitTransactionAsync();
+                await transaction.CommitAsync();
             }
             catch(Exception e)
             {
-                await _model.Database.RollbackTransactionAsync();
+                await transaction.RollbackAsync();
+                throw e;
             }
+
+            return user.Iduser;
         }
 
-        public async Task<bool> IsNameExistAsync(string login, int? currentId = null)
+        public async Task<bool> IsLoginExistAsync(string login, int? currentId = null)
         {
             if (string.IsNullOrEmpty(login)) 
                 return false;
 
-            return await _model.Users.AnyAsync(e => e.Iduser != currentId && e.Name == login);
+            return await _model.Users.AnyAsync(e => e.Iduser != currentId && e.Login == login);
         }
 
         public async Task<Token> LoginAsync(LoginModel login)
@@ -179,6 +193,44 @@ namespace AuthenticationService.Services
             }
 
             ClaimsIdentity identity = await GenerateIdenityAsync(login.Login);
+
+            var now = DateTime.UtcNow;
+            // создаем JWT-токен
+            var jwt = new JwtSecurityToken(
+                    issuer: AuthOptions.ISSUER,
+                    audience: AuthOptions.AUDIENCE,
+                    notBefore: now,
+                    claims: identity.Claims,
+                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            Token response = new Token()
+            {
+                AccessToken = encodedJwt,
+                Login = identity.Name,
+                Role = await _rolesService.GetAsync(identity.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).FirstOrDefault()),
+                Name = identity.Claims.Where(c => c.Type == "UserName").Select(o => o.Value).FirstOrDefault()
+            };
+
+            return response;
+        }
+
+        public async Task<Token> LoginAsync(string login)
+        {
+            if (string.IsNullOrEmpty(login))
+            {
+                _logger.LogError("Логин пользователя пустой");
+                throw new CustomStatusCodeException(HttpStatusCode.BadRequest, "Не удалось войти в систему", "Логин не задан");
+            }
+
+            if (!(await _model.Users.AnyAsync(o => o.Login == login)))
+            {
+                _logger.LogInformation($"Не найден пользователь: {login}");
+                throw new CustomStatusCodeException(HttpStatusCode.NotFound, "Не найден пользователь", $"Пользователь с логином {login} не найден");
+            }
+
+            ClaimsIdentity identity = await GenerateIdenityAsync(login);
 
             var now = DateTime.UtcNow;
             // создаем JWT-токен

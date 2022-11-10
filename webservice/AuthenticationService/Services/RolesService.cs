@@ -86,7 +86,7 @@ namespace AuthenticationService.Services
         {
             if(! await _model.Roles.AnyAsync(o => o.Idrole == id))
             {
-                _logger.LogError($"Не найдена мойка с id={id}");
+                _logger.LogError($"Не найдена роль с id={id}");
                 throw new CustomStatusCodeException(System.Net.HttpStatusCode.NotFound, "Роль не найдена", "Не удалось найти роль по запрошенному id");
             }
 
@@ -256,6 +256,20 @@ namespace AuthenticationService.Services
                 throw new CustomStatusCodeException(System.Net.HttpStatusCode.InternalServerError, "Не удалось удалить роль",
                     "В данный момент не удалось удалить роль, попробуйте позже и сообщите об этой ошибке специалистам");
             }
+        }
+
+        public async Task<IEnumerable<string>> GetAssociatedUsers(string code = null, int id = 0)
+        {
+            var result = await _model.Roles.Where(o => o.Idrole == id || o.Code == code).Include(o => o.Users).Select(o => o.Users.Select(u => u.Login)).FirstOrDefaultAsync();
+            return result;
+        }
+
+        public async Task<bool> IsCodeExistAsync(string code, int? currentId = null)
+        {
+            if (string.IsNullOrEmpty(code))
+                return false;
+
+            return await _model.Roles.AnyAsync(e => e.Idrole != currentId && e.Code == code);
         }
     }
 }

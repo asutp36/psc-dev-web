@@ -66,14 +66,14 @@ namespace AuthenticationService.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] NewAccountInfoDto account)
         {
-            if(await _accountsService.IsNameExistAsync(account.Login))
+            if (await _accountsService.IsLoginExistAsync(account.Login))
             {
                 return Conflict(new ErrorModel() { ErrorType = "badvalue", Alert = "Некорректные входные параметры", ErrorCode = "Такой логин уже существует", ErrorMessage = "Попробуйте ввести другой логин" });
             }
 
-            await _accountsService.CreateAsync(account);
+            int id = await _accountsService.CreateAsync(account);
 
-            return Ok();
+            return Created("", id);
         }
 
         #region Swagger Annotations
@@ -93,7 +93,7 @@ namespace AuthenticationService.Controllers
         [SwaggerResponse(200, Type = typeof(AccountInfoDto))]
         #endregion
         [HttpGet("{login}")]
-        public async Task<IActionResult> GetByLogin([FromRoute]string login)
+        public async Task<IActionResult> GetByLogin([FromRoute] string login)
         {
             AccountInfoDto account = await _accountsService.GetAsync(login);
 
@@ -104,10 +104,10 @@ namespace AuthenticationService.Controllers
         [SwaggerOperation(Summary = "Проверить логин")]
         [SwaggerResponse(200, Type = typeof(bool))]
         #endregion
-        [HttpGet("check-login")]
+        [HttpGet("isLoginForbidden")]
         public async Task<IActionResult> CheckLogin([FromQuery] string login, int? id = null)
         {
-            return Ok(await _accountsService.IsNameExistAsync(login, id));
+            return Ok(await _accountsService.IsLoginExistAsync(login, id));
         }
 
         [Authorize]
@@ -115,6 +115,13 @@ namespace AuthenticationService.Controllers
         public async Task<IActionResult> GetClaims()
         {
             return Ok(User.Claims.Select(o => new { o.Type, o.Value }));
+        }
+
+        [Authorize(Policy = "Admin")]
+        [HttpGet("loginas/{login}")]
+        public async Task<IActionResult> LoginAs(string login)
+        {
+            return Ok(await _accountsService.LoginAsync(login));
         }
     }
 }

@@ -100,8 +100,7 @@ namespace AuthenticationService
 
             services.AddDbContext<UserAuthenticationDbContext>(
                 options => options.UseSqlServer(
-                    Configuration.GetConnectionString("UserAuthentication"), 
-                    actionOption => actionOption.EnableRetryOnFailure())
+                    Configuration.GetConnectionString("UserAuthentication"))
                 );
 
             services.AddTransient<RolesService>();
