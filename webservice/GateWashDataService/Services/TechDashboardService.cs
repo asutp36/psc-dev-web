@@ -143,7 +143,7 @@ namespace GateWashDataService.Services
 
         public async Task<HttpResponseMessage> SendNotificationCardsInsertion(TerminalCardsInsertionModel cards)
         {
-            var content = new { chatId = "-650370220", body = $"{cards.TerminalCode}: Добавлены карты cards1={cards.RightDispenser}, cards2={cards.LeftDispenser}" };
+            var content = new { chatId = "-650370220", body = $"{cards.TerminalCode}: Добавлены карты cards1={cards.Cards1}, cards2={cards.Cards2}" };
 
             HttpClient httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("http://cwmon.ru/notify/");

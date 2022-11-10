@@ -8,7 +8,7 @@ namespace GateWashDataService.Models
     public class TerminalCardsInsertionModel
     {
         public string TerminalCode { get; set; }
-        public int RightDispenser { get; set; }
-        public int LeftDispenser { get; set; }
+        public int Cards1 { get; set; }
+        public int Cards2 { get; set; }
     }
 }
