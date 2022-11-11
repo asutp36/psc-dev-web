@@ -108,7 +108,7 @@ namespace AuthenticationService.Services
         /// </summary>
         /// <param name="role"></param>
         /// <returns></returns>
-        public async Task<int> CreateRoleAsync(RoleDTO role)
+        public async Task<RoleDTO> CreateRoleAsync(RoleDTO role)
         {
             try
             {
@@ -143,7 +143,16 @@ namespace AuthenticationService.Services
                 await _model.Roles.AddAsync(r);
                 await _model.SaveChangesAsync();
 
-                return r.Idrole;
+                return new RoleDTO 
+                {
+                    Id = r.Idrole,
+                    Code = r.Code,
+                    Name = r.Name,
+                    IsAdmin = r.IsAdmin,
+                    Eco = (AccessLevel)r.Eco,
+                    GateWash = (AccessLevel)r.GateWash,
+                    RefillGateWash = r.RefillGateWash
+                };
             }
             catch(DbUpdateException e)
             {
@@ -158,7 +167,7 @@ namespace AuthenticationService.Services
         /// </summary>
         /// <param name="role"></param>
         /// <returns></returns>
-        public async Task<int> UpdateRoleAsync(RoleDTO role)
+        public async Task<RoleDTO> UpdateRoleAsync(RoleDTO role)
         {
             try
             {
@@ -192,7 +201,16 @@ namespace AuthenticationService.Services
                 _model.Roles.Update(r);
                 await _model.SaveChangesAsync();
 
-                return r.Idrole;
+                return new RoleDTO
+                {
+                    Id = r.Idrole,
+                    Code = r.Code,
+                    Name = r.Name,
+                    IsAdmin = r.IsAdmin,
+                    Eco = (AccessLevel)r.Eco,
+                    GateWash = (AccessLevel)r.GateWash,
+                    RefillGateWash = r.RefillGateWash
+                };
             }
             catch (DbUpdateException e)
             {

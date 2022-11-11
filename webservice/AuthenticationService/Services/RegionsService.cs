@@ -37,6 +37,7 @@ namespace AuthenticationService.Services
                         IdWash = e.Idwash,
                         Code = e.Code,
                         Name = e.Name,
+                        Address = e.Address,
                         Type = new WashTypeDTO() { IdWashType = e.IdwashType, Code = e.IdwashTypeNavigation.Code, Name = e.IdwashTypeNavigation.Name }
                     })
                 }).ToListAsync();

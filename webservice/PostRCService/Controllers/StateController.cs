@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using PostRCService.Controllers.BindingModels;
-using PostRCService.Models.GateWashContext;
+using PostRCService.Models.GateWash;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -43,17 +43,17 @@ namespace AuthenticationService.Controllers
         [HttpPost]
         public async Task<IActionResult> PostRole(RoleDTO role)
         {
-            int idRole = await _rolesService.CreateRoleAsync(role);
+            var r = await _rolesService.CreateRoleAsync(role);
 
-            return Created("", idRole);
+            return Created("", r);
         }
 
         [HttpPut]
         public async Task<IActionResult> PutRole(RoleDTO role)
         {
-            int idRole = await _rolesService.UpdateRoleAsync(role);
+            var r = await _rolesService.UpdateRoleAsync(role);
 
-            return Ok(idRole);
+            return Ok(r);
         }
 
         [HttpDelete]

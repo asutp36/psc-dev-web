@@ -64,7 +64,7 @@ namespace AuthenticationService.Services
             }
         }
 
-        public async Task<AccountInfoDto> Get(int id) 
+        public async Task<AccountInfoDto> GetAsync(int id) 
         {
             return await _model.Users.Where(o => o.Iduser == id).Select(o => new AccountInfoDto
             {
@@ -81,7 +81,7 @@ namespace AuthenticationService.Services
 
         public async Task<AccountInfoDto> GetAsync(string login)
         {
-            var user = await _model.Users.Where(o => o.Login == login)
+            var user = await _model.Users.Include(o => o.UserWashes).Where(o => o.Login == login)
                 .Select(o => new AccountInfoDto
                 {
                     id = o.Iduser,
@@ -110,7 +110,67 @@ namespace AuthenticationService.Services
             return user;
         }
 
-        public async Task Update() { }
+        public async Task<AccountInfoDto> UpdateAsync(UpdateAccountModel account) 
+        {
+            try
+            {
+                IEnumerable<WashDTO> washes = _washesService.GetRange(account.Washes);
+
+                if (string.IsNullOrEmpty(account.Login))
+                {
+                    _logger.LogError("Не задан логин пользователя");
+                    throw new CustomStatusCodeException(HttpStatusCode.BadRequest, "Не задан логин", "Логин пользователя не задан. Проверьте введённые данные и попробуйте снова");
+                }
+
+                if (string.IsNullOrEmpty(account.Name))
+                {
+                    _logger.LogError("Не задано имя пользователя");
+                    throw new CustomStatusCodeException(HttpStatusCode.BadRequest, "Не задано имя", "Имя пользователя не задано. Проверьте введённые данные и попробуйте снова");
+                }
+
+                User user = _model.Users.FirstOrDefault(u => u.Iduser == account.id);
+
+                if (user == null)
+                {
+                    _logger.LogError($"ПОльзователь с id={account.id} не найден");
+                    throw new CustomStatusCodeException(HttpStatusCode.NotFound, "Пользователь не найден", "Пользователь по запрошенному id н найден");
+                }
+
+                //var role = await _rolesService.GetAsync(account.IdRole);
+                var role = await _model.Roles.FindAsync(account.IdRole);
+
+                var userWashesToRemove = _model.UserWashes.Where(uw => uw.Iduser == user.Iduser);
+                _model.UserWashes.RemoveRange(userWashesToRemove);
+
+                user.Login = account.Login;
+                user.Name = account.Name;
+                user.Email = account.Email;
+                user.Phone = string.Format("{0:+#-###-###-##-##}", account.Phone + 70000000000);
+                user.PhoneInt = account.Phone + 70000000000;
+                //user.Idrole = role.Id;
+                user.Idrole = role.Idrole;
+                user.UserWashes = washes.Select(o => new UserWash { Iduser = user.Iduser, Idwash = o.IdWash }).ToList();
+
+                //_model.Users.Update(user);
+                await _model.SaveChangesAsync();
+
+                return new AccountInfoDto
+                {
+                    id = user.Iduser,
+                    Login = user.Login,
+                    Name = user.Name,
+                    Phone = user.PhoneInt - 70000000000,
+                    Email = user.Email,
+                    Role = await _rolesService.GetAsync(user.Idrole),
+                    Washes = washes.Select(o => new WashInfo { Code = o.Code, Name = o.Name, TypeCode = o.Type.Code })
+                };
+            }
+            catch(Exception e)
+            {
+                _logger.LogError($"Произошла ошибка: {e.GetType()}: {e.Message}");
+                throw new CustomStatusCodeException(HttpStatusCode.InternalServerError, "Что-то случилось", "");
+            }
+        }
 
         public async Task DeleteAsync(string login) 
         {
@@ -120,7 +180,7 @@ namespace AuthenticationService.Services
             await _model.SaveChangesAsync();
         }
 
-        public async Task<int> CreateAsync(NewAccountInfoDto account) 
+        public async Task<AccountInfoDto> CreateAsync(NewAccountInfoDto account) 
         {
             var role = await _rolesService.GetAsync(account.IdRole);
 
@@ -161,7 +221,16 @@ namespace AuthenticationService.Services
                 throw e;
             }
 
-            return user.Iduser;
+            return new AccountInfoDto
+            {
+                id = user.Iduser,
+                Login = user.Login,
+                Name = user.Name,
+                Phone = user.PhoneInt - 70000000000,
+                Email = user.Email,
+                Role = await _rolesService.GetAsync(user.Idrole),
+                Washes = washes.Select(o => new WashInfo { Code = o.Code, Name = o.Name, TypeCode = o.Type.Code })
+            };
         }
 
         public async Task<bool> IsLoginExistAsync(string login, int? currentId = null)

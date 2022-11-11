@@ -111,5 +111,18 @@ namespace AuthenticationService.Services
 
             return wash;
         }
+
+        public IEnumerable<WashDTO> GetRange(IEnumerable<string> codes)
+        {
+            return _model.Washes.Where(o => codes.Contains(o.Code)).Include(o => o.IdwashTypeNavigation)
+                .Select(o => new WashDTO
+                {
+                    IdWash = o.Idwash,
+                    Code = o.Code,
+                    Name = o.Name,
+                    Type = new WashTypeDTO() { IdWashType = o.IdwashType, Code = o.IdwashTypeNavigation.Code, Name = o.IdwashTypeNavigation.Name }
+                })
+                .AsEnumerable();
+        }
     }
 }

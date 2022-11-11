@@ -46,7 +46,10 @@ namespace GateWashDataService.Controllers
         [HttpPost("cash")]
         public async Task<IActionResult> SendPayoutCashInsertion(PayoutCashInsertionModel insertion)
         {
-            await _techDashboardService.SendNotificationPayoutInsertion(insertion);
+            _techDashboardService.SendNotificationPayoutInsertion(insertion);
+
+            await _techDashboardService.SendPayoutInsertionToTerminal(insertion);
+
             return Ok();
         }
 

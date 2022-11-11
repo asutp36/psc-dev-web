@@ -71,9 +71,9 @@ namespace AuthenticationService.Controllers
                 return Conflict(new ErrorModel() { ErrorType = "badvalue", Alert = "Некорректные входные параметры", ErrorCode = "Такой логин уже существует", ErrorMessage = "Попробуйте ввести другой логин" });
             }
 
-            int id = await _accountsService.CreateAsync(account);
+            var user = await _accountsService.CreateAsync(account);
 
-            return Created("", id);
+            return Created("", user);
         }
 
         #region Swagger Annotations
@@ -122,6 +122,21 @@ namespace AuthenticationService.Controllers
         public async Task<IActionResult> LoginAs(string login)
         {
             return Ok(await _accountsService.LoginAsync(login));
+        }
+
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateAccountModel account)
+        {
+            var login = await _accountsService.GetAsync(account.id);
+
+            if (!User.HasClaim(c => c.Type == "IsAdmin" && c.Value == true.ToString()) && User.Identity.Name != login.Login)
+            {
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.Forbidden, "Изменение пользователя недоступно", "Можно менять данные своего аккаунта, либо необходимо обладать правами администратора");
+            }
+
+            var user = await _accountsService.UpdateAsync(account);
+            return Ok(user);
         }
     }
 }
