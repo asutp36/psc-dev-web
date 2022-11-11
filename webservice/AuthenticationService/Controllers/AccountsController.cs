@@ -138,5 +138,13 @@ namespace AuthenticationService.Controllers
             var user = await _accountsService.UpdateAsync(account);
             return Ok(user);
         }
+
+        [Authorize(Policy = "Admin")]
+        [HttpPut("password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
+        {
+            var account = await _accountsService.ChangePassword(model);
+            return Ok(account);
+        }
     }
 }

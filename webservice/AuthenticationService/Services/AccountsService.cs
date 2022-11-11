@@ -356,5 +356,39 @@ namespace AuthenticationService.Services
             _logger.LogError($"user == null");
             throw new CustomStatusCodeException(HttpStatusCode.NotFound, "Неверный логин или пароль", "Проверьте правильность введённых данных и попробуйте снова");
         }
+
+        public async Task<AccountInfoDto> ChangePassword(ChangePasswordModel password)
+        {
+            User user = await _model.Users.FindAsync(password.Id);
+
+            if(user == null)
+            {
+                _logger.LogError($"Пользователь id={password.Id} не найден");
+                throw new CustomStatusCodeException(HttpStatusCode.NotFound, "Не удалось поменять пароль", "Пользователь по запрошенному id не найден");
+            }
+
+            if (string.IsNullOrEmpty(password.Password))
+            {
+                _logger.LogError($"Новый пароль пустой");
+                throw new CustomStatusCodeException(HttpStatusCode.BadRequest, "Не удалось поменять пароль", "Новый пароль не задан. Проверьте правильность введённых данных и попробуйте снова");
+            }
+
+            user.Password = password.Password;
+            await _model.SaveChangesAsync();
+
+            user = await _model.Users.Include(u => u.UserWashes).ThenInclude(uw => uw.IdwashNavigation).ThenInclude(w => w.IdwashTypeNavigation)
+                .Where(u => u.Iduser == password.Id).FirstOrDefaultAsync();
+
+            return new AccountInfoDto
+            {
+                id = user.Iduser,
+                Login = user.Login,
+                Name = user.Name,
+                Phone = user.PhoneInt - 70000000000,
+                Email = user.Email,
+                Role = await _rolesService.GetAsync(user.Idrole),
+                Washes = user.UserWashes.Select(o => new WashInfo { Code = o.IdwashNavigation.Code, Name = o.IdwashNavigation.Name, TypeCode = o.IdwashNavigation.IdwashTypeNavigation.Code })
+            };
+        }
     }
 }
