@@ -11,5 +11,6 @@ namespace GateWashDataService.Models
         public int M10 { get; set; }
         public int B50 { get; set; }
         public int B100 { get; set; }
+        public int UserID { get; set; }
     }
 }

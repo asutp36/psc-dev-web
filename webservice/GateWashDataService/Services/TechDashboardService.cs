@@ -184,18 +184,12 @@ namespace GateWashDataService.Services
             return result;
         }
 
-        public async Task<CurrentCounters> GetCurrentCountersAsync(string terminal, string action)
+        public async Task<CurrentCounters> GetCurrentCountersAsync(string terminal)
         {
             if (string.IsNullOrEmpty(terminal))
             {
                 _logger.LogError("Код терминала не задан");
                 throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Не задан код терминала", "");
-            }
-
-            if (string.IsNullOrEmpty(action))
-            {
-                _logger.LogError("Не задано действие");
-                throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Не задано дейтвие пополнения", "");
             }
 
             if(!(await _context.Devices.AnyAsync(t => t.Code == terminal)))
@@ -204,15 +198,17 @@ namespace GateWashDataService.Services
                 throw new CustomStatusCodeException(System.Net.HttpStatusCode.NotFound, "Не найден терминал", "Терминал по введённому коду не найден");
             }
 
+            string action = await GetTerminalAction(terminal);
+
             switch (action)
             {
                 case "cash":
                     return await GetCurrentPayoutCountersAsync(terminal);
                 case "cards":
-                    return null;
+                    return await GetCurrentCardsCountersAsync(terminal);
                 default:
-                    _logger.LogError($"Действие {action} не распознано");
-                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Действие не распознано", $"Действие {action} не известно");
+                    _logger.LogError($"Действие для терминала {terminal} не определено");
+                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Не определён тип счётчиков для терминала", $"Для терминала {terminal} не определён тип счётчиков");
             }
         }
 
@@ -244,6 +240,42 @@ namespace GateWashDataService.Services
                 throw new CustomStatusCodeException(System.Net.HttpStatusCode.InternalServerError, "Произошла в ходе обращения к базе данных", 
                     "При получении текущих значений счётчиков произошла ошибка. Попробуйте позже");
             }
+        }
+
+        private async Task<CurrentCounters> GetCurrentCardsCountersAsync(string terminal)
+        {
+            try
+            {
+                CurrentCounters counters = new CurrentCounters()
+                    {
+                        DTime = DateTime.Now,
+                        Counters = new Dictionary<string, int>()
+                        {
+                            { "m10",  0},
+                            { "b50", 0 },
+                            { "b100", 0 }
+                        }
+                    };
+
+                return counters;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Произошла ошибка при получении текущих счётчиков по сдаче: {e.GetType()} - {e.Message}");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.InternalServerError, "Произошла в ходе обращения к базе данных",
+                    "При получении текущих значений счётчиков произошла ошибка. Попробуйте позже");
+            }
+        }
+
+        private async Task<string> GetTerminalAction(string terminal)
+        {
+            return await _context.Terminals.Include(o => o.IddeviceNavigation).ThenInclude(o => o.IddeviceTypeNavigation).ThenInclude(o => o.DeviceTypeAction)
+                .Where(t => t.IddeviceNavigation.Code == terminal &&
+                    (t.IddeviceNavigation.IddeviceTypeNavigation.DeviceTypeAction.InsertPayoutCash || t.IddeviceNavigation.IddeviceTypeNavigation.DeviceTypeAction.InsertWashCards))
+                .Select(e => e.IddeviceNavigation.IddeviceTypeNavigation.DeviceTypeAction.InsertPayoutCash ? "cash" 
+                            : e.IddeviceNavigation.IddeviceTypeNavigation.DeviceTypeAction.InsertWashCards ? "cards" 
+                            : null)
+                .FirstOrDefaultAsync();
         }
 
     }

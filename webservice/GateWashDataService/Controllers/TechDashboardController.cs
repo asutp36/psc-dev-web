@@ -43,19 +43,21 @@ namespace GateWashDataService.Controllers
             return Ok(result);
         }
 
-        [HttpGet("counters/{terminalCode}/{insert_action}")]
-        public async Task<IActionResult> GetCurrentCounters(string terminalCode, string insert_action)
+        [HttpGet("counters/{terminalCode}")]
+        public async Task<IActionResult> GetCurrentCounters(string terminalCode)
         {
-            var counters = await _techDashboardService.GetCurrentCountersAsync(terminalCode, insert_action);
+            var counters = await _techDashboardService.GetCurrentCountersAsync(terminalCode);
             return Ok(counters);
         }
 
         [HttpPost("cash")]
         public async Task<IActionResult> SendPayoutCashInsertion(PayoutCashInsertionModel insertion)
-        {
-            _techDashboardService.SendNotificationPayoutInsertion(insertion);
+        { 
+            insertion.UserID = User.Claims.Where(c => c.Type == "UserID").Select(c => int.Parse(c.Value)).FirstOrDefault();
 
-            await _techDashboardService.SendPayoutInsertionToTerminal(insertion);
+            await _techDashboardService.SendNotificationPayoutInsertion(insertion);
+
+            //await _techDashboardService.SendPayoutInsertionToTerminal(insertion);
 
             return Ok();
         }
@@ -63,6 +65,8 @@ namespace GateWashDataService.Controllers
         [HttpPost("cards")]
         public async Task<IActionResult> SendCardsInsertion(TerminalCardsInsertionModel insertion)
         {
+            insertion.UserID = User.Claims.Where(c => c.Type == "UserID").Select(c => int.Parse(c.Value)).FirstOrDefault();
+
             await _techDashboardService.SendNotificationCardsInsertion(insertion);
             return Ok();
         }

@@ -10,5 +10,6 @@ namespace GateWashDataService.Models
         public string TerminalCode { get; set; }
         public int Cards1 { get; set; }
         public int Cards2 { get; set; }
+        public int UserID { get; set; }
     }
 }
