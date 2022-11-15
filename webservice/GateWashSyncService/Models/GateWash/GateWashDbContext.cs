@@ -271,6 +271,10 @@ namespace GateWashSyncService.Models.GateWash
 
                 entity.Property(e => e.Inbox4B100).HasColumnName("inbox_4_b100");
 
+                entity.Property(e => e.Inbox5M10).HasColumnName("inbox_5_m10");
+
+                entity.Property(e => e.M10).HasColumnName("m10");
+
                 entity.HasOne(d => d.IdpayEventNavigation)
                     .WithOne(p => p.EventPayout)
                     .HasForeignKey<EventPayout>(d => d.IdpayEvent)

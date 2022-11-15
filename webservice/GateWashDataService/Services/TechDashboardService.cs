@@ -183,6 +183,69 @@ namespace GateWashDataService.Services
 
             return result;
         }
+
+        public async Task<CurrentCounters> GetCurrentCountersAsync(string terminal, string action)
+        {
+            if (string.IsNullOrEmpty(terminal))
+            {
+                _logger.LogError("Код терминала не задан");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Не задан код терминала", "");
+            }
+
+            if (string.IsNullOrEmpty(action))
+            {
+                _logger.LogError("Не задано действие");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Не задано дейтвие пополнения", "");
+            }
+
+            if(!(await _context.Devices.AnyAsync(t => t.Code == terminal)))
+            {
+                _logger.LogError($"Терминал {terminal} не найден");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.NotFound, "Не найден терминал", "Терминал по введённому коду не найден");
+            }
+
+            switch (action)
+            {
+                case "cash":
+                    return await GetCurrentPayoutCountersAsync(terminal);
+                case "cards":
+                    return null;
+                default:
+                    _logger.LogError($"Действие {action} не распознано");
+                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.BadRequest, "Действие не распознано", $"Действие {action} не известно");
+            }
+        }
+
+        private async Task<CurrentCounters> GetCurrentPayoutCountersAsync(string terminal)
+        {
+            try
+            {
+                CurrentCounters counters = await _context.EventPayouts.Include(o => o.IdpayEventNavigation).ThenInclude(o => o.IddeviceNavigation)
+                    .Where(o => o.IdpayEventNavigation.Dtime == (_context.EventPayouts.Include(o => o.IdpayEventNavigation).ThenInclude(o => o.IddeviceNavigation)
+                                                                    .Where(d => d.IdpayEventNavigation.IddeviceNavigation.Code == terminal)
+                                                                    .Max(w => w.IdpayEventNavigation.Dtime))
+                                && o.IdpayEventNavigation.IddeviceNavigation.Code == terminal)
+                    .Select(o => new CurrentCounters
+                    {
+                        DTime = o.IdpayEventNavigation.Dtime,
+                        Counters = new Dictionary<string, int>()
+                        {
+                            { "m10",  o.Inbox5M10},
+                            { "b50", o.Inbox1B50 },
+                            { "b100", o.Inbox3B100 }
+                        }
+                    }).FirstOrDefaultAsync();
+
+                return counters;
+            }
+            catch(Exception e)
+            {
+                _logger.LogError($"Произошла ошибка при получении текущих счётчиков по сдаче: {e.GetType()} - {e.Message}");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.InternalServerError, "Произошла в ходе обращения к базе данных", 
+                    "При получении текущих значений счётчиков произошла ошибка. Попробуйте позже");
+            }
+        }
+
     }
 
 }

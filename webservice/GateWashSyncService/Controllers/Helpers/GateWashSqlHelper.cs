@@ -216,12 +216,14 @@ namespace GateWashSyncService.Controllers.Helpers
                 EventPayout ep = new EventPayout
                 {
                     Amount = epayout.amount,
+                    M10 = epayout.m10,
                     B50 = epayout.b50,
                     B100 = epayout.b100,
                     Inbox1B50 = epayout.inbox_1_b50,
                     Inbox2B50 = epayout.inbox_2_b50,
                     Inbox3B100 = epayout.inbox_3_b100,
-                    Inbox4B100 = epayout.inbox_4_b100
+                    Inbox4B100 = epayout.inbox_4_b100,
+                    Inbox5M10 = epayout.inbox_5_m10
                 };
                 ep.IdpayEventNavigation = e;
 

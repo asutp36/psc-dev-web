@@ -43,6 +43,13 @@ namespace GateWashDataService.Controllers
             return Ok(result);
         }
 
+        [HttpGet("counters/{terminalCode}/{insert_action}")]
+        public async Task<IActionResult> GetCurrentCounters(string terminalCode, string insert_action)
+        {
+            var counters = await _techDashboardService.GetCurrentCountersAsync(terminalCode, insert_action);
+            return Ok(counters);
+        }
+
         [HttpPost("cash")]
         public async Task<IActionResult> SendPayoutCashInsertion(PayoutCashInsertionModel insertion)
         {
