@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using PostRCService.Middlewares;
 using PostRCService.Models.GateWash;
 using PostRCService.Models.WashCompany;
+using PostRCService.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -65,6 +66,8 @@ namespace PostRCService
             services.AddDbContext<GateWashDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("GateWash")));
 
             services.AddDbContext<WashCompanyDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("WashCompany")));
+
+            services.AddTransient<GateWashService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
