@@ -335,6 +335,8 @@ namespace AuthenticationService.Services
                 Claim c = new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Code);
                 claims.Add(c);
 
+                claims.Add(new Claim("UserID", user.id.ToString()));
+
                 foreach (WashInfo w in user.Washes)
                 {
                     claims.Add(new Claim(w.TypeCode, w.Code));
