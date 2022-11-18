@@ -1,4 +1,5 @@
-﻿using AuthenticationService.Models;
+﻿using AuthenticationService.Extentions;
+using AuthenticationService.Models;
 using AuthenticationService.Models.DTOs;
 using AuthenticationService.Models.UserAuthenticationDb;
 using AuthenticationService.Services;
@@ -50,11 +51,26 @@ namespace AuthenticationService.Controllers
         #endregion
         [Authorize(Policy = "Admin")]
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] PagingParameter paging, [FromQuery] string query = null)
         {
-            IEnumerable<AccountInfoDto> accounts = await _accountsService.GetAsync();
+            IQueryable<AccountInfoDto> accounts = await _accountsService.GetByQueryAsync(query);
+            PagedList<AccountInfoDto> result = PagedList<AccountInfoDto>.ToPagedList(accounts, paging);
 
-            return Ok(accounts);
+            return Ok(result);
+        }
+
+        #region Swagger Annotations
+        [SwaggerOperation(Summary = "Получить всех пользователей (количество записей)")]
+        [SwaggerResponse(200, Type = typeof(int))]
+        [SwaggerResponse(500, Type = typeof(ErrorModel))]
+        #endregion
+        [Authorize(Policy = "Admin")]
+        [HttpGet("total_count")]
+        public async Task<IActionResult> GetTotalCount([FromQuery] PagingParameter paging, [FromQuery] string query = null)
+        {
+            IQueryable<AccountInfoDto> accounts = await _accountsService.GetByQueryAsync(query);
+
+            return Ok(accounts.Count());
         }
 
         #region Swagger Annotations

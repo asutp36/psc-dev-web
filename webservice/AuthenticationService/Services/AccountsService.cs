@@ -64,6 +64,48 @@ namespace AuthenticationService.Services
             }
         }
 
+        /// <summary>
+        /// Получить всех пользователей с фильтрацией по строке поиска
+        /// </summary>
+        /// <returns>Список пользователей</returns>
+        public async Task<IQueryable<AccountInfoDto>> GetByQueryAsync(string query)
+        {
+            try
+            {
+                var queryParams = query.Split(" ");
+                string s = string.Join("|", queryParams.Select(p => $"(%{p}%)"));
+
+                var accounts = _model.Users.Include(o => o.UserWashes).ThenInclude(o => o.IdwashNavigation).ThenInclude(o => o.IdwashTypeNavigation)
+                                    .Include(o => o.IdroleNavigation)
+                                    .Select(o => new AccountInfoDto
+                                    {
+                                        id = o.Iduser,
+                                        Login = o.Login,
+                                        Name = o.Name,
+                                        Phone = o.PhoneInt - 70000000000,
+                                        Email = o.Email,
+                                        Role = new RoleDTO(o.Idrole, o.IdroleNavigation.Code, o.IdroleNavigation.Name),
+                                        Washes = o.UserWashes.Select(w => new WashInfo
+                                        {
+                                            Code = w.IdwashNavigation.Code,
+                                            Name = w.IdwashNavigation.Name,
+                                            TypeCode = w.IdwashNavigation.IdwashTypeNavigation.Code
+                                        })
+                                    })
+                                    .Where(o => EF.Functions.Like(o.Login, s))
+                                    .AsQueryable();
+
+                var accList = accounts.ToList();
+
+                return accounts;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + Environment.NewLine + e.StackTrace);
+                return null;
+            }
+        }
+
         public async Task<AccountInfoDto> GetAsync(int id) 
         {
             return await _model.Users.Where(o => o.Iduser == id).Select(o => new AccountInfoDto
