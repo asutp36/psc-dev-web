@@ -20,5 +20,6 @@ namespace GateWashSyncService.Controllers.BindingModels
         public int b500 { get; set; }
         public int b1000 { get; set; }
         public int b2000 { get; set; }
+        public string uuid { get; set; }
     }
 }

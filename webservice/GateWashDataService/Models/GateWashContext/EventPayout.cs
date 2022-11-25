@@ -17,6 +17,7 @@ namespace GateWashDataService.Models.GateWashContext
         public int Inbox3B100 { get; set; }
         public int Inbox4B100 { get; set; }
         public int Inbox5M10 { get; set; }
+        public int? UserId { get; set; }
 
         public virtual PayEvent IdpayEventNavigation { get; set; }
     }

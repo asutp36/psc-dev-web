@@ -5,14 +5,13 @@ using System.Threading.Tasks;
 
 namespace GateWashDataService.Models
 {
-    public class Payout
+    public class ClientEntrance
     {
         public string Terminal { get; set; }
         public string TerminalCode { get; set; }
         public DateTime DTime { get; set; }
-        public int Amount { get; set; }
-        public int M10 { get; set; }
-        public int B50 { get; set; }
-        public int B100 { get; set; }
+        public string Card { get; set; }
+        public string Program { get; set; }
+        public int Cost { get; set; }
     }
 }

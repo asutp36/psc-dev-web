@@ -210,7 +210,8 @@ namespace GateWashSyncService.Controllers.Helpers
                     IdeventOnPost = epayout.idEventOnPost,
                     Iddevice = this.GetIdDevice(epayout.deviceCode),
                     IdeventKind = this.GetIdEventKind(epayout.eventKindCode),
-                    Dtime = DateTime.Parse(epayout.dtime)
+                    Dtime = DateTime.Parse(epayout.dtime),
+                    Uuid = epayout.uuid
                 };
 
                 EventPayout ep = new EventPayout
@@ -307,7 +308,7 @@ namespace GateWashSyncService.Controllers.Helpers
                     FiscalError = psession.fiscalError,
                     DtimeEnd = DateTime.Parse(psession.dtimeEnd),
                     Details = psession.details,
-                    Guid = psession.guid
+                    Uuid = psession.uuid
                 };
 
                 await _model.PaySession.AddAsync(ps);

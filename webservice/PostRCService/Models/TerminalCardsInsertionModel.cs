@@ -7,9 +7,9 @@ namespace PostRCService.Models
 {
     public class TerminalCardsInsertionModel
     {
-        public string TerminalCode { get; set; }
-        public int Cards1 { get; set; }
-        public int Cards2 { get; set; }
-        public int UserID { get; set; }
+        public string terminalCode { get; set; }
+        public int cards1 { get; set; }
+        public int cards2 { get; set; }
+        public string login { get; set; }
     }
 }

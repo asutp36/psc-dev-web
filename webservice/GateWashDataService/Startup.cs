@@ -113,6 +113,10 @@ namespace GateWashDataService
             services.AddTransient<GraphicsRepository>();
 
             services.AddTransient<TechDashboardService>();
+
+            services.AddTransient<PayoutService>();
+
+            services.AddTransient<ClientService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

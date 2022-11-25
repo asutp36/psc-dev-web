@@ -30,11 +30,11 @@ namespace PostRCService.Controllers
         [HttpPost("cards")]
         public async Task<IActionResult> RefillCards(TerminalCardsInsertionModel model)
         {
-            string ip = await _gateWashService.GetDeviceIp(model.TerminalCode);
+            string ip = await _gateWashService.GetDeviceIp(model.terminalCode);
             if (ip == null)
             {
-                _logger.LogError($"Не найден ip девайса {model.TerminalCode}");
-                throw new CustomStatusCodeException(System.Net.HttpStatusCode.NotFound, $"Не найден ip девайса {model.TerminalCode}", "");
+                _logger.LogError($"Не найден ip девайса {model.terminalCode}");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.NotFound, $"Не найден ip девайса {model.terminalCode}", "");
             }
 
             HttpClient httpClient = new HttpClient();
@@ -67,7 +67,7 @@ namespace PostRCService.Controllers
                 }
                 else
                 {
-                    _logger.LogError($"Ответ от поста {model.TerminalCode} не ок. StatusCode: {response.StatusCode}, Message: {content}");
+                    _logger.LogError($"Ответ от поста {model.terminalCode} не ок. StatusCode: {response.StatusCode}, Message: {content}");
                     throw new CustomStatusCodeException((System.Net.HttpStatusCode)424, "Ответ не 200", content);
                 }
 

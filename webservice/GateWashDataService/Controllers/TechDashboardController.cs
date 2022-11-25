@@ -57,7 +57,7 @@ namespace GateWashDataService.Controllers
 
             await _techDashboardService.SendNotificationPayoutInsertion(insertion);
 
-            //await _techDashboardService.SendPayoutInsertionToTerminal(insertion);
+            await _techDashboardService.SendPayoutInsertionToTerminal(insertion);
 
             return Ok();
         }
@@ -68,6 +68,7 @@ namespace GateWashDataService.Controllers
             insertion.UserID = User.Claims.Where(c => c.Type == "UserID").Select(c => int.Parse(c.Value)).FirstOrDefault();
 
             await _techDashboardService.SendNotificationCardsInsertion(insertion);
+            await _techDashboardService.SendCardInsertionToTerminal(insertion);
             return Ok();
         }
     }

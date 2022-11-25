@@ -13,6 +13,7 @@ namespace GateWashDataService.Models.GateWashContext
         public int IdeventKind { get; set; }
         public int Iddevice { get; set; }
         public DateTime Dtime { get; set; }
+        public string Uuid { get; set; }
 
         public virtual Device IddeviceNavigation { get; set; }
         public virtual EventKind IdeventKindNavigation { get; set; }

@@ -275,6 +275,8 @@ namespace GateWashSyncService.Models.GateWash
 
                 entity.Property(e => e.M10).HasColumnName("m10");
 
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
                 entity.HasOne(d => d.IdpayEventNavigation)
                     .WithOne(p => p.EventPayout)
                     .HasForeignKey<EventPayout>(d => d.IdpayEvent)
@@ -298,6 +300,10 @@ namespace GateWashSyncService.Models.GateWash
                 entity.Property(e => e.IdeventOnPost).HasColumnName("IDEventOnPost");
 
                 entity.Property(e => e.IdpaySession).HasColumnName("IDPaySession");
+
+                entity.Property(e => e.Uuid)
+                    .HasMaxLength(32)
+                    .IsFixedLength();
 
                 entity.HasOne(d => d.IddeviceNavigation)
                     .WithMany(p => p.PayEvent)
@@ -333,11 +339,6 @@ namespace GateWashSyncService.Models.GateWash
 
                 entity.Property(e => e.FiscalError).HasMaxLength(100);
 
-                entity.Property(e => e.Guid)
-                    .HasColumnName("GUID")
-                    .HasMaxLength(32)
-                    .IsFixedLength();
-
                 entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
 
                 entity.Property(e => e.Idprogram).HasColumnName("IDProgram");
@@ -347,6 +348,10 @@ namespace GateWashSyncService.Models.GateWash
                 entity.Property(e => e.Qr)
                     .HasColumnName("QR")
                     .HasMaxLength(100);
+
+                entity.Property(e => e.Uuid)
+                    .HasMaxLength(32)
+                    .IsFixedLength();
 
                 entity.HasOne(d => d.IddeviceNavigation)
                     .WithMany(p => p.PaySession)

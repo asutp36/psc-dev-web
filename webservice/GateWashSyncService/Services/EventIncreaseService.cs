@@ -76,7 +76,8 @@ namespace GateWashSyncService.Services
                     Iddevice = await _devicesSevice.GetIdByCode(model.deviceCode),
                     IdeventKind = await _eventKindsService.GetIdByCode(model.eventKindCode),
                     Dtime = DateTime.Parse(model.dtime),
-                    EventIncrease = ei
+                    EventIncrease = ei,
+                    Uuid = model.uuid
                 };
 
                 await _context.PayEvent.AddAsync(pe);

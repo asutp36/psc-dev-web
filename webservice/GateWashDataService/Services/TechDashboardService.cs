@@ -184,6 +184,34 @@ namespace GateWashDataService.Services
             return result;
         }
 
+        public async Task<HttpResponseMessage> SendCardInsertionToTerminal(TerminalCardsInsertionModel cards)
+        {
+            try
+            {
+                HttpClient httpClient = new HttpClient();
+                httpClient.BaseAddress = new Uri("http://cwmon.ru:444/postrc/");
+
+                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/refillgatewash/cards");
+                requestMessage.Content = new StringContent(JsonConvert.SerializeObject(cards), Encoding.UTF8, "application/json");
+
+                HttpResponseMessage result = await httpClient.SendAsync(requestMessage);
+
+                if (!result.IsSuccessStatusCode)
+                {
+                    string content = await result.Content.ReadAsStringAsync();
+                    _logger.LogError($"Ответ от терминала {cards.TerminalCode} не 200: {result.StatusCode} - {content}");
+                    throw new CustomStatusCodeException(System.Net.HttpStatusCode.FailedDependency, "Не удалось отправить на терминал значения сдачи", content);
+                }
+
+                return result;
+            }
+            catch (HttpRequestException e)
+            {
+                _logger.LogError($"Не удалось соединиться с сервисом управления постами {cards.TerminalCode}. {e.GetType()}: {e.Message}");
+                throw new CustomStatusCodeException(System.Net.HttpStatusCode.FailedDependency, "Нет связи с сервисом управления постами", $"Не удалось подключиться к сервису упрввления постами. {e.Message}");
+            }
+        }
+
         public async Task<CurrentCounters> GetCurrentCountersAsync(string terminal)
         {
             if (string.IsNullOrEmpty(terminal))

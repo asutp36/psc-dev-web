@@ -11,6 +11,6 @@ namespace PostRCService.Models
         public int m10 { get; set; }
         public int b50 { get; set; }
         public int b100 { get; set; }
-        public int userID { get; set; }
+        public string login { get; set; }
     }
 }

@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace GateWashDataService.Models
 {
-    public class PayoutEventKind : PayoutInsertion
+    public class PayoutInsertion : Payout
     {
-        public string EventKind { get; set; }
+        public string login { get; set; }
     }
 }
