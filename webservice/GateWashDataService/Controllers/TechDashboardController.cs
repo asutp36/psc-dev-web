@@ -53,7 +53,7 @@ namespace GateWashDataService.Controllers
         [HttpPost("cash")]
         public async Task<IActionResult> SendPayoutCashInsertion(PayoutCashInsertionModel insertion)
         { 
-            insertion.UserID = User.Claims.Where(c => c.Type == "UserID").Select(c => int.Parse(c.Value)).FirstOrDefault();
+            insertion.Login = User.Identity.Name;
 
             await _techDashboardService.SendNotificationPayoutInsertion(insertion);
 
@@ -65,7 +65,7 @@ namespace GateWashDataService.Controllers
         [HttpPost("cards")]
         public async Task<IActionResult> SendCardsInsertion(TerminalCardsInsertionModel insertion)
         {
-            insertion.UserID = User.Claims.Where(c => c.Type == "UserID").Select(c => int.Parse(c.Value)).FirstOrDefault();
+            insertion.Login = User.Identity.Name;
 
             await _techDashboardService.SendNotificationCardsInsertion(insertion);
             await _techDashboardService.SendCardInsertionToTerminal(insertion);

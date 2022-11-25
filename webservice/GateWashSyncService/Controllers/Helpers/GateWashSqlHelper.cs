@@ -224,7 +224,8 @@ namespace GateWashSyncService.Controllers.Helpers
                     Inbox2B50 = epayout.inbox_2_b50,
                     Inbox3B100 = epayout.inbox_3_b100,
                     Inbox4B100 = epayout.inbox_4_b100,
-                    Inbox5M10 = epayout.inbox_5_m10
+                    Inbox5M10 = epayout.inbox_5_m10,
+                    Login = epayout.login
                 };
                 ep.IdpayEventNavigation = e;
 

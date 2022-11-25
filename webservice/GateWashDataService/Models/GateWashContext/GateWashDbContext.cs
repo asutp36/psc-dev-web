@@ -307,9 +307,9 @@ namespace GateWashDataService.Models.GateWashContext
 
                 entity.Property(e => e.Inbox5M10).HasColumnName("inbox_5_m10");
 
-                entity.Property(e => e.M10).HasColumnName("m10");
+                entity.Property(e => e.Login).HasMaxLength(50);
 
-                entity.Property(e => e.UserId).HasColumnName("UserID");
+                entity.Property(e => e.M10).HasColumnName("m10");
 
                 entity.HasOne(d => d.IdpayEventNavigation)
                     .WithOne(p => p.EventPayout)

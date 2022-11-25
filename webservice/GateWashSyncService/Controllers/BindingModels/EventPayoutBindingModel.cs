@@ -22,5 +22,6 @@ namespace GateWashSyncService.Controllers.BindingModels
         public int inbox_4_b100 { get; set; }
         public int inbox_5_m10 { get; set; }
         public string uuid { get; set; }
+        public string login { get; set; }
     }
 }
