@@ -63,7 +63,7 @@ namespace GateWashDataService.Controllers
             return Ok(payouts.Count);
         }
 
-        [HttpGet("insertions")]
+        [HttpGet("refills")]
         public async Task<IActionResult> GetInsertions([FromQuery] GetPayoutsParameters parameters)
         {
             List<PayoutInsertion> payouts = new List<PayoutInsertion>();
@@ -89,7 +89,7 @@ namespace GateWashDataService.Controllers
             return Ok(result);
         }
 
-        [HttpGet("insertions/total_count")]
+        [HttpGet("refills/total_count")]
         public async Task<IActionResult> GetInsertionsTotalCount([FromQuery] GetPayoutsParameters parameters)
         {
             List<PayoutInsertion> payouts = new List<PayoutInsertion>();

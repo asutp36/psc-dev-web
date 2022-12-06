@@ -26,11 +26,6 @@ namespace GateWashDataService.Services
         /// <returns></returns>
         private async Task<IQueryable<PayoutEventKind>> GetAsync(string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
         {
-            if (eventKind == "payoutinsertion")
-            {
-                return GetFake();
-            }
-
             IQueryable<PayoutEventKind> payouts = _model.EventPayouts.Include(o => o.IdpayEventNavigation).ThenInclude(o => o.IdeventKindNavigation)
                                                                      .Include(o => o.IdpayEventNavigation).ThenInclude(o => o.IddeviceNavigation)
                                                                      .Where(o => o.IdpayEventNavigation.IdeventKindNavigation.Code == eventKind &&
@@ -46,7 +41,7 @@ namespace GateWashDataService.Services
                                                                  M10 = o.M10,
                                                                  B50 = o.B50,
                                                                  B100 = o.B100,
-                                                                 //UserID = o.UserId ?? 0,
+                                                                 login = o.Login,
                                                                  EventKind = o.IdpayEventNavigation.IdeventKindNavigation.Name
                                                              });
             return payouts;
