@@ -63,7 +63,7 @@ namespace GateWashDataService.Controllers
             return Ok(payouts.Count);
         }
 
-        [HttpGet("refills")]
+        [HttpGet("insertions")]
         public async Task<IActionResult> GetInsertions([FromQuery] GetPayoutsParameters parameters)
         {
             List<PayoutInsertion> payouts = new List<PayoutInsertion>();
@@ -89,8 +89,50 @@ namespace GateWashDataService.Controllers
             return Ok(result);
         }
 
-        [HttpGet("refills/total_count")]
+        [HttpGet("insertions/total_count")]
         public async Task<IActionResult> GetInsertionsTotalCount([FromQuery] GetPayoutsParameters parameters)
+        {
+            List<PayoutInsertion> payouts = new List<PayoutInsertion>();
+            if (parameters.IsSplitTerminals)
+            {
+                payouts = await _payoutService.GetPayoutInsertionsSplitTerminalAsync(parameters);
+            }
+            else
+            {
+                payouts = await _payoutService.GetPayoutInsertionsAsync(parameters);
+            }
+
+            return Ok(payouts.Count);
+        }
+
+        [HttpGet("refills")]
+        public async Task<IActionResult> GetRefills([FromQuery] GetPayoutsParameters parameters)
+        {
+            List<PayoutInsertion> payouts = new List<PayoutInsertion>();
+            if (parameters.IsSplitTerminals)
+            {
+                payouts = await _payoutService.GetPayoutInsertionsSplitTerminalAsync(parameters);
+            }
+            else
+            {
+                payouts = await _payoutService.GetPayoutInsertionsAsync(parameters);
+            }
+
+            string sortingRule;
+            if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
+                sortingRule = "Dtime desc,TerminalCode asc";
+            else
+                sortingRule = $"{parameters.Sorting.Field} {parameters.Sorting.Direction},Dtime desc,TerminalCode asc";
+
+            payouts = Sorting.Sort<PayoutInsertion>(payouts.AsQueryable(), sortingRule).ToList();
+
+            PagedList<PayoutInsertion> result = PagedList<PayoutInsertion>.ToPagedList(payouts.AsQueryable(), parameters.Paging);
+
+            return Ok(result);
+        }
+
+        [HttpGet("refills/total_count")]
+        public async Task<IActionResult> GetRefillsTotalCount([FromQuery] GetPayoutsParameters parameters)
         {
             List<PayoutInsertion> payouts = new List<PayoutInsertion>();
             if (parameters.IsSplitTerminals)

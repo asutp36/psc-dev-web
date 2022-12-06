@@ -119,6 +119,8 @@ namespace GateWashDataService
             services.AddTransient<ClientService>();
 
             services.AddTransient<CardService>();
+
+            services.AddTransient<CollectService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

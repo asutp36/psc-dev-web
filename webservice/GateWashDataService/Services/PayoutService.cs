@@ -47,34 +47,6 @@ namespace GateWashDataService.Services
             return payouts;
         }
 
-        private IQueryable<PayoutEventKind> GetFake()
-        {
-            List<PayoutEventKind> list = new List<PayoutEventKind>();
-            Random rnd = new Random();
-
-            for(int i = 0; i < 50; i++)
-            {
-                int m10 = rnd.Next(0, 100);
-                int b50 = rnd.Next(0, 100);
-                int b100 = rnd.Next(0, 100);
-
-                list.Add(new PayoutEventKind
-                {
-                    Terminal = "Тест",
-                    TerminalCode = "test",
-                    DTime = DateTime.Now.AddHours(-rnd.Next(0, 24)),
-                    EventKind = "пополнение сдачи",
-                    Amount = 10 * m10 + 50 * b50 + 100 * b100,
-                    M10 = m10,
-                    B50 = b50,
-                    B100 = b100,
-                    login = "eco"
-                });
-            }
-
-            return list.AsQueryable();
-        }
-
         /// <summary>
         /// Все сдачи, сгруппированные по часам
         /// </summary>
