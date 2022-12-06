@@ -274,16 +274,18 @@ namespace GateWashDataService.Services
         {
             try
             {
-                CurrentCounters counters = new CurrentCounters()
-                    {
-                        DTime = DateTime.Now,
-                        Counters = new Dictionary<string, int>()
-                        {
-                            { "m10",  0},
-                            { "b50", 0 },
-                            { "b100", 0 }
-                        }
-                    };
+                CurrentCounters counters = await _context.CardCounters.Include(o => o.IddeviceNavigation).Where(o => o.Dtime == (_context.CardCounters.Include(o => o.IddeviceNavigation)
+                                                                                                                          .Where(o => o.IddeviceNavigation.Code == terminal).Max(o => o.Dtime))
+                                                                                                              && o.IddeviceNavigation.Code == terminal)
+                                                                     .Select(o => new CurrentCounters 
+                                                                     {
+                                                                         DTime = o.Dtime,
+                                                                         Counters = new Dictionary<string, int>()
+                                                                         {
+                                                                             { "dispenser1", o.Dispenser1 },
+                                                                             { "dispenser2", o.Dispenser2 }
+                                                                         }
+                                                                     }).FirstOrDefaultAsync();
 
                 return counters;
             }

@@ -55,6 +55,7 @@ namespace GateWashSyncService.Controllers.Helpers
                 {
                     IdsessoinOnWash = session.idSession,
                     Idfunction = this.GetIdProgram(session.functionCode),
+                    Iddevice = this.GetIdDevice(session.deviceCode),
                     Idcard = this.GetIdCard(session.cardNum),
                     Dtime = DateTime.Parse(session.dtime),
                     Uuid = session.uuid
@@ -350,6 +351,44 @@ namespace GateWashSyncService.Controllers.Helpers
             return _model.EventPayout.Include(ei => ei.IdpayEventNavigation).ThenInclude(e => e.IddeviceNavigation)
                                        .Where(r => r.IdpayEventNavigation.IdeventOnPost == idOnPost && r.IdpayEventNavigation.IddeviceNavigation.Code == deviceCode)
                                        .FirstOrDefault() != null;
+        }
+
+        public async Task<int> WriteCardRefillAsync(CardCounterModel model)
+        {
+            try
+            {
+                CardCounters cr = new CardCounters()
+                {
+                    IdcardOperation = model.idCardOperation,
+                    Iddevice = this.GetIdDevice(model.deviceCode),
+                    IdeventKind = this.GetIdEventKind(model.eventKindCode),
+                    Dtime = DateTime.Parse(model.dtime),
+                    Login = model.login,
+                    Dispenser1 = model.dispenser1,
+                    Dispenser2 = model.dispenser2,
+                    Count1 = model.count1,
+                    Count2 = model.count2
+                };
+
+                await _model.CardCounters.AddAsync(cr);
+
+                await _model.SaveChangesAsync();
+
+                return cr.IdcardRefill;
+            }
+            catch (SqlException e)
+            {
+                throw new Exception("command", e);
+            }
+            catch (DbUpdateException e)
+            {
+                if (e.HResult == -2146232060) // проблема с внешними ключами
+                {
+                    throw new Exception("command", e);
+                }
+
+                throw new Exception("db", e);
+            }
         }
     }
 }

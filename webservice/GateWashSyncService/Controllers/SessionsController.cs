@@ -31,6 +31,11 @@ namespace GateWashSyncService.Controllers
             try
             {
                 GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
+                if (!sqlHelper.IsDeviceExsists(session.deviceCode))
+                {
+                    _logger.LogError($"Не найден девайс {session.deviceCode}");
+                    return NotFound(new Error() { errorCode = "badvalue", errorMessage = $"Не найден девайс {session.deviceCode}" });
+                }
                 if (!sqlHelper.IsCardExsists(session.cardNum))
                 {
                     _logger.LogError($"Карта {session.cardNum} не найдена");

@@ -64,5 +64,29 @@ namespace GateWashSyncService.Controllers
                 }
             }
         }
+
+        [HttpPost("refill")]
+        public async Task<IActionResult> PostRefill(CardCounterModel model)
+        {
+            GateWashSqlHelper sqlHelper = new GateWashSqlHelper(_model);
+
+            if (model.eventKindCode != "cardcountincrease" && model.eventKindCode != "cardissuance")
+            {
+                _logger.LogError($"Пришёл код события {model.eventKindCode}, а нужен cardcountincrease или cardissuance");
+                return BadRequest(new Error { errorCode = "badvalue", errorMessage = "Не правильный код события" });
+            }
+
+            if (!sqlHelper.IsDeviceExsists(model.deviceCode))
+            {
+                _logger.LogError($"Не найден девайс {model.deviceCode}");
+                return NotFound(new Error { errorCode = "not found", errorMessage = $"Не найден девайс {model.deviceCode}" });
+            }
+
+            int id = await sqlHelper.WriteCardRefillAsync(model);
+
+            Response.Headers.Add("ServerID", id.ToString());
+            _logger.LogInformation($"Добавлена запись о пополнении карт id = {id}" + Environment.NewLine);
+            return Created(id.ToString(), null);
+        }
     }
 }

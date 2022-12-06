@@ -8,6 +8,7 @@ namespace GateWashSyncService.Controllers.BindingModels
     public class SessionBindingModel
     {
         public int idSession { get; set; }
+        public string deviceCode { get; set; }
         public string functionCode { get; set; }
         public string cardNum { get; set; }
         public string dtime { get; set; }

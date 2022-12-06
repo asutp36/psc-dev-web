@@ -11,11 +11,13 @@ namespace GateWashSyncService.Models.GateWash
     {
         public Device()
         {
+            CardCounters = new HashSet<CardCounters>();
             Collect = new HashSet<Collect>();
             Event = new HashSet<Event>();
             PayEvent = new HashSet<PayEvent>();
             PaySession = new HashSet<PaySession>();
             Posts = new HashSet<Posts>();
+            Sessions = new HashSet<Sessions>();
             Terminals = new HashSet<Terminals>();
         }
 
@@ -27,11 +29,13 @@ namespace GateWashSyncService.Models.GateWash
         public string IpAddress { get; set; }
 
         public virtual DeviceTypes IddeviceTypeNavigation { get; set; }
+        public virtual ICollection<CardCounters> CardCounters { get; set; }
         public virtual ICollection<Collect> Collect { get; set; }
         public virtual ICollection<Event> Event { get; set; }
         public virtual ICollection<PayEvent> PayEvent { get; set; }
         public virtual ICollection<PaySession> PaySession { get; set; }
         public virtual ICollection<Posts> Posts { get; set; }
+        public virtual ICollection<Sessions> Sessions { get; set; }
         public virtual ICollection<Terminals> Terminals { get; set; }
     }
 }

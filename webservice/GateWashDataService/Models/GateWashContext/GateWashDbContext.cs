@@ -18,6 +18,7 @@ namespace GateWashDataService.Models.GateWashContext
         }
 
         public virtual DbSet<Card> Cards { get; set; }
+        public virtual DbSet<CardCounter> CardCounters { get; set; }
         public virtual DbSet<Collect> Collects { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<DeviceType> DeviceTypes { get; set; }
@@ -63,6 +64,37 @@ namespace GateWashDataService.Models.GateWashContext
                     .IsRequired()
                     .HasMaxLength(8)
                     .IsFixedLength(true);
+            });
+
+            modelBuilder.Entity<CardCounter>(entity =>
+            {
+                entity.HasKey(e => e.IdcardRefill)
+                    .HasName("PK_CardRefill");
+
+                entity.Property(e => e.IdcardRefill).HasColumnName("IDCardRefill");
+
+                entity.Property(e => e.Dtime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("DTime");
+
+                entity.Property(e => e.IdcardOperation).HasColumnName("IDCardOperation");
+
+                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
+
+                entity.Property(e => e.IdeventKind).HasColumnName("IDEventKind");
+
+                entity.Property(e => e.Login).HasMaxLength(50);
+
+                entity.HasOne(d => d.IddeviceNavigation)
+                    .WithMany(p => p.CardCounters)
+                    .HasForeignKey(d => d.Iddevice)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CardRefill_Device");
+
+                entity.HasOne(d => d.IdeventKindNavigation)
+                    .WithMany(p => p.CardCounters)
+                    .HasForeignKey(d => d.IdeventKind)
+                    .HasConstraintName("FK_CardRefill_EventKind");
             });
 
             modelBuilder.Entity<Collect>(entity =>
@@ -512,6 +544,8 @@ namespace GateWashDataService.Models.GateWashContext
 
                 entity.Property(e => e.Idcard).HasColumnName("IDCard");
 
+                entity.Property(e => e.Iddevice).HasColumnName("IDDevice");
+
                 entity.Property(e => e.Idfunction).HasColumnName("IDFunction");
 
                 entity.Property(e => e.IdsessoinOnWash).HasColumnName("IDSessoinOnWash");
@@ -525,6 +559,12 @@ namespace GateWashDataService.Models.GateWashContext
                     .WithMany(p => p.Sessions)
                     .HasForeignKey(d => d.Idcard)
                     .HasConstraintName("FK_Sessions_Cards");
+
+                entity.HasOne(d => d.IddeviceNavigation)
+                    .WithMany(p => p.Sessions)
+                    .HasForeignKey(d => d.Iddevice)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Sessions_Device");
 
                 entity.HasOne(d => d.IdfunctionNavigation)
                     .WithMany(p => p.Sessions)

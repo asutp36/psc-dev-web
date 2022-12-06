@@ -9,6 +9,7 @@ namespace GateWashDataService.Models.GateWashContext
     {
         public EventKind()
         {
+            CardCounters = new HashSet<CardCounter>();
             Events = new HashSet<Event>();
             PayEvents = new HashSet<PayEvent>();
         }
@@ -19,6 +20,7 @@ namespace GateWashDataService.Models.GateWashContext
         public int DisplayOrder { get; set; }
         public float? Fee { get; set; }
 
+        public virtual ICollection<CardCounter> CardCounters { get; set; }
         public virtual ICollection<Event> Events { get; set; }
         public virtual ICollection<PayEvent> PayEvents { get; set; }
     }

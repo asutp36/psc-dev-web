@@ -18,8 +18,10 @@ namespace GateWashDataService.Models.GateWashContext
         public int Idcard { get; set; }
         public DateTime Dtime { get; set; }
         public string Uuid { get; set; }
+        public int Iddevice { get; set; }
 
         public virtual Card IdcardNavigation { get; set; }
+        public virtual Device IddeviceNavigation { get; set; }
         public virtual Program IdfunctionNavigation { get; set; }
         public virtual ICollection<Event> Events { get; set; }
     }
