@@ -4,11 +4,11 @@ using System.Text;
 
 namespace WashPing.Models
 {
-    class Wash
+    class Host
     {
         public string Name { get; set; }
         public string Ip { get; set; }
-        public string ChatID { get; set; }
-        public string Message { get; set; }
+        public string FailedChatID { get; set; }
+        public string FailedMessage { get; set; }
     }
 }

@@ -19,10 +19,11 @@ namespace WashPing
 
         private static ILogger _logger;
 
-        private static List<Wash> _washes;
+        private static List<Host> _hosts;
         private static int _retryCount;
         private static int _timeout;
         private static string _notifyUrl;
+        private static string _notifyEndpoint;
 
         private static void Configure()
         {
@@ -32,10 +33,12 @@ namespace WashPing
 
             IConfiguration config = builder.Build();
 
-            _washes = config.GetSection("Washes").Get<List<Wash>>();
+            _hosts = config.GetSection("Hosts").Get<List<Host>>();
             _retryCount = int.Parse(config.GetSection("RetryCount").Value);
             _timeout = int.Parse(config.GetSection("Timeout").Value);
             _notifyUrl = config.GetSection("NotifyUrl").Value;
+            _notifyEndpoint = config.GetSection("NotifyEndpoint").Value;
+
             _pinger = new Ping();
         }
 
@@ -45,7 +48,7 @@ namespace WashPing
             {
                 Configure();
 
-                foreach (Wash w in _washes)
+                foreach (Host w in _hosts)
                 {
                     if (Ping(w.Ip))
                     {
@@ -53,7 +56,7 @@ namespace WashPing
                     }
                     else
                     {
-                        await SendNotification(w.ChatID, w.Message);
+                        await SendNotification(w.FailedChatID, w.FailedMessage.Replace("{name}", w.Name));
                         _logger.Error($"Мойка {w.Name} не пингуется");
                     }
                 }
@@ -109,7 +112,7 @@ namespace WashPing
 
                 var data = new StringContent(JsonConvert.SerializeObject(msg), Encoding.UTF8, "application/json");
                 
-                var result = await httpClient.PostAsync("api/notify/message-group", data);
+                var result = await httpClient.PostAsync(_notifyEndpoint, data);
                 result.EnsureSuccessStatusCode();
             }
             catch(HttpRequestException e)
