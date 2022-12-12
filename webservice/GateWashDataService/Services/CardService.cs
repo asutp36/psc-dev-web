@@ -1,5 +1,7 @@
 ﻿using GateWashDataService.Models;
+using GateWashDataService.Models.Filters;
 using GateWashDataService.Models.GateWashContext;
+using GateWashDataService.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,11 +15,23 @@ namespace GateWashDataService.Services
     {
         private readonly ILogger<CardService> _logger;
         private readonly GateWashDbContext _context;
+        private readonly WashesRepository _washesRepository;
 
-        public CardService(ILogger<CardService> logger, GateWashDbContext context)
+        public CardService(ILogger<CardService> logger, GateWashDbContext context, WashesRepository washesRepository)
         {
             _logger = logger;
             _context = context;
+            _washesRepository = washesRepository;
+        }
+
+        public async Task<CardFilters> GetFiltersAsync(IEnumerable<string> washes)
+        {
+            CardFilters filters = new CardFilters();
+
+            List<string> terminalTypes = new List<string>() { "typedEntry" };
+            filters.Terminals = await _washesRepository.GetTerminalsForFilters(washes, terminalTypes);
+
+            return filters;
         }
 
         public async Task<List<CardIssuance>> GetCardIssuanceAsync(GetCardsRefillParameters parameters, IEnumerable<string> terminals)

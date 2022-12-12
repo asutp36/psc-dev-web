@@ -1,6 +1,8 @@
 ﻿using GateWashDataService.Extentions;
 using GateWashDataService.Models;
+using GateWashDataService.Models.Filters;
 using GateWashDataService.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,6 +21,15 @@ namespace GateWashDataService.Controllers
         public PayoutsController(PayoutService payoutService)
         {
             _payoutService = payoutService;
+        }
+
+        [HttpGet("filters")]
+        [Authorize]
+        public async Task<IActionResult> GetFilters()
+        {
+            PayoutFilters filters = await _payoutService.GetFiltersAsync(User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value));
+
+            return Ok(filters);
         }
 
         [HttpGet]

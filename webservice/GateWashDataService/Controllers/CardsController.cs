@@ -1,5 +1,6 @@
 ﻿using GateWashDataService.Extentions;
 using GateWashDataService.Models;
+using GateWashDataService.Models.Filters;
 using GateWashDataService.Repositories;
 using GateWashDataService.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -23,6 +24,15 @@ namespace GateWashDataService.Controllers
         {
             _cardService = cardService;
             _washesRepository = washesRepository;
+        }
+
+        [HttpGet("filters")]
+        [Authorize]
+        public async Task<IActionResult> GetFilters()
+        {
+            CardFilters filters = await _cardService.GetFiltersAsync(User.Claims.Where(c => c.Type == "GateWash").Select(c => c.Value));
+
+            return Ok(filters);
         }
 
         [HttpGet("refills")]
