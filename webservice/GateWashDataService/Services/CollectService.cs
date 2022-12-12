@@ -1,5 +1,7 @@
 ﻿using GateWashDataService.Models;
+using GateWashDataService.Models.Filters;
 using GateWashDataService.Models.GateWashContext;
+using GateWashDataService.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,11 +15,13 @@ namespace GateWashDataService.Services
     {
         private readonly ILogger<CollectService> _logger;
         private readonly GateWashDbContext _context;
+        private readonly WashesRepository _washesRepository;
 
-        public CollectService(ILogger<CollectService> logger, GateWashDbContext context)
+        public CollectService(ILogger<CollectService> logger, GateWashDbContext context, WashesRepository washesRepository)
         {
             _logger = logger;
             _context = context;
+            _washesRepository = washesRepository;
         }
 
         public async Task<IQueryable<CollectModel>> GetAsync(GetCollectsParameters parameters, IEnumerable<string> terminals)
@@ -38,6 +42,15 @@ namespace GateWashDataService.Services
                                        b2000 = c.B2000
                                    });
             return collects;
+        }
+
+        public async Task<CollectFilters> GetFiltersAsync(IEnumerable<string> washes)
+        {
+            List<string> terminalTypes = new List<string>() { "pay" };
+            CollectFilters filters = new CollectFilters();
+            filters.Terminals = await _washesRepository.GetTerminalsForFilters(washes, terminalTypes);
+
+            return filters;
         }
     }
 }

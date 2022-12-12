@@ -1,4 +1,5 @@
 ﻿using GateWashDataService.Models.DTOs;
+using GateWashDataService.Models.Filters;
 using GateWashDataService.Models.GateWashContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -51,6 +52,27 @@ namespace GateWashDataService.Repositories
                             .Include(t => t.IddeviceNavigation)
                             .Select(t => t.IddeviceNavigation.Code)
                             .ToListAsync();
+        }
+
+        /// <summary>
+        /// Получить модели терминалов для фильтров 
+        /// </summary>
+        /// <param name="washes">Код моек</param>
+        /// <param name="terminalTypes">Код типов терминалов</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<TerminalModel>> GetTerminalsForFilters(IEnumerable<string> washes, IEnumerable<string> terminalTypes)
+        {
+            IEnumerable<TerminalModel> terminals = await _model.Terminals.Include(t => t.IddeviceNavigation).ThenInclude(d => d.IddeviceTypeNavigation)
+                                                  .Include(w => w.IdwashNavigation)
+                                    .Where(t => terminalTypes.Contains(t.IddeviceNavigation.IddeviceTypeNavigation.Code)
+                                                && washes.Contains(t.IdwashNavigation.Code))
+                                    .Select(t => new TerminalModel
+                                    {
+                                        Code = t.IddeviceNavigation.Code,
+                                        Name = t.IddeviceNavigation.Name
+                                    })
+                                    .ToListAsync();
+            return terminals;
         }
     }
 }

@@ -35,7 +35,7 @@ namespace GateWashDataService.Controllers
             try
             {
                 FiltersModel filters = new FiltersModel();
-                filters.PayTerminals = new List<PayTerminalModel>();
+                filters.PayTerminals = new List<TerminalModel>();
                 filters.Programs = new List<ProgramModel>();
                 filters.Washes = new List<WashModel>();
                 filters.EventKinds = new List<EventKindModel>();
@@ -47,7 +47,7 @@ namespace GateWashDataService.Controllers
                         filters.Washes.Add(_context.Washes.Where(w => w.Code == c.Value).Select(w => new WashModel { IdWash = w.Idwash, IdRegion = w.Idregion, Code = w.Code, Name = w.Name }).FirstOrDefault());
                         var terminals = _context.Terminals.Where(t => t.IdwashNavigation.Code == c.Value)
                             .Include(d => d.IddeviceNavigation)
-                            .Select(t => new PayTerminalModel
+                            .Select(t => new TerminalModel
                             {
                                 IdDevice = t.Iddevice,
                                 Code = t.IddeviceNavigation.Code,
@@ -87,7 +87,7 @@ namespace GateWashDataService.Controllers
                         filters.Washes.Add(_context.Washes.Where(w => w.Code == c.Value).Select(w => new WashModel { IdWash = w.Idwash, IdRegion = w.Idregion, Code = w.Code, Name = w.Name }).FirstOrDefault());
                         var terminals = _context.Terminals.Where(t => t.IdwashNavigation.Code == c.Value)
                             .Include(d => d.IddeviceNavigation)
-                            .Select(t => new PayTerminalModel
+                            .Select(t => new TerminalModel
                             {
                                 IdDevice = t.Iddevice,
                                 Code = t.IddeviceNavigation.Code,

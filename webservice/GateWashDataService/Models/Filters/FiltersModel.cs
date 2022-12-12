@@ -9,7 +9,7 @@ namespace GateWashDataService.Models.Filters
     {
         public List<RegionModel> Regions { get; set; }
         public List<WashModel> Washes { get; set; }
-        public List<PayTerminalModel> PayTerminals { get; set; }
+        public List<TerminalModel> PayTerminals { get; set; }
         public List<ProgramModel> Programs { get; set; }
         public List<EventKindModel> EventKinds { get; set; }
     }

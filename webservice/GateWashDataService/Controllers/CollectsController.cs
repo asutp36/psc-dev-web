@@ -1,6 +1,7 @@
 ﻿using GateWashDataService.Extentions;
 using GateWashDataService.Helpers;
 using GateWashDataService.Models;
+using GateWashDataService.Models.Filters;
 using GateWashDataService.Models.GateWashContext;
 using GateWashDataService.Repositories;
 using GateWashDataService.Services;
@@ -27,6 +28,14 @@ namespace GateWashDataService.Controllers
         {
             _collectService = collectService;
             _washesRepository = washesRepository;
+        }
+
+        [HttpGet("filters")]
+        [Authorize]
+        public async Task<IActionResult> GetFilters()
+        {
+            CollectFilters filters = await _collectService.GetFiltersAsync(User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value));
+            return Ok(filters);
         }
 
         [HttpGet]
