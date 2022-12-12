@@ -1,6 +1,8 @@
 ﻿using GateWashDataService.Extentions;
 using GateWashDataService.Models;
+using GateWashDataService.Repositories;
 using GateWashDataService.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,16 +17,20 @@ namespace GateWashDataService.Controllers
     public class CardsController : ControllerBase
     {
         private readonly CardService _cardService;
+        private readonly WashesRepository _washesRepository;
 
-        public CardsController(CardService cardService)
+        public CardsController(CardService cardService, WashesRepository washesRepository)
         {
             _cardService = cardService;
+            _washesRepository = washesRepository;
         }
 
         [HttpGet("refills")]
+        [Authorize]
         public async Task<IActionResult> GetRefills([FromQuery]GetCardsRefillParameters parameters)
         {
-            List<CardsRefill> refills = await _cardService.GetCardCountIncreaseAsync(parameters);
+            IEnumerable<string> terminals = await _washesRepository.GetTerminalCodesByWashesAsync(User.Claims.Where(c => c.Type == "GateWash").Select(c => c.Value));
+            List<CardsRefill> refills = await _cardService.GetCardCountIncreaseAsync(parameters, terminals);
 
             string sortingRule;
             if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
@@ -40,16 +46,20 @@ namespace GateWashDataService.Controllers
         }
 
         [HttpGet("refills/total-count")]
+        [Authorize]
         public async Task<IActionResult> GetRefillsTotalCount([FromQuery] GetCardsRefillParameters parameters)
         {
-            List<CardsRefill> refills = await _cardService.GetCardCountIncreaseAsync(parameters);
+            IEnumerable<string> terminals = await _washesRepository.GetTerminalCodesByWashesAsync(User.Claims.Where(c => c.Type == "GateWash").Select(c => c.Value));
+            List<CardsRefill> refills = await _cardService.GetCardCountIncreaseAsync(parameters, terminals);
             return Ok(refills.Count);
         }
 
         [HttpGet("issuances")]
+        [Authorize]
         public async Task<IActionResult> GetIssuances([FromQuery] GetCardsRefillParameters parameters)
         {
-            List<CardIssuance> refills = await _cardService.GetCardIssuanceAsync(parameters);
+            IEnumerable<string> terminals = await _washesRepository.GetTerminalCodesByWashesAsync(User.Claims.Where(c => c.Type == "GateWash").Select(c => c.Value));
+            List<CardIssuance> refills = await _cardService.GetCardIssuanceAsync(parameters, terminals);
 
             string sortingRule;
             if (parameters.Sorting == null || string.IsNullOrEmpty(parameters.Sorting.Field) || string.IsNullOrEmpty(parameters.Sorting.Direction))
@@ -65,9 +75,11 @@ namespace GateWashDataService.Controllers
         }
 
         [HttpGet("issuances/total-count")]
+        [Authorize]
         public async Task<IActionResult> GetIssuancesTotalCount([FromQuery] GetCardsRefillParameters parameters)
         {
-            List<CardIssuance> refills = await _cardService.GetCardIssuanceAsync(parameters);
+            IEnumerable<string> terminals = await _washesRepository.GetTerminalCodesByWashesAsync(User.Claims.Where(c => c.Type == "GateWash").Select(c => c.Value));
+            List<CardIssuance> refills = await _cardService.GetCardIssuanceAsync(parameters, terminals);
             return Ok(refills.Count);
         }
     }

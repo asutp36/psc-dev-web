@@ -39,5 +39,18 @@ namespace GateWashDataService.Repositories
                 .Where(o => washCodes.Contains(o.Code)).Select(o => o.IdregionNavigation.Code).Distinct();
             return regions;
         }
+
+        /// <summary>
+        /// Получить коды термналов по списку кодов моек
+        /// </summary>
+        /// <param name="washCodes">Коды моек</param>
+        /// <returns>Список кодов терминалов</returns>
+        public async Task<List<string>> GetTerminalCodesByWashesAsync(IEnumerable<string> washCodes)
+        {
+            return await _model.Terminals.Where(t => washCodes.Contains(t.IdwashNavigation.Code))
+                            .Include(t => t.IddeviceNavigation)
+                            .Select(t => t.IddeviceNavigation.Code)
+                            .ToListAsync();
+        }
     }
 }

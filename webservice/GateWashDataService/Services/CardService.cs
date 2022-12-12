@@ -20,10 +20,12 @@ namespace GateWashDataService.Services
             _context = context;
         }
 
-        public async Task<List<CardIssuance>> GetCardIssuanceAsync(GetCardsRefillParameters parameters)
+        public async Task<List<CardIssuance>> GetCardIssuanceAsync(GetCardsRefillParameters parameters, IEnumerable<string> terminals)
         {
             List<CardIssuance> issuances = await _context.CardCounters.Include(o => o.IddeviceNavigation).Include(o => o.IdeventKindNavigation)
-                .Where(o => o.Dtime >= parameters.StartDate && o.Dtime <= parameters.EndDate && (parameters.Terminal == null || o.IddeviceNavigation.Code == parameters.Terminal)
+                .Where(o => o.Dtime >= parameters.StartDate && o.Dtime <= parameters.EndDate
+                        && terminals.Contains(o.IddeviceNavigation.Code)
+                        && (parameters.Terminal == null || o.IddeviceNavigation.Code == parameters.Terminal)
                         && o.IdeventKindNavigation.Code == "cardissuance")
                 .Select(o => new CardIssuance
                 {
@@ -38,10 +40,12 @@ namespace GateWashDataService.Services
             return issuances;
         }
 
-        public async Task<List<CardsRefill>> GetCardCountIncreaseAsync(GetCardsRefillParameters parameters)
+        public async Task<List<CardsRefill>> GetCardCountIncreaseAsync(GetCardsRefillParameters parameters, IEnumerable<string> terminals)
         {
             List<CardsRefill> refills = await _context.CardCounters.Include(o => o.IddeviceNavigation).Include(o => o.IdeventKindNavigation)
-                .Where(o => o.Dtime >= parameters.StartDate && o.Dtime <= parameters.EndDate && (parameters.Terminal == null || o.IddeviceNavigation.Code == parameters.Terminal) 
+                .Where(o => o.Dtime >= parameters.StartDate && o.Dtime <= parameters.EndDate 
+                        && terminals.Contains(o.IddeviceNavigation.Code)
+                        && (parameters.Terminal == null || o.IddeviceNavigation.Code == parameters.Terminal) 
                         && o.IdeventKindNavigation.Code == "cardcountincrease")
                 .Select(o => new CardsRefill
                 {
