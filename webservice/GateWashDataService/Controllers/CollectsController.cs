@@ -2,7 +2,9 @@
 using GateWashDataService.Helpers;
 using GateWashDataService.Models;
 using GateWashDataService.Models.GateWashContext;
+using GateWashDataService.Repositories;
 using GateWashDataService.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,41 +20,33 @@ namespace GateWashDataService.Controllers
     [ApiController]
     public class CollectsController : ControllerBase
     {
-        private readonly GateWashDbContext _context;
         private readonly CollectService _collectService;
+        private readonly WashesRepository _washesRepository;
 
-        public CollectsController(GateWashDbContext context, CollectService collectService)
+        public CollectsController(CollectService collectService, WashesRepository washesRepository)
         {
-            _context = context;
             _collectService = collectService;
+            _washesRepository = washesRepository;
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Get([FromQuery] GetCollectsParameters parameters)
         {
-            PagedList<CollectModel> result = PagedList<CollectModel>.ToPagedList(await _collectService.GetAsync(parameters), parameters.Paging);
+            IEnumerable<string> terminals = await _washesRepository.GetTerminalCodesByWashesAsync(User.Claims.Where(c => c.Type == "GatteWash" || c.Type == "RobotWash").Select(c => c.Value));
+            PagedList<CollectModel> result = PagedList<CollectModel>.ToPagedList(await _collectService.GetAsync(parameters, terminals), parameters.Paging);
 
             PagedList<CollectModel>.PrepareHTTPResponseMetadata(Response, result);
 
             return Ok(result);
         }
 
-        [HttpGet("count")]
-        public async Task<IActionResult> GetCountWrong([FromQuery] GetCollectsParameters parameters)
-        {
-            IQueryable<CollectModel> collects = await _collectService.GetAsync(parameters);
-
-            //PagedList<CollectModel> result = PagedList<CollectModel>.ToPagedList(collects.AsQueryable(), parameters.Paging);
-
-            //PagedList<CollectModel>.PrepareHTTPResponseMetadata(Response, result);
-
-            return Ok(collects.Count());
-        }
-
         [HttpGet("total_count")]
-        public async Task<IActionResult> GetCountRight([FromQuery] GetCollectsParameters parameters)
+        [Authorize]
+        public async Task<IActionResult> GetTotalCount([FromQuery] GetCollectsParameters parameters)
         {
-            IQueryable<CollectModel> collects = await _collectService.GetAsync(parameters);
+            IEnumerable<string> terminals = await _washesRepository.GetTerminalCodesByWashesAsync(User.Claims.Where(c => c.Type == "GatteWash" || c.Type == "RobotWash").Select(c => c.Value));
+            IQueryable<CollectModel> collects = await _collectService.GetAsync(parameters, terminals);
 
             return Ok(collects.Count());
         }

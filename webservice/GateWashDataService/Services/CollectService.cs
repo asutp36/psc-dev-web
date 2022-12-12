@@ -20,10 +20,11 @@ namespace GateWashDataService.Services
             _context = context;
         }
 
-        public async Task<IQueryable<CollectModel>> GetAsync(GetCollectsParameters parameters)
+        public async Task<IQueryable<CollectModel>> GetAsync(GetCollectsParameters parameters, IEnumerable<string> terminals)
         {
             IQueryable<CollectModel> collects = _context.Collects.Where(c => (c.Dtime >= parameters.StartDate && c.Dtime <= parameters.EndDate)
-                                               && (parameters.Terminal == null || c.IddeviceNavigation.Code == parameters.Terminal))
+                                                   && terminals.Contains(c.IddeviceNavigation.Code)
+                                                   && (parameters.Terminal == null || c.IddeviceNavigation.Code == parameters.Terminal))
                                    .Select(c => new CollectModel
                                    {
                                        DTime = c.Dtime,
