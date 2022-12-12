@@ -1,7 +1,9 @@
 ﻿using GateWashDataService.Extentions;
 using GateWashDataService.Models;
+using GateWashDataService.Models.Filters;
 using GateWashDataService.Models.GateWashContext;
 using GateWashDataService.Repositories;
+using GateWashDataService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,10 +21,12 @@ namespace GateWashDataService.Controllers
     public class IncreasesController : ControllerBase
     {
         private readonly GateWashDbContext _context;
+        private readonly IncreaseService _increaseService;
 
-        public IncreasesController(GateWashDbContext context)
+        public IncreasesController(GateWashDbContext context, IncreaseService increaseService)
         {
             _context = context;
+            _increaseService = increaseService;
         }
 
         public IQueryable<T> Sort<T>(IQueryable<T> entities, string orderByQueryString)
@@ -49,6 +53,14 @@ namespace GateWashDataService.Controllers
             }
             var orderQuery = orderQueryBuilder.ToString().TrimEnd(',', ' ');
             return entities.OrderBy(orderQuery);
+        }
+
+        [HttpGet("filters")]
+        [Authorize]
+        public async Task<IActionResult> GetFilters()
+        {
+            IncreaseFilters filters = await _increaseService.GetFilters(User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value));
+            return Ok(filters);
         }
 
         [AllowAnonymous]
