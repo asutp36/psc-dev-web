@@ -1,4 +1,6 @@
 ﻿using GateWashDataService.Models;
+using GateWashDataService.Models.Filters;
+using GateWashDataService.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -10,9 +12,28 @@ namespace GateWashDataService.Services
     public class ClientService
     {
         private readonly ILogger<ClientService> _logger;
-        public ClientService(ILogger<ClientService> logger)
+        private readonly WashesRepository _washRepository;
+        private readonly ProgramService _programService;
+        public ClientService(ILogger<ClientService> logger, WashesRepository washRepository, ProgramService programService)
         {
             _logger = logger;
+            _washRepository = washRepository;
+            _programService = programService;
+        }
+
+        public async Task<ClientFilters> GetFiltersAsync(IEnumerable<string> washes)
+        {
+            ClientFilters filters = new ClientFilters();
+
+            List<string> terminalTypes = new List<string>() { "typedEntry" };
+            filters.EnterTerminals = await _washRepository.GetTerminalsForFilters(washes, terminalTypes);
+
+            terminalTypes = new List<string>() { "typedExit", "stop" };
+            filters.ExitTerminals = await _washRepository.GetTerminalsForFilters(washes, terminalTypes);
+
+            filters.Programs = await _programService.GetProgramsAsFiltersAsync(washes);
+
+            return filters;
         }
         
         public async Task<List<ClientEntrance>> GetEntrancesAsync()

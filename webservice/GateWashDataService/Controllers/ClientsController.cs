@@ -1,6 +1,8 @@
 ﻿using GateWashDataService.Extentions;
 using GateWashDataService.Models;
+using GateWashDataService.Models.Filters;
 using GateWashDataService.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,6 +21,15 @@ namespace GateWashDataService.Controllers
         public ClientsController(ClientService clientService)
         {
             _clientService = clientService;
+        }
+
+        [HttpGet("filters")]
+        [Authorize]
+        public async Task<IActionResult> GetFilters()
+        {
+            ClientFilters filters = await _clientService.GetFiltersAsync(User.Claims.Where(c => c.Type == "GateWash").Select(c => c.Value));
+
+            return Ok(filters);
         }
 
         [HttpGet("entrances")]
