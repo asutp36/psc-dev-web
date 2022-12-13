@@ -33,16 +33,19 @@ namespace GateWashDataService.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Get([FromQuery] GetPayoutsParameters parameters)
         {
+            IEnumerable<string> washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value);
+
             List<Payout> payouts = new List<Payout>();
             if (parameters.IsSplitTerminals) 
             {
-               payouts = await _payoutService.GetPayoutsSplitTerminalsAsync(parameters);
+               payouts = await _payoutService.GetPayoutsSplitTerminalsAsync(washes, parameters);
             }
             else
             {
-                payouts = await _payoutService.GetPayoutsAsync(parameters);
+                payouts = await _payoutService.GetPayoutsAsync(washes, parameters);
             }
 
             string sortingRule;
@@ -61,14 +64,16 @@ namespace GateWashDataService.Controllers
         [HttpGet("total_count")]
         public async Task<IActionResult> GetTotalCount([FromQuery] GetPayoutsParameters parameters)
         {
+            IEnumerable<string> washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value);
+
             List<Payout> payouts = new List<Payout>();
             if (parameters.IsSplitTerminals)
             {
-                payouts = await _payoutService.GetPayoutsSplitTerminalsAsync(parameters);
+                payouts = await _payoutService.GetPayoutsSplitTerminalsAsync(washes, parameters);
             }
             else
             {
-                payouts = await _payoutService.GetPayoutsAsync(parameters);
+                payouts = await _payoutService.GetPayoutsAsync(washes, parameters);
             }
 
             return Ok(payouts.Count);
@@ -77,14 +82,16 @@ namespace GateWashDataService.Controllers
         [HttpGet("refills")]
         public async Task<IActionResult> GetRefills([FromQuery] GetPayoutsParameters parameters)
         {
+            IEnumerable<string> washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value);
+
             List<PayoutInsertion> payouts = new List<PayoutInsertion>();
             if (parameters.IsSplitTerminals)
             {
-                payouts = await _payoutService.GetPayoutInsertionsSplitTerminalAsync(parameters);
+                payouts = await _payoutService.GetPayoutInsertionsSplitTerminalAsync(washes, parameters);
             }
             else
             {
-                payouts = await _payoutService.GetPayoutInsertionsAsync(parameters);
+                payouts = await _payoutService.GetPayoutInsertionsAsync(washes, parameters);
             }
 
             string sortingRule;
@@ -103,14 +110,16 @@ namespace GateWashDataService.Controllers
         [HttpGet("refills/total_count")]
         public async Task<IActionResult> GetRefillsTotalCount([FromQuery] GetPayoutsParameters parameters)
         {
+            IEnumerable<string> washes = User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value);
+
             List<PayoutInsertion> payouts = new List<PayoutInsertion>();
             if (parameters.IsSplitTerminals)
             {
-                payouts = await _payoutService.GetPayoutInsertionsSplitTerminalAsync(parameters);
+                payouts = await _payoutService.GetPayoutInsertionsSplitTerminalAsync(washes, parameters);
             }
             else
             {
-                payouts = await _payoutService.GetPayoutInsertionsAsync(parameters);
+                payouts = await _payoutService.GetPayoutInsertionsAsync(washes,  parameters);
             }
 
             return Ok(payouts.Count);

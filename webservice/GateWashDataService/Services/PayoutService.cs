@@ -38,11 +38,13 @@ namespace GateWashDataService.Services
         /// Выборка всех сдач
         /// </summary>
         /// <returns></returns>
-        private async Task<IQueryable<PayoutEventKind>> GetAsync(string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
+        private async Task<IQueryable<PayoutEventKind>> GetAsync(IEnumerable<string> washes, string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
         {
+            IEnumerable<string> terminals = await _washesRepository.GetTerminalCodesByWashesAsync(washes);
             IQueryable<PayoutEventKind> payouts = _model.EventPayouts.Include(o => o.IdpayEventNavigation).ThenInclude(o => o.IdeventKindNavigation)
                                                                      .Include(o => o.IdpayEventNavigation).ThenInclude(o => o.IddeviceNavigation)
                                                                      .Where(o => o.IdpayEventNavigation.IdeventKindNavigation.Code == eventKind &&
+                                                                                 terminals.Contains(o.IdpayEventNavigation.IddeviceNavigation.Code) &&
                                                                                  (terminal == null || o.IdpayEventNavigation.IddeviceNavigation.Code == terminal) &&
                                                                                  o.IdpayEventNavigation.Dtime >= dtimeStart && 
                                                                                  o.IdpayEventNavigation.Dtime <= dtimeEnd)
@@ -65,9 +67,9 @@ namespace GateWashDataService.Services
         /// Все сдачи, сгруппированные по часам
         /// </summary>
         /// <returns></returns>
-        private async Task<IQueryable<PayoutEventKind>> GetGroupByHourAsync(string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
+        private async Task<IQueryable<PayoutEventKind>> GetGroupByHourAsync(IEnumerable<string> washes, string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
         {
-            IQueryable<PayoutEventKind> payouts = await GetAsync(eventKind, terminal, dtimeStart, dtimeEnd);
+            IQueryable<PayoutEventKind> payouts = await GetAsync(washes, eventKind, terminal, dtimeStart, dtimeEnd);
 
             payouts = payouts.GroupBy(key => new { key.DTime.Date, key.DTime.Hour, key.EventKind },
                                       val => new { val.Amount, val.M10, val.B50, val.B100 },
@@ -88,9 +90,9 @@ namespace GateWashDataService.Services
         /// Все сдачи, сгркпированные по дням
         /// </summary>
         /// <returns></returns>
-        private async Task<IQueryable<PayoutEventKind>> GetGroupByDayAsync(string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
+        private async Task<IQueryable<PayoutEventKind>> GetGroupByDayAsync(IEnumerable<string> washes, string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
         {
-            IQueryable<PayoutEventKind> payouts = await GetAsync(eventKind, terminal, dtimeStart, dtimeEnd);
+            IQueryable<PayoutEventKind> payouts = await GetAsync(washes, eventKind, terminal, dtimeStart, dtimeEnd);
 
             payouts = payouts.GroupBy(key => new { key.DTime.Date, key.EventKind },
                                       val => new { val.Amount, val.M10, val.B50, val.B100 },
@@ -111,9 +113,9 @@ namespace GateWashDataService.Services
         /// Все сдачи, сгруппированные по месяцам
         /// </summary>
         /// <returns></returns>
-        private async Task<IQueryable<PayoutEventKind>> GetGroupedByMonthAsync(string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
+        private async Task<IQueryable<PayoutEventKind>> GetGroupedByMonthAsync(IEnumerable<string> washes, string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
         {
-            IQueryable<PayoutEventKind> payouts = await GetAsync(eventKind, terminal, dtimeStart, dtimeEnd);
+            IQueryable<PayoutEventKind> payouts = await GetAsync(washes, eventKind, terminal, dtimeStart, dtimeEnd);
 
             payouts = payouts.GroupBy(key => new { key.DTime.Year, key.DTime.Month, key.EventKind },
                                       val => new { val.Amount, val.M10, val.B50, val.B100 },
@@ -134,9 +136,9 @@ namespace GateWashDataService.Services
         /// Все сдачи, сгруппированные по часам и терминалам
         /// </summary>
         /// <returns></returns>
-        private async Task<IQueryable<PayoutEventKind>> GetGroupByHourSplitTerminalsAsync(string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
+        private async Task<IQueryable<PayoutEventKind>> GetGroupByHourSplitTerminalsAsync(IEnumerable<string> washes, string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
         {
-            IQueryable<PayoutEventKind> payouts = await GetAsync(eventKind, terminal, dtimeStart, dtimeEnd);
+            IQueryable<PayoutEventKind> payouts = await GetAsync(washes, eventKind, terminal, dtimeStart, dtimeEnd);
 
             payouts = payouts.GroupBy(key => new { key.DTime.Date, key.DTime.Hour, key.EventKind, key.Terminal, key.TerminalCode },
                                       val => new { val.Amount, val.M10, val.B50, val.B100 },
@@ -159,9 +161,9 @@ namespace GateWashDataService.Services
         /// Все сдачи, сгркпированные по дням и терминалам
         /// </summary>
         /// <returns></returns>
-        private async Task<IQueryable<PayoutEventKind>> GetGroupByDaySplitTerminalsAsync(string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
+        private async Task<IQueryable<PayoutEventKind>> GetGroupByDaySplitTerminalsAsync(IEnumerable<string> washes, string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
         {
-            IQueryable<PayoutEventKind> payouts = await GetAsync(eventKind, terminal, dtimeStart, dtimeEnd);
+            IQueryable<PayoutEventKind> payouts = await GetAsync(washes, eventKind, terminal, dtimeStart, dtimeEnd);
 
             payouts = payouts.GroupBy(key => new { key.DTime.Date, key.EventKind, key.Terminal, key.TerminalCode },
                                       val => new { val.Amount, val.M10, val.B50, val.B100 },
@@ -184,9 +186,9 @@ namespace GateWashDataService.Services
         /// Все сдачи, сгруппированные по месяцам и терминалам
         /// </summary>
         /// <returns></returns>
-        private async Task<IQueryable<PayoutEventKind>> GetGroupedByMonthSplitTerminalsAsync(string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
+        private async Task<IQueryable<PayoutEventKind>> GetGroupedByMonthSplitTerminalsAsync(IEnumerable<string> washes, string eventKind, string terminal, DateTime dtimeStart, DateTime dtimeEnd)
         {
-            IQueryable<PayoutEventKind> payouts = await GetAsync(eventKind, terminal, dtimeStart, dtimeEnd);
+            IQueryable<PayoutEventKind> payouts = await GetAsync(washes, eventKind, terminal, dtimeStart, dtimeEnd);
 
             payouts = payouts.GroupBy(key => new { key.DTime.Year, key.DTime.Month, key.EventKind, key.Terminal, key.TerminalCode },
                                       val => new { val.Amount, val.M10, val.B50, val.B100 },
@@ -209,22 +211,22 @@ namespace GateWashDataService.Services
         /// Список записей о выдаче сдач
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Payout>> GetPayoutsAsync(GetPayoutsParameters parameters)
+        public async Task<List<Payout>> GetPayoutsAsync(IEnumerable<string> washes, GetPayoutsParameters parameters)
         {
             IQueryable<Payout> payouts = null;
             switch (parameters.GroupBy)
             {
                 case "hour":
-                    payouts = await GetGroupByHourAsync("payout", parameters.Terminal, parameters.StartDate, parameters.EndDate);
+                    payouts = await GetGroupByHourAsync(washes, "payout", parameters.Terminal, parameters.StartDate, parameters.EndDate);
                     break;
                 case "day":
-                    payouts = await GetGroupByDayAsync("payout", parameters.Terminal, parameters.StartDate, parameters.EndDate);
+                    payouts = await GetGroupByDayAsync(washes, "payout", parameters.Terminal, parameters.StartDate, parameters.EndDate);
                     break;
                 case "month":
-                    payouts = await GetGroupedByMonthAsync("payout", parameters.Terminal, parameters.StartDate, parameters.EndDate);
+                    payouts = await GetGroupedByMonthAsync(washes, "payout", parameters.Terminal, parameters.StartDate, parameters.EndDate);
                     break;
                 default:
-                    payouts = await GetAsync("payout", parameters.Terminal, parameters.StartDate, parameters.EndDate);
+                    payouts = await GetAsync(washes, "payout", parameters.Terminal, parameters.StartDate, parameters.EndDate);
                     break;
             }
 
@@ -241,15 +243,15 @@ namespace GateWashDataService.Services
         /// Список записей о выдаче сдач по терминалам
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Payout>> GetPayoutsSplitTerminalsAsync(GetPayoutsParameters parameters)
+        public async Task<List<Payout>> GetPayoutsSplitTerminalsAsync(IEnumerable<string> washes, GetPayoutsParameters parameters)
         {
             IQueryable<Payout> payouts = null;
             payouts = parameters.GroupBy switch
             {
-                "hour" => await GetGroupByHourSplitTerminalsAsync("payout", parameters.Terminal, parameters.StartDate, parameters.EndDate),
-                "day" => await GetGroupByDaySplitTerminalsAsync("payout", parameters.Terminal, parameters.StartDate, parameters.EndDate),
-                "month" => await GetGroupedByMonthSplitTerminalsAsync("payout", parameters.Terminal, parameters.StartDate, parameters.EndDate),
-                _ => await GetAsync("payout", parameters.Terminal, parameters.StartDate, parameters.EndDate),
+                "hour" => await GetGroupByHourSplitTerminalsAsync(washes, "payout", parameters.Terminal, parameters.StartDate, parameters.EndDate),
+                "day" => await GetGroupByDaySplitTerminalsAsync(washes, "payout", parameters.Terminal, parameters.StartDate, parameters.EndDate),
+                "month" => await GetGroupedByMonthSplitTerminalsAsync(washes, "payout", parameters.Terminal, parameters.StartDate, parameters.EndDate),
+                _ => await GetAsync(washes, "payout", parameters.Terminal, parameters.StartDate, parameters.EndDate),
             };
 
             //IQueryable<Payout> result = payouts.Where(o => o.EventKind == "payout" &&
@@ -263,22 +265,22 @@ namespace GateWashDataService.Services
         /// Список записей о пополнении сдач
         /// </summary>
         /// <returns></returns>
-        public async Task<List<PayoutInsertion>> GetPayoutInsertionsAsync(GetPayoutsParameters parameters)
+        public async Task<List<PayoutInsertion>> GetPayoutInsertionsAsync(IEnumerable<string> washes, GetPayoutsParameters parameters)
         {
             IQueryable<PayoutInsertion> payouts = null;
             switch (parameters.GroupBy)
             {
                 case "hour":
-                    payouts = await GetGroupByHourAsync("payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
+                    payouts = await GetGroupByHourAsync(washes, "payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
                     break;
                 case "day":
-                    payouts = await GetGroupByDayAsync("payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
+                    payouts = await GetGroupByDayAsync(washes, "payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
                     break;
                 case "month":
-                    payouts = await GetGroupedByMonthAsync("payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
+                    payouts = await GetGroupedByMonthAsync(washes, "payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
                     break;
                 default:
-                    payouts = await GetAsync("payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
+                    payouts = await GetAsync(washes, "payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
                     break;
             }
 
@@ -293,22 +295,22 @@ namespace GateWashDataService.Services
         /// Список записей о пополнении сдач по терминалам
         /// </summary>
         /// <returns></returns>
-        public async Task<List<PayoutInsertion>> GetPayoutInsertionsSplitTerminalAsync(GetPayoutsParameters parameters)
+        public async Task<List<PayoutInsertion>> GetPayoutInsertionsSplitTerminalAsync(IEnumerable<string> washes, GetPayoutsParameters parameters)
         {
             IQueryable<PayoutInsertion> payouts;
             switch (parameters.GroupBy)
             {
                 case "hour":
-                    payouts = await GetGroupByHourSplitTerminalsAsync("payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
+                    payouts = await GetGroupByHourSplitTerminalsAsync(washes, "payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
                     break;
                 case "day":
-                    payouts = await GetGroupByDaySplitTerminalsAsync("payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
+                    payouts = await GetGroupByDaySplitTerminalsAsync(washes, "payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
                     break;
                 case "month":
-                    payouts = await GetGroupedByMonthSplitTerminalsAsync("payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
+                    payouts = await GetGroupedByMonthSplitTerminalsAsync(washes, "payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
                     break;
                 default:
-                    payouts = await GetAsync("payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
+                    payouts = await GetAsync(washes, "payoutinsertion", parameters.Terminal, parameters.StartDate, parameters.EndDate);
                     break;
             }
 
