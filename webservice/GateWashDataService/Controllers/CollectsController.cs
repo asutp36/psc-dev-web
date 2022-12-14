@@ -42,7 +42,7 @@ namespace GateWashDataService.Controllers
         [Authorize]
         public async Task<IActionResult> Get([FromQuery] GetCollectsParameters parameters)
         {
-            IEnumerable<string> terminals = await _washesRepository.GetTerminalCodesByWashesAsync(User.Claims.Where(c => c.Type == "GatteWash" || c.Type == "RobotWash").Select(c => c.Value));
+            IEnumerable<string> terminals = await _washesRepository.GetTerminalCodesByWashesAsync(User.Claims.Where(c => c.Type == "GateWash" || c.Type == "RobotWash").Select(c => c.Value));
             PagedList<CollectModel> result = PagedList<CollectModel>.ToPagedList(await _collectService.GetAsync(parameters, terminals), parameters.Paging);
 
             PagedList<CollectModel>.PrepareHTTPResponseMetadata(Response, result);

@@ -64,7 +64,7 @@ namespace LoyalityService.Services
                     discount.Ruble = p.DiscountRub ?? 0;
                 }
 
-                if (p.VipCondition != null && phone == p.VipCondition.Phone) 
+                if (p.VipCondition != null && CheckVipCondition(p.VipCondition, phone)) 
                 {
                     discount.Percent = p.Discount ?? 0;
                     discount.Ruble = p.DiscountRub ?? 0;
@@ -89,7 +89,7 @@ namespace LoyalityService.Services
         {
             // посчитать все мойки клиента за последние Days (из условия скидки)
             int clientWashingsCount = _context.Washings.Count(o => o.IdclientNavigation.Phone == clientPhone 
-                                                                && (condition.Days == 0 || o.Dtime.Date <= DateTime.Now.Date.AddDays(-condition.Days)));
+                                                                && (condition.Days == 0 || o.Dtime.Date >= DateTime.Now.Date.AddDays(-condition.Days)));
 
             // если количество моек > 0 и эта мойка будет энной, скидка будет из условия или 0
             return (clientWashingsCount + 1) % condition.EachN == 0;
@@ -104,6 +104,14 @@ namespace LoyalityService.Services
         {
             int currentHour = DateTime.Now.Hour;
             return currentHour >= condition.HourBegin && currentHour < condition.HourEnd;
+        }
+
+        private bool CheckVipCondition(VipCondition condition, long clientPhone)
+        {
+            // посчитать все мойки клиента за последние Days (из условия скидки)
+            int clientWashingsCount = _context.Washings.Count(o => o.IdclientNavigation.Phone == clientPhone
+                                                                && (condition.Days == 0 || o.Dtime.Date >= DateTime.Now.Date.AddDays(-condition.Days)));
+            return clientWashingsCount <= condition.Amount;
         }
 
         private async Task<Group> GetWashGroupByTerminalCodeAsync(string terminalCode)

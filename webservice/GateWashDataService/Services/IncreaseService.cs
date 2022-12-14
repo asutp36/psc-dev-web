@@ -27,7 +27,7 @@ namespace GateWashDataService.Services
         {
             IncreaseFilters filters = new IncreaseFilters();
 
-            List<string> terminalTypes = new List<string>() { "pay" };
+            List<string> terminalTypes = new List<string>() { "pay", "typedExit" };
             filters.Terminals = await _washesRepository.GetTerminalsForFilters(washes, terminalTypes);
 
             filters.Programs = await _programService.GetProgramsAsFiltersAsync(washes);
