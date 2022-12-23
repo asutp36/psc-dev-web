@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -24,6 +26,19 @@ namespace BotNotificationService.Controllers
         public NotifyController(ILogger<NotifyController> logger)
         {
             _logger = logger;
+        }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> PostUpdate([FromBody]Update update)
+        {
+            _logger.LogInformation(JsonConvert.SerializeObject(update));
+
+            if(update.message != null && update.message.chat != null  && update.message.group_chat_created)
+            {
+                _logger.LogInformation($"Создана группа chat_id={update.message.chat.id}");
+            }
+
+            return Ok();
         }
 
         [HttpGet("updates")]

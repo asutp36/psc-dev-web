@@ -7,6 +7,8 @@ namespace BotNotificationService.Models
 {
     public class Message
     {
+        public string text { get; set; }
         public Chat chat { get; set; }
+        public bool group_chat_created { get; set; }
     }
 }
