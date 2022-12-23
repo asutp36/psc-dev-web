@@ -111,7 +111,7 @@ namespace LoyalityService.Services
             // посчитать все мойки клиента за последние Days (из условия скидки)
             int clientWashingsCount = _context.Washings.Count(o => o.IdclientNavigation.Phone == clientPhone
                                                                 && (condition.Days == 0 || o.Dtime.Date >= DateTime.Now.Date.AddDays(-condition.Days)));
-            return clientWashingsCount <= condition.Amount;
+            return clientPhone == condition.Phone && clientWashingsCount <= condition.Amount;
         }
 
         private async Task<Group> GetWashGroupByTerminalCodeAsync(string terminalCode)
