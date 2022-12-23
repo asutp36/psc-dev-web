@@ -31,11 +31,11 @@ namespace BotNotificationService.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> PostUpdate([FromBody]Update update)
         {
-            _logger.LogInformation(JsonConvert.SerializeObject(update));
-
             if(update.message != null && update.message.chat != null  && update.message.group_chat_created)
             {
-                _logger.LogInformation($"Создана группа chat_id={update.message.chat.id}");
+                _logger.LogInformation($"Создана группа {update.message.chat.title} chat_id={update.message.chat.id}");
+
+                SendMessage(new SendMessageWhattsAppModel { chatId = update.message.chat.id.ToString(), body = $"chat_id={update.message.chat.id}" });
             }
 
             return Ok();
