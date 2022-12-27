@@ -41,8 +41,6 @@ namespace LoyalityService.Services
                                            .ToListAsync();
 
             Discount discount = new Discount();
-            //discount.Percent = 0;
-            //discount.Ruble = 0;
 
             foreach(var p in proms)
             {
@@ -50,24 +48,28 @@ namespace LoyalityService.Services
                 {
                     discount.Percent = p.Discount ?? 0;
                     discount.Ruble = p.DiscountRub ?? 0;
+                    discount.Programs = p.Programs;
                 }
 
                 if (p.HappyHourCondition != null && CheckHappyHourCondition(p.HappyHourCondition)) 
                 {
                     discount.Percent = p.Discount ?? 0;
                     discount.Ruble = p.DiscountRub ?? 0;
+                    discount.Programs = p.Programs;
                 }
 
                 if (p.HolidayCondition != null && DateTime.Now.Date == p.HolidayCondition.Date.Date) 
                 {
                     discount.Percent = p.Discount ?? 0;
                     discount.Ruble = p.DiscountRub ?? 0;
+                    discount.Programs = p.Programs;
                 }
 
                 if (p.VipCondition != null && CheckVipCondition(p.VipCondition, phone)) 
                 {
                     discount.Percent = p.Discount ?? 0;
                     discount.Ruble = p.DiscountRub ?? 0;
+                    discount.Programs = p.Programs;
                 }
 
                 if (discount.Percent > 0 || discount.Ruble > 0)
@@ -76,7 +78,24 @@ namespace LoyalityService.Services
                 }
             }
 
+            if (CheckIfTaxi(phone) && (discount.Ruble < 100 || discount.Percent == 0))
+            {
+                discount.Ruble = 100;
+                discount.Percent = 0;
+                discount.Programs = "program1, program2, program3, program4";
+            }
+
+            _logger.LogInformation($"Запуск поста со скидкой: {JsonConvert.SerializeObject(discount)}");
             return discount;
+        }
+
+        private bool CheckIfTaxi(long phone)
+        {
+            int clientWashingsCount = _context.Washings.Count(o => o.IdclientNavigation.Phone == phone);
+            int weekWashingsCount = _context.Washings.Count(o => o.IdclientNavigation.Phone == phone
+                                                                    && o.Dtime.Date >= DateTime.Now.Date.AddDays(-7));
+
+            return weekWashingsCount >= 3 || weekWashingsCount == clientWashingsCount;
         }
 
         /// <summary>
@@ -153,7 +172,7 @@ namespace LoyalityService.Services
                 DiscountRub = washing.DiscountRub,
                 Iddevice = await GetDeviceIdByCode(washing.Device),
                 Idprogram = await GetProgramIdByCode(washing.Program),
-                Guid = new Guid(washing.Guid)
+                Guid = washing.Guid
             };
 
             await _context.Washings.AddAsync(toAdd);

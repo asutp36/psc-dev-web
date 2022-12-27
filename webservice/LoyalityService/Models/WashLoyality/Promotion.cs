@@ -13,6 +13,7 @@ namespace LoyalityService.Models.WashLoyality
         public int? DiscountRub { get; set; }
         public int Idgroup { get; set; }
         public int ApplyOrder { get; set; }
+        public string Programs { get; set; }
 
         public virtual Group IdgroupNavigation { get; set; }
         public virtual PromotionType IdpromotionTypeNavigation { get; set; }

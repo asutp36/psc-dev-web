@@ -189,6 +189,8 @@ namespace LoyalityService.Models.WashLoyality
 
                 entity.Property(e => e.IdpromotionType).HasColumnName("IDPromotionType");
 
+                entity.Property(e => e.Programs).HasMaxLength(100);
+
                 entity.HasOne(d => d.IdgroupNavigation)
                     .WithMany(p => p.Promotions)
                     .HasForeignKey(d => d.Idgroup)
@@ -295,7 +297,10 @@ namespace LoyalityService.Models.WashLoyality
                     .HasColumnType("datetime")
                     .HasColumnName("DTime");
 
-                entity.Property(e => e.Guid).HasColumnName("GUID");
+                entity.Property(e => e.Guid)
+                    .HasMaxLength(32)
+                    .HasColumnName("GUID")
+                    .IsFixedLength(true);
 
                 entity.Property(e => e.Idclient).HasColumnName("IDClient");
 

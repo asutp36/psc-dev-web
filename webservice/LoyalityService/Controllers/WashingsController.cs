@@ -27,24 +27,24 @@ namespace LoyalityService.Controllers
         public async Task<IActionResult> WriteWashing([FromBody]WashingModel washing)
         {
             _logger.LogInformation($"параметры запроса: {JsonConvert.SerializeObject(washing)}");
-            if(!DateTime.TryParse(washing.DTime, out DateTime dtime))
-            {
-                return BadRequest("Не удалось распарсить дату");
-            }
+            //if(!DateTime.TryParse(washing.DTime, out DateTime dtime))
+            //{
+            //    return BadRequest("Не удалось распарсить дату");
+            //}
 
-            // проверить, что девайс существует
-            if(!(await _washDiscountService.IsDeviceExistsAsync(washing.Device)))
-            {
-                _logger.LogError($"Девайс {washing.Device} не найден");
-                return NotFound($"Девайс {washing.Device} не найден");
-            }
+            //// проверить, что девайс существует
+            //if(!(await _washDiscountService.IsDeviceExistsAsync(washing.Device)))
+            //{
+            //    _logger.LogError($"Девайс {washing.Device} не найден");
+            //    return NotFound($"Девайс {washing.Device} не найден");
+            //}
 
-            // проверить, что программа существует
-            if (!(await _washDiscountService.IsProgramExistsAsync(washing.Program)))
-            {
-                _logger.LogError($"Программа {washing.Program} не найдена");
-                return NotFound($"Программа {washing.Program} не найдена");
-            }
+            //// проверить, что программа существует
+            //if (!(await _washDiscountService.IsProgramExistsAsync(washing.Program)))
+            //{
+            //    _logger.LogError($"Программа {washing.Program} не найдена");
+            //    return NotFound($"Программа {washing.Program} не найдена");
+            //}
 
             // ServerID добавленного запуска
             int idWashing = 0;
