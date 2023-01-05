@@ -78,7 +78,7 @@ namespace LoyalityService.Services
                 }
             }
 
-            if (CheckIfTaxi(phone) && (discount.Ruble < 100 || discount.Percent == 0))
+            if (discount.Ruble < 100 && discount.Percent == 0 && CheckIfTaxi(phone))
             {
                 discount.Ruble = 100;
                 discount.Percent = 0;
@@ -127,9 +127,17 @@ namespace LoyalityService.Services
 
         private bool CheckVipCondition(VipCondition condition, long clientPhone)
         {
+            if (condition.Phone != clientPhone)
+            {
+                return false;
+            }
+
             // посчитать все мойки клиента за последние Days (из условия скидки)
             int clientWashingsCount = _context.Washings.Count(o => o.IdclientNavigation.Phone == clientPhone
                                                                 && (condition.Days == 0 || o.Dtime.Date >= DateTime.Now.Date.AddDays(-condition.Days)));
+            
+            _logger.LogInformation($"Определние вип скидки: телефон клиента: {clientPhone}, количество моек за {condition.Days} дней: {clientWashingsCount}, условие скидки: {condition.Amount}");
+
             return clientPhone == condition.Phone && clientWashingsCount <= condition.Amount;
         }
 
