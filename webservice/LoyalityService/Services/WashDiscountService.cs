@@ -46,6 +46,7 @@ namespace LoyalityService.Services
             {
                 if (p.EachNwashCondition != null && CheckEachNWashCondition(p.EachNwashCondition, phone)) 
                 {
+                    _logger.LogInformation($"Клиенту {phone} подходит скидка \"каждая {p.EachNwashCondition.EachN} мойка за {p.EachNwashCondition.Days} дней\"");
                     discount.Percent = p.Discount ?? 0;
                     discount.Ruble = p.DiscountRub ?? 0;
                     discount.Programs = p.Programs;
@@ -53,6 +54,7 @@ namespace LoyalityService.Services
 
                 if (p.HappyHourCondition != null && CheckHappyHourCondition(p.HappyHourCondition)) 
                 {
+                    _logger.LogInformation($"Клиент {phone} попал в счастливые часы с {p.HappyHourCondition.HourBegin} до {p.HappyHourCondition.HourEnd}");
                     discount.Percent = p.Discount ?? 0;
                     discount.Ruble = p.DiscountRub ?? 0;
                     discount.Programs = p.Programs;
@@ -60,6 +62,7 @@ namespace LoyalityService.Services
 
                 if (p.HolidayCondition != null && DateTime.Now.Date == p.HolidayCondition.Date.Date) 
                 {
+                    _logger.LogInformation($"Клиент {phone} попал на праздничный день {p.HolidayCondition.Date}");
                     discount.Percent = p.Discount ?? 0;
                     discount.Ruble = p.DiscountRub ?? 0;
                     discount.Programs = p.Programs;
@@ -67,6 +70,7 @@ namespace LoyalityService.Services
 
                 if (p.VipCondition != null && CheckVipCondition(p.VipCondition, phone)) 
                 {
+                    _logger.LogInformation($"Вип клиент {phone}");
                     discount.Percent = p.Discount ?? 0;
                     discount.Ruble = p.DiscountRub ?? 0;
                     discount.Programs = p.Programs;
@@ -91,11 +95,25 @@ namespace LoyalityService.Services
 
         private bool CheckIfTaxi(long phone)
         {
-            int clientWashingsCount = _context.Washings.Count(o => o.IdclientNavigation.Phone == phone);
             int weekWashingsCount = _context.Washings.Count(o => o.IdclientNavigation.Phone == phone
                                                                     && o.Dtime.Date >= DateTime.Now.Date.AddDays(-7));
+            if(weekWashingsCount >= 3)
+            {
+                _logger.LogInformation($"Клиент {phone} таксист, потому что это его {weekWashingsCount} мойка за неделю");
+                return true;
+            }
 
-            return weekWashingsCount >= 3 || weekWashingsCount == clientWashingsCount;
+            int clientWashingsCount = _context.Washings.Count(o => o.IdclientNavigation.Phone == phone);
+            
+            if(weekWashingsCount == clientWashingsCount)
+            {
+                _logger.LogInformation($"Клиент {phone} таксист, потому что это его {weekWashingsCount} за неделю при общем количестве моек = {clientWashingsCount}");
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -122,6 +140,7 @@ namespace LoyalityService.Services
         private bool CheckHappyHourCondition(HappyHourCondition condition)
         {
             int currentHour = DateTime.Now.Hour;
+
             return currentHour >= condition.HourBegin && currentHour < condition.HourEnd;
         }
 
