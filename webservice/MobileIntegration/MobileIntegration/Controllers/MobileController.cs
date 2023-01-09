@@ -9,6 +9,9 @@ using MobileIntegration.Controllers.Supplies;
 using System.Data.Common;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
+using Microsoft.Ajax.Utilities;
+using log4net.Repository;
+using System.Web.WebPages;
 
 namespace MobileIntegration.Controllers
 {
@@ -677,6 +680,70 @@ namespace MobileIntegration.Controllers
 
             var result = command.ExecuteScalar();
             return int.Parse(result.ToString());
+        }
+
+        [HttpPost]
+        [ActionName("stop_post")]
+        public HttpResponseMessage StopPost([FromBody]StopPostAppModel model)
+        {
+            Logger.InitLogger();
+
+            Logger.Log.Debug($"StopPost: остановка поста");
+            try
+            {
+                if(!CryptHash.CheckHashCode(model.hash, model.time_send.ToString("yyyy-MM-dd HH:mm:ss")))
+                {
+                    Logger.Log.Error($"StopPost: Хэш не прошёл проверку ({model.hash}, {model.time_send.ToString("yyyy-MM-dd HH:mm:ss")})");
+                    return Request.CreateResponse(HttpStatusCode.Unauthorized);
+                }
+
+                if (string.IsNullOrEmpty(model.card))
+                {
+                    Logger.Log.Error($"StopPost: номер карты пустой");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+
+                var card = _model.Cards.Where(c => c.CardNum == model.card).FirstOrDefault();
+                if (card == null)
+                {
+                    Logger.Log.Error($"StopPost: не найдена карта {model.card}");
+                    return Request.CreateResponse(HttpStatusCode.Forbidden);
+                }
+
+                string ip = GetPostIp(model.post);
+                string deviceCode = _model.Posts.Where(p => p.QRCode == model.post).Select(p => p.Device.Code).FirstOrDefault();
+
+                if (string.IsNullOrEmpty(ip))
+                {
+                    Logger.Log.Error($"StopPost: не найден ip поста {model.post}");
+                    return Request.CreateResponse(HttpStatusCode.NotFound);
+                }
+
+                HttpResponse resp = Sender.SendPost("http://" + ip + "записа эндпоинт", JsonConvert.SerializeObject(new StopPostDeviceParameters
+                {
+                    CardNum = model.card,
+                    DeviceCode = deviceCode
+                }));
+
+                if (resp.StatusCode == 0)
+                {
+                    Logger.Log.Error("StartPost: Не удалось подключиться" + Environment.NewLine);
+                    return Request.CreateResponse((HttpStatusCode)424);
+                }
+
+                if (resp.StatusCode == (HttpStatusCode)423)
+                {
+                    Logger.Log.Error(String.Format("StartPost: Post {0} is busy", model.post) + Environment.NewLine);
+                    return Request.CreateResponse((HttpStatusCode)423);
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch(Exception e)
+            {
+                Logger.Log.Error($"StopPost: произошла ошибка: {e.Message}" + Environment.NewLine + e.StackTrace);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
         }
 
         /// <summary>
