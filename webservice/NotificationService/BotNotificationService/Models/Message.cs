@@ -11,5 +11,6 @@ namespace BotNotificationService.Models
         public Chat chat { get; set; }
         public User from { get; set; }
         public bool group_chat_created { get; set; }
+        public List<MessageEntity> entities { get; set; }
     }
 }
