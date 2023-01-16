@@ -31,6 +31,17 @@ namespace BotNotificationService.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> PostUpdate([FromBody]Update update)
         {
+            _logger.LogInformation("Получено обновление: " + JsonConvert.SerializeObject(update));
+            
+            if(update.message != null && update.message.from.Id == 134083432 && update.message.text == "setting")
+            {
+                _logger.LogInformation($"Отправляю chat_id={update.message.chat.id} группы {update.message.chat.title}");
+
+                SendMessage(new SendMessageWhattsAppModel { chatId = 134083432.ToString(), body = $"Группа {update.message.chat.title}: chat_id={update.message.chat.id}" });
+
+                return Ok();
+            }
+
             if(update.message != null && update.message.chat != null  && update.message.group_chat_created)
             {
                 _logger.LogInformation($"Создана группа {update.message.chat.title} chat_id={update.message.chat.id}");
