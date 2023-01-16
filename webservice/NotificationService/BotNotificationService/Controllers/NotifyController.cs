@@ -31,7 +31,7 @@ namespace BotNotificationService.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> PostUpdate([FromBody]Update update)
         {
-            _logger.LogInformation("Получено обновление: " + JsonConvert.SerializeObject(update));
+            //_logger.LogInformation("Получено обновление: " + JsonConvert.SerializeObject(update));
 
 
             if (update.message != null && 
