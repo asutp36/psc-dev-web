@@ -48,16 +48,19 @@ namespace WashPing
             {
                 Configure();
 
-                foreach (Host w in _hosts)
+                foreach (Host host in _hosts)
                 {
-                    if (Ping(w.Ip))
+                    if (host.IsActive)
                     {
-                        _logger.Info($"Мойка {w.Name} пингуется");
-                    }
-                    else
-                    {
-                        await SendNotification(w.FailedChatID, w.FailedMessage.Replace("{name}", w.Name));
-                        _logger.Error($"Мойка {w.Name} не пингуется");
+                        if (Ping(host.Ip))
+                        {
+                            _logger.Info($"Мойка {host.Name} пингуется");
+                        }
+                        else
+                        {
+                            await SendNotification(host.FailedChatID, host.FailedMessage.Replace("{name}", host.Name));
+                            _logger.Error($"Мойка {host.Name} не пингуется");
+                        }
                     }
                 }
             }

@@ -10,5 +10,6 @@ namespace WashPing.Models
         public string Ip { get; set; }
         public string FailedChatID { get; set; }
         public string FailedMessage { get; set; }
+        public bool IsActive { get; set; }
     }
 }
