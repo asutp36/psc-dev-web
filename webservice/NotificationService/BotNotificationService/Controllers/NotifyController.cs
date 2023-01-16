@@ -31,12 +31,13 @@ namespace BotNotificationService.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> PostUpdate([FromBody]Update update)
         {
-            //_logger.LogInformation("Получено обновление: " + JsonConvert.SerializeObject(update));
+            _logger.LogInformation("Получено обновление: " + JsonConvert.SerializeObject(update));
 
-
-            if (update.message != null && 
-                update.message.from.Id == 134083432 && 
-                update.message.entities.Any(e => e.type == "bot_command") && 
+            if (update.message != null &&
+                update.message.from.Id == 134083432 &&
+                update.message.entities != null &&
+                update.message.entities.Any(e => e.type == "bot_command") &&
+                update.message.text != null &&
                 update.message.text.Split('@')[0].StartsWith("/get_chat_info"))
             {
                 _logger.LogInformation($"Отправляю chat_id={update.message.chat.id} группы {update.message.chat.title}");
