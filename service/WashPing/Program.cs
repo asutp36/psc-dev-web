@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using WashPing.Models;
@@ -29,8 +30,11 @@ namespace WashPing
         {
             _logger = LogManager.GetCurrentClassLogger();
 
-            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false);
+            string projectDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            _logger.Info($"Текущая директория: {projectDirectory}");
 
+            var builder = new ConfigurationBuilder().SetBasePath(projectDirectory).AddJsonFile("appsettings.json", optional: false);
+            
             IConfiguration config = builder.Build();
 
             _hosts = config.GetSection("Hosts").Get<List<Host>>();
