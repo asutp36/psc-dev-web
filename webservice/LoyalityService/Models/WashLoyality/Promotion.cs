@@ -14,6 +14,8 @@ namespace LoyalityService.Models.WashLoyality
         public int Idgroup { get; set; }
         public int ApplyOrder { get; set; }
         public string Programs { get; set; }
+        public string Description { get; set; }
+        public string Code { get; set; }
 
         public virtual Group IdgroupNavigation { get; set; }
         public virtual PromotionType IdpromotionTypeNavigation { get; set; }

@@ -185,6 +185,10 @@ namespace LoyalityService.Models.WashLoyality
 
                 entity.Property(e => e.Idpromotion).HasColumnName("IDPromotion");
 
+                entity.Property(e => e.Code).HasMaxLength(30);
+
+                entity.Property(e => e.Description).HasMaxLength(100);
+
                 entity.Property(e => e.Idgroup).HasColumnName("IDGroup");
 
                 entity.Property(e => e.IdpromotionType).HasColumnName("IDPromotionType");
@@ -292,6 +296,8 @@ namespace LoyalityService.Models.WashLoyality
                     .HasName("PK_Table_1_1");
 
                 entity.Property(e => e.Idwashing).HasColumnName("IDWashing");
+
+                entity.Property(e => e.Description).HasMaxLength(100);
 
                 entity.Property(e => e.Dtime)
                     .HasColumnType("datetime")

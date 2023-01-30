@@ -16,6 +16,7 @@ namespace LoyalityService.Models.WashLoyality
         public int Discount { get; set; }
         public int? DiscountRub { get; set; }
         public string Guid { get; set; }
+        public string Description { get; set; }
 
         public virtual Client IdclientNavigation { get; set; }
         public virtual Device IddeviceNavigation { get; set; }

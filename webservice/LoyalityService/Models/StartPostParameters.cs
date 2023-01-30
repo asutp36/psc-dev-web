@@ -12,5 +12,7 @@ namespace LoyalityService.Models
         public int DiscountRub { get; set; }
         public long ClientPhone { get; set; }
         public string Programs { get; set; }
+        public string Description { get; set; }
+        public string PromotionCode { get; set; }
     }
 }

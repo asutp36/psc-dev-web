@@ -49,7 +49,16 @@ namespace LoyalityService.Controllers
 
             Discount discount = await _washDiscountService.CalculateDiscountAsync(terminalCode, clientPhone);
 
-            _postRCService.StartPostAsync(new StartPostParameters { DeviceCode = terminalCode, DiscountPercent = discount.Percent, DiscountRub = discount.Ruble, ClientPhone = clientPhone, Programs = discount.Programs });
+            _postRCService.StartPostAsync(new StartPostParameters 
+            { 
+                DeviceCode = terminalCode, 
+                DiscountPercent = discount.Percent, 
+                DiscountRub = discount.Ruble, 
+                ClientPhone = clientPhone, 
+                Programs = discount.Programs,
+                Description = discount.Description,
+                PromotionCode = discount.Code
+            });
 
             return Accepted();
         }

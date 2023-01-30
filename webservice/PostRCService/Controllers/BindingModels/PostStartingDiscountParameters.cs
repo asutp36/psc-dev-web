@@ -12,5 +12,7 @@ namespace PostRCService.Controllers.BindingModels
         public int discountRub { get; set; }
         public long clientPhone { get; set; }
         public string programs { get; set; }
+        public string description { get; set; }
+        public string promotionCode { get; set; }
     }
 }

@@ -46,34 +46,42 @@ namespace LoyalityService.Services
             {
                 if (p.EachNwashCondition != null && CheckEachNWashCondition(p.EachNwashCondition, phone)) 
                 {
-                    _logger.LogInformation($"Клиенту {phone} подходит скидка \"каждая {p.EachNwashCondition.EachN} мойка за {p.EachNwashCondition.Days} дней\"");
+                    _logger.LogInformation($"Клиенту {phone} подходит скидка \"каждая {p.EachNwashCondition.EachN} мойка за {p.EachNwashCondition.Days} дней\". Описание скидки: {p.Description}");
                     discount.Percent = p.Discount ?? 0;
                     discount.Ruble = p.DiscountRub ?? 0;
                     discount.Programs = p.Programs;
+                    discount.Description = p.Description;
+                    discount.Code = p.Code;
                 }
 
                 if (p.HappyHourCondition != null && CheckHappyHourCondition(p.HappyHourCondition)) 
                 {
-                    _logger.LogInformation($"Клиент {phone} попал в счастливые часы с {p.HappyHourCondition.HourBegin} до {p.HappyHourCondition.HourEnd}");
+                    _logger.LogInformation($"Клиент {phone} попал в счастливые часы с {p.HappyHourCondition.HourBegin} до {p.HappyHourCondition.HourEnd}. Описание скидки: {p.Description}");
                     discount.Percent = p.Discount ?? 0;
                     discount.Ruble = p.DiscountRub ?? 0;
                     discount.Programs = p.Programs;
+                    discount.Description = p.Description;
+                    discount.Code = p.Code;
                 }
 
                 if (p.HolidayCondition != null && DateTime.Now.Date == p.HolidayCondition.Date.Date) 
                 {
-                    _logger.LogInformation($"Клиент {phone} попал на праздничный день {p.HolidayCondition.Date}");
+                    _logger.LogInformation($"Клиент {phone} попал на праздничный день {p.HolidayCondition.Date}. Описание скидки: {p.Description}");
                     discount.Percent = p.Discount ?? 0;
                     discount.Ruble = p.DiscountRub ?? 0;
                     discount.Programs = p.Programs;
+                    discount.Description = p.Description;
+                    discount.Code = p.Code;
                 }
 
                 if (p.VipCondition != null && CheckVipCondition(p.VipCondition, phone)) 
                 {
-                    _logger.LogInformation($"Вип клиент {phone}");
+                    _logger.LogInformation($"Вип клиент {phone}. Описание скидки: {p.Description}");
                     discount.Percent = p.Discount ?? 0;
                     discount.Ruble = p.DiscountRub ?? 0;
                     discount.Programs = p.Programs;
+                    discount.Description = p.Description;
+                    discount.Code = p.Code;
                 }
 
                 if (discount.Percent > 0 || discount.Ruble > 0)
@@ -84,9 +92,12 @@ namespace LoyalityService.Services
 
             if (discount.Ruble < 100 && discount.Percent == 0 && CheckIfTaxi(phone))
             {
+                _logger.LogInformation($"Клиент {phone} получил скидку как таксист");
                 discount.Ruble = 100;
                 discount.Percent = 0;
                 discount.Programs = "program1, program2, program3, program4";
+                discount.Description = "Скидка таксистам";
+                discount.Code = "taxi";
             }
 
             _logger.LogInformation($"Запуск поста со скидкой: {JsonConvert.SerializeObject(discount)}");
@@ -199,7 +210,8 @@ namespace LoyalityService.Services
                 DiscountRub = washing.DiscountRub,
                 Iddevice = await GetDeviceIdByCode(washing.Device),
                 Idprogram = await GetProgramIdByCode(washing.Program),
-                Guid = washing.Guid
+                Guid = washing.Guid,
+                Description= washing.Description
             };
 
             await _context.Washings.AddAsync(toAdd);

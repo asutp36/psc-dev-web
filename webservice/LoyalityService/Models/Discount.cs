@@ -10,5 +10,7 @@ namespace LoyalityService.Models
         public int Percent { get; set; }
         public int Ruble { get; set; }
         public string Programs { get; set; }
+        public string Description { get; set; }
+        public string Code { get; set; }
     }
 }
