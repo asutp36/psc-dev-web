@@ -4,9 +4,11 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using WashPing.Models;
@@ -16,6 +18,7 @@ namespace WashPing
 {
     class Program
     {
+        private static string _projectDirectory;
         private static Ping _pinger;
 
         private static ILogger _logger;
@@ -26,14 +29,18 @@ namespace WashPing
         private static string _notifyUrl;
         private static string _notifyEndpoint;
 
-        private static void Configure()
+        private static int _significantFailedPingCount;
+        private static string _failedPingCountersFilename;
+        private static List<PingCounter> _failedPingCounters;
+
+        private static async Task ConfigureAsync()
         {
             _logger = LogManager.GetCurrentClassLogger();
 
-            string projectDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            _logger.Info($"Текущая директория: {projectDirectory}");
+            _projectDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            _logger.Info($"Текущая директория: {_projectDirectory}");
 
-            var builder = new ConfigurationBuilder().SetBasePath(projectDirectory).AddJsonFile("appsettings.json", optional: false);
+            var builder = new ConfigurationBuilder().SetBasePath(_projectDirectory).AddJsonFile("appsettings.json", optional: false);
             
             IConfiguration config = builder.Build();
 
@@ -42,6 +49,10 @@ namespace WashPing
             _timeout = int.Parse(config.GetSection("Timeout").Value);
             _notifyUrl = config.GetSection("NotifyUrl").Value;
             _notifyEndpoint = config.GetSection("NotifyEndpoint").Value;
+            _significantFailedPingCount = int.Parse(config.GetSection("SignificantFailedPingCount").Value);
+            _failedPingCountersFilename = config.GetSection("FailedPingCountersFilename").Value;
+
+            await GetFailedPingCountersAsync();
 
             _pinger = new Ping();
         }
@@ -50,8 +61,8 @@ namespace WashPing
         {
             try
             {
-                Configure();
-
+                await ConfigureAsync();
+                
                 foreach (Host host in _hosts)
                 {
                     if (host.IsActive)
@@ -59,14 +70,37 @@ namespace WashPing
                         if (Ping(host.Ip))
                         {
                             _logger.Info($"Мойка {host.Name} пингуется");
+                            if(_failedPingCounters.Any(w => w.Name.Equals(host.Name)))
+                            {
+                                var counterToRemove = _failedPingCounters.Where(w => w.Name.Equals(host.Name)).First();
+                                _failedPingCounters.Remove(counterToRemove);
+                            }
                         }
                         else
                         {
-                            await SendNotification(host.FailedChatID, host.FailedMessage.Replace("{name}", host.Name));
-                            _logger.Error($"Мойка {host.Name} не пингуется");
+                            if (_failedPingCounters.Any(w => w.Name.Equals(host.Name)))
+                            {
+                                var counter = _failedPingCounters.Where(w => w.Name.Equals(host.Name)).First();
+                                counter.FailedPingCount++;
+
+                                if(counter.FailedPingCount % _significantFailedPingCount == 0)
+                                {
+                                    _logger.Info($"По мойке {host.Name} отправляется оповещение");
+                                    await SendNotification(host.FailedChatID, host.FailedMessage.Replace("{name}", host.Name));
+                                }
+                                
+                                _logger.Error($"Мойка {host.Name} не пингуется");
+                            }
+                            else
+                            {
+                                PingCounter counter = new PingCounter { Name = host.Name, FailedPingCount = 1 };
+                                _failedPingCounters.Add(counter);
+                            }
                         }
                     }
                 }
+
+                UpdateFailedCountersFile();
             }
             catch(Exception e)
             {
@@ -125,6 +159,25 @@ namespace WashPing
             catch(HttpRequestException e)
             {
                 _logger.Error($"Ошибка при отправке сообщения: {e.Message}");
+            }
+        }
+
+        private static void UpdateFailedCountersFile()
+        {
+            File.WriteAllText(_projectDirectory + "/" + _failedPingCountersFilename, JsonConvert.SerializeObject(_failedPingCounters));
+        }
+
+        private static async Task GetFailedPingCountersAsync()
+        {
+            using (StreamReader sr = new StreamReader(_projectDirectory + "/" + _failedPingCountersFilename))
+            {
+                string fileContent = await sr.ReadToEndAsync();
+                _failedPingCounters = JsonConvert.DeserializeObject<List<PingCounter>>(fileContent);
+            }
+
+            if (_failedPingCounters == null)
+            {
+                _failedPingCounters = new List<PingCounter>();
             }
         }
     }
