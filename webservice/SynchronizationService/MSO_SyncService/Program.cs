@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using MSO.SyncService.Extentions;
 using MSO_SyncService.Models.WashCompanyDb;
 using NLog;
+using NLog.Extensions.Logging;
 using NLog.Web;
+using System.Runtime.CompilerServices;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
@@ -20,7 +23,7 @@ try
     {
         swagger.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
         {
-            Title = "MSO_SyncService",
+            Title = "MSO.SyncService",
             Description = "Сервис получения данных постов моек самообслуживаня",
             Version = "v1"
         });
@@ -44,6 +47,8 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
     }
+
+    app.ConfigureExceptionHandler(new NLogLoggerProvider().CreateLogger("Program.cs"));
 
     app.UseHttpsRedirection();
 
