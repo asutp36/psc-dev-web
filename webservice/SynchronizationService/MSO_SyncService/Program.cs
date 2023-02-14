@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MSO.SyncService.Extentions;
+using MSO.SyncService.Services;
 using MSO_SyncService.Models.WashCompanyDb;
 using NLog;
 using NLog.Extensions.Logging;
@@ -29,15 +30,18 @@ try
         });
     });
 
+    // NLog: Setup NLog for Dependency injection
+    builder.Logging.ClearProviders();
+    builder.Host.UseNLog();
+
     // Register WashCompany Database Context
     builder.Services.AddDbContext<WashCompanyDbContext>(options =>
     {
         options.UseSqlServer(builder.Configuration.GetConnectionString("WashCompany"));
     });
 
-    // NLog: Setup NLog for Dependency injection
-    builder.Logging.ClearProviders();
-    builder.Host.UseNLog();
+    // Register services
+    builder.Services.AddTransient<DeviceService>();
 
     var app = builder.Build();
 
