@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31410.357
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynchronizationService", "SynchronizationService\SynchronizationService.csproj", "{9BFE384F-77B2-4FF9-AFA2-7A6A10DCD6AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostSynchronizationService", "PostSynchronizationService\PostSynchronizationService.csproj", "{8CBE47B4-9496-41FC-9045-6D673DC48911}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostSynchronizationService", "PostSynchronizationService\PostSynchronizationService.csproj", "{8CBE47B4-9496-41FC-9045-6D673DC48911}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSO_SyncService", "MSO_SyncService\MSO_SyncService.csproj", "{10C3D565-E401-45F1-B6E1-24504AC948A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{8CBE47B4-9496-41FC-9045-6D673DC48911}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CBE47B4-9496-41FC-9045-6D673DC48911}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CBE47B4-9496-41FC-9045-6D673DC48911}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10C3D565-E401-45F1-B6E1-24504AC948A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10C3D565-E401-45F1-B6E1-24504AC948A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10C3D565-E401-45F1-B6E1-24504AC948A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10C3D565-E401-45F1-B6E1-24504AC948A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

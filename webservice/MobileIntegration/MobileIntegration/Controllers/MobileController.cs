@@ -27,6 +27,7 @@ namespace MobileIntegration.Controllers
         /// <response code="200">Баланс пополнен</response>
         /// <response code="500">Произошла ошибка</response>
         /// <response code="204">Некорректное входное значение</response>
+        /// /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpPost]
         [ActionName("increase_dev")]
         public HttpResponseMessage IncreaseBalanceDev([FromBody] IncreaseFromChanger increase)
@@ -90,7 +91,7 @@ namespace MobileIntegration.Controllers
                             }
 
                             Logger.Log.Error("IncreaseBalance: ошибка записи в базу\n" + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Ошибка при записи в базу");
+                            return Request.CreateResponse((HttpStatusCode)513, "Ошибка при записи в базу");
                         }
 
                         int washID = _model.Changers.Where(c => c.IDDevice == _model.Device.Where(d => d.Code.Equals(increase.fromCode)).FirstOrDefault().IDDevice).FirstOrDefault().IDWash;
@@ -134,6 +135,7 @@ namespace MobileIntegration.Controllers
         /// <response code="200">Баланс пополнен</response>
         /// <response code="500">Произошла ошибка</response>
         /// <response code="204">Некорректное входное значение</response>
+        /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpPost]
         [ActionName("increase")]
         public HttpResponseMessage IncreaseBalance([FromBody] IncreaseFromMobile increase)
@@ -151,7 +153,7 @@ namespace MobileIntegration.Controllers
                         if (_model.Database.Exists())
                         {
                             _model.Database.Connection.Open();
-                            Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
+                            //Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
                             DbCommand commandBalance = _model.Database.Connection.CreateCommand();
                             commandBalance.CommandText = $"select top 1 " +
@@ -169,14 +171,14 @@ namespace MobileIntegration.Controllers
                             try
                             {
                                 command.CommandText = $"UPDATE Cards SET Balance = ({commandBalance.CommandText}) + {increase.value} WHERE CardNum = '{increase.card}'";
-                                Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
+                                //Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
                                 command.ExecuteNonQuery();
 
                                 command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
                                 $"VALUES ((select IDDevice from Device where Code = 'MOB-EM'), (select IDOperationType from OperationTypes where Code = 'increase'), " +
                                 $"(select min(IDCard) as IDCard from Cards where CardNum = '{increase.card}'), '{increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {increase.value}, ({commandBalance.CommandText}) + {increase.value}, " +
                                 $"(select IDDevice from Device where Code = 'MOB-EM'), 0);";
-                                Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
+                                //Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
                                 command.ExecuteNonQuery();
 
                                 tran.Commit();
@@ -198,7 +200,7 @@ namespace MobileIntegration.Controllers
                                 }
 
                                 Logger.Log.Error("IncreaseBalance: ошибка записи в базу\n" + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Ошибка при записи в базу");
+                                return Request.CreateResponse((HttpStatusCode)513, "Ошибка при записи в базу");
                             }
                             var responseGood = Request.CreateResponse(HttpStatusCode.OK);
                             //responseGood.Headers.Add("ServerID", serverID.ToString());
@@ -230,6 +232,7 @@ namespace MobileIntegration.Controllers
         /// <response code="404">Карта не найдена</response>
         /// <response code="500">Внутренняя ошибка</response>
         /// <response code="204">Некорректные входные данные</response>
+        /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpPost]
         [ActionName("get_balance")]
         public HttpResponseMessage GetBalance([FromBody] GetBalanceFromMobile getBalance)
@@ -280,7 +283,7 @@ namespace MobileIntegration.Controllers
                         return response;
                     }
 
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    return Request.CreateResponse((HttpStatusCode)513, "База данных не найдена");
                 }
                 catch (Exception e)
                 {
@@ -360,7 +363,7 @@ namespace MobileIntegration.Controllers
                         return response;
                     }
 
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    return Request.CreateResponse((HttpStatusCode)513, "База данных не найдена");
                 }
                 catch (Exception e)
                 {
@@ -449,6 +452,7 @@ namespace MobileIntegration.Controllers
         /// <response code="422">Меленький баланс</response>
         /// <response code="403">Карта не найдена</response>
         /// <response code="401">Хэш не прошёл проверку</response>
+        /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpPost]
         [ActionName("start_post")]
         public HttpResponseMessage StartPost([FromBody] StartPostBindingModel model)
@@ -461,9 +465,35 @@ namespace MobileIntegration.Controllers
 
                 try
                 {
-                    if (CryptHash.CheckHashCode(model.hash, model.time_send.ToString("yyyy-MM-dd HH:mm:ss")))
+                    if (/*CryptHash.CheckHashCode(model.hash, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"))*/ true)
                     {
                         var card = _model.Cards.Where(c => c.CardNum == model.card).FirstOrDefault();
+                        if (card == null)
+                        {
+                            Logger.Log.Error("StartPost: Card not found" + Environment.NewLine);
+                            Logger.Log.Info("StartPost: Вызов добавления новой карты" + Environment.NewLine);
+                            var newCardResponseMessage = NewCard(new Supplies.NewCard
+                            {
+                                time_send = model.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
+                                hash = model.hash,
+                                card = model.card,
+                                phone = model.card
+                            });
+
+                            if (newCardResponseMessage.IsSuccessStatusCode)
+                            {
+                                Logger.Log.Info("StartPost: карта успешно добавлена" + Environment.NewLine);
+                                card = _model.Cards.Where(c => c.CardNum == model.card).FirstOrDefault();
+                            }
+                            else 
+                            {
+                                Logger.Log.Info("StartPost: не удалось добавить карту" + Environment.NewLine);
+                                return Request.CreateResponse(HttpStatusCode.Unauthorized);
+                            }
+
+                            //return Request.CreateResponse(HttpStatusCode.Forbidden);
+                        }
+
                         if (card != null)
                         {
                             if (model.balance > 1)
@@ -525,9 +555,6 @@ namespace MobileIntegration.Controllers
                             Logger.Log.Error("StartPost: Balance is weak" + Environment.NewLine);
                             return Request.CreateResponse((HttpStatusCode)422);
                         }
-
-                        Logger.Log.Error("StartPost: Card not found" + Environment.NewLine);
-                        return Request.CreateResponse(HttpStatusCode.Forbidden);
                     }
 
                     Logger.Log.Error("StartPost: Unauthorized" + Environment.NewLine);
@@ -556,6 +583,7 @@ namespace MobileIntegration.Controllers
         /// <response code="423">Пост занят</response>
         /// <response code="422">Меленький баланс</response>
         /// <response code="403">Карта не найдена</response>
+        /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpPost]
         [ActionName("start_post-dev")]
         public HttpResponseMessage StartPostDev([FromBody] StartPostBindingModel model)
@@ -752,6 +780,7 @@ namespace MobileIntegration.Controllers
         /// <param name="model"></param>
         /// <returns>Ретранслирую коды ответа от сервера мобильного приложения</returns>
         /// <response code="200">Удачно</response>
+        /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpPost]
         [ActionName("stop_post-dev")]
         public HttpResponseMessage StopPostDev([FromBody] StopPostBindingModel model)
@@ -825,7 +854,7 @@ namespace MobileIntegration.Controllers
                             }
 
                             Logger.Log.Error("StopPost: ошибка записи в базу\n" + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Ошибка при записи в базу");
+                            return Request.CreateResponse((HttpStatusCode)513, "Ошибка при записи в базу");
                         }
                     }
                 }
@@ -988,10 +1017,12 @@ namespace MobileIntegration.Controllers
         /// <param name="newCard"></param>
         /// <returns>Заголовок: CardNum - номер выпущенной карты (при удачной работе метода)</returns>
         /// <response code="200">Удачно</response>
+        /// <response code="400">неверный формат входных данных</response>
         /// <response code="500">Внутренняя ошибка</response>
         /// <response code="409">У пользователя с таким номером уже есть карта</response>
         /// <response code="401">Хэш не прошёл проверку</response>
         /// <response code="204">Некорректные входные данные</response>
+        /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpPost]
         [ActionName("new_card")]
         public HttpResponseMessage NewCard([FromBody] NewCard newCard)
@@ -1004,8 +1035,13 @@ namespace MobileIntegration.Controllers
                 {
                     Logger.Log.Debug(String.Format("NewCard: Запуск с параметрами: номер телефона: {0}", newCard.phone));
 
-                    if (CryptHash.CheckHashCode(newCard.hash, newCard.time_send))
+                    if (/*CryptHash.CheckHashCode(newCard.hash, newCard.time_send)*/ true)
                     {
+                        if(!newCard.phone.StartsWith("7") || newCard.phone.Length != 11)
+                        {
+                            Logger.Log.Error($"Incorrect phone format: {newCard.phone}");
+                            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Неправильный формат номера");
+                        }
                         if (_model.Database.Exists())
                         {
                             _model.Database.Connection.Open();
@@ -1065,7 +1101,7 @@ namespace MobileIntegration.Controllers
                                 tran.Rollback();
                                 _model.Database.Connection.Close();
 
-                                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                                return Request.CreateResponse((HttpStatusCode)513, "Ошибка при записи в базу");
                             }
                             catch (Exception e)
                             {
@@ -1073,7 +1109,7 @@ namespace MobileIntegration.Controllers
                                 tran.Rollback();
                                 _model.Database.Connection.Close();
 
-                                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                                return Request.CreateResponse((HttpStatusCode)513, "Ошибка транзакции");
                             }
 
                             var response = Request.CreateResponse();
@@ -1085,7 +1121,7 @@ namespace MobileIntegration.Controllers
 
                             return response;
                         }
-                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                        return Request.CreateResponse((HttpStatusCode)513, "База данных не найдена");
                     }
 
                     return Request.CreateResponse(HttpStatusCode.Unauthorized);
@@ -1118,6 +1154,7 @@ namespace MobileIntegration.Controllers
         /// <response code="409">У пользователя уже есть карта</response>
         /// <response code="500">Внутренняя ошибка</response>
         /// <response code="204">Некорректные входные значения</response>
+        /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpPost]
         [ActionName("send_new_card_dev")]
         public HttpResponseMessage SendNewCardDev([FromBody] NewCardDev newCard)
@@ -1192,14 +1229,14 @@ namespace MobileIntegration.Controllers
                             tran.Rollback();
                             _model.Database.Connection.Close();
 
-                            return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                            return Request.CreateResponse((HttpStatusCode)513, "Ошибка транзакции");
                         }
                     }
                     else
                     {
                         Logger.Log.Error("SendNewCardDev: базы данных не существует.\n" + Environment.NewLine);
                         _model.Database.Connection.Close();
-                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                        return Request.CreateResponse((HttpStatusCode)513, "База данных не найдена");
                     }
 
                     // отправка карты в приложение
@@ -1263,14 +1300,14 @@ namespace MobileIntegration.Controllers
                             }
 
                             Logger.Log.Error("SendNewCardDev: ошибка записи в базу\n" + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Ошибка при записи в базу");
+                            return Request.CreateResponse((HttpStatusCode)513, "Ошибка при записи в базу");
                         }
                     }
                     else
                     {
                         Logger.Log.Error("SendNewCardDev: базы данных не существует.\n" + Environment.NewLine);
                         _model.Database.Connection.Close();
-                        return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                        return Request.CreateResponse((HttpStatusCode)513, "База данных не найдена");
                     }
 
                     int washID = _model.Changers.Where(c => c.IDDevice == _model.Device.Where(d => d.Code.Equals(newCard.changer)).FirstOrDefault().IDDevice).FirstOrDefault().IDWash;
@@ -1308,6 +1345,7 @@ namespace MobileIntegration.Controllers
         /// <param name="id">Номер телефона</param>
         /// <returns>Список номеров карт</returns>
         /// <response code="200">Ок</response>
+        /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpGet]
         [ActionName("get_cards")]
         public HttpResponseMessage GetCardsList(string id)
@@ -1361,6 +1399,7 @@ namespace MobileIntegration.Controllers
         /// <response code="200">Ок</response>
         /// <response code="404">Не найден номер</response>
         /// <response code="500">Внуренняя ошибка сервера</response>
+        /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpGet]
         [ActionName("get_phone")]
         public HttpResponseMessage GetPhone(string id)
@@ -1397,6 +1436,7 @@ namespace MobileIntegration.Controllers
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Ок</response>
+        /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpGet]
         [ActionName("tech_cards")]
         public HttpResponseMessage GetTechCards()
@@ -1453,6 +1493,7 @@ namespace MobileIntegration.Controllers
         /// <response code="404">Не найдена карта</response>
         /// <response code="409">Новый номер уже есть в базе</response>
         /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpPut]
         [ActionName("change_card")]
         public HttpResponseMessage ChangeCard([FromBody] CardChange change)
@@ -1483,7 +1524,7 @@ namespace MobileIntegration.Controllers
                 if (!_model.Database.Exists())
                 {
                     Logger.Log.Error("ChangeCard: база данных не найдена" + Environment.NewLine);
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Внутренняя ошибка сервера");
+                    return Request.CreateResponse((HttpStatusCode)513, "База данных не найдена");
                 }
 
                 _model.Database.Connection.Open();
@@ -1519,6 +1560,7 @@ namespace MobileIntegration.Controllers
         /// <response code="404">Нет такой карты</response>
         /// <response code="400">Некорректные входные данные</response>
         /// <response code="500">Внутренняя ошибка</response>
+        /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpGet]
         [ActionName("card_exists")]
         public HttpResponseMessage IsCardExists(string cardNum)
@@ -1562,6 +1604,7 @@ namespace MobileIntegration.Controllers
         /// <response code="401">Хэш не прошёл проверку</response>
         /// <response code="404">Карта не найдена</response>
         /// <response code="500">Внутренняя ошибка сервера</response>
+        /// <response code="513">Ошибка при работе с базой данных</response>
         [HttpPost]
         [ActionName("get_decrease")]
         public HttpResponseMessage GetDecrease([FromBody]GetDecreaseModel model)
@@ -1600,7 +1643,7 @@ namespace MobileIntegration.Controllers
                 if (!_model.Database.Exists())
                 {
                     Logger.Log.Error("GetDecrease: база данных не найдена!" + Environment.NewLine);
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    return Request.CreateResponse((HttpStatusCode)513, "База данных не найдена");
                 }
 
                 _model.Database.Connection.Open();

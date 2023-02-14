@@ -23,6 +23,17 @@ namespace LoyalityService.Controllers
             _logger = logger;
         }
 
+        [HttpGet("guid")]
+        public IActionResult GetGuid()
+        {
+            List<string> ids = new List<string>();
+            for(int i = 0; i < 17; i++)
+            {
+                ids.Add(Guid.NewGuid().ToString().ToUpper());
+            }
+            return Ok(ids);
+        }
+
         [HttpPost]
         public async Task<IActionResult> WriteWashing([FromBody]WashingModel washing)
         {
