@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynchronizationService", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostSynchronizationService", "PostSynchronizationService\PostSynchronizationService.csproj", "{8CBE47B4-9496-41FC-9045-6D673DC48911}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSO_SyncService", "MSO_SyncService\MSO_SyncService.csproj", "{10C3D565-E401-45F1-B6E1-24504AC948A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSO.SyncService", "MSO_SyncService\MSO.SyncService.csproj", "{10C3D565-E401-45F1-B6E1-24504AC948A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

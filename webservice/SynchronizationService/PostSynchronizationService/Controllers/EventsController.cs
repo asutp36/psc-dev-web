@@ -7,6 +7,7 @@ using PostSynchronizationService.Controllers.Models;
 using PostSynchronizationService.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -122,11 +123,11 @@ namespace PostSynchronizationService.Controllers
         {
             try
             {
-                
+                return Ok();
             }
             catch(Exception e)
             {
-
+                return StatusCode(500);
             }
         }
     }

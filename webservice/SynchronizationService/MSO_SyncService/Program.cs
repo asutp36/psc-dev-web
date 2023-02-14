@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using MSO_SyncService.Models.WashCompanyDb;
 using NLog;
 using NLog.Web;
 
@@ -22,6 +24,12 @@ try
             Description = "Сервис получения данных постов моек самообслуживаня",
             Version = "v1"
         });
+    });
+
+    // Register WashCompany Database Context
+    builder.Services.AddDbContext<WashCompanyDbContext>(options =>
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("WashCompany"));
     });
 
     // NLog: Setup NLog for Dependency injection
