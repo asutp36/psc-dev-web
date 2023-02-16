@@ -41,9 +41,9 @@ namespace MobileAppWasteSender
         {
             try
             {
+                Log.Logger.Information("Работает");
                 Config();
 
-                Log.Logger.Information("Работает");
                 Log.Logger.Information("Settings:");
                 Log.Logger.Information($"Мойка считается незавершённой через {_oldSessionTime} минут");
                 Log.Logger.Information($"Период работы программы {_updatePeriod} секунд");
@@ -144,17 +144,17 @@ namespace MobileAppWasteSender
             _config = new ConfigurationBuilder()
                              .AddJsonFile("appsettings.json")
                              .Build();
-            _updatePeriod = int.Parse(_config.GetSection("UpdatePeriod").Value);
-            _oldSessionTime = int.Parse(_config.GetSection("OldSessionTime").Value);
-            _resultMessageLength = int.Parse(_config.GetSection("ResultMessageLength").Value);
-            _mobileAppBaseUrl = _config.GetSection("MobileAppBaseUrl").Value;
-            _notifyServiceBaseUrl = _config.GetSection("NotifyServiceBaseUrl").Value;
-            _telegramChatID = _config.GetSection("TelegramChatID").Value;
+            _updatePeriod = int.Parse(_config.GetSection("UpdatePeriod").Value); /*60;*/
+            _oldSessionTime = int.Parse(_config.GetSection("OldSessionTime").Value); //60;
+            _resultMessageLength = int.Parse(_config.GetSection("ResultMessageLength").Value); //80;
+            _mobileAppBaseUrl = _config.GetSection("MobileAppBaseUrl").Value; //@"http://188.225.79.69/api/externaldb/";
+            _notifyServiceBaseUrl = _config.GetSection("NotifyServiceBaseUrl").Value; //@"https://cwmon.ru/notify/";
+            _telegramChatID = _config.GetSection("TelegramChatID").Value; //"-650370220";
 
 
             Log.Logger = new LoggerConfiguration()
               .MinimumLevel.Debug()
-              .WriteTo.File($"Logs/{DateTime.Now:yyyy-MM-dd}.log")
+              .WriteTo.File($"Logs/mobile-send-cons.{DateTime.Now:yyyy-MM-dd}.log")
               .CreateLogger();
 
             _httpClient = new HttpClient();
@@ -163,7 +163,7 @@ namespace MobileAppWasteSender
               HeaderNames.Accept, "application/json");
 
             _cache = new MemoryCache(new MemoryCacheOptions());
-            _cacheExpiringTime = int.Parse(_config.GetSection("CacheExpiringTime").Value);
+            _cacheExpiringTime = int.Parse(_config.GetSection("CacheExpiringTime").Value); //60;
         }
 
         private static List<MobileSending> GetUnsentWastes()

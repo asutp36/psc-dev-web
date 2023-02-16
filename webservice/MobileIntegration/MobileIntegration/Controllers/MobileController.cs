@@ -465,7 +465,7 @@ namespace MobileIntegration.Controllers
 
                 try
                 {
-                    if (/*CryptHash.CheckHashCode(model.hash, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"))*/ true)
+                    if (CryptHash.CheckHashCode(model.hash, model.time_send.ToString("yyyy-MM-dd HH:mm:ss")))
                     {
                         var card = _model.Cards.Where(c => c.CardNum == model.card).FirstOrDefault();
                         if (card == null)
@@ -563,6 +563,11 @@ namespace MobileIntegration.Controllers
                 catch (Exception e)
                 {
                     Logger.Log.Error("StartPost: " + e.Message.ToString() + Environment.NewLine + e.StackTrace.ToString() + Environment.NewLine);
+                    if (e.InnerException != null)
+                    {
+                        Logger.Log.Error("StartPost: InnerException: " + e.InnerException.Message.ToString() + Environment.NewLine);
+                    }
+
                     return Request.CreateResponse(HttpStatusCode.InternalServerError);
                 }
             }
@@ -677,37 +682,69 @@ namespace MobileIntegration.Controllers
 
         private int UpdateDTimeStartMoobileSendings(StartPostBindingModel start)
         {
-            _model.Database.Connection.Open();
+            try
+            {
+                _model.Database.Connection.Open();
 
-            DbCommand command = _model.Database.Connection.CreateCommand();
-            command.CommandText = $@"update MobileSendings 
+                DbCommand command = _model.Database.Connection.CreateCommand();
+                command.CommandText = $@"update MobileSendings 
                 set IDPost = (select IDPost from Posts where QRCode = '{start.post}'), DTimeStart = '{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}' 
                 where IDCard = (select IDCard from Cards where CardNum = '22') 
                 and DTimeEnd is null";
 
-            var result = command.ExecuteScalar();
-            _model.Database.Connection.Close();
-            if (result == null)
-                return 0;
+                var result = command.ExecuteScalar();
+                if (result == null)
+                    return 0;
 
-            return int.Parse(result.ToString());
+                return int.Parse(result.ToString());
+            }
+            catch(Exception e)
+            {
+                Logger.Log.Error($"UpdateDTimeStartMoobileSendings: {e.Message}");
+                if(e.InnerException != null)
+                {
+                    Logger.Log.Error($"UpdateDTimeStartMoobileSendings: InnerException: {e.InnerException.Message}");
+                }
+                return 0;
+            }
+            finally
+            {
+                _model.Database.Connection.Close();
+            }
         }
 
         private int InsertToMobileSendings(StartPostBindingModel start)
         {
-            Guid g = Guid.NewGuid();
+            try
+            {
+                Guid g = Guid.NewGuid();
 
-            _model.Database.Connection.Open();
+                _model.Database.Connection.Open();
 
-            DbCommand command = _model.Database.Connection.CreateCommand();
-            command.CommandText = $"insert into MobileSendings (IDCard, IDPost, DTimeStart, Guid)" +
-                $"values ((select IDCard from Cards where CardNum = '{start.card}'), " +
-                $"(select IDPost from Posts where QrCode = '{start.post}'), " +
-                $"'{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}', '{g.ToString().ToUpper()}'); " +
-                $"select scope_identity()";
+                DbCommand command = _model.Database.Connection.CreateCommand();
+                command.CommandText = $"insert into MobileSendings (IDCard, IDPost, DTimeStart, Guid)" +
+                    $"values ((select IDCard from Cards where CardNum = '{start.card}'), " +
+                    $"(select IDPost from Posts where QrCode = '{start.post}'), " +
+                    $"'{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}', '{g.ToString().ToUpper()}'); " +
+                    $"select scope_identity()";
 
-            var result = command.ExecuteScalar();
-            return int.Parse(result.ToString());
+                var result = command.ExecuteScalar();
+                
+                return int.Parse(result.ToString());
+            }
+            catch(Exception e)
+            {
+                Logger.Log.Error($"InsertToMobileSendings: {e.Message}");
+                if (e.InnerException != null)
+                {
+                    Logger.Log.Error($"InsertToMobileSendings: InnerException: {e.InnerException.Message}");
+                }
+                return 0;
+            }
+            finally 
+            { 
+                _model.Database.Connection.Close();
+            }
         }
 
         [HttpPost]
@@ -789,8 +826,6 @@ namespace MobileIntegration.Controllers
 
             Logger.Log.Debug($"StopPost: отправка списания по карте {model.card}");
 
-            string washCode = PrepareWashCodeForMobile(model.post);
-
             try
             {
                 var res = UpdateMobileSendings(model);
@@ -799,6 +834,7 @@ namespace MobileIntegration.Controllers
             catch (Exception e)
             {
                 Logger.Log.Error("Ошибка при записи времени конца и суммы в журнал отправок приложения: " + e.Message);
+                return Request.CreateResponse((HttpStatusCode)513, "Ошибка при записи в базу");
             }
 
             if (model.balance > 0)
@@ -862,33 +898,6 @@ namespace MobileIntegration.Controllers
                 {
                     Logger.Log.Error("StopPostDev: ошибка при записи операции в базу.\n" + e.Message + Environment.NewLine + e.StackTrace);
                 }
-
-            string qrCode = "";
-            try
-            {
-
-                //qrCode = _model.Posts.Where(p => p.IDDevice == _model.Device.Where(d => d.Code.Equals(model.post)).FirstOrDefault().IDDevice).FirstOrDefault().QRCode;
-            }
-            catch (Exception e)
-            {
-                Logger.Log.Error("StopPostDev: не найден пост.\n" + e.Message + Environment.NewLine);
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Post not found");
-            }
-
-            //Logger.Log.Debug($"StopPostDev: отправка конца мойки. Баланс = {(int)model.balance}");
-
-            //HttpResponse resp = Sender.SendPost("http://188.225.79.69/api/externaldb/set-waste", JsonConvert.SerializeObject(new Decrease(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), model.card, model.time_send.ToString("yyyy-MM-dd HH:mm:ss"), /*model.post*/ washCode, (int)model.balance)));
-
-            //Logger.Log.Debug("StopPostDev: Ответ от их сервера: " + resp.ResultMessage);
-            //try
-            //{
-            //    int r = WriteResponseToMibileSending(model, resp);
-            //    Logger.Log.Debug($"Записан http ответ мобильного приложения в {r} записях");
-            //}
-            //catch (Exception e)
-            //{
-            //    Logger.Log.Error("Ошибка обновления записи в журнале отправок: " + e.Message + Environment.NewLine);
-            //}
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
