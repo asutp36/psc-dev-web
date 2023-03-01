@@ -53,6 +53,8 @@ namespace GateWashSyncService
                 c.EnableAnnotations();
             });
 
+            services.AddTransient<GlobalExceptionHandlerMiddleware>();
+
             services.AddDbContext<GateWashDbContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("GateWash")));
 
@@ -81,13 +83,13 @@ namespace GateWashSyncService
                 app.UseDeveloperExceptionPage();
             }
 
-            app.ConfigureExceptionHandler(this.Logger);
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

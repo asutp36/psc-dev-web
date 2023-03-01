@@ -85,7 +85,7 @@ namespace GateWashSyncService.Controllers
             int id = await sqlHelper.WriteCardRefillAsync(model);
 
             Response.Headers.Add("ServerID", id.ToString());
-            _logger.LogInformation($"Добавлена запись о пополнении карт id = {id}" + Environment.NewLine);
+            //_logger.LogInformation($"Добавлена запись о пополнении карт id = {id}" + Environment.NewLine);
             return Created(id.ToString(), null);
         }
     }

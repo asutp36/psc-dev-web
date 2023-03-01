@@ -11,6 +11,7 @@ using GateWashSyncService.Models.GateWash;
 using Newtonsoft.Json;
 using GateWashSyncService.Services;
 using GateWashSyncService.Exceptions;
+using System.Net;
 
 namespace GateWashSyncService.Controllers
 {
@@ -136,7 +137,7 @@ namespace GateWashSyncService.Controllers
             }
             catch (CustomStatusCodeException e) 
             {
-                return StatusCode(e.ResponseStatuseCode, e.Message);
+                return StatusCode((int)e.StatusCode, e.Message);
             }
             catch (Exception e)
             {
