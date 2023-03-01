@@ -40,8 +40,7 @@ namespace MobileAppWasteSender
         static async Task Main(string[] args)
         {
             try
-            {
-                Log.Logger.Information("Работает");
+            { 
                 Config();
 
                 Log.Logger.Information("Settings:");
@@ -61,7 +60,7 @@ namespace MobileAppWasteSender
 
                         Log.Logger = new LoggerConfiguration()
                             .MinimumLevel.Debug()
-                            .WriteTo.File($"Logs/{DateTime.Now:yyyy-MM-dd}.log")
+                            .WriteTo.File($"Logs/mobile-send-cons.{DateTime.Now:yyyy-MM-dd}.log")
                             .CreateLogger();
 
                         curDate = DateTime.Now.Date;
@@ -135,7 +134,7 @@ namespace MobileAppWasteSender
             catch (Exception e)
             {
                 Log.Logger.Error("Перехвачена общая ошибка. " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                Notification.SendCritical(e);
+                Notification.SendCritical(e, _notifyServiceBaseUrl, _telegramChatID);
             }
         }
 

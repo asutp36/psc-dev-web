@@ -33,14 +33,14 @@ namespace MobileAppWasteSender
                 return JsonConvert.SerializeObject(this);
             }
         }
-        public static async void SendCritical(Exception e)
+        public static async void SendCritical(Exception e, string baseUrl, string chatId)
         {
             Message m = new Message();
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("https://cwmon.ru/notify/");
+            httpClient.BaseAddress = new Uri(baseUrl);
             httpClient.DefaultRequestHeaders.Add(
                 HeaderNames.Accept, "application/json");
-            var data = new StringContent(m.Create("120363043000833241@g.us", $"Сервис отправки окончания мойки в мобильное приложение упал. {e.Message}"), Encoding.UTF8, Application.Json);
+            var data = new StringContent(m.CreateChatId(chatId, $"Сервис отправки окончания мойки в мобильное приложение упал. {e.Message}"), Encoding.UTF8, Application.Json);
 
             await httpClient.PostAsync("api/notify/message-group", data);
         }
