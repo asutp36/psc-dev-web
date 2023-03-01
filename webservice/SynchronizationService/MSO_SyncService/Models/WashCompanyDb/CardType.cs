@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace MSO.SyncService.Models.WashCompanyDb;
 
-public partial class Mode
+public partial class CardType
 {
-    public int Idmode { get; set; }
+    public int IdcardType { get; set; }
 
     public string Code { get; set; } = null!;
 
     public string Name { get; set; } = null!;
 
-    public virtual ICollection<EventMode> EventModes { get; } = new List<EventMode>();
+    public virtual ICollection<Card> Cards { get; } = new List<Card>();
 }

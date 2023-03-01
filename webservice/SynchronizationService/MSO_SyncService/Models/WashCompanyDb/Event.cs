@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MSO_SyncService.Models.WashCompanyDb;
+namespace MSO.SyncService.Models.WashCompanyDb;
 
 public partial class Event
 {
@@ -22,6 +22,8 @@ public partial class Event
     public virtual EventMode? EventMode { get; set; }
 
     public virtual EventSimple? EventSimple { get; set; }
+
+    public virtual EventKind IdeventKindNavigation { get; set; } = null!;
 
     public virtual Post IdpostNavigation { get; set; } = null!;
 }

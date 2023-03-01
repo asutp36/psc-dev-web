@@ -5,50 +5,27 @@ using MSO.SyncService.Models.WashCompanyDb;
 
 namespace MSO.SyncService.Services
 {
-    public class DeviceService
+    public class CardService
     {
         private readonly WashCompanyDbContext _context;
-        private readonly ILogger<DeviceService> _logger;
+        private readonly ILogger<CardService> _logger;
 
-        public DeviceService(WashCompanyDbContext context, ILogger<DeviceService> logger)
+        public CardService(WashCompanyDbContext context, ILogger<CardService> logger)
         {
             _context = context;
             _logger = logger;
         }
 
-        public async Task<bool> IsExistsAsync(string deviceCode)
+        public async Task<bool> IsCardTypeExistsAsync(string cardTypeCode)
         {
             try
             {
-                if (deviceCode.IsNullOrEmpty())
+                if (cardTypeCode.IsNullOrEmpty())
                 {
-                    throw new CustomStatusCodeException("Не задан код девайса", 400);
+                    throw new CustomStatusCodeException("Не задан код типа карты", 400);
                 }
 
-                return await _context.Devices.AnyAsync(d => d.Code == deviceCode);
-            }
-            catch (CustomStatusCodeException e)
-            {
-                throw e;
-            }
-            catch (Exception e) 
-            {
-                _logger.LogError($"DeviceService.IsExists: {e.GetType()}: {e.Message}");
-                throw new CustomStatusCodeException("При обращении к базе данных произошла ошибка", 513);
-            }
-        }
-
-        public async Task<int> GetPostIdByDeviceCode(string deviceCode)
-        {
-            try
-            {
-                if (deviceCode.IsNullOrEmpty())
-                {
-                    throw new CustomStatusCodeException("Не задан код девайса", 400);
-                }
-
-                return await _context.Posts.Include(p => p.IddeviceNavigation).Where(d => d.IddeviceNavigation.Code == deviceCode)
-                    .Select(p => p.Idpost).FirstOrDefaultAsync();
+                return await _context.CardTypes.AnyAsync(ct => ct.Code == cardTypeCode);
             }
             catch (CustomStatusCodeException e)
             {
@@ -56,7 +33,29 @@ namespace MSO.SyncService.Services
             }
             catch (Exception e)
             {
-                _logger.LogError($"DeviceService.IsExists: {e.GetType()}: {e.Message}");
+                _logger.LogError($"CardService.IsCardTypeExists: {e.GetType()}: {e.Message}");
+                throw new CustomStatusCodeException("При обращении к базе данных произошла ошибка", 513);
+            }
+        }
+
+        public async Task<bool> IsCardExistsAsync(string cardNum)
+        {
+            try
+            {
+                if (cardNum.IsNullOrEmpty())
+                {
+                    throw new CustomStatusCodeException("Не задан номер карты", 400);
+                }
+
+                return await _context.Cards.AnyAsync(c => c.CardNum == cardNum);
+            }
+            catch (CustomStatusCodeException e)
+            {
+                throw e;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"CardService.IsCardExists: {e.GetType()}: {e.Message}");
                 throw new CustomStatusCodeException("При обращении к базе данных произошла ошибка", 513);
             }
         }

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MSO.SyncService.Extentions;
+using MSO.SyncService.Models.WashCompanyDb;
 using MSO.SyncService.Services;
-using MSO_SyncService.Models.WashCompanyDb;
 using NLog;
 using NLog.Extensions.Logging;
 using NLog.Web;
@@ -42,6 +42,11 @@ try
 
     // Register services
     builder.Services.AddTransient<DeviceService>();
+    builder.Services.AddTransient<EventKindService>();
+    builder.Services.AddTransient<CardService>();
+    builder.Services.AddTransient<ModeService>();
+    builder.Services.AddTransient<InsertService>();
+
 
     var app = builder.Build();
 

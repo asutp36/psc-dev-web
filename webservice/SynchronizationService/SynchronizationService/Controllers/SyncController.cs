@@ -890,7 +890,7 @@ namespace SynchronizationService.Controllers
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.Transaction = transaction;
 
-                        command.CommandText = $@"select IDPost from Posts where Code = '{data.DeviceCode}'";
+                        command.CommandText = $@"select IDPost from Posts p join Device d on d.IDDevice = p.IDDevice where d.Code = '{data.DeviceCode}'";
                         //Logger.Log.Debug("Command is: " + command.CommandText);
                         var id = command.ExecuteScalar();
                         if (id == DBNull.Value)
@@ -1014,7 +1014,7 @@ namespace SynchronizationService.Controllers
         public HttpResponseMessage RobotEventPayout([FromBody] DataRobotPayout data)
         {
             Logger.InitLogger();
-            //Logger.Log.Debug("RobotEventPayout: Запуск с параметрами:\n" + JsonConvert.SerializeObject(data));
+            Logger.Log.Debug("RobotEventPayout: Запуск с параметрами:\n" + JsonConvert.SerializeObject(data));
 
             bool transaction_success = false;
 
@@ -1028,7 +1028,7 @@ namespace SynchronizationService.Controllers
                         DbCommand command = _model.Database.Connection.CreateCommand();
                         command.Transaction = transaction;
 
-                        command.CommandText = $@"select IDPost from Posts where Code = '{data.DeviceCode}'";
+                        command.CommandText = $@"select IDPost from Posts p join Device d on d.IDDevice = p.IDDevice where d.Code = '{data.DeviceCode}'";
                         //Logger.Log.Debug("Command is: " + command.CommandText);
                         var id = command.ExecuteScalar();
                         if (id == DBNull.Value)

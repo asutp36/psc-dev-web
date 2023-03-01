@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MSO_SyncService.Models.WashCompanyDb;
+namespace MSO.SyncService.Models.WashCompanyDb;
 
 public partial class Card
 {
@@ -20,6 +20,8 @@ public partial class Card
     public int LocalizedBy { get; set; }
 
     public int LocalizedId { get; set; }
+
+    public virtual CardType IdcardTypeNavigation { get; set; } = null!;
 
     public virtual ICollection<MobileSending> MobileSendings { get; } = new List<MobileSending>();
 }

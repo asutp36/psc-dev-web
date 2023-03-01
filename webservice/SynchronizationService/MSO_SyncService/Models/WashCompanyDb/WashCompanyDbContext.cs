@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace MSO_SyncService.Models.WashCompanyDb;
+namespace MSO.SyncService.Models.WashCompanyDb;
 
 public partial class WashCompanyDbContext : DbContext
 {
@@ -17,6 +17,8 @@ public partial class WashCompanyDbContext : DbContext
 
     public virtual DbSet<Card> Cards { get; set; }
 
+    public virtual DbSet<CardType> CardTypes { get; set; }
+
     public virtual DbSet<Device> Devices { get; set; }
 
     public virtual DbSet<Event> Events { get; set; }
@@ -24,6 +26,8 @@ public partial class WashCompanyDbContext : DbContext
     public virtual DbSet<EventCollect> EventCollects { get; set; }
 
     public virtual DbSet<EventIncrease> EventIncreases { get; set; }
+
+    public virtual DbSet<EventKind> EventKinds { get; set; }
 
     public virtual DbSet<EventMode> EventModes { get; set; }
 
@@ -55,6 +59,19 @@ public partial class WashCompanyDbContext : DbContext
             entity.Property(e => e.IdcardType).HasColumnName("IDCardType");
             entity.Property(e => e.Idowner).HasColumnName("IDOwner");
             entity.Property(e => e.LocalizedId).HasColumnName("LocalizedID");
+
+            entity.HasOne(d => d.IdcardTypeNavigation).WithMany(p => p.Cards)
+                .HasForeignKey(d => d.IdcardType)
+                .HasConstraintName("FK_Cards_CardTypes");
+        });
+
+        modelBuilder.Entity<CardType>(entity =>
+        {
+            entity.HasKey(e => e.IdcardType);
+
+            entity.Property(e => e.IdcardType).HasColumnName("IDCardType");
+            entity.Property(e => e.Code).HasMaxLength(10);
+            entity.Property(e => e.Name).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Device>(entity =>
@@ -84,6 +101,10 @@ public partial class WashCompanyDbContext : DbContext
             entity.Property(e => e.IdeventKind).HasColumnName("IDEventKind");
             entity.Property(e => e.IdeventPost).HasColumnName("IDEventPost");
             entity.Property(e => e.Idpost).HasColumnName("IDPost");
+
+            entity.HasOne(d => d.IdeventKindNavigation).WithMany(p => p.Events)
+                .HasForeignKey(d => d.IdeventKind)
+                .HasConstraintName("FK_Event_EventKind");
 
             entity.HasOne(d => d.IdpostNavigation).WithMany(p => p.Events)
                 .HasForeignKey(d => d.Idpost)
@@ -137,6 +158,17 @@ public partial class WashCompanyDbContext : DbContext
                 .HasForeignKey(d => d.IdpostSession)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_EventIncrease_PostSession");
+        });
+
+        modelBuilder.Entity<EventKind>(entity =>
+        {
+            entity.HasKey(e => e.IdeventKind);
+
+            entity.ToTable("EventKind", tb => tb.HasComment("Типы событий"));
+
+            entity.Property(e => e.IdeventKind).HasColumnName("IDEventKind");
+            entity.Property(e => e.Code).HasMaxLength(20);
+            entity.Property(e => e.Name).HasMaxLength(50);
         });
 
         modelBuilder.Entity<EventMode>(entity =>

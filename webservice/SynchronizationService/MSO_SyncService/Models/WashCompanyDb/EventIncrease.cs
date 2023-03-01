@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MSO_SyncService.Models.WashCompanyDb;
+namespace MSO.SyncService.Models.WashCompanyDb;
 
 public partial class EventIncrease
 {
