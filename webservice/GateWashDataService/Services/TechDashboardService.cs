@@ -146,7 +146,7 @@ namespace GateWashDataService.Services
             try
             {
                 HttpClient httpClient = new HttpClient();
-                httpClient.BaseAddress = new Uri("http://cwmon.ru:444/postrc/");
+                httpClient.BaseAddress = new Uri("http://cwmon.ru/postrc/");
 
                 HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/refillgatewash/payout");
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(cash), Encoding.UTF8, "application/json");
@@ -189,7 +189,7 @@ namespace GateWashDataService.Services
             try
             {
                 HttpClient httpClient = new HttpClient();
-                httpClient.BaseAddress = new Uri("http://cwmon.ru:444/postrc/");
+                httpClient.BaseAddress = new Uri("http://cwmon.ru/postrc/");
 
                 HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/refillgatewash/cards");
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(cards), Encoding.UTF8, "application/json");
