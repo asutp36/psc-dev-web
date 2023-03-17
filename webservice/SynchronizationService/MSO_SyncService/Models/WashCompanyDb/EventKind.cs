@@ -15,4 +15,6 @@ public partial class EventKind
     public string Name { get; set; } = null!;
 
     public virtual ICollection<Event> Events { get; } = new List<Event>();
+
+    public virtual ICollection<RobotEvent> RobotEvents { get; } = new List<RobotEvent>();
 }

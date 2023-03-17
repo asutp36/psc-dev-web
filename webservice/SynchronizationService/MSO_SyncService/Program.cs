@@ -46,6 +46,7 @@ try
     builder.Services.AddTransient<CardService>();
     builder.Services.AddTransient<ModeService>();
     builder.Services.AddTransient<InsertService>();
+    builder.Services.AddTransient<RobotProgramService>();
 
 
     var app = builder.Build();

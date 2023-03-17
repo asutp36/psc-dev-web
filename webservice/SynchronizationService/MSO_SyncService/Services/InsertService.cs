@@ -13,6 +13,7 @@ namespace MSO.SyncService.Services
         private readonly DeviceService _deviceService;
         private readonly EventKindService _eventKindService;
         private readonly ModeService _modeService;
+        private readonly RobotProgramService _robotProgramService;
 
         public InsertService
             (
@@ -20,7 +21,8 @@ namespace MSO.SyncService.Services
             ILogger<InsertService> logger, 
             DeviceService deviceService, 
             EventKindService eventKindService, 
-            ModeService modeService
+            ModeService modeService,
+            RobotProgramService robotProgramService
             )
         {
             _context = context;
@@ -28,6 +30,7 @@ namespace MSO.SyncService.Services
             _deviceService = deviceService;
             _eventKindService = eventKindService;
             _modeService = modeService;
+            _robotProgramService = robotProgramService;
         }
 
         public async Task<int> InsertEventIncreaseAsync(EventIncreaseDto eventIncreaseDto)
@@ -217,6 +220,40 @@ namespace MSO.SyncService.Services
             {
                 _logger.LogError($"UpdateMobileSendingsAsync: {e.GetType()}: {e.Message}");
                 return 0;
+            }
+        }
+
+        public async Task<int> InsertRobotSessionAsync(RobotSessionDto robotSessionDto)
+        {
+            try
+            {
+                if (!(await _deviceService.IsExistsAsync(robotSessionDto.DeviceCode)))
+                {
+                    throw new CustomStatusCodeException($"Не найден девайс {robotSessionDto.DeviceCode}", 404);
+                }
+
+                if(!(await _robotProgramService.IsExistsAsync(robotSessionDto.ProgramCode)))
+                {
+                    throw new CustomStatusCodeException($"Не найдена программа {robotSessionDto.ProgramCode}", 404);
+                }
+
+                RobotSession rs = new RobotSession()
+                {
+                    Idpost = await _deviceService.GetPostIdByDeviceCode(robotSessionDto.DeviceCode),
+                    Dtime = robotSessionDto.DTime,
+                    IdrobotProgram = await _robotProgramService.GetIdByCodeAsync(robotSessionDto.ProgramCode),
+                    IdsessionPost = robotSessionDto.IDSessionPost
+                };
+
+                await _context.RobotSessions.AddAsync(rs);
+                await _context.SaveChangesAsync();
+
+                return rs.IdrobotSession;
+            }
+            catch(Exception e)
+            {
+                _logger.LogError($"InsertService.InsertRobotSession: {e.GetType()}: {e.Message}");
+                throw new CustomStatusCodeException("Не удалось вставить robot session", 513);
             }
         }
     }

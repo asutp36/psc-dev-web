@@ -24,4 +24,6 @@ public partial class Post
     public virtual Wash IdwashNavigation { get; set; } = null!;
 
     public virtual ICollection<MobileSending> MobileSendings { get; } = new List<MobileSending>();
+
+    public virtual ICollection<RobotEvent> RobotEvents { get; } = new List<RobotEvent>();
 }

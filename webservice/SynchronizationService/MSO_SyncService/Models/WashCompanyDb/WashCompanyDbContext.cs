@@ -41,6 +41,16 @@ public partial class WashCompanyDbContext : DbContext
 
     public virtual DbSet<PostSession> PostSessions { get; set; }
 
+    public virtual DbSet<RobotEvent> RobotEvents { get; set; }
+
+    public virtual DbSet<RobotEventIncrease> RobotEventIncreases { get; set; }
+
+    public virtual DbSet<RobotEventPayout> RobotEventPayouts { get; set; }
+
+    public virtual DbSet<RobotProgram> RobotPrograms { get; set; }
+
+    public virtual DbSet<RobotSession> RobotSessions { get; set; }
+
     public virtual DbSet<Wash> Washes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -298,6 +308,117 @@ public partial class WashCompanyDbContext : DbContext
             entity.Property(e => e.StopDtime)
                 .HasColumnType("datetime")
                 .HasColumnName("StopDTime");
+        });
+
+        modelBuilder.Entity<RobotEvent>(entity =>
+        {
+            entity.HasKey(e => e.IdrobotEvent);
+
+            entity.ToTable("RobotEvent");
+
+            entity.Property(e => e.IdrobotEvent).HasColumnName("IDRobotEvent");
+            entity.Property(e => e.Dtime)
+                .HasColumnType("datetime")
+                .HasColumnName("DTime");
+            entity.Property(e => e.IdeventKind).HasColumnName("IDEventKind");
+            entity.Property(e => e.IdeventPost).HasColumnName("IDEventPost");
+            entity.Property(e => e.Idpost).HasColumnName("IDPost");
+            entity.Property(e => e.IdrobotSession).HasColumnName("IDRobotSession");
+
+            entity.HasOne(d => d.IdeventKindNavigation).WithMany(p => p.RobotEvents)
+                .HasForeignKey(d => d.IdeventKind)
+                .HasConstraintName("FK_RobotEvent_EventKind");
+
+            entity.HasOne(d => d.IdpostNavigation).WithMany(p => p.RobotEvents)
+                .HasForeignKey(d => d.Idpost)
+                .HasConstraintName("FK_RobotEvent_Point");
+        });
+
+        modelBuilder.Entity<RobotEventIncrease>(entity =>
+        {
+            entity.HasKey(e => e.IdrobotEvent).HasName("PK_RobotEventCash");
+
+            entity.ToTable("RobotEventIncrease");
+
+            entity.Property(e => e.IdrobotEvent)
+                .ValueGeneratedNever()
+                .HasColumnName("IDRobotEvent");
+            entity.Property(e => e.Amount).HasColumnName("amount");
+            entity.Property(e => e.B100).HasColumnName("b100");
+            entity.Property(e => e.B1000).HasColumnName("b1000");
+            entity.Property(e => e.B200).HasColumnName("b200");
+            entity.Property(e => e.B2000).HasColumnName("b2000");
+            entity.Property(e => e.B50).HasColumnName("b50");
+            entity.Property(e => e.B500).HasColumnName("b500");
+            entity.Property(e => e.Balance).HasColumnName("balance");
+            entity.Property(e => e.M10).HasColumnName("m10");
+
+            entity.HasOne(d => d.IdrobotEventNavigation).WithOne(p => p.RobotEventIncrease)
+                .HasForeignKey<RobotEventIncrease>(d => d.IdrobotEvent)
+                .HasConstraintName("FK_RobotEventCash_RobotEvent");
+        });
+
+        modelBuilder.Entity<RobotEventPayout>(entity =>
+        {
+            entity.HasKey(e => e.IdrobotEvent);
+
+            entity.ToTable("RobotEventPayout");
+
+            entity.Property(e => e.IdrobotEvent)
+                .ValueGeneratedNever()
+                .HasColumnName("IDRobotEvent");
+            entity.Property(e => e.Amount).HasColumnName("amount");
+            entity.Property(e => e.B100).HasColumnName("b100");
+            entity.Property(e => e.B50).HasColumnName("b50");
+            entity.Property(e => e.Balance).HasColumnName("balance");
+            entity.Property(e => e.StorageB100).HasColumnName("storage_b100");
+            entity.Property(e => e.StorageB50).HasColumnName("storage_b50");
+
+            entity.HasOne(d => d.IdrobotEventNavigation).WithOne(p => p.RobotEventPayout)
+                .HasForeignKey<RobotEventPayout>(d => d.IdrobotEvent)
+                .HasConstraintName("FK_RobotEventPayout_RobotEvent");
+        });
+
+        modelBuilder.Entity<RobotProgram>(entity =>
+        {
+            entity.HasKey(e => e.IdrobotProgram).HasName("PK_Functions");
+
+            entity.ToTable("RobotProgram");
+
+            entity.Property(e => e.IdrobotProgram).HasColumnName("IDRobotProgram");
+            entity.Property(e => e.AltName).HasMaxLength(50);
+            entity.Property(e => e.Button).HasColumnName("button");
+            entity.Property(e => e.Code).HasMaxLength(10);
+            entity.Property(e => e.Name).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<RobotSession>(entity =>
+        {
+            entity.HasKey(e => e.IdrobotSession);
+
+            entity.ToTable("RobotSession");
+
+            entity.Property(e => e.IdrobotSession).HasColumnName("IDRobotSession");
+            entity.Property(e => e.Dtime)
+                .HasColumnType("datetime")
+                .HasColumnName("DTime");
+            entity.Property(e => e.FiscalError).HasMaxLength(150);
+            entity.Property(e => e.Idpost).HasColumnName("IDPost");
+            entity.Property(e => e.IdrobotProgram).HasColumnName("IDRobotProgram");
+            entity.Property(e => e.IdsessionPost).HasColumnName("IDSessionPost");
+            entity.Property(e => e.Qr)
+                .HasMaxLength(100)
+                .HasColumnName("QR");
+            entity.Property(e => e.StartDtime)
+                .HasColumnType("datetime")
+                .HasColumnName("StartDTime");
+            entity.Property(e => e.StopDtime)
+                .HasColumnType("datetime")
+                .HasColumnName("StopDTime");
+
+            entity.HasOne(d => d.IdrobotProgramNavigation).WithMany(p => p.RobotSessions)
+                .HasForeignKey(d => d.IdrobotProgram)
+                .HasConstraintName("FK_RobotSession_RobotProgram");
         });
 
         modelBuilder.Entity<Wash>(entity =>

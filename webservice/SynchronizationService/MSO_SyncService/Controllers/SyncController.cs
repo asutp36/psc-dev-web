@@ -44,5 +44,14 @@ namespace MSO.SyncService.Controllers
             Response.Headers.Add("ServerID", eventId.ToString());
             return Ok();
         }
+
+        [HttpPost("rsession")]
+        public async Task<IActionResult> PostRobotSession(RobotSessionDto robotSessionDto)
+        {
+            int robotSessionID = await _insertService.InsertRobotSessionAsync(robotSessionDto);
+
+            Response.Headers.Add("ServerID", robotSessionID.ToString());
+            return Ok();
+        }
     }
 }
