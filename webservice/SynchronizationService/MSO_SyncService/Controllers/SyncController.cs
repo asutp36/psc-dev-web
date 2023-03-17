@@ -35,5 +35,14 @@ namespace MSO.SyncService.Controllers
             Response.Headers.Add("ServerID", eventId.ToString());
             return Ok();
         }
+
+        [HttpPost("ecollect")]
+        public async Task<IActionResult> PostEventCollect(EventCollectDto eventCollectDto)
+        {
+            int eventId = await _insertService.InsertEventCollectAsync(eventCollectDto);
+
+            Response.Headers.Add("ServerID", eventId.ToString());
+            return Ok();
+        }
     }
 }

@@ -39,6 +39,11 @@ namespace MSO.SyncService.Services
                     throw new CustomStatusCodeException($"Не найден девайс {eventIncreaseDto.Device}", 404);
                 }
 
+                if(!(await _eventKindService.IsExistsAsync(eventIncreaseDto.Kind)))
+                {
+                    throw new CustomStatusCodeException($"Не найден тип события {eventIncreaseDto.Kind}", 404);
+                }
+
                 EventIncrease eventIncrease = new EventIncrease()
                 {
                     Amount = eventIncreaseDto.Amount,
@@ -57,8 +62,8 @@ namespace MSO.SyncService.Services
                     EventIncrease = eventIncrease
                 };
 
-                //await _context.Events.AddAsync(e);
-                //await _context.SaveChangesAsync();
+                await _context.Events.AddAsync(e);
+                await _context.SaveChangesAsync();
 
                 if(eventIncreaseDto.Kind == "cardincrease" && eventIncreaseDto.CardNum != null)
                 {
@@ -151,7 +156,7 @@ namespace MSO.SyncService.Services
                 await _context.Events.AddAsync(e);
                 await _context.SaveChangesAsync();
 
-                return e.IdeventKind;
+                return e.Idevent;
             }
             catch (Exception e)
             {
