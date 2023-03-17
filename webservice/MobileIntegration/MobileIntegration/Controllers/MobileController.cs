@@ -12,6 +12,7 @@ using System.Data.SqlClient;
 using Microsoft.Ajax.Utilities;
 using log4net.Repository;
 using System.Web.WebPages;
+using System.Data.Entity.Core;
 
 namespace MobileIntegration.Controllers
 {
@@ -560,6 +561,13 @@ namespace MobileIntegration.Controllers
                     Logger.Log.Error("StartPost: Unauthorized" + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.Unauthorized);
                 }
+                catch(EntityException e)
+                {
+                    if(e.InnerException != null)
+                    {
+
+                    }
+                }
                 catch (Exception e)
                 {
                     Logger.Log.Error("StartPost: " + e.Message.ToString() + Environment.NewLine + e.StackTrace.ToString() + Environment.NewLine);
@@ -668,6 +676,13 @@ namespace MobileIntegration.Controllers
 
                         Logger.Log.Error("StartPost: Card not found" + Environment.NewLine);
                         return Request.CreateResponse(HttpStatusCode.Forbidden);
+                    }
+                }
+                catch(EntityException e)
+                {
+                    if(e.InnerException != null)
+                    {
+
                     }
                 }
                 catch (Exception e)

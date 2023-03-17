@@ -166,8 +166,8 @@ namespace MSO.SyncService.Services
             {
                 var currentWash = await _context.MobileSendings.Include(p => p.IdpostNavigation).ThenInclude(d => d.IddeviceNavigation)
                             .Include(c => c.IdcardNavigation)
-                            .Where(ms => //ms.IdpostNavigation.IddeviceNavigation.Code == eventIncreaseDto.Device &&
-                                         //ms.IdcardNavigation.CardNum == eventIncreaseDto.CardNum &&
+                            .Where(ms => ms.IdpostNavigation.IddeviceNavigation.Code == eventIncreaseDto.Device &&
+                                         ms.IdcardNavigation.CardNum == eventIncreaseDto.CardNum &&
                                          ms.DtimeEnd == null &&
                                          ms.DtimeStart <= eventIncreaseDto.DTime.AddSeconds(2))
                             .OrderByDescending(ms => ms.DtimeStart)
@@ -179,10 +179,12 @@ namespace MSO.SyncService.Services
                 }
                 else
                 {
+                    int updatedRows = 0;
                     currentWash.DtimeEnd = DateTime.Now;
                     currentWash.Amount = eventIncreaseDto.Amount;
                     _context.Update(currentWash);
-                    
+                    updatedRows = await _context.SaveChangesAsync();
+
                     var otherUnstoppedWashings = await _context.MobileSendings.Include(p => p.IdpostNavigation).ThenInclude(d => d.IddeviceNavigation)
                             .Include(c => c.IdcardNavigation)
                             .Where(ms => ms.IdpostNavigation.IddeviceNavigation.Code == eventIncreaseDto.Device &&
@@ -190,15 +192,18 @@ namespace MSO.SyncService.Services
                                          ms.DtimeEnd == null &&
                                          ms.DtimeStart <= eventIncreaseDto.DTime.AddSeconds(2))
                             .ToListAsync();
-                    foreach(var unstoppedWashing in otherUnstoppedWashings)
+
+                    if (otherUnstoppedWashings.Count > 0)
                     {
-                        unstoppedWashing.DtimeEnd = DateTime.Now;
-                        unstoppedWashing.Amount = 0;
+                        foreach (var unstoppedWashing in otherUnstoppedWashings)
+                        {
+                            unstoppedWashing.DtimeEnd = DateTime.Now;
+                            unstoppedWashing.Amount = 0;
+                        }
+
+                        _context.UpdateRange(otherUnstoppedWashings);
+                        updatedRows += await _context.SaveChangesAsync();
                     }
-
-                    _context.UpdateRange(otherUnstoppedWashings);
-
-                    int updatedRows = await _context.SaveChangesAsync();
 
                     return updatedRows;
                 }
