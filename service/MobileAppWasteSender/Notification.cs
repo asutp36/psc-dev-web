@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace MobileAppWasteSender
@@ -33,7 +34,7 @@ namespace MobileAppWasteSender
                 return JsonConvert.SerializeObject(this);
             }
         }
-        public static async void SendCritical(Exception e, string baseUrl, string chatId)
+        public static async Task SendCritical(Exception e, string baseUrl, string chatId)
         {
             Message m = new Message();
             HttpClient httpClient = new HttpClient();
@@ -42,7 +43,8 @@ namespace MobileAppWasteSender
                 HeaderNames.Accept, "application/json");
             var data = new StringContent(m.CreateChatId(chatId, $"Сервис отправки окончания мойки в мобильное приложение упал. {e.Message}"), Encoding.UTF8, Application.Json);
 
-            await httpClient.PostAsync("api/notify/message-group", data);
+            var response = await httpClient.PostAsync("api/notify/message-group", data);
+
         }
 
         public static async void SendUnstoppedSession(UnstoppedSessionModel unstopped, string baseUrl, string chatID)

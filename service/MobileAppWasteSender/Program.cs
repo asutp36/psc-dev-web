@@ -40,7 +40,7 @@ namespace MobileAppWasteSender
         static async Task Main(string[] args)
         {
             try
-            { 
+            {
                 Config();
 
                 Log.Logger.Information("Settings:");
@@ -134,7 +134,7 @@ namespace MobileAppWasteSender
             catch (Exception e)
             {
                 Log.Logger.Error("Перехвачена общая ошибка. " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                Notification.SendCritical(e, _notifyServiceBaseUrl, _telegramChatID);
+                await Notification.SendCritical(e, _notifyServiceBaseUrl, _telegramChatID);
             }
         }
 
