@@ -799,7 +799,7 @@ namespace MobileIntegration.Controllers
                     return Request.CreateResponse(HttpStatusCode.NotFound);
                 }
 
-                HttpResponse resp = Sender.SendPost("http://" + ip + "записа эндпоинт", JsonConvert.SerializeObject(new StopPostDeviceParameters
+                HttpResponse resp = Sender.SendPost("http://" + ip + "/api/post/loyalty/stop", JsonConvert.SerializeObject(new StopPostDeviceParameters
                 {
                     CardNum = model.card,
                     DeviceCode = deviceCode
@@ -811,13 +811,37 @@ namespace MobileIntegration.Controllers
                     return Request.CreateResponse((HttpStatusCode)424);
                 }
 
-                if (resp.StatusCode == (HttpStatusCode)423)
+                if (resp.StatusCode == (HttpStatusCode)409)
                 {
-                    Logger.Log.Error(String.Format("StartPost: Post {0} is busy", model.post) + Environment.NewLine);
-                    return Request.CreateResponse((HttpStatusCode)423);
+                    Logger.Log.Error($"StopPost: Пост {model.post} ответил, что у него не этот ({model.card}) клиент " + Environment.NewLine);
+                    return Request.CreateResponse((HttpStatusCode)409);
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK);
+                if (resp.StatusCode == (HttpStatusCode)404)
+                {
+                    Logger.Log.Error($"StopPost: На посту {model.post} нет активной мойки" + Environment.NewLine);
+                    return Request.CreateResponse((HttpStatusCode)424);
+                }
+
+                if (resp.StatusCode == (HttpStatusCode)204)
+                {
+                    Logger.Log.Error($"StopPost: Проблема с входными данными для поста {model.post}. Номер карты: {model.card}" + Environment.NewLine);
+                    return Request.CreateResponse((HttpStatusCode)424);
+                }
+
+                if (resp.StatusCode == (HttpStatusCode)500)
+                {
+                    Logger.Log.Error($"StopPost: Исключение на посту {model.post}" + Environment.NewLine);
+                    return Request.CreateResponse((HttpStatusCode)424);
+                }
+
+                int wasteBalance = 0;
+                if(!int.TryParse(resp.ResultMessage, out wasteBalance))
+                {
+                    Logger.Log.Error($"StopPost: не удалось распарсить баланс остановки мойки: {resp.ResultMessage}" + Environment.NewLine);
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, wasteBalance);
             }
             catch(Exception e)
             {
