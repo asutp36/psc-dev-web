@@ -48,7 +48,7 @@ namespace GateWashDataService.Services
             {
                 entrances.Add(new ClientEntrance
                 {
-                    Terminal = "Въездной тест",
+                    Terminal = "Въездной терминал",
                     TerminalCode = "test-entrance",
                     DTime = DateTime.Now.AddHours(-rnd.Next(0, 24)),
                     Card = cards[rnd.Next(0, 3)],
@@ -72,13 +72,13 @@ namespace GateWashDataService.Services
             {
                 exits.Add(new ClientExit
                 {
-                    Terminal = "Выездной тест",
+                    Terminal = "Выездной терминал",
                     TerminalCode = "test-exit",
                     DTime = DateTime.Now.AddHours(-rnd.Next(0, 24)),
                     Card = cards[rnd.Next(0, 3)],
                     Cost = 0,
                     Program = "Постоплата",
-                    PayTerminal = "Платёжный тест",
+                    PayTerminal = "Платёжный терминал",
                     PayTerminalCode = "test-pay",
                     PayType = "наличными"
                 });
