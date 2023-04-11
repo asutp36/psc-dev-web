@@ -256,5 +256,24 @@ namespace MSO.SyncService.Services
                 throw new CustomStatusCodeException("Не удалось вставить robot session", 513);
             }
         }
+
+        public async Task<int> InsertRobotEventIncreaseAsync(RobotEventIncreaseDto robotEventIncreaseDto)
+        {
+            try
+            {
+                if (!(await _deviceService.IsExistsAsync(robotEventIncreaseDto.DeviceCode)))
+                {
+                    throw new CustomStatusCodeException($"Не найден девайс {robotEventIncreaseDto.DeviceCode}", 404);
+                }
+
+                if (!(await _eventKindService.IsExistsAsync(robotEventIncreaseDto.EventKindCode)))
+                {
+                    throw new CustomStatusCodeException($"Не найден тип события {robotEventIncreaseDto.EventKindCode}", 404);
+                }
+
+
+            }
+            catch(Exception e) { }
+        }
     }
 }
