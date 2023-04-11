@@ -50,7 +50,7 @@ namespace GateWashSyncService.Services
                     throw new CustomStatusCodeException($"Сессия с id={model.idSessionOnPost} на девайсе {model.deviceCode} не записана", 404);
                 }
 
-                if(await this.CheckIfExistsAsync(model.idEventOnPost, model.deviceCode))
+                if(await this.CheckIfPayEventExistsAsync(model.idEventOnPost, model.deviceCode))
                 {
                     _logger.LogError($"EventIncreaseService.InsertAsync: уже записано событие id={model.idEventOnPost} на девайсе {model.deviceCode}");
                     throw new CustomStatusCodeException($"Уже записано событие id={model.idEventOnPost} на девайсе {model.deviceCode}", 409);
@@ -85,6 +85,10 @@ namespace GateWashSyncService.Services
 
                 return pe.IdpayEvent;
             }
+            catch(CustomStatusCodeException e)
+            {
+                throw e;
+            }
             catch (Exception e) 
             {
                 _logger.LogError($"EventIncreaseService.InsertAsync: {e.Message}");
@@ -98,12 +102,12 @@ namespace GateWashSyncService.Services
         /// <param name="idEventOnPost">ID события на посту</param>
         /// <param name="deviceCode">Код девайса</param>
         /// <returns>bool</returns>
-        public async Task<bool> CheckIfExistsAsync(int idEventOnPost, string deviceCode)
+        public async Task<bool> CheckIfPayEventExistsAsync(int idEventOnPost, string deviceCode)
         {
             if (idEventOnPost < 0 || string.IsNullOrEmpty(deviceCode))
                 return false;
 
-            return await _context.Event.AnyAsync(o => o.IdeventOnPost == idEventOnPost && o.IddeviceNavigation.Code == deviceCode);
+            return await _context.PayEvent.AnyAsync(o => o.IdeventOnPost == idEventOnPost && o.IddeviceNavigation.Code == deviceCode);
         }
 
         /// <summary>
