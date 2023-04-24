@@ -110,7 +110,7 @@ namespace LeikaIntegration.Controllers
                 }
                 else
                 {
-                    if(model.amount <= 0 || model.amount > 500)
+                    if(model.amount <= 200 || model.amount >= 1000)
                     {
                         _logger.LogError("некорректный баланс: " + model.amount + Environment.NewLine);
                         return BadRequest("Incorrect amount");
