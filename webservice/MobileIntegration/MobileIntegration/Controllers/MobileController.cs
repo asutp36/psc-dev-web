@@ -738,7 +738,7 @@ namespace MobileIntegration.Controllers
 
                 DbCommand command = _model.Database.Connection.CreateCommand();
                 command.CommandText = $"insert into MobileSendings (IDCard, IDPost, DTimeStart, Guid)" +
-                    $"values ((select IDCard from Cards where CardNum = '{start.card}'), " +
+                    $"values ((select min(IDCard) from Cards where CardNum = '{start.card}'), " +
                     $"(select IDPost from Posts where QrCode = '{start.post}'), " +
                     $"'{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}', '{g.ToString().ToUpper()}'); " +
                     $"select scope_identity()";
@@ -780,15 +780,21 @@ namespace MobileIntegration.Controllers
                 if (string.IsNullOrEmpty(model.card))
                 {
                     Logger.Log.Error($"StopPost: номер карты пустой");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                    return Request.CreateResponse((HttpStatusCode)204);
                 }
 
-                var card = _model.Cards.Where(c => c.CardNum == model.card).FirstOrDefault();
-                if (card == null)
+                if (string.IsNullOrEmpty(model.post))
                 {
-                    Logger.Log.Error($"StopPost: не найдена карта {model.card}");
-                    return Request.CreateResponse(HttpStatusCode.Forbidden);
+                    Logger.Log.Error($"StopPost: код поста пустой");
+                    return Request.CreateResponse((HttpStatusCode)204);
                 }
+
+                //var card = _model.Cards.Where(c => c.CardNum == model.card).FirstOrDefault();
+                //if (card == null)
+                //{
+                //    Logger.Log.Error($"StopPost: не найдена карта {model.card}");
+                //    return Request.CreateResponse(HttpStatusCode.Forbidden);
+                //}
 
                 string ip = GetPostIp(model.post);
                 string deviceCode = _model.Posts.Where(p => p.QRCode == model.post).Select(p => p.Device.Code).FirstOrDefault();
@@ -820,13 +826,13 @@ namespace MobileIntegration.Controllers
                 if (resp.StatusCode == (HttpStatusCode)404)
                 {
                     Logger.Log.Error($"StopPost: На посту {model.post} нет активной мойки" + Environment.NewLine);
-                    return Request.CreateResponse((HttpStatusCode)424);
+                    return Request.CreateResponse((HttpStatusCode)409);
                 }
 
                 if (resp.StatusCode == (HttpStatusCode)204)
                 {
                     Logger.Log.Error($"StopPost: Проблема с входными данными для поста {model.post}. Номер карты: {model.card}" + Environment.NewLine);
-                    return Request.CreateResponse((HttpStatusCode)424);
+                    return Request.CreateResponse((HttpStatusCode)204);
                 }
 
                 if (resp.StatusCode == (HttpStatusCode)500)
@@ -841,7 +847,7 @@ namespace MobileIntegration.Controllers
                     Logger.Log.Error($"StopPost: не удалось распарсить баланс остановки мойки: {resp.ResultMessage}" + Environment.NewLine);
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, wasteBalance);
+                return Request.CreateResponse(HttpStatusCode.OK, new { waste = wasteBalance });
             }
             catch(Exception e)
             {
@@ -943,6 +949,16 @@ namespace MobileIntegration.Controllers
 
         private int UpdateMobileSendings(StopPostBindingModel stop)
         {
+            string sqlDetails;
+            if (string.IsNullOrEmpty(stop.details))
+            {
+                sqlDetails = "details = NULL";
+            }
+            else
+            {
+                sqlDetails = $"details = '{stop.details}'";
+            }
+
             _model.Database.Connection.Open();
 
             DbCommand command = _model.Database.Connection.CreateCommand();
@@ -951,7 +967,7 @@ namespace MobileIntegration.Controllers
             try
             {
                 command.CommandText = $"update MobileSendings " +
-                    $"set DTimeEnd = '{stop.time_send:yyyy-MM-dd HH:mm:ss.fff}', amount = {stop.balance} " +
+                    $"set DTimeEnd = '{stop.time_send:yyyy-MM-dd HH:mm:ss.fff}', amount = {stop.balance}, {sqlDetails} " +
                     $"where IDMobileSending in " +
                     $"(select top 1 IDMobileSending " +
                     $"from MobileSendings ms " +

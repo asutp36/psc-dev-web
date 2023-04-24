@@ -11,5 +11,6 @@ namespace MobileIntegration.Controllers.Supplies
         public string card { get; set; }
         public string post { get; set; }
         public double balance { get; set; }
+        public string details { get; set; }
     }
 }
