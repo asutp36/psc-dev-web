@@ -13,9 +13,9 @@ namespace GateWashDataService.Models
         public string Program { get; set; }
         public int Bank { get; set; }
         public int Cash { get; set; }
-        public double Revenue { get;  set; }
-        public double Amount { get { return this.Revenue - this.Payout; } set { } }
-        public int Payout { get; set; }
+        public double Revenue { get;  set; } // получено
+        public double Amount { get { return this.Revenue - this.Payout; } set { } } // внесено
+        public int Payout { get; set; } // сдача
         public bool Cheque { get; set; }
         public string Note { get; set; }
         public string Type { get; set; }
