@@ -437,6 +437,15 @@ namespace SynchronizationService.Controllers
 
         private int UpdateMobileSendings(EIncreaseFromRequest increase)
         {
+            string sqlDetails;
+            if (string.IsNullOrEmpty(increase.Details))
+            {
+                sqlDetails = "details = NULL";
+            }
+            else
+            {
+                sqlDetails = $"details = '{increase.Details}'";
+            }
             _model.Database.Connection.Open();
 
             DbCommand command = _model.Database.Connection.CreateCommand();
@@ -445,7 +454,7 @@ namespace SynchronizationService.Controllers
             try
             {
                 command.CommandText = $"update MobileSendings " +
-                    $"set DTimeEnd = '{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}', amount = {increase.Amount} " +
+                    $"set DTimeEnd = '{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}', amount = {increase.Amount}, {sqlDetails} " +
                     $"where IDMobileSending in " +
                     $"(select top 1 IDMobileSending " +
                     $"from MobileSendings ms " +
