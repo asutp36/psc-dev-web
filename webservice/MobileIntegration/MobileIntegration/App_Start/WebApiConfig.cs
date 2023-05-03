@@ -1,6 +1,9 @@
-﻿using System;
+﻿//using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Web.Http;
 
 namespace MobileIntegration
@@ -10,6 +13,8 @@ namespace MobileIntegration
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            //config.Services.Add(typeof(MemoryCache), new MemoryCache("main cache"));
+            //config.Services. (ServiceDescriptor.Singleton(typeof(MemoryCache), new MemoryCache("main cache")));
 
             // Web API routes
             config.MapHttpAttributeRoutes();

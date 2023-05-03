@@ -13,12 +13,21 @@ using Microsoft.Ajax.Utilities;
 using log4net.Repository;
 using System.Web.WebPages;
 using System.Data.Entity.Core;
+//using Microsoft.Extensions.Caching.Memory;
+using System.Runtime.Caching;
+using System.Threading;
 
 namespace MobileIntegration.Controllers
 {
     public class MobileController : ApiController
     {
         private ModelDb _model = new ModelDb();
+        private readonly CacheSingleton _cacheSingleton;
+
+        public MobileController()
+        {
+            _cacheSingleton = CacheSingleton.GetCache();
+        }
 
         /// <summary>
         /// Пополнить баланс карты (хэш не проверяется)
@@ -507,6 +516,11 @@ namespace MobileIntegration.Controllers
                                 {
                                     Logger.Log.Error("StartPost: Post not found" + Environment.NewLine);
                                     return Request.CreateResponse(HttpStatusCode.NotFound);
+                                }
+
+                                if(!_cacheSingleton.AddItem(card.CardNum, model.post))
+                                {
+                                    Logger.Log.Info($"StartPost: в кэше уже есть запуск поста {model.post} с номером {card.CardNum}");
                                 }
 
                                 Logger.Log.Debug("StartPost: запуск настоящего поста");
