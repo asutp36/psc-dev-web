@@ -885,10 +885,15 @@ namespace MobileIntegration.Controllers
 
             Logger.Log.Debug($"StopPost: отправка списания по карте {model.card}");
 
+            int responseStatusCode = 200;
+
             try
             {
                 var res = UpdateMobileSendings(model);
                 Logger.Log.Debug($"Обновлены {res} записи MobileSendings");
+
+                if (res == 0)
+                    responseStatusCode = 513;
             }
             catch (Exception e)
             {
@@ -958,6 +963,12 @@ namespace MobileIntegration.Controllers
                     Logger.Log.Error("StopPostDev: ошибка при записи операции в базу.\n" + e.Message + Environment.NewLine + e.StackTrace);
                 }
 
+            if(responseStatusCode == 513)
+            {
+                Logger.Log.Info("StopPost: не обновлено ни одной записи MobileSending, поэтому возвращаею 513 (ошибка с бд)");
+                return Request.CreateResponse((HttpStatusCode)responseStatusCode, "Ни одной записи MobileSending не обновлено");
+            }
+
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
@@ -985,7 +996,7 @@ namespace MobileIntegration.Controllers
                     $"where IDMobileSending in " +
                     $"(select top 1 IDMobileSending " +
                     $"from MobileSendings ms " +
-                    $"where IDCard = (select IDCard from Cards where CardNum = '{stop.card}') " +
+                    $"where IDCard = (select min(IDCard) from Cards where CardNum = '{stop.card}') " +
                     $"and IDPost = (select p.IDpost from Posts p join Device d on d.IDDevice = p.IDDevice where d.Code = '{stop.post}') " +
                     $"and ms.DTimeEnd is null " +
                     $"order by ms.DTimeStart desc); ";
@@ -998,7 +1009,7 @@ namespace MobileIntegration.Controllers
                         $"where IDMobileSending in " +
                         $"(select IDMobileSending " +
                         $"from MobileSendings ms " +
-                        $"where IDCard = (select IDCard from Cards where CardNum = '{stop.card}') " +
+                        $"where IDCard = (select min(IDCard) from Cards where CardNum = '{stop.card}') " +
                         $"and IDPost = (select p.IDpost from Posts p join Device d on d.IDDevice = p.IDDevice where d.Code = '{stop.post}') " +
                         $"and ms.DTimeEnd is null) ";
 
