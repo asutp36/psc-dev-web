@@ -25,6 +25,7 @@ namespace GateWashDataService.Controllers
         [HttpGet("wash")]
         public async Task<IActionResult> GetWashes()
         {
+            var userWashCodes = User.Claims.Where(o => o.Type == "GateWash").Select(o => o.Value).ToList();
             var result = await _techDashboardService.GetWashesWithTerminalsActions(User.Claims.Where(o => o.Type == "GateWash").Select(o => o.Value));
             return Ok(result);
         }
@@ -39,7 +40,12 @@ namespace GateWashDataService.Controllers
         [HttpGet("region")]
         public async Task<IActionResult> GetRegions()
         {
+            var userWashCodes = User.Claims.Where(o => o.Type == "GateWash").Select(o => o.Value).ToList();
             var result = await _techDashboardService.GetRegionsWithWashesTerminalAction(User.Claims.Where(o => o.Type == "GateWash").Select(o => o.Value));
+            foreach (var region in result)
+            {
+                region.Washes = region.Washes.Where(t => userWashCodes.Contains(t.Code));
+            }
             return Ok(result);
         }
 
