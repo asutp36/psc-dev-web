@@ -10,7 +10,7 @@ namespace BotNotificationService.Models
 {
     public class Chat
     {
-        public int id { get; set; }
+        public long id { get; set; }
         public string title { get; set; }
         //{ get 
         //    {
