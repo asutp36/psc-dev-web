@@ -267,31 +267,40 @@ namespace SynchronizationService.Controllers
 
                     if (_model.Database.Exists())
                     {
-                        _model.Database.Connection.Open();
-                        Logger.Log.Debug("PostEventIncrease: Соединение с БД: " + _model.Database.Connection.State);
-
-                        DbCommand command = _model.Database.Connection.CreateCommand();
-                        command.CommandText = "BEGIN TRANSACTION; " +
-                            "INSERT INTO Event (IDPost, IDEventKind, DTime, IDEventPost) " +
-                            $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{increase.Device}\')), " +
-                            $"(select ek.IDEventKind from EventKind ek where ek.Code = \'{increase.Kind}\'), \'{increase.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\', {increase.IDEventPost}); " +
-                            "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, balance) " +
-                            $"VALUES ((SELECT SCOPE_IDENTITY()), {increase.Amount}, {increase.m10}, {increase.b10}, {increase.b50}, {increase.b100},{increase.b200}, " +
-                            $"{increase.Balance}); " +
-                            "SELECT IDENT_CURRENT(\'Event\')" +
-                            "COMMIT;";
-
-                        Logger.Log.Debug("Command is: " + command.CommandText);
-
-                        var id = command.ExecuteScalar();
-                        _model.Database.Connection.Close();
-
-                        Int32 serverID = Convert.ToInt32(id.ToString());
-
-                        Logger.Log.Debug("PostEventIncrease: Event добавлен. IDEvent: " + serverID.ToString() + Environment.NewLine);
-
                         var response = Request.CreateResponse(HttpStatusCode.OK);
-                        response.Headers.Add("ServerID", serverID.ToString());
+
+                        if (increase.Amount > 0)
+                        {
+                            _model.Database.Connection.Open();
+                            Logger.Log.Debug("PostEventIncrease: Соединение с БД: " + _model.Database.Connection.State);
+
+                            DbCommand command = _model.Database.Connection.CreateCommand();
+                            command.CommandText = "BEGIN TRANSACTION; " +
+                                "INSERT INTO Event (IDPost, IDEventKind, DTime, IDEventPost) " +
+                                $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{increase.Device}\')), " +
+                                $"(select ek.IDEventKind from EventKind ek where ek.Code = \'{increase.Kind}\'), \'{increase.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\', {increase.IDEventPost}); " +
+                                "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, balance) " +
+                                $"VALUES ((SELECT SCOPE_IDENTITY()), {increase.Amount}, {increase.m10}, {increase.b10}, {increase.b50}, {increase.b100},{increase.b200}, " +
+                                $"{increase.Balance}); " +
+                                "SELECT IDENT_CURRENT(\'Event\')" +
+                                "COMMIT;";
+
+                            Logger.Log.Debug("Command is: " + command.CommandText);
+
+                            var id = command.ExecuteScalar();
+                            _model.Database.Connection.Close();
+
+                            Int32 serverID = Convert.ToInt32(id.ToString());
+
+                            Logger.Log.Debug("PostEventIncrease: Event добавлен. IDEvent: " + serverID.ToString() + Environment.NewLine);
+
+                            response.Headers.Add("ServerID", serverID.ToString());
+                        }
+                        else
+                        {
+                            Logger.Log.Debug($"PostEventIncrease: amount <= 0, поэтому event не создаётся");
+                            response.Headers.Add("ServerID", "3");
+                        }
 
                         if(increase.Kind == "cardincrease" && increase.CardNum != null)
                         {
@@ -364,34 +373,43 @@ namespace SynchronizationService.Controllers
 
                     if (_model.Database.Exists())
                     {
-                        _model.Database.Connection.Open();
-                        Logger.Log.Debug("PostEventIncrease: Соединение с БД: " + _model.Database.Connection.State);
+                        var response = Request.CreateResponse(HttpStatusCode.OK);
 
-                        DbCommand command = _model.Database.Connection.CreateCommand();
-                        
-                        command.CommandText = "BEGIN TRANSACTION; " +
-                            "INSERT INTO Event (IDPost, IDEventKind, DTime, IDEventPost) " +
-                            $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{increase.Device}\')), " +
-                            $"(select ek.IDEventKind from EventKind ek where ek.Code = \'{increase.Kind}\'), \'{increase.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\', {increase.IDEventPost}); " +
-                            "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, balance, IDPostSession) " +
-                            $"VALUES ((SELECT SCOPE_IDENTITY()), {increase.Amount}, {increase.m10}, {increase.b10}, {increase.b50}, {increase.b100},{increase.b200}, " +
-                            $@"{increase.Balance}, (select ps.IDPostSession
+                        if (increase.Amount > 0)
+                        {
+                            _model.Database.Connection.Open();
+                            Logger.Log.Debug("PostEventIncrease: Соединение с БД: " + _model.Database.Connection.State);
+
+                            DbCommand command = _model.Database.Connection.CreateCommand();
+
+                            command.CommandText = "BEGIN TRANSACTION; " +
+                                "INSERT INTO Event (IDPost, IDEventKind, DTime, IDEventPost) " +
+                                $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{increase.Device}\')), " +
+                                $"(select ek.IDEventKind from EventKind ek where ek.Code = \'{increase.Kind}\'), \'{increase.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\', {increase.IDEventPost}); " +
+                                "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, balance, IDPostSession) " +
+                                $"VALUES ((SELECT SCOPE_IDENTITY()), {increase.Amount}, {increase.m10}, {increase.b10}, {increase.b50}, {increase.b100},{increase.b200}, " +
+                                $@"{increase.Balance}, (select ps.IDPostSession
                                         from PostSession ps
                                         where ps.IDSessionOnPost = {increase.IDPostSession}
                                         and ps.IDPost = (select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = '{increase.Device}')))); " +
-                            "SELECT IDENT_CURRENT(\'Event\')" +
-                            "COMMIT;";
-                        Logger.Log.Debug("Command is: " + command.CommandText);
+                                "SELECT IDENT_CURRENT(\'Event\')" +
+                                "COMMIT;";
+                            Logger.Log.Debug("Command is: " + command.CommandText);
 
-                        var id = command.ExecuteScalar();
-                        _model.Database.Connection.Close();
+                            var id = command.ExecuteScalar();
+                            _model.Database.Connection.Close();
 
-                        Int32 serverID = Convert.ToInt32(id.ToString());
+                            Int32 serverID = Convert.ToInt32(id.ToString());
 
-                        Logger.Log.Debug("PostEventIncrease: Event добавлен. IDEvent: " + serverID.ToString() + Environment.NewLine);
+                            Logger.Log.Debug("PostEventIncrease: Event добавлен. IDEvent: " + serverID.ToString() + Environment.NewLine);
 
-                        var response = Request.CreateResponse(HttpStatusCode.OK);
-                        response.Headers.Add("ServerID", serverID.ToString());
+                            response.Headers.Add("ServerID", serverID.ToString());
+                        }
+                        else
+                        {
+                            Logger.Log.Debug($"PostEventIncrease: amount <= 0, поэтому event не создаётся");
+                            response.Headers.Add("ServerID", "3");
+                        }
 
                         if (increase.Kind == "cardincrease" && increase.CardNum != null)
                         {
