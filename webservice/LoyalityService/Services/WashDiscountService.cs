@@ -93,7 +93,7 @@ namespace LoyalityService.Services
             if (discount.Ruble < 100 && discount.Percent == 0 && CheckIfTaxi(phone))
             {
                 _logger.LogInformation($"Клиент {phone} получил скидку как таксист");
-                discount.Ruble = 100;
+                discount.Ruble = 150;
                 discount.Percent = 0;
                 discount.Programs = "program1, program2, program3, program4";
                 discount.Description = "Скидка таксистам";
