@@ -524,7 +524,7 @@ namespace MobileIntegration.Controllers
                                 }
 
                                 Logger.Log.Debug("StartPost: запуск настоящего поста");
-
+                                // datetim = now 
                                 HttpResponse resp = Sender.SendPost("http://" + ip + "/api/post/balance/increase/card", JsonConvert.SerializeObject(new StartPostDevModel
                                 {
                                     Amount = amount,
@@ -546,11 +546,11 @@ namespace MobileIntegration.Controllers
 
                                 try
                                 {
-                                    int updateResult = UpdateDTimeStartMoobileSendings(model);
+                                    int updateResult = UpdateDTimeStartMoobileSendings(model); // pass datetime
 
                                     if (updateResult == 0)
                                     {
-                                        int insertResult = InsertToMobileSendings(model);
+                                        int insertResult = InsertToMobileSendings(model); // pass datetime
                                         Logger.Log.Debug("Добавлена запись в MobileSendings: " + insertResult.ToString());
                                     }
                                     else
@@ -707,6 +707,18 @@ namespace MobileIntegration.Controllers
             }
 
             return Request.CreateResponse(HttpStatusCode.NoContent);
+        }
+
+        [HttpPost]
+        [ActionName("test")]
+        public HttpResponseMessage Test()
+        {
+            try
+            {
+                Sender.Send("http://123.123.123.123/qwertyy", "");
+            }
+            catch(Exception e) { }
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         private int UpdateDTimeStartMoobileSendings(StartPostBindingModel start)
