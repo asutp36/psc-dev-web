@@ -66,14 +66,17 @@ namespace MobileAppWasteSender
                         curDate = DateTime.Now.Date;
                     }
 
+                    Log.Logger.Debug($"Начало загрузки моек для отправки");
                     _context = new WashCompanyContext();
                     List<MobileSending> mobileSendings = GetUnsentWastes();
                     if (mobileSendings.Count > 0)
                     {
+                        Log.Logger.Debug("Количество записей для отправки - " + mobileSendings.Count);
                         foreach (MobileSending ms in mobileSendings)
                         {
                             try
                             {
+                                Log.Logger.Debug($"Начало отправки записи {ms.IdmobileSending}");
                                 using var response = await SendWaste(ms);
                                 if(response != null)
                                 {
@@ -97,6 +100,7 @@ namespace MobileAppWasteSender
 
                             try
                             {
+                                Log.Logger.Debug($"Начало обновления записи {ms.IdmobileSending}");
                                 await UpdateWaste(ms);
                                 Log.Logger.Debug("Обновлена запись id=" + ms.IdmobileSending + Environment.NewLine);
                             }
@@ -167,6 +171,7 @@ namespace MobileAppWasteSender
 
         private static List<MobileSending> GetUnsentWastes()
         {
+            //return _context.MobileSendings.Where(s => s.StatusCode == null && s.DtimeEnd != null && s.Amount != null).ToList();
             return _context.MobileSendings.Where(s => (HttpStatusCode)s.StatusCode != HttpStatusCode.OK && s.DtimeEnd != null && s.Amount != null).ToList();
         }
 
