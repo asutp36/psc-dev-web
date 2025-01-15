@@ -329,3 +329,5 @@ ASALocalRun/
 *.ldf
 *.zip
 /webservice/SynchronizationService/SynchronizationService/Logs
+
+.vs/
