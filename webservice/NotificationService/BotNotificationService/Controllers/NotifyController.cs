@@ -47,6 +47,11 @@ namespace BotNotificationService.Controllers
                 SendMessage(new SendMessageWhattsAppModel { chatId = update.message.chat.id.ToString(), body = $"chat_id={update.message.chat.id}" });
             }
 
+            if(update.message != null && update.message.reply_to_message != null)
+            {
+                _logger.LogInformation($"Ответ на сообщение {update.message.reply_to_message.text}: {update.message.text}");
+            }
+
             return Ok();
         }
 
