@@ -49,8 +49,6 @@ namespace MobileIntegration.Controllers.Supplies
 
             try
             {
-
-
                 Stream requestStream = request.GetRequestStream();
 
                 requestStream.Write(postBytes, 0, postBytes.Length);
@@ -92,18 +90,81 @@ namespace MobileIntegration.Controllers.Supplies
             }
             catch (WebException ex)
             {
-                HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
+                //HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
 
-                string result;
-                using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))
-                {
-                    result = rdr.ReadToEnd();
-                }
+                //string result;
+                //using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))
+                //{
+                //    result = rdr.ReadToEnd();
+                //}
 
                 return new HttpResponse
                 {
-                    StatusCode = webResponse.StatusCode,
-                    ResultMessage = result
+                    StatusCode = (HttpStatusCode)0,
+                    ResultMessage = "Connection failed"
+                };
+            }
+        }
+
+        public static HttpResponse SendGet(string addres, bool auth = false)
+        {
+            #region адреса различные
+            // тест
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ptsv2.com/t/rq63q-1572107969/post");
+
+            // первый сервис
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://api.myeco24.ru/transactions/post/cash");
+
+            // второй сервис
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://eco.voodoolab.io/api/externaldb/user-create"); //new card
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://eco.voodoolab.io/api/externaldb/set-waste"); //списание
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://eco.voodoolab.io/api/externaldb/set-replenish"); //пополнение
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://eco.voodoolab.io/api/externaldb/user-balance"); //узнать баланс
+            #endregion 
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(addres);
+            request.Method = "GET";
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    return new HttpResponse
+                    {
+                        StatusCode = response.StatusCode,
+                        ResultMessage = response.ToString()
+                    };
+                }
+                else
+                {
+                    string result;
+                    using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+                    {
+                        result = rdr.ReadToEnd();
+                    }
+
+                    return new HttpResponse
+                    {
+                        StatusCode = response.StatusCode,
+                        ResultMessage = result
+                    };
+                }
+            }
+            catch (WebException ex)
+            {
+                //HttpWebResponse webResponse = (HttpWebResponse)ex.Response;
+
+                //string result;
+                //using (StreamReader rdr = new StreamReader(webResponse.GetResponseStream()))
+                //{
+                //    result = rdr.ReadToEnd();
+                //}
+
+                return new HttpResponse
+                {
+                    StatusCode = (HttpStatusCode)0,
+                    ResultMessage = "Connection failed"
                 };
             }
         }
