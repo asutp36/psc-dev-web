@@ -475,6 +475,7 @@ namespace MobileIntegration.Controllers
 
                 try
                 {
+                    //if(true)
                     if (CryptHash.CheckHashCode(model.hash, model.time_send.ToString("yyyy-MM-dd HH:mm:ss")))
                     {
                         var card = _model.Cards.Where(c => c.CardNum == model.card).FirstOrDefault();
@@ -495,7 +496,7 @@ namespace MobileIntegration.Controllers
                                 Logger.Log.Info("StartPost: карта успешно добавлена" + Environment.NewLine);
                                 card = _model.Cards.Where(c => c.CardNum == model.card).FirstOrDefault();
                             }
-                            else 
+                            else
                             {
                                 Logger.Log.Info("StartPost: не удалось добавить карту" + Environment.NewLine);
                                 return Request.CreateResponse(HttpStatusCode.Unauthorized);
@@ -518,40 +519,27 @@ namespace MobileIntegration.Controllers
                                     return Request.CreateResponse(HttpStatusCode.NotFound);
                                 }
 
-                                if(!_cacheSingleton.AddItem(card.CardNum, model.post))
+                                if (!_cacheSingleton.AddItem(card.CardNum, model.post))
                                 {
                                     Logger.Log.Info($"StartPost: в кэше уже есть запуск поста {model.post} с номером {card.CardNum}");
                                 }
 
-                                Logger.Log.Debug("StartPost: запуск настоящего поста");
-                                // datetim = now 
-                                HttpResponse resp = Sender.SendPost("http://" + ip + "/api/post/balance/increase/card", JsonConvert.SerializeObject(new StartPostDevModel
-                                {
-                                    Amount = amount,
-                                    Dtime = model.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
-                                    CardNum = model.card
-                                }));
+                                HttpResponse resp1 = Sender.SendGet("http://" + ip + $"/api/post/state?ClientId={model.card}");
 
-                                if (resp.StatusCode == 0)
+                                if (resp1.StatusCode != HttpStatusCode.OK)
                                 {
-                                    Logger.Log.Error("StartPost: Не удалось подключиться" + Environment.NewLine);
-                                    return Request.CreateResponse((HttpStatusCode)424);
-                                }
-
-                                if (resp.StatusCode == (HttpStatusCode)423)
-                                {
-                                    Logger.Log.Error(String.Format("StartPost: Post {0} is busy", model.post) + Environment.NewLine);
                                     return Request.CreateResponse((HttpStatusCode)423);
                                 }
 
+                                int updateResult = 0;
                                 try
                                 {
-                                    int updateResult = UpdateDTimeStartMoobileSendings(model); // pass datetime
+                                    updateResult = UpdateDTimeStartMoobileSendings(model); // pass datetime
 
                                     if (updateResult == 0)
                                     {
-                                        int insertResult = InsertToMobileSendings(model); // pass datetime
-                                        Logger.Log.Debug("Добавлена запись в MobileSendings: " + insertResult.ToString());
+                                        updateResult = InsertToMobileSendings(model); // pass datetime
+                                        Logger.Log.Debug("Добавлена запись в MobileSendings: " + updateResult.ToString());
                                     }
                                     else
                                     {
@@ -563,8 +551,63 @@ namespace MobileIntegration.Controllers
                                     Logger.Log.Error("Ошибка при записи в журнал отправок в приложение: " + e.Message);
                                 }
 
-                                Logger.Log.Debug("Результат: " + resp.StatusCode);
-                                return Request.CreateResponse(resp.StatusCode);
+                                if (updateResult > 0)
+                                {
+                                    Logger.Log.Debug("StartPost: запуск настоящего поста");
+                                    // datetim = now 
+                                    HttpResponse resp = Sender.SendPost("http://" + ip + "/api/post/balance/increase/card", JsonConvert.SerializeObject(new StartPostDevModel
+                                    {
+                                        Amount = amount,
+                                        Dtime = model.time_send.ToString("yyyy-MM-dd HH:mm:ss"),
+                                        CardNum = model.card
+                                    }));
+
+                                    HttpStatusCode responseStatusCode = resp.StatusCode;
+
+                                    if (resp.StatusCode == 0)
+                                    {
+                                        Logger.Log.Error("StartPost: Не удалось подключиться" + Environment.NewLine);
+                                        //return Request.CreateResponse((HttpStatusCode)424);
+                                        responseStatusCode = (HttpStatusCode)424;
+                                    }
+
+                                    if (resp.StatusCode == (HttpStatusCode)423)
+                                    {
+                                        Logger.Log.Error(String.Format("StartPost: Post {0} is busy", model.post) + Environment.NewLine);
+                                        //return Request.CreateResponse((HttpStatusCode)423);
+                                        responseStatusCode = (HttpStatusCode)423;
+                                    }
+
+                                    Logger.Log.Debug("Результат: " + resp.StatusCode);
+                                    //return Request.CreateResponse(resp.StatusCode);
+
+                                    if (responseStatusCode != HttpStatusCode.OK)
+                                    {
+                                        // stop mobile sending
+                                        updateResult = UpdateMobileSendings(model.time_send, model.card, "", model.post, 0, "");
+
+                                        if (updateResult == 0)
+                                        {
+                                            Logger.Log.Error($"Неудачная попытка завершить мойку в базе - {model}" + Environment.NewLine);
+                                        }
+                                        else
+                                        {
+                                            Logger.Log.Error($"Автоматическое заврешение мойки в базе из-за неудачного запуска на посту - {model}" + Environment.NewLine);
+                                        }
+
+                                        return Request.CreateResponse(responseStatusCode);
+                                    }
+                                    else
+                                    {
+                                        return Request.CreateResponse(responseStatusCode);
+                                    }
+                                }
+                                else
+                                {
+                                    Logger.Log.Error($"StartPost: не удалось записать в базу начало мойки - {model}" + Environment.NewLine);
+                                    return Request.CreateResponse(HttpStatusCode.ServiceUnavailable);
+                                }
+
                             }
 
                             Logger.Log.Error("StartPost: Balance is weak" + Environment.NewLine);
@@ -730,7 +773,7 @@ namespace MobileIntegration.Controllers
                 DbCommand command = _model.Database.Connection.CreateCommand();
                 command.CommandText = $@"update MobileSendings 
                 set IDPost = (select IDPost from Posts where QRCode = '{start.post}'), DTimeStart = '{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}' 
-                where IDCard = (select IDCard from Cards where CardNum = '22') 
+                where IDCard = (select IDCard from Cards where CardNum = '{start.card}') 
                 and DTimeEnd is null";
 
                 var result = command.ExecuteScalar();
@@ -1027,8 +1070,67 @@ namespace MobileIntegration.Controllers
 
                     //var result = command.ExecuteScalar();
                     res += command.ExecuteNonQuery();
+                    tran.Commit();   
+                }
+
+                return res;
+            }
+            catch (Exception e)
+            {
+                Logger.Log.Error("UpdateMobileSendings: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                tran.Rollback();
+                return 0;
+            }
+            finally
+            {
+                _model.Database.Connection.Close();
+            }
+        }
+
+        private int UpdateMobileSendings(DateTime time_send, string card, string post_code, string post_qrCode, double balance, string details)
+        {
+            string sqlDetails;
+            if (string.IsNullOrEmpty(details))
+            {
+                sqlDetails = "details = NULL";
+            }
+            else
+            {
+                sqlDetails = $"details = '{details}'";
+            }
+
+            _model.Database.Connection.Open();
+
+            DbCommand command = _model.Database.Connection.CreateCommand();
+            DbTransaction tran = _model.Database.Connection.BeginTransaction();
+            command.Transaction = tran;
+            try
+            {
+                command.CommandText = $"update MobileSendings " +
+                    $"set DTimeEnd = '{time_send:yyyy-MM-dd HH:mm:ss.fff}', amount = {balance}, {sqlDetails} " +
+                    $"where IDMobileSending in " +
+                    $"(select top 1 IDMobileSending " +
+                    $"from MobileSendings ms " +
+                    $"where IDCard = (select min(IDCard) from Cards where CardNum = '{card}') " +
+                    $"and IDPost = (select p.IDpost from Posts p join Device d on d.IDDevice = p.IDDevice where p.QRCode = '{post_qrCode}') " +
+                    $"and ms.DTimeEnd is null " +
+                    $"order by ms.DTimeStart desc); ";
+
+                var res = command.ExecuteNonQuery();
+                if (res > 0)
+                {
+                    command.CommandText = $"update MobileSendings " +
+                        $"set DTimeEnd = '{time_send:yyyy-MM-dd HH:mm:ss.fff}', amount = 0 " +
+                        $"where IDMobileSending in " +
+                        $"(select IDMobileSending " +
+                        $"from MobileSendings ms " +
+                        $"where IDCard = (select min(IDCard) from Cards where CardNum = '{card}') " +
+                        $"and IDPost = (select p.IDpost from Posts p join Device d on d.IDDevice = p.IDDevice where p.QRCode = '{post_qrCode}') " +
+                        $"and ms.DTimeEnd is null) ";
+
+                    //var result = command.ExecuteScalar();
+                    res += command.ExecuteNonQuery();
                     tran.Commit();
-                    
                 }
 
                 return res;
