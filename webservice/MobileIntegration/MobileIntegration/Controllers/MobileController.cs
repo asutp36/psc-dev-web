@@ -931,7 +931,7 @@ namespace MobileIntegration.Controllers
         {
             Logger.InitLogger();
 
-            Logger.Log.Debug($"StopPost: Пост {model.post} отправляет списание по карте {model.card} на сумму {model.balance}");
+            Logger.Log.Debug($"StopPost.Post: Пост {model.post} отправляет списание по карте {model.card} на сумму {model.balance}");
 
             int responseStatusCode = 200;
 
@@ -944,7 +944,7 @@ namespace MobileIntegration.Controllers
             }
             catch (Exception e)
             {
-                Logger.Log.Error("Ошибка при записи времени конца и суммы в журнал отправок приложения: " + e.Message);
+                Logger.Log.Error("StopPost.Post: Исключение при записи времени конца и суммы в журнал отправок приложения: " + e.Message);
                 return Request.CreateResponse((HttpStatusCode)513, "Ошибка при записи в базу");
             }
 
@@ -1012,7 +1012,7 @@ namespace MobileIntegration.Controllers
 
             if(responseStatusCode == 513)
             {
-                Logger.Log.Info("StopPost: не обновлено ни одной записи MobileSending, поэтому возвращаю 513 (ошибка с бд)");
+                Logger.Log.Info("StopPost.Post: не обновлено ни одной записи MobileSending, поэтому возвращаю 513 (ошибка с бд)");
                 return Request.CreateResponse((HttpStatusCode)responseStatusCode, "Ни одной записи MobileSending не обновлено");
             }
 
@@ -1069,7 +1069,7 @@ namespace MobileIntegration.Controllers
             }
             catch (Exception e)
             {
-                Logger.Log.Error("UpdateMobileSendings: " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
+                Logger.Log.Error("UpdateMobileSendings: Exception - " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
                 tran.Rollback();
                 return 0;
             }
