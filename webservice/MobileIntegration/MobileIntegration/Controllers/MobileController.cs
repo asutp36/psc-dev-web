@@ -830,24 +830,24 @@ namespace MobileIntegration.Controllers
         {
             Logger.InitLogger();
 
-            Logger.Log.Debug($"StopPost: остановка поста");
+            Logger.Log.Debug($"StopPost.App: остановка поста {model.post} клиентом {model.card} из приложения");
             try
             {
                 if(!CryptHash.CheckHashCode(model.hash, model.time_send.ToString("yyyy-MM-dd HH:mm:ss")))
                 {
-                    Logger.Log.Error($"StopPost: Хэш не прошёл проверку ({model.hash}, {model.time_send.ToString("yyyy-MM-dd HH:mm:ss")})");
+                    Logger.Log.Error($"StopPost.App: Хэш не прошёл проверку ({model.hash}, {model.time_send.ToString("yyyy-MM-dd HH:mm:ss")})");
                     return Request.CreateResponse(HttpStatusCode.Unauthorized);
                 }
 
                 if (string.IsNullOrEmpty(model.card))
                 {
-                    Logger.Log.Error($"StopPost: номер карты пустой");
+                    Logger.Log.Error($"StopPost.App: номер карты пустой");
                     return Request.CreateResponse((HttpStatusCode)204);
                 }
 
                 if (string.IsNullOrEmpty(model.post))
                 {
-                    Logger.Log.Error($"StopPost: код поста пустой");
+                    Logger.Log.Error($"StopPost.App: код поста пустой");
                     return Request.CreateResponse((HttpStatusCode)204);
                 }
 
@@ -863,7 +863,7 @@ namespace MobileIntegration.Controllers
 
                 if (string.IsNullOrEmpty(ip))
                 {
-                    Logger.Log.Error($"StopPost: не найден ip поста {model.post}");
+                    Logger.Log.Error($"StopPost.App: не найден ip поста {model.post}");
                     return Request.CreateResponse(HttpStatusCode.NotFound);
                 }
 
@@ -875,38 +875,38 @@ namespace MobileIntegration.Controllers
 
                 if (resp.StatusCode == 0)
                 {
-                    Logger.Log.Error("StartPost: Не удалось подключиться" + Environment.NewLine);
+                    Logger.Log.Error($"StartPost.App: Не удалось подключиться к посту {model.post} ({ip})");
                     return Request.CreateResponse((HttpStatusCode)424);
                 }
 
                 if (resp.StatusCode == (HttpStatusCode)409)
                 {
-                    Logger.Log.Error($"StopPost: Пост {model.post} ответил, что у него не этот ({model.card}) клиент " + Environment.NewLine);
+                    Logger.Log.Error($"StopPost.App: Пост {model.post} ответил, что у него не этот ({model.card}) клиент");
                     return Request.CreateResponse((HttpStatusCode)409);
                 }
 
                 if (resp.StatusCode == (HttpStatusCode)404)
                 {
-                    Logger.Log.Error($"StopPost: На посту {model.post} нет активной мойки" + Environment.NewLine);
+                    Logger.Log.Error($"StopPost.App: На посту {model.post} нет активной мойки" + Environment.NewLine);
                     return Request.CreateResponse((HttpStatusCode)409);
                 }
 
                 if (resp.StatusCode == (HttpStatusCode)204)
                 {
-                    Logger.Log.Error($"StopPost: Проблема с входными данными для поста {model.post}. Номер карты: {model.card}" + Environment.NewLine);
+                    Logger.Log.Error($"StopPost.App: Проблема с входными данными для поста {model.post}. Номер карты: {model.card}" + Environment.NewLine);
                     return Request.CreateResponse((HttpStatusCode)204);
                 }
 
                 if (resp.StatusCode == (HttpStatusCode)500)
                 {
-                    Logger.Log.Error($"StopPost: Исключение на посту {model.post}" + Environment.NewLine);
+                    Logger.Log.Error($"StopPost.App: Исключение на посту {model.post}" + Environment.NewLine);
                     return Request.CreateResponse((HttpStatusCode)424);
                 }
 
                 int wasteBalance = 0;
                 if(!int.TryParse(resp.ResultMessage, out wasteBalance))
                 {
-                    Logger.Log.Error($"StopPost: не удалось распарсить баланс остановки мойки: {resp.ResultMessage}" + Environment.NewLine);
+                    Logger.Log.Error($"StopPost.App: не удалось распарсить баланс остановки мойки: {resp.ResultMessage}" + Environment.NewLine);
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { waste = wasteBalance });
@@ -931,14 +931,13 @@ namespace MobileIntegration.Controllers
         {
             Logger.InitLogger();
 
-            Logger.Log.Debug($"StopPost: отправка списания по карте {model.card}");
+            Logger.Log.Debug($"StopPost: Пост {model.post} отправляет списание по карте {model.card} на сумму {model.balance}");
 
             int responseStatusCode = 200;
 
             try
             {
                 var res = UpdateMobileSendings(model);
-                Logger.Log.Debug($"Обновлены {res} записи MobileSendings");
 
                 if (res == 0)
                     responseStatusCode = 513;
