@@ -156,77 +156,80 @@ namespace MobileIntegration.Controllers
             {
                 try
                 {
-                    Logger.Log.Debug(String.Format("IncreaseBalnce. Запуск с параметрами:\n" +
-                        "time_send: {0}, hash: {1}\ncard: {2}, value: {3}\nfrom: {4}, operation_type: {5}", increase.time_send, increase.hash, increase.card.ToString(),
-                        increase.value, increase.from, increase.operation_type));
+                    //Logger.Log.Debug(String.Format("IncreaseBalnce. Запуск с параметрами:\n" +
+                    //    "time_send: {0}, hash: {1}\ncard: {2}, value: {3}\nfrom: {4}, operation_type: {5}", increase.time_send, increase.hash, increase.card.ToString(),
+                    //    increase.value, increase.from, increase.operation_type));
+
                     if (CryptHash.CheckHashCode(increase.hash, increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")))
                     {
-                        if (_model.Database.Exists())
-                        {
-                            _model.Database.Connection.Open();
-                            //Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
+                        return Request.CreateResponse(HttpStatusCode.OK);
 
-                            DbCommand commandBalance = _model.Database.Connection.CreateCommand();
-                            commandBalance.CommandText = $"select top 1 " +
-                            $"isnull(o.Balance, 0) " +
-                            $"from Cards c " +
-                            $"left join Operations o on o.IDCard = c.IDCard " +
-                            $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
-                            $"where c.CardNum = '{increase.card}' " +
-                            $"order by o.IDOperation desc";
+                        //if (_model.Database.Exists())
+                        //{
+                        //    _model.Database.Connection.Open();
+                        //    //Logger.Log.Debug("Db connection: " + _model.Database.Connection.State.ToString());
 
-                            DbCommand command = _model.Database.Connection.CreateCommand();
-                            DbTransaction tran = _model.Database.Connection.BeginTransaction();
-                            command.Transaction = tran;
+                        //    DbCommand commandBalance = _model.Database.Connection.CreateCommand();
+                        //    commandBalance.CommandText = $"select top 1 " +
+                        //    $"isnull(o.Balance, 0) " +
+                        //    $"from Cards c " +
+                        //    $"left join Operations o on o.IDCard = c.IDCard " +
+                        //    $"and o.DTime = (select MAX(DTime) from Operations where IDCard = c.IDCard) " +
+                        //    $"where c.CardNum = '{increase.card}' " +
+                        //    $"order by o.IDOperation desc";
 
-                            try
-                            {
-                                command.CommandText = $"UPDATE Cards SET Balance = ({commandBalance.CommandText}) + {increase.value} WHERE CardNum = '{increase.card}'";
-                                //Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
-                                command.ExecuteNonQuery();
+                        //    DbCommand command = _model.Database.Connection.CreateCommand();
+                        //    DbTransaction tran = _model.Database.Connection.BeginTransaction();
+                        //    command.Transaction = tran;
 
-                                command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
-                                $"VALUES ((select IDDevice from Device where Code = 'MOB-EM'), (select IDOperationType from OperationTypes where Code = 'increase'), " +
-                                $"(select min(IDCard) as IDCard from Cards where CardNum = '{increase.card}'), '{increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {increase.value}, ({commandBalance.CommandText}) + {increase.value}, " +
-                                $"(select IDDevice from Device where Code = 'MOB-EM'), 0);";
-                                //Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
-                                command.ExecuteNonQuery();
+                        //    try
+                        //    {
+                        //        command.CommandText = $"UPDATE Cards SET Balance = ({commandBalance.CommandText}) + {increase.value} WHERE CardNum = '{increase.card}'";
+                        //        //Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
+                        //        command.ExecuteNonQuery();
 
-                                tran.Commit();
+                        //        //command.CommandText = $"INSERT INTO Operations (IDDevice, IDOperationType, IDCard, DTime, Amount, Balance, LocalizedBy, LocalizedID) " +
+                        //        //$"VALUES ((select IDDevice from Device where Code = 'MOB-EM'), (select IDOperationType from OperationTypes where Code = 'increase'), " +
+                        //        //$"(select min(IDCard) as IDCard from Cards where CardNum = '{increase.card}'), '{increase.time_send.ToString("yyyy-MM-dd HH:mm:ss")}', {increase.value}, ({commandBalance.CommandText}) + {increase.value}, " +
+                        //        //$"(select IDDevice from Device where Code = 'MOB-EM'), 0);";
+                        //        ////Logger.Log.Debug("IncreaseBalance: command is: " + command.CommandText);
+                        //        //command.ExecuteNonQuery();
 
-                                command.CommandText = "SELECT SCOPE_IDENTITY();";
+                        //        tran.Commit();
 
-                                var serverID = command.ExecuteScalar();
-                                Logger.Log.Debug("IncreaseBalance: операция добавлена. id = " + serverID.ToString() + Environment.NewLine);
-                                _model.Database.Connection.Close();
+                        //        //command.CommandText = "SELECT SCOPE_IDENTITY();";
 
-                                _model.Database.Connection.Close();
-                            }
-                            catch (Exception e)
-                            {
-                                if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
-                                {
-                                    tran.Rollback();
-                                    _model.Database.Connection.Close();
-                                }
+                        //        //var serverID = command.ExecuteScalar();
+                        //        //Logger.Log.Debug("IncreaseBalance: операция добавлена. id = " + serverID.ToString() + Environment.NewLine);
+                        //        //_model.Database.Connection.Close();
 
-                                Logger.Log.Error("IncreaseBalance: ошибка записи в базу\n" + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine);
-                                return Request.CreateResponse((HttpStatusCode)513, "Ошибка при записи в базу");
-                            }
-                            var responseGood = Request.CreateResponse(HttpStatusCode.OK);
-                            //responseGood.Headers.Add("ServerID", serverID.ToString());
-                            return responseGood;
-                        }
+                        //        _model.Database.Connection.Close();
+                        //    }
+                        //    catch (Exception e)
+                        //    {
+                        //        if (_model.Database.Connection.State == System.Data.ConnectionState.Open)
+                        //        {
+                        //            tran.Rollback();
+                        //            _model.Database.Connection.Close();
+                        //        }
+
+                        //        Logger.Log.Error("IncreaseBalance.App: Исключение при записи в базу -" + e.Message + Environment.NewLine + e.StackTrace);
+                        //        return Request.CreateResponse((HttpStatusCode)513, "Ошибка при записи в базу");
+                        //    }
+                        //    var responseGood = Request.CreateResponse(HttpStatusCode.OK);
+                        //    //responseGood.Headers.Add("ServerID", serverID.ToString());
+                        //    return responseGood;
+                        //}
                     }
                     else
                     {
-                        Logger.Log.Error("Unauthorized" + Environment.NewLine);
+                        Logger.Log.Error("IncreaseBalance.App: Хэш не прошёл проверку");
                         return Request.CreateResponse(HttpStatusCode.Unauthorized);
                     }
                 }
                 catch (Exception e)
                 {
-                    Logger.Log.Error("IncreaseBalance reciever: " + e.Message.ToString() + Environment.NewLine);
+                    Logger.Log.Error("IncreaseBalance.App: Исключение - " + e.Message.ToString() + Environment.NewLine);
                     return Request.CreateResponse(HttpStatusCode.InternalServerError);
                 }
             }
