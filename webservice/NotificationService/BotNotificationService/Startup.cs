@@ -1,3 +1,4 @@
+using BotNotificationService.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +40,8 @@ namespace BotNotificationService
                     Description = "Сервис отправки оповещений через бота Телеграм",
                 });
             });
+
+            services.ConfigureOptions<TelegramBotOptionsSetup>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

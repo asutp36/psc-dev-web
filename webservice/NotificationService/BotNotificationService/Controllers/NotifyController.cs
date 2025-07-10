@@ -1,6 +1,8 @@
 ﻿using BotNotificationService.Models;
+using BotNotificationService.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -16,9 +18,12 @@ namespace BotNotificationService.Controllers
     public class NotifyController : ControllerBase
     {
         private readonly ILogger<NotifyController> _logger;
-        public NotifyController(ILogger<NotifyController> logger)
+        private readonly TelegramBotOptions _options;
+
+        public NotifyController(ILogger<NotifyController> logger, IOptions<TelegramBotOptions> options)
         {
             _logger = logger;
+            _options = options.Value;
         }
 
         [HttpPost("update")]
@@ -27,7 +32,7 @@ namespace BotNotificationService.Controllers
             _logger.LogInformation("Получено обновление: " + JsonConvert.SerializeObject(update));
 
             if (update.message != null &&
-                update.message.from.Id == 134083432 &&
+                _options.AcceptableCommandUsers.Contains(update.message.from.Id) &&
                 update.message.entities != null &&
                 update.message.entities.Any(e => e.type == "bot_command") &&
                 update.message.text != null &&
@@ -35,7 +40,7 @@ namespace BotNotificationService.Controllers
             {
                 _logger.LogInformation($"Отправляю chat_id={update.message.chat.id} группы {update.message.chat.title}");
 
-                SendMessage(new SendMessageWhattsAppModel { chatId = 134083432.ToString(), body = $"Группа {update.message.chat.title}: chat_id={update.message.chat.id}" });
+                await SendMessage(new SendMessageWhattsAppModel { chatId = update.message.from.Id.ToString(), body = $"Группа {update.message.chat.title}: chat_id={update.message.chat.id}" });
 
                 return Ok();
             }
@@ -44,7 +49,7 @@ namespace BotNotificationService.Controllers
             {
                 _logger.LogInformation($"Создана группа {update.message.chat.title} chat_id={update.message.chat.id}");
 
-                SendMessage(new SendMessageWhattsAppModel { chatId = update.message.chat.id.ToString(), body = $"chat_id={update.message.chat.id}" });
+                await SendMessage(new SendMessageWhattsAppModel { chatId = update.message.chat.id.ToString(), body = $"chat_id={update.message.chat.id}" });
             }
 
             if(update.message != null && update.message.reply_to_message != null)
@@ -98,9 +103,8 @@ namespace BotNotificationService.Controllers
         {
             try
             {
-                BotCredentials bot = new BotCredentials();
                 HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri($"https://api.telegram.org/bot{bot.Token}/");
+                client.BaseAddress = new Uri($"https://api.telegram.org/bot{_options.Token}/");
 
                 HttpRequestMessage message = new HttpRequestMessage(method, uri);
 
