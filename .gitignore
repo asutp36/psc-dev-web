@@ -331,3 +331,7 @@ ASALocalRun/
 /webservice/SynchronizationService/SynchronizationService/Logs
 
 .vs/
+
+# Development and Production configurations
+**/appsettings.Development.json
+**/appsettings.Production.json
