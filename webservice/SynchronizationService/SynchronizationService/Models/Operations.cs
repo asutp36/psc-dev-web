@@ -25,9 +25,11 @@ namespace SynchronizationService.Models
         public string Functions { get; set; }
         public string Details { get; set; }
         public int IDChanger { get; set; }
+        public Nullable<int> IDDevice { get; set; }
     
         public virtual Cards Cards { get; set; }
         public virtual OperationTypes OperationTypes { get; set; }
         public virtual Changers Changers { get; set; }
+        public virtual Device Device { get; set; }
     }
 }

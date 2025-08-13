@@ -27,6 +27,7 @@ namespace SynchronizationService.Models
         public int IDCardType { get; set; }
         public int LocalizedBy { get; set; }
         public int LocalizedID { get; set; }
+        public Nullable<int> Balance { get; set; }
     
         public virtual CardStatuses CardStatuses { get; set; }
         public virtual CardTypes CardTypes { get; set; }

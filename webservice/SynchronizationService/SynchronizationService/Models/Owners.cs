@@ -24,6 +24,7 @@ namespace SynchronizationService.Models
         public string Phone { get; set; }
         public int LocalizedBy { get; set; }
         public int LocalizedID { get; set; }
+        public Nullable<long> PhoneInt { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Cards> Cards { get; set; }

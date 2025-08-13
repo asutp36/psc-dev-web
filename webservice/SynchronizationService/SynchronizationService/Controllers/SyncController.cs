@@ -10,6 +10,7 @@ using System.Data.Common;
 using Newtonsoft.Json;
 using System.Globalization;
 using System.Data.SqlClient;
+using System.Web;
 
 namespace SynchronizationService.Controllers
 {
@@ -263,7 +264,7 @@ namespace SynchronizationService.Controllers
             {           
                 if (increase != null)
                 {
-                    Logger.Log.Debug("PostEventIncrease: Запуск с параметрами:\n" + JsonConvert.SerializeObject(increase));
+                    Logger.Log.Debug($"PostEventIncrease: Вызов от {HttpContext.Current?.Request?.UserHostAddress}. Запуск с параметрами:\n" + JsonConvert.SerializeObject(increase));
 
                     if (_model.Database.Exists())
                     {
@@ -279,8 +280,8 @@ namespace SynchronizationService.Controllers
                                 "INSERT INTO Event (IDPost, IDEventKind, DTime, IDEventPost) " +
                                 $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{increase.Device}\')), " +
                                 $"(select ek.IDEventKind from EventKind ek where ek.Code = \'{increase.Kind}\'), \'{increase.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\', {increase.IDEventPost}); " +
-                                "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, balance) " +
-                                $"VALUES ((SELECT SCOPE_IDENTITY()), {increase.Amount}, {increase.m10}, {increase.b10}, {increase.b50}, {increase.b100},{increase.b200}, " +
+                                "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, b500, b1000, b2000, balance) " +
+                                $"VALUES ((SELECT SCOPE_IDENTITY()), {increase.Amount}, {increase.m10}, {increase.b10}, {increase.b50}, {increase.b100}, {increase.b200}, {increase.b500}, {increase.b1000}, {increase.b2000}, " +
                                 $"{increase.Balance}); " +
                                 "SELECT IDENT_CURRENT(\'Event\')" +
                                 "COMMIT;";
@@ -386,8 +387,8 @@ namespace SynchronizationService.Controllers
                                 "INSERT INTO Event (IDPost, IDEventKind, DTime, IDEventPost) " +
                                 $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{increase.Device}\')), " +
                                 $"(select ek.IDEventKind from EventKind ek where ek.Code = \'{increase.Kind}\'), \'{increase.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\', {increase.IDEventPost}); " +
-                                "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, balance, IDPostSession) " +
-                                $"VALUES ((SELECT SCOPE_IDENTITY()), {increase.Amount}, {increase.m10}, {increase.b10}, {increase.b50}, {increase.b100},{increase.b200}, " +
+                                "INSERT INTO EventIncrease (IDEvent, amount, m10, b10, b50, b100, b200, b500, b1000, b2000, balance, IDPostSession) " +
+                                $"VALUES ((SELECT SCOPE_IDENTITY()), {increase.Amount}, {increase.m10}, {increase.b10}, {increase.b50}, {increase.b100}, {increase.b200}, {increase.b500}, {increase.b1000}, {increase.b2000}, " +
                                 $@"{increase.Balance}, (select ps.IDPostSession
                                         from PostSession ps
                                         where ps.IDSessionOnPost = {increase.IDPostSession}
@@ -471,6 +472,12 @@ namespace SynchronizationService.Controllers
             command.Transaction = tran;
             try
             {
+
+
+                // смягчить условие проверки ms.DTimeStart
+
+
+
                 command.CommandText = $"update MobileSendings " +
                     $"set DTimeEnd = '{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}', amount = {increase.Amount}, {sqlDetails} " +
                     $"where IDMobileSending in " +
@@ -661,8 +668,8 @@ namespace SynchronizationService.Controllers
                             "INSERT INTO Event (IDPost, IDEventKind, DTime, IDEventPost) " +
                             $"VALUES ((select p.IDPost from Posts p where p.IDDevice = (select d.IDDevice from Device d where d.Code = \'{collect.Device}\')), " +
                             $"(select ek.IDEventKind from EventKind ek where ek.Code = \'collect\'), \'{collect.DTime.ToString("yyyyMMdd HH:mm:ss.fff")}\', {collect.IDEventPost}); " +
-                            "INSERT INTO EventCollect (IDEvent, amount, m10, b10, b50, b100, b200) " +
-                            $"VALUES ((SELECT SCOPE_IDENTITY()), {collect.Amount}, {collect.m10}, {collect.b10}, {collect.b50}, {collect.b100},{collect.b200}); " +
+                            "INSERT INTO EventCollect (IDEvent, amount, m10, b10, b50, b100, b200, b500, b1000, b2000) " +
+                            $"VALUES ((SELECT SCOPE_IDENTITY()), {collect.Amount}, {collect.m10}, {collect.b10}, {collect.b50}, {collect.b100}, {collect.b200}, {collect.b500}, {collect.b1000}, {collect.b2000}); " +
                             "SELECT IDENT_CURRENT(\'Event\')" +
                             "COMMIT;";
 

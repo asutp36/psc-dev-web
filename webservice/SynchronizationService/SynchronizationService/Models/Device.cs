@@ -19,6 +19,8 @@ namespace SynchronizationService.Models
         {
             this.Finance = new HashSet<Finance>();
             this.Posts = new HashSet<Posts>();
+            this.Changers = new HashSet<Changers>();
+            this.Operations = new HashSet<Operations>();
         }
     
         public int IDDevice { get; set; }
@@ -32,5 +34,9 @@ namespace SynchronizationService.Models
         public virtual ICollection<Finance> Finance { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Posts> Posts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Changers> Changers { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Operations> Operations { get; set; }
     }
 }

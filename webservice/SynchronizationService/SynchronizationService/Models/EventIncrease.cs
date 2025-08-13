@@ -22,6 +22,10 @@ namespace SynchronizationService.Models
         public Nullable<int> b100 { get; set; }
         public Nullable<int> b200 { get; set; }
         public Nullable<int> balance { get; set; }
+        public Nullable<int> IDPostSession { get; set; }
+        public int b500 { get; set; }
+        public int b1000 { get; set; }
+        public int b2000 { get; set; }
     
         public virtual Event Event { get; set; }
     }

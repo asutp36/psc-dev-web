@@ -14,6 +14,7 @@
           <Property Name="CardNum" Type="nvarchar" MaxLength="20" Nullable="false" />
           <Property Name="IDCardStatus" Type="int" Nullable="false" />
           <Property Name="IDCardType" Type="int" Nullable="false" />
+          <Property Name="Balance" Type="int" />
           <Property Name="LocalizedBy" Type="int" Nullable="false" />
           <Property Name="LocalizedID" Type="int" Nullable="false" />
         </EntityType>
@@ -38,7 +39,7 @@
             <PropertyRef Name="IDChanger" />
           </Key>
           <Property Name="IDChanger" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IDDevice" Type="int" />
           <Property Name="IDWash" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Device">
@@ -73,6 +74,9 @@
           <Property Name="b50" Type="int" />
           <Property Name="b100" Type="int" />
           <Property Name="b200" Type="int" />
+          <Property Name="b500" Type="int" Nullable="false" />
+          <Property Name="b1000" Type="int" Nullable="false" />
+          <Property Name="b2000" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="EventIncrease">
           <Key>
@@ -86,6 +90,10 @@
           <Property Name="b100" Type="int" />
           <Property Name="b200" Type="int" />
           <Property Name="balance" Type="int" />
+          <Property Name="IDPostSession" Type="int" />
+          <Property Name="b500" Type="int" Nullable="false" />
+          <Property Name="b1000" Type="int" Nullable="false" />
+          <Property Name="b2000" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="EventKind">
           <Key>
@@ -144,7 +152,7 @@
             <PropertyRef Name="IDMode" />
           </Key>
           <Property Name="IDMode" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Code" Type="smallint" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="20" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <EntityType Name="Operations">
@@ -152,7 +160,7 @@
             <PropertyRef Name="IDOperation" />
           </Key>
           <Property Name="IDOperation" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="IDChanger" Type="int" Nullable="false" />
+          <Property Name="IDDevice" Type="int" />
           <Property Name="IDOperationType" Type="int" Nullable="false" />
           <Property Name="IDCard" Type="int" Nullable="false" />
           <Property Name="DTime" Type="datetime" Nullable="false" />
@@ -177,6 +185,7 @@
           </Key>
           <Property Name="IDOwner" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Phone" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="PhoneInt" Type="bigint" />
           <Property Name="LocalizedBy" Type="int" Nullable="false" />
           <Property Name="LocalizedID" Type="int" Nullable="false" />
         </EntityType>
@@ -185,11 +194,11 @@
             <PropertyRef Name="IDPost" />
           </Key>
           <Property Name="IDPost" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Code" Type="nvarchar" MaxLength="10" />
-          <Property Name="Name" Type="nvarchar" MaxLength="100" />
           <Property Name="IDWash" Type="int" Nullable="false" />
           <Property Name="IDDevice" Type="int" />
           <Property Name="QRCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="Code" Type="nvarchar" MaxLength="20" />
+          <Property Name="Name" Type="nvarchar" MaxLength="200" />
         </EntityType>
         <EntityType Name="Wash">
           <Key>
@@ -240,6 +249,20 @@
             </Principal>
             <Dependent Role="Cards">
               <PropertyRef Name="IDOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Changers_Device">
+          <End Role="Device" Type="Self.Device" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Changers" Type="Self.Changers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Changers">
+              <PropertyRef Name="IDDevice" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -397,17 +420,17 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Operations_Changers">
-          <End Role="Changers" Type="Self.Changers" Multiplicity="1">
+        <Association Name="FK_Operations_Device">
+          <End Role="Device" Type="Self.Device" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
           </End>
           <End Role="Operations" Type="Self.Operations" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Changers">
-              <PropertyRef Name="IDChanger" />
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
             </Principal>
             <Dependent Role="Operations">
-              <PropertyRef Name="IDChanger" />
+              <PropertyRef Name="IDDevice" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -485,6 +508,10 @@
             <End Role="Owners" EntitySet="Owners" />
             <End Role="Cards" EntitySet="Cards" />
           </AssociationSet>
+          <AssociationSet Name="FK_Changers_Device" Association="Self.FK_Changers_Device">
+            <End Role="Device" EntitySet="Device" />
+            <End Role="Changers" EntitySet="Changers" />
+          </AssociationSet>
           <AssociationSet Name="FK_Changers_Wash" Association="Self.FK_Changers_Wash">
             <End Role="Wash" EntitySet="Wash" />
             <End Role="Changers" EntitySet="Changers" />
@@ -529,8 +556,8 @@
             <End Role="Cards" EntitySet="Cards" />
             <End Role="Operations" EntitySet="Operations" />
           </AssociationSet>
-          <AssociationSet Name="FK_Operations_Changers" Association="Self.FK_Operations_Changers">
-            <End Role="Changers" EntitySet="Changers" />
+          <AssociationSet Name="FK_Operations_Device" Association="Self.FK_Operations_Device">
+            <End Role="Device" EntitySet="Device" />
             <End Role="Operations" EntitySet="Operations" />
           </AssociationSet>
           <AssociationSet Name="FK_Operations_OperationTypes" Association="Self.FK_Operations_OperationTypes">
@@ -565,6 +592,7 @@
           <NavigationProperty Name="CardTypes" Relationship="Self.FK_Cards_CardTypes" FromRole="Cards" ToRole="CardTypes" />
           <NavigationProperty Name="Owners" Relationship="Self.FK_Cards_Owners" FromRole="Cards" ToRole="Owners" />
           <NavigationProperty Name="Operations" Relationship="Self.FK_Operations_Cards" FromRole="Cards" ToRole="Operations" />
+          <Property Name="Balance" Type="Int32" />
         </EntityType>
         <EntityType Name="CardStatuses">
           <Key>
@@ -596,6 +624,8 @@
           <Property Name="IpAddress" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Finance" Relationship="Self.FK_Finance_Device" FromRole="Device" ToRole="Finance" />
           <NavigationProperty Name="Posts" Relationship="Self.FK_Posts_Device" FromRole="Device" ToRole="Posts" />
+          <NavigationProperty Name="Changers" Relationship="WashCompany.FK_Changers_Device" FromRole="Device" ToRole="Changers" />
+          <NavigationProperty Name="Operations" Relationship="WashCompany.FK_Operations_Device" FromRole="Device" ToRole="Operations" />
         </EntityType>
         <EntityType Name="Event">
           <Key>
@@ -625,6 +655,9 @@
           <Property Name="b100" Type="Int32" />
           <Property Name="b200" Type="Int32" />
           <NavigationProperty Name="Event" Relationship="Self.FK_EventCollect_Event" FromRole="EventCollect" ToRole="Event" />
+          <Property Name="b500" Type="Int32" Nullable="false" />
+          <Property Name="b1000" Type="Int32" Nullable="false" />
+          <Property Name="b2000" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="EventIncrease">
           <Key>
@@ -639,6 +672,10 @@
           <Property Name="b200" Type="Int32" />
           <Property Name="balance" Type="Int32" />
           <NavigationProperty Name="Event" Relationship="Self.FK_EventCash_Event" FromRole="EventIncrease" ToRole="Event" />
+          <Property Name="IDPostSession" Type="Int32" />
+          <Property Name="b500" Type="Int32" Nullable="false" />
+          <Property Name="b1000" Type="Int32" Nullable="false" />
+          <Property Name="b2000" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="EventKind">
           <Key>
@@ -726,6 +763,8 @@
           <NavigationProperty Name="OperationTypes" Relationship="Self.FK_Operations_OperationTypes" FromRole="Operations" ToRole="OperationTypes" />
           <Property Name="IDChanger" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Changers" Relationship="WashCompany.FK_Operations_Changers" FromRole="Operations" ToRole="Changers" />
+          <Property Name="IDDevice" Type="Int32" />
+          <NavigationProperty Name="Device" Relationship="WashCompany.FK_Operations_Device" FromRole="Operations" ToRole="Device" />
         </EntityType>
         <EntityType Name="OperationTypes">
           <Key>
@@ -745,14 +784,15 @@
           <Property Name="LocalizedBy" Type="Int32" Nullable="false" />
           <Property Name="LocalizedID" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Cards" Relationship="Self.FK_Cards_Owners" FromRole="Owners" ToRole="Cards" />
+          <Property Name="PhoneInt" Type="Int64" />
         </EntityType>
         <EntityType Name="Posts">
           <Key>
             <PropertyRef Name="IDPost" />
           </Key>
           <Property Name="IDPost" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Code" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="IDWash" Type="Int32" Nullable="false" />
           <Property Name="IDDevice" Type="Int32" />
           <NavigationProperty Name="Device" Relationship="Self.FK_Posts_Device" FromRole="Posts" ToRole="Device" />
@@ -1088,6 +1128,14 @@
             <End Role="Changers" EntitySet="Changers" />
             <End Role="Operations" EntitySet="Operations" />
           </AssociationSet>
+          <AssociationSet Name="FK_Changers_Device" Association="WashCompany.FK_Changers_Device">
+            <End Role="Device" EntitySet="Device" />
+            <End Role="Changers" EntitySet="Changers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Operations_Device" Association="WashCompany.FK_Operations_Device">
+            <End Role="Device" EntitySet="Device" />
+            <End Role="Operations" EntitySet="Operations" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Changers">
           <Key>
@@ -1098,6 +1146,8 @@
           <Property Name="IDWash" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Wash" Relationship="WashCompany.FK_Changers_Wash" FromRole="Changers" ToRole="Wash" />
           <NavigationProperty Name="Operations" Relationship="WashCompany.FK_Operations_Changers" FromRole="Changers" ToRole="Operations" />
+          <Property Name="IDDevice" Type="Int32" />
+          <NavigationProperty Name="Device" Relationship="WashCompany.FK_Changers_Device" FromRole="Changers" ToRole="Device" />
         </EntityType>
         <Association Name="FK_Changers_Wash">
           <End Type="WashCompany.Wash" Role="Wash" Multiplicity="1">
@@ -1127,6 +1177,34 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Changers_Device">
+          <End Type="WashCompany.Device" Role="Device" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WashCompany.Changers" Role="Changers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Changers">
+              <PropertyRef Name="IDDevice" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Operations_Device">
+          <End Type="WashCompany.Device" Role="Device" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="WashCompany.Operations" Role="Operations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="IDDevice" />
+            </Principal>
+            <Dependent Role="Operations">
+              <PropertyRef Name="IDDevice" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1136,6 +1214,7 @@
           <EntitySetMapping Name="Cards">
             <EntityTypeMapping TypeName="WashCompany.Cards">
               <MappingFragment StoreEntitySet="Cards">
+                <ScalarProperty Name="Balance" ColumnName="Balance" />
                 <ScalarProperty Name="IDCard" ColumnName="IDCard" />
                 <ScalarProperty Name="IDOwner" ColumnName="IDOwner" />
                 <ScalarProperty Name="CardNum" ColumnName="CardNum" />
@@ -1190,6 +1269,9 @@
           <EntitySetMapping Name="EventCollect">
             <EntityTypeMapping TypeName="WashCompany.EventCollect">
               <MappingFragment StoreEntitySet="EventCollect">
+                <ScalarProperty Name="b2000" ColumnName="b2000" />
+                <ScalarProperty Name="b1000" ColumnName="b1000" />
+                <ScalarProperty Name="b500" ColumnName="b500" />
                 <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
                 <ScalarProperty Name="amount" ColumnName="amount" />
                 <ScalarProperty Name="m10" ColumnName="m10" />
@@ -1203,6 +1285,10 @@
           <EntitySetMapping Name="EventIncrease">
             <EntityTypeMapping TypeName="WashCompany.EventIncrease">
               <MappingFragment StoreEntitySet="EventIncrease">
+                <ScalarProperty Name="b2000" ColumnName="b2000" />
+                <ScalarProperty Name="b1000" ColumnName="b1000" />
+                <ScalarProperty Name="b500" ColumnName="b500" />
+                <ScalarProperty Name="IDPostSession" ColumnName="IDPostSession" />
                 <ScalarProperty Name="IDEvent" ColumnName="IDEvent" />
                 <ScalarProperty Name="amount" ColumnName="amount" />
                 <ScalarProperty Name="m10" ColumnName="m10" />
@@ -1283,7 +1369,7 @@
           <EntitySetMapping Name="Operations">
             <EntityTypeMapping TypeName="WashCompany.Operations">
               <MappingFragment StoreEntitySet="Operations">
-                <ScalarProperty Name="IDChanger" ColumnName="IDChanger" />
+                <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
                 <ScalarProperty Name="IDOperation" ColumnName="IDOperation" />
                 <ScalarProperty Name="IDOperationType" ColumnName="IDOperationType" />
                 <ScalarProperty Name="IDCard" ColumnName="IDCard" />
@@ -1309,6 +1395,7 @@
           <EntitySetMapping Name="Owners">
             <EntityTypeMapping TypeName="WashCompany.Owners">
               <MappingFragment StoreEntitySet="Owners">
+                <ScalarProperty Name="PhoneInt" ColumnName="PhoneInt" />
                 <ScalarProperty Name="IDOwner" ColumnName="IDOwner" />
                 <ScalarProperty Name="Phone" ColumnName="Phone" />
                 <ScalarProperty Name="LocalizedBy" ColumnName="LocalizedBy" />
@@ -1342,8 +1429,8 @@
           <EntitySetMapping Name="Changers">
             <EntityTypeMapping TypeName="WashCompany.Changers">
               <MappingFragment StoreEntitySet="Changers">
+                <ScalarProperty Name="IDDevice" ColumnName="IDDevice" />
                 <ScalarProperty Name="IDWash" ColumnName="IDWash" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="IDChanger" ColumnName="IDChanger" />
               </MappingFragment>
             </EntityTypeMapping>
