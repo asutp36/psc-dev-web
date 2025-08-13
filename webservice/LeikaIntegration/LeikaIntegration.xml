@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LeikaIntegration</name>
+    </assembly>
+    <members>
+        <member name="M:LeikaIntegration.Controllers.PostController.State(LeikaIntegration.Controllers.Supplies.PostStateRequestBindingModel)">
+            <summary>
+            Узнать состояние поста
+            </summary>
+            <returns></returns>
+            <response code="200">Свободен</response>
+            <response code="401">Хэш не прошёл проверку</response>
+            <response code="404">Не найден пост</response>
+            <response code="424">Нет связи с постом</response>
+            <response code="423">Пост занят</response>
+            <response code="500">Внутренняя ошибка сервера</response>
+        </member>
+        <member name="M:LeikaIntegration.Controllers.PostController.Start(LeikaIntegration.Controllers.Supplies.StartPostRequestBindingModel)">
+            <summary>
+            Запустить пост
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+            <response code="200">Удачно</response>
+            <response code="400">Некорректные входные параметры</response>
+            <response code="401">Хэш не прошёл проверку</response>
+            <response code="404">Пост не найден</response>
+            <response code="424">Нет связи с постом</response>
+            <response code="423">Пост занят</response>
+            <response code="500">Внутренняя ошибка сервера</response>
+        </member>
+    </members>
+</doc>
